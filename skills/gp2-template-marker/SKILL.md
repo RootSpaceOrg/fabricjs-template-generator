@@ -90,6 +90,9 @@ python3 ../../scripts/audit-template-markup.py artifacts/gp2-template-marker/<sl
 | Foto/imagem que varia por post (gerada por IA, escolhida pelo usuário) | `<img data-image-type="userAsset" data-template-element="true" data-te-description="..." data-te-remove-bg="false">` |
 | CTA-label fixo ("Arraste →", "Saiba mais", "@") | `data-static="true"` |
 | Numeração / progresso / etiquetas decorativas estáticas | `data-static="true"` |
+| Carousel chrome — track, fill, counter "N/T" da progress bar | `data-static="true"` (designer já deve ter marcado; confirme) |
+| Carousel chrome — fill da progress bar em slide LIGHT | `data-static="true"` + `data-variable="primary" data-variable-target="background"` (track e counter não recebem variable) |
+| Carousel chrome — swipe arrow (background sutil + chevron SVG) | `data-static="true"` (em todos os slides exceto o último) |
 | Formas decorativas (linhas, faixas, fundos, divisores) | nada (auto-detect como decoração) ou `data-static="true"` se ambíguo |
 | Acento de cor que troca com preset (botão, headline colorido, faixa) | `data-variable="primary\|secondary"` + opcional `data-variable-target="fill\|stroke\|background"` |
 | Slide background colorido brand | no `<section>`: `data-variable="primary"` + `data-variable-target="background"` |

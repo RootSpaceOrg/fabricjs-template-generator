@@ -27,7 +27,10 @@ A regra "não prescreva direção estética" só vale no Free mode.
 |----------|---------------------|
 | Asset type, dimensions, slide count | Hard input; can't be inferred later |
 | Health segment (one of 8) | Drives editor metadata and `data-segment` |
-| Per-slide narrative role (1–2 lines) | Story arc — needs the user's intent |
+| **Sequência narrativa** (Standard / Listicle / Tutorial / Comparação / Single-post) | Determina arco do carrossel e alternância de background — ver "Sequências narrativas" abaixo |
+| Per-slide narrative role (1–2 lines) | Story arc — derivado da sequência mas pode customizar |
+| **Hook do Slide 1** (fórmula + 1 linha de copy) | Slide 1 mata ou salva o carrossel — ver "Hook do Slide 1" abaixo |
+| **Carousel chrome** (yes / no / auto) | Progress bar + seta de swipe são UI consistente em formatos longos; opt-in respeita variedade |
 | Brand color count: primary only OR primary + secondary | Two swappable accents or one |
 | Professional photo: yes / no / conditional | Trust-vs-noise decision |
 | Copy/tone direction | Voice the user expects |
@@ -124,6 +127,93 @@ Quando há imagem(s) anexada(s), extraia **com precisão**:
 - Fotos específicas (vão ser placeholders ou assets do usuário).
 - Eventuais erros visuais da referência (overflow, contraste ruim) — corrija no spec.
 
+## Sequências narrativas
+
+Em vez de inventar o arco do carrossel do zero, escolha uma das **5 sequências canônicas** abaixo. Cada uma já tem papel + background sugerido por slide. O designer no Passo 1 (low-fi) parte com esqueleto pronto.
+
+| Sequência | N slides | Quando usar |
+|-----------|----------|-------------|
+| **Standard** | 7 | Educativo geral: hook → problema → solução → features → detalhes → passos → CTA. Default quando o pedido é amplo. |
+| **Listicle** | 5–10 | "X dicas", "X erros", "X sinais", "X benefícios". Capa + N itens + CTA. |
+| **Tutorial** | 7 | Passo-a-passo: hook → contexto/por quê → 3 passos → resultado esperado → CTA. |
+| **Comparação** | 5 | A vs B: capa → opção A → opção B → veredicto → CTA. |
+| **Single-post** | 1 | Posts não-carrossel: datas comemorativas, citações, anúncios, capas isoladas. |
+
+### Detecção automática
+
+Analise a linguagem do pedido:
+
+| Pista no pedido | Sequência |
+|-----------------|-----------|
+| "5 dicas…", "7 erros…", "X sinais de…", "lista de…" | **Listicle** (N = número mencionado, ou 5–7) |
+| "como fazer…", "passo a passo…", "guia para…", "tutorial…" | **Tutorial** |
+| "A ou B", "X vs Y", "diferença entre…", "qual escolher…" | **Comparação** |
+| "post para Dia de…", "homenagem a…", "citação…", "single post", referência a um único frame | **Single-post** |
+| Educativo amplo, sem formato claro | **Standard** (default) |
+
+Se ambíguo, fique com **Standard**. Anote a sequência escolhida e por quê em uma linha do brief.
+
+### Alternância de background por sequência
+
+Convenções de cor por slide (designer pode ajustar no Passo 2, mas o esqueleto vem do interpreter):
+
+- **Standard:** LIGHT, DARK, Brand, LIGHT, DARK, LIGHT, Brand
+- **Listicle:** LIGHT (capa), alternar LIGHT/DARK nos itens, Brand (CTA)
+- **Tutorial:** LIGHT (hook), DARK (contexto), alternar LIGHT/DARK nos passos, DARK (resultado), Brand (CTA)
+- **Comparação:** LIGHT (capa), LIGHT (A), DARK (B), Brand (veredicto), DARK (CTA)
+- **Single-post:** o slide pode ser LIGHT, DARK ou Brand — escolha pelo tom do post
+
+Onde:
+- **LIGHT** = neutro claro derivado do preset HealthMarket (off-white quente)
+- **DARK** = neutro escuro derivado do preset (near-black com tint brand)
+- **Brand** = primary sólido OU gradient primary→secondary (se brief decidir 2 cores)
+
+No Free mode os hexs ficam abertos para o designer materializar. No Reference-driven mode o `reference-spec.md` trava a paleta.
+
+## Hook do Slide 1
+
+O Slide 1 tem 1 segundo para parar o scroll. Entregue o hook **já escrito** no brief, não só "o papel narrativo". Use uma das 5 fórmulas:
+
+| Fórmula | Quando funciona | Exemplo HealthMarket |
+|---------|-----------------|----------------------|
+| **Afirmação polêmica** | desafia crença comum do nicho | "Você está fazendo skincare errado" |
+| **Número + benefício** | educativo / listicle | "7 sinais de que você precisa de um nutricionista" |
+| **Pergunta que dói** | toca em dor real do segmento | "Por que sua clínica não tem agenda cheia?" |
+| **Resultado concreto** | prova social / case | "Como triplicamos os agendamentos em 30 dias" |
+| **Inversão de expectativa** | educativo com viés contraintuitivo | "Treinar mais não vai melhorar sua postura" |
+
+### Regras do hook
+
+- **Nunca** comece com o nome da marca como headline ("Clínica X apresenta…" é frio).
+- O hook deve **prometer um valor** que os slides seguintes entregam — não invente promessa que o conteúdo não cumpre.
+- Prefira hooks que admitam **prova visual** no slide (foto, número, frase curta) quando aplicável.
+- Em **Single-post**, o hook é o ponto central da arte (ex: o título principal do post de Dia das Mães).
+- Em **Tutorial** e **Listicle**, o hook do Slide 1 pode usar a estrutura "Número + benefício" ou "Pergunta que dói" alinhada ao número de itens.
+
+## Carousel chrome (opcional)
+
+Progress bar (3px no rodapé) + seta de swipe à direita são **UI consistente** de carrossel, comum em conteúdo educativo longo. Vamos torná-los opt-in.
+
+Valores possíveis para `## Carousel chrome` no brief:
+
+| Valor | Significado |
+|-------|-------------|
+| `yes` | Designer adiciona progress bar + seta em todos os slides exceto o último |
+| `no` | Designer **não** adiciona chrome |
+| `auto` | Interpreter decide pela sequência |
+
+### Decisão automática (modo `auto`)
+
+| Sequência | Chrome em `auto` |
+|-----------|------------------|
+| Standard | `yes` |
+| Tutorial | `yes` |
+| Listicle | `yes` |
+| Comparação | `no` (foco no contraste A/B) |
+| Single-post | `no` (1 slide só, chrome seria ruído) |
+
+Em **Reference-driven mode**, se a referência tem progress bar visível, force `yes` independente da sequência. Se a referência não tem, force `no`. Anote no `reference-spec.md`.
+
 ## Output
 
 ### `brief.md` (sempre)
@@ -144,10 +234,22 @@ Write `artifacts/gp2-request-interpreter/<slug>/brief.md`:
 ## Segmento
 <um dos 8: clinicas-medicas | laboratorios | farmacias | nutricionistas | fisioterapia | psicologia | odontologia | estetica-bem-estar>
 
+## Sequência
+<Standard | Listicle | Tutorial | Comparação | Single-post>
+<por que essa escolha em 1 linha>
+
+## Hook
+- Fórmula: <Afirmação polêmica | Número + benefício | Pergunta que dói | Resultado concreto | Inversão>
+- Copy: "<o hook escrito de fato em 1 linha>"
+
+## Carousel chrome
+<yes | no | auto>
+<se auto, em qual valor a sequência resolve>
+
 ## Arco narrativo
-- Slide 1 (capa): <papel narrativo em 1-2 linhas>
-- Slide 2: <...>
-- Slide N (CTA): <...>
+- Slide 1 (capa): <papel narrativo + background sugerido (LIGHT/DARK/Brand)>
+- Slide 2: <... + background>
+- Slide N (CTA): <... + background>
 
 ## Cores de marca
 - Quantidade: <primária somente | primária + secundária>
@@ -209,6 +311,10 @@ Write `artifacts/gp2-request-interpreter/<slug>/reference-spec.md` quando há re
 - <ex: fio horizontal fino abaixo de cada título>
 - <ex: número de slide gigante no canto inferior direito>
 
+## Carousel chrome detectado na referência
+<yes (vi progress bar / setas / contador 1/N) | no (referência sem chrome de navegação)>
+<se yes: descrever brevemente — "barra fina no rodapé com label X/N + chevron sutil à direita">
+
 ## Tratamento de imagem
 - **Foto profissional:** <retangular editorial 360x520 | circular avatar | full-bleed | ausente>
 - **Foto contextual:** <ausente | crop editorial | ilustração>
@@ -261,7 +367,10 @@ Neutros (branco, preto, cinza) **nunca** são contados como brand color.
 Modo: <free | reference-driven>
 Brief gerado: `<path>/brief.md`
 Reference spec: `<path>/reference-spec.md` (somente em reference-driven)
+Sequência: <Standard | Listicle | Tutorial | Comparação | Single-post>
 Slides: <N>
+Hook: "<copy do hook em 1 linha>" (<fórmula>)
+Carousel chrome: <yes | no> (resolvido)
 Cores de marca: <primária | primária+secundária>
 Foto profissional: <usar | não usar | condicional>
 Próximo passo: gp2-html-designer
