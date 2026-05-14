@@ -87,6 +87,7 @@ python3 ../../scripts/audit-template-markup.py artifacts/gp2-template-marker/<sl
 | Texto de perfil de marca (`@handle`, `Sua Clínica`, `(11) ...`, endereço) | `data-text-type="instagramHandle\|instagramName\|phone\|address"` + `data-static="true"` |
 | Logo da marca | `<img data-image-type="brandLogo" data-static="true">` |
 | Foto profissional do usuário | `<img data-image-type="professionalPhoto" data-static="true">` (foto fica no perfil; trocada via profile, não AI) |
+| Foto profissional cutout PNG (default da v2) | mesma classificação acima — `data-static="true"` + `data-image-type="professionalPhoto"`. **Não** marque como template-element mesmo quando o `src` é um data URL base64 longo. |
 | Foto/imagem que varia por post (gerada por IA, escolhida pelo usuário) | `<img data-image-type="userAsset" data-template-element="true" data-te-description="..." data-te-remove-bg="false">` |
 | CTA-label fixo ("Arraste →", "Saiba mais", "@") | `data-static="true"` |
 | Numeração / progresso / etiquetas decorativas estáticas | `data-static="true"` |
@@ -97,6 +98,8 @@ python3 ../../scripts/audit-template-markup.py artifacts/gp2-template-marker/<sl
 | Acento de cor que troca com preset (botão, headline colorido, faixa) | `data-variable="primary\|secondary"` + opcional `data-variable-target="fill\|stroke\|background"` |
 | Slide background colorido brand | no `<section>`: `data-variable="primary"` + `data-variable-target="background"` |
 | Span dentro de título com cor diferente | `<span data-variable="..." style="color:...">` (não é elemento separado!) |
+
+> **Nota sobre `professionalPhoto` cutout PNG:** quando a `<img data-image-type="professionalPhoto">` usa `object-fit: contain` e `object-position: bottom center` (PNG cutout transparente — ver [`gp2-html-designer/references/professional-photo-placements.md`](../gp2-html-designer/references/professional-photo-placements.md)), a classificação não muda — continua `data-static="true"`. O `gp2-template-converter` emite `ClippableImage` normalmente; o runtime do HealthMarket (`image-variable.ts:84-94`) preserva aspect ratio via `Math.min(scaleX, scaleY)` e ancora `bottom-center` para `professionalPhoto`, então a foto real do usuário substitui o placeholder sem distorção e com pés alinhados ao rodapé do slot.
 
 ## Regras críticas
 

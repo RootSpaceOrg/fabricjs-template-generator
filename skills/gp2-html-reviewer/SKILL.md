@@ -81,6 +81,8 @@ Nunca devolva `PASS_WITH_WARNINGS` — `PASS` aceita warnings justificados; `REV
 - Pseudo-elementos `::before`/`::after`, `@keyframes`, `mix-blend-mode`, `backdrop-filter` complexo.
 - Posicionamento via flex/grid dentro de `.slide` (deveria ser absoluto).
 - `<section class="slide">` sem `data-width` / `data-height`.
+- `<img data-image-type="professionalPhoto">` (ou `class="professional-photo"`) com `object-fit: cover` ou `border-radius` arredondado quando o brief não pediu avatar circular — perde o efeito do cutout PNG e quebra o anchor `bottom-center` do runtime. Esperado: `object-fit: contain; object-position: bottom center; border-radius: 0;` (ver [`gp2-html-designer/references/professional-photo-placements.md`](../gp2-html-designer/references/professional-photo-placements.md)).
+- `<img data-image-type="professionalPhoto">` posicionada de forma que a face da figura (zona superior do slot, ~30% da altura) é coberta por texto ou outro elemento visível — leitor não consegue avaliar confiança.
 
 ### Aderência ao spec (somente reference-driven, HARD-GATE quando não documentado em notes.md)
 

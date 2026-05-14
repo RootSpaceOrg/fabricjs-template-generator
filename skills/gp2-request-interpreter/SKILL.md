@@ -259,6 +259,8 @@ Write `artifacts/gp2-request-interpreter/<slug>/brief.md`:
 ## Foto profissional
 - Decisão: <usar | não usar | condicional ao pedido do usuário>
 - Justificativa: <1 linha>
+- Placeholder sugerido: <professional-photo-1 (masculino, jaleco) | professional-photo-2 (feminino, casual) | n/a>
+- Posição sugerida: <hero cover | CTA final | overlap sobre foto contextual | outra | n/a>
 
 ## Tom / copy
 <2-3 linhas sobre voz: educativo? promocional? acolhedor? técnico?>
@@ -316,9 +318,9 @@ Write `artifacts/gp2-request-interpreter/<slug>/reference-spec.md` quando há re
 <se yes: descrever brevemente — "barra fina no rodapé com label X/N + chevron sutil à direita">
 
 ## Tratamento de imagem
-- **Foto profissional:** <retangular editorial 360x520 | circular avatar | full-bleed | ausente>
+- **Foto profissional:** <cutout PNG full-figure (default) | retangular editorial 360x520 | circular avatar | full-bleed | ausente>
 - **Foto contextual:** <ausente | crop editorial | ilustração>
-- **Placeholders aceitáveis:** <padrão diagonal neutro nas mesmas tonalidades da paleta>
+- **Placeholders aceitáveis:** <padrão diagonal neutro nas mesmas tonalidades da paleta; para foto profissional, professional-photo-{1,2}.b64.txt>
 
 ## O que NÃO copiar
 - Conteúdo/copy literal da referência.
@@ -344,6 +346,34 @@ Não use foto profissional quando:
 - a foto reduziria a clareza do conteúdo.
 
 Em condicional: declare a regra ("usar somente se o usuário enviar foto") para o designer reservar área correta.
+
+### Placeholder sugerido (quando há foto profissional)
+
+Sugira ao designer qual placeholder usar baseado no segmento HealthMarket. O designer embute a base64 inline no `template.html`; em produção o runtime troca pela foto real do usuário.
+
+| Segmento | Placeholder sugerido |
+|----------|----------------------|
+| Clínicas Médicas | `professional-photo-1.b64.txt` (masculino, jaleco) |
+| Laboratórios | `professional-photo-1.b64.txt` (masculino, jaleco) |
+| Farmácias | qualquer dos dois |
+| Nutricionistas | `professional-photo-2.b64.txt` (feminino, casual) |
+| Fisioterapia | `professional-photo-1.b64.txt` (masculino, jaleco) |
+| Psicologia | `professional-photo-2.b64.txt` (feminino, casual) |
+| Odontologia | `professional-photo-1.b64.txt` (masculino, jaleco) |
+| Estética e Bem-Estar | `professional-photo-2.b64.txt` (feminino, casual) |
+
+A sugestão é heurística — o designer pode trocar se a composição/tom do template pedir o outro perfil. Em **reference-driven mode**, se a referência mostra um perfil específico (ex: dentista feminina, nutricionista masculino), priorize o placeholder mais próximo do que a referência mostra e anote no `reference-spec.md`.
+
+### Posição sugerida
+
+Sugira no `brief.md` qual das 3 posições estratégicas combina melhor com o pedido (catálogo completo em [`gp2-html-designer/references/professional-photo-placements.md`](../gp2-html-designer/references/professional-photo-placements.md)):
+
+- **Hero cover full-figure** — quando o slide 1 deve apresentar o profissional/marca antes de qualquer mensagem educativa ("Conheça o Dr. João", "Sou a Dra. Maria, especialista em…").
+- **CTA final lateral** — quando o último slide é "agende com" e o nome do profissional aparece na chamada.
+- **Overlap sobre foto contextual** — quando há foto de ambiente/clínica/asset que ganha com presença humana ancorando a cena (mostrar consultório + quem atende, equipamento + quem opera).
+- **Outra** — defina livremente se nenhuma das 3 cabe (ex: avatar circular pequeno em assinatura).
+
+Em templates com 2+ slots de foto profissional (ex: hero cover no slide 1 + CTA no slide N), use a mesma combinação em todos para o produto mostrar a foto real do usuário consistentemente.
 
 ## Decisão de quantas cores de marca
 

@@ -185,16 +185,36 @@ Inaceitável (nunca faça):
 
 ## Fotos profissionais (quando o brief pediu)
 
-Tratamento padrão: crop **retangular/editorial**, com pouco ou nenhum `border-radius`. Avatar circular **só** se a referência/pedido pedir explicitamente.
+Tratamento padrão: **PNG cutout** (figura com fundo transparente). Use `object-fit: contain; object-position: bottom center; border-radius: 0;`. Avatar circular **só** se a referência/pedido pedir explicitamente.
+
+Posições disponíveis e snippets prontos: [`references/professional-photo-placements.md`](./references/professional-photo-placements.md). Padrões cobertos:
+
+1. **Hero cover full-figure** — slide 1, foto na coluna direita/esquerda ocupando ~50% largura × 88% altura.
+2. **CTA final lateral** — último slide, foto ~37% largura ao lado do CTA.
+3. **Overlap sobre foto contextual** — foto profissional sobreposta no canto da imagem de apoio (`userAsset`), criando sensação de "presença humana ancorando a cena".
+
+Placeholders visuais (base64): [`references/placeholders/`](./references/placeholders/). O `brief.md` do interpreter sugere qual usar:
+
+- `professional-photo-1.b64.txt` — masculino, jaleco médico (clínicas, odontologia, fisioterapia, laboratórios).
+- `professional-photo-2.b64.txt` — feminino, blazer casual (estética, nutrição, psicologia, wellness).
+
+O designer pode trocar de placeholder se a composição/tom do template pedir o outro perfil. Em produção, o `data-image-type="professionalPhoto"` faz o runtime do HealthMarket substituir pela foto real do usuário no editor — o placeholder serve só para o reviewer e o auto-check avaliarem composição.
 
 Marque com classe e alt semânticos:
 
 ```html
 <img class="professional-photo" alt="Foto profissional"
-     style="position:absolute; left:610px; top:170px; width:360px; height:520px;
-            object-fit:cover; border-radius:0;"
-     src="<URL ou placeholder>">
+     data-image-type="professionalPhoto"
+     style="position:absolute; left:540px; top:80px; width:540px; height:1200px;
+            object-fit:contain; object-position:bottom center; border-radius:0;"
+     src="data:image/png;base64,<conteúdo de professional-photo-N.b64.txt>">
 ```
+
+Anti-patterns críticos:
+
+- **`object-fit: cover` em cutout** corta pés/cabeça e perde o efeito.
+- **`border-radius` arredondado em cutout** mostra o fundo recortado por cima da figura sem fundo.
+- **Texto sobre a face** (zona superior do slot, ~30%) cobre o que dá confiança ao leitor.
 
 ## Famílias tipográficas seguras
 
