@@ -8,6 +8,7 @@ Catálogo de 3 padrões prontos para `<img data-image-type="professionalPhoto">`
 - **Sempre `object-position: bottom center`**: o runtime do HealthMarket (`image-variable.ts:92-94`) ancora `bottom-center` por padrão para `professionalPhoto`. O HTML deve refletir o mesmo anchor para evitar surpresa visual quando o usuário sobe sua foto real.
 - **Sempre `border-radius: 0`**: cutout perde sentido em slot circular/arredondado. Avatar circular é exceção que precisa de pedido explícito (ver "Avatar circular" no fim).
 - **Evite cobrir a face**: a face fica na zona superior (~30% do slot). Não posicione textos ou outros elementos sobre ela.
+- **Aspect ratio do slot ≈ aspect ratio do PNG (~3:4 = `0.78`)**: o `gp2-html-reviewer` flagra slots com ratio fora de `0.55–1.10` como finding técnico. Por quê: com `object-fit: contain`, slots muito altos (ratio < 0.55) ou muito largos (ratio > 1.10) deixam metade do slot vazia e tornam fácil para o converter calcular `originWidth/Height` errado (sintoma típico: figura cobrindo só metade do slot no editor). Faixa saudável: `9:16` (0.56) até `1:1` (1.00). Para "ocupar mais espaço visual", aumente proporcionalmente width E height — não estique só uma das dimensões.
 
 ## Posição 1 — Hero cover full-figure (capa)
 
@@ -37,22 +38,23 @@ Foto ocupa metade do slide 1 (~50% da largura, ~88% da altura), texto na coluna 
     20 anos cuidando da sua mobilidade com fisioterapia ortopédica especializada.
   </p>
 
-  <!-- Coluna direita: foto profissional cutout -->
+  <!-- Coluna direita: foto profissional cutout. Slot 540x720 (ratio 0.75 ≈ PNG cutout 3:4). -->
   <img class="professional-photo" alt="Foto profissional"
        data-image-type="professionalPhoto"
-       style="position:absolute; left:540px; top:80px; width:540px; height:1200px;
+       style="position:absolute; left:540px; top:560px; width:540px; height:720px;
               object-fit:contain; object-position:bottom center; border-radius:0;"
        src="data:image/png;base64,<conteúdo de professional-photo-1.b64.txt>">
 </section>
 ```
 
 **Dimensões para canvas 1080×1350:**
-- Slot da foto: `left:540px; top:80px; width:540px; height:1200px` (50% × 88%).
+- Slot da foto: `left:540px; top:560px; width:540px; height:720px` (50% × 53%, ratio 0.75 ✓).
 - Texto: coluna esquerda em `left: 60px–520px`, deixando ~20px de gap entre as colunas.
-- Top de 80px deixa respiração no header.
+- O slot é colado no rodapé (`top + height = 1280`, deixando 70px do bottom). A figura sai do slot pela borda inferior porque `object-position: bottom center` ancora os pés no `bottom` do slot.
+- **Não use slot 540×1200**: ratio 0.45 está fora da faixa `0.55–1.10` aceita pelo reviewer e o cutout fica espremido na metade superior do slot.
 
-**Para canvas 1080×1080 (feed quadrado):** reduzir `height` para ~960, `top: 60px`.
-**Para canvas 1080×1920 (stories/reels):** aumentar `height` para ~1700, `top: 120px`.
+**Para canvas 1080×1080 (feed quadrado):** slot `540×720` em `top:300`.
+**Para canvas 1080×1920 (stories/reels):** slot `540×720` em `top:1120`. Mantenha o slot em `~720` independente do canvas — é o tamanho que respeita o cutout. Para "figura maior", aumente proporcional: `600×800` (ratio 0.75) ou `720×960`.
 
 ## Posição 2 — CTA final lateral (slide de fechamento)
 
@@ -82,19 +84,20 @@ Foto ~37% da largura, altura ~67% do canvas, à direita do CTA. Aumenta confian�
     Atendimento presencial e online.<br>WhatsApp (11) 90000-0000.
   </p>
 
-  <!-- Coluna direita: foto profissional -->
+  <!-- Coluna direita: foto profissional. Slot 400x540 (ratio 0.74 ≈ PNG cutout 3:4). -->
   <img class="professional-photo" alt="Foto profissional"
        data-image-type="professionalPhoto"
-       style="position:absolute; left:660px; top:300px; width:400px; height:900px;
+       style="position:absolute; left:660px; top:740px; width:400px; height:540px;
               object-fit:contain; object-position:bottom center; border-radius:0;"
        src="data:image/png;base64,<conteúdo de professional-photo-N.b64.txt>">
 </section>
 ```
 
 **Dimensões para canvas 1080×1350:**
-- Slot da foto: `left:660px; top:300px; width:400px; height:900px` (37% × 67%).
+- Slot da foto: `left:660px; top:740px; width:400px; height:540px` (37% × 40%, ratio 0.74 ✓).
 - Texto à esquerda em `left: 60–620px`.
-- Foto ancorada no rodapé visual do bloco do CTA, criando alinhamento natural entre o "Agende" e a presença humana.
+- Slot colado no rodapé (`top + height = 1280`, deixando 70px). Figura ancorada nos pés via `object-position: bottom center`, criando alinhamento natural entre o "Agende" e a presença humana.
+- **Não use slot 400×900**: ratio 0.44 está fora da faixa aceita.
 
 ## Posição 3 — Overlap sobre foto contextual de apoio
 
@@ -127,10 +130,10 @@ Foto profissional pequena (~26% largura, ~53% altura) sobreposta no canto da ima
               object-fit:cover; border-radius:24px;"
        src="<URL ou placeholder diagonal SVG>">
 
-  <!-- Foto profissional sobreposta no canto direito da imagem de apoio -->
+  <!-- Foto profissional sobreposta. Slot 300x400 (ratio 0.75 ≈ PNG cutout 3:4). -->
   <img class="professional-photo" alt="Foto profissional"
        data-image-type="professionalPhoto"
-       style="position:absolute; left:760px; top:580px; width:280px; height:720px;
+       style="position:absolute; left:740px; top:880px; width:300px; height:400px;
               object-fit:contain; object-position:bottom center; border-radius:0;
               z-index:2;"
        src="data:image/png;base64,<conteúdo de professional-photo-N.b64.txt>">
@@ -139,9 +142,10 @@ Foto profissional pequena (~26% largura, ~53% altura) sobreposta no canto da ima
 
 **Dimensões para canvas 1080×1350:**
 - Foto contextual (userAsset): `left:60px; top:680px; width:960px; height:600px` (89% × 44%).
-- Foto profissional sobreposta: `left:760px; top:580px; width:280px; height:720px` (26% × 53%).
-  - Note que `top: 580px` da foto profissional é **acima** do `top: 680px` da foto contextual — é assim que ela "sai" do retângulo.
+- Foto profissional sobreposta: `left:740px; top:880px; width:300px; height:400px` (28% × 30%, ratio 0.75 ✓).
+  - O `top: 880px` da foto profissional é **acima** do bottom da foto contextual (`top + height = 1280`), e ambas terminam na mesma linha de base — é assim que a figura "sai" pelo topo do retângulo da foto contextual.
 - `z-index: 2` na foto profissional (foto contextual fica em `z-index: auto = 0`).
+- **Não use slot 280×720**: ratio 0.39 fora da faixa aceita.
 
 **Variação: overlap no canto esquerdo** — mudar `left:760px` para `left:40px` (ou `left:0` para sangrar até a borda).
 

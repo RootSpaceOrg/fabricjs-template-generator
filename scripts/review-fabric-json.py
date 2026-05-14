@@ -634,6 +634,80 @@ def compare_expected(slide_name: str, objects: list[dict[str, Any]], expected: d
                         issues.append(issue('warning', slide_name, rid, f'{key} drift: expected {exp[key]}, got {obj[key]} ({round(delta,2)})'))
 
 
+def check_clippable_image_geometry(slide_name: str, name: str, obj: dict[str, Any], issues: list[dict[str, str]]) -> None:
+    """Catch the most common cutout-vs-cover misemission for ClippableImage.
+
+    For professionalPhoto cutouts (object-fit: contain) the converter must:
+      - set originWidth/Height to the SOURCE PNG's natural size (not the slot)
+      - leave cropX/cropY at 0 and width === originWidth, height === originHeight
+        (because contain has NO crop)
+      - use originY in {"top","bottom"} when object-position dictates an anchor
+
+    For cropped images (object-fit: cover, border-radius, data-image-crop) the
+    width/height represent the crop on the source — typically smaller than
+    originWidth/Height and with non-zero cropX or cropY.
+
+    The cheap check we run here: when the object is flagged as cutout-style
+    (imageType professionalPhoto + cropX/cropY both 0), require width === originWidth
+    and height === originHeight. If they diverge, the converter likely treated the
+    slot as the frame (the bug observed in production), which produces the symptom
+    'figure renders ~half the slot, anchored to the top'.
+    """
+    image_type = obj.get('imageType')
+    crop_x = obj.get('cropX')
+    crop_y = obj.get('cropY')
+    width = obj.get('width')
+    height = obj.get('height')
+    origin_w = obj.get('originWidth')
+    origin_h = obj.get('originHeight')
+
+    # Numeric guard
+    nums = [width, height, origin_w, origin_h]
+    if not all(isinstance(v, (int, float)) for v in nums):
+        return
+
+    # Heuristic: cutout = no crop applied
+    looks_like_cutout = (
+        image_type == 'professionalPhoto'
+        and isinstance(crop_x, (int, float)) and crop_x == 0
+        and isinstance(crop_y, (int, float)) and crop_y == 0
+    )
+    if looks_like_cutout:
+        # In contain (cutout) the frame IS the natural image — width must equal originWidth.
+        if abs(width - origin_w) > 0.5 or abs(height - origin_h) > 0.5:
+            issues.append(issue(
+                'critical', slide_name, name,
+                f'ClippableImage cutout mismatch: width/height ({width}x{height}) must equal '
+                f'originWidth/originHeight ({origin_w}x{origin_h}) when cropX/Y=0. '
+                f'Likely cause: converter treated the HTML slot as the frame instead of the PNG natural size. '
+                f'Fix: read naturalWidth/naturalHeight of the source PNG and use those for both '
+                f'width/height and originWidth/originHeight; position via scaleX/scaleY + originY.'
+            ))
+        # originY must reflect object-position; "center" with bottom-anchored placements is a smell
+        # but only a warning — the runtime swap with anchor:'bottom-center' will still center the
+        # user's photo correctly, just not match the placeholder render exactly.
+        if obj.get('originY') == 'center':
+            issues.append(issue(
+                'warning', slide_name, name,
+                'ClippableImage cutout uses originY:"center"; if HTML had object-position:"bottom*", '
+                'emit originY:"bottom" so placeholder render matches the runtime bottom-center anchor.'
+            ))
+
+    # Catch obvious cover bugs too: if cropX/Y are 0 but width !== originWidth on a non-cutout image,
+    # something is off (cover with cropX=0 means the crop window starts at the source edge).
+    elif (
+        isinstance(crop_x, (int, float)) and crop_x == 0
+        and isinstance(crop_y, (int, float)) and crop_y == 0
+        and (abs(width - origin_w) > 0.5 or abs(height - origin_h) > 0.5)
+    ):
+        issues.append(issue(
+            'warning', slide_name, name,
+            f'ClippableImage with cropX/Y=0 but width/height ({width}x{height}) != '
+            f'originWidth/Height ({origin_w}x{origin_h}). For cover crops, cropX or cropY '
+            f'should be non-zero to recenter. Verify the HTML used object-fit:cover not contain.'
+        ))
+
+
 def review_slide(path: Path, expected_slide: dict[str, Any] | None, html_info: dict[str, Any] | None = None) -> tuple[list[dict[str, str]], dict[str, int]]:
     data = load_json(path)
     issues: list[dict[str, str]] = []
@@ -660,8 +734,18 @@ def review_slide(path: Path, expected_slide: dict[str, Any] | None, html_info: d
         if name in seen_names:
             issues.append(issue('warning', path.name, name, 'duplicate object name makes review harder; prefer unique names/reviewId'))
         seen_names.add(name)
-        if obj.get('originX') != 'center' or obj.get('originY') != 'center':
-            issues.append(issue('critical', path.name, name, 'origin must be center/center'))
+        # Origin rule: most objects must be center/center.
+        # Exception: ClippableImage cutout (object-fit: contain) honours object-position
+        # via originY in {"top","bottom","center"} and originX in {"left","right","center"}.
+        # The runtime image-variable.ts:117-121 understands these anchors.
+        if obj.get('type') == 'ClippableImage':
+            if obj.get('originX') not in ('left', 'center', 'right'):
+                issues.append(issue('critical', path.name, name, f'ClippableImage originX must be left|center|right, got {obj.get("originX")!r}'))
+            if obj.get('originY') not in ('top', 'center', 'bottom'):
+                issues.append(issue('critical', path.name, name, f'ClippableImage originY must be top|center|bottom, got {obj.get("originY")!r}'))
+        else:
+            if obj.get('originX') != 'center' or obj.get('originY') != 'center':
+                issues.append(issue('critical', path.name, name, 'origin must be center/center'))
         if obj.get('type') == 'textbox':
             if 'styles' not in obj:
                 issues.append(issue('critical', path.name, name, 'textbox missing styles'))
@@ -679,6 +763,7 @@ def review_slide(path: Path, expected_slide: dict[str, Any] | None, html_info: d
             for field in ['src', 'originWidth', 'originHeight', 'cropX', 'cropY', 'imageType']:
                 if field not in obj:
                     issues.append(issue('critical', path.name, name, f'ClippableImage missing {field}'))
+            check_clippable_image_geometry(path.name, name, obj, issues)
         box = fabric_box(obj)
         if obj.get('type') != 'textbox' and box is None:
             issues.append(issue('warning', path.name, name, 'cannot compute object box; width/height/left/top incomplete'))

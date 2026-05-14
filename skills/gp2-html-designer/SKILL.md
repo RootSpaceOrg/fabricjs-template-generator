@@ -110,7 +110,7 @@ Em cima do `template-v1.html`, gere `template-v2.html` aplicando:
   - Reference-driven mode: replique **todos** os elementos editoriais listados no spec (eyebrow numerado, fios, número de slide, etc.) e use o movimento memorável declarado.
 - **Fotos**: uma `<img>` por região de imagem real. Se não tem asset real, use placeholder com padrão diagonal neutro **na mesma família tonal da paleta** (ver "Placeholder de imagem" abaixo). **Nunca** divs ou SVG complexo fingindo foto.
 - **Foto profissional**: respeite a decisão do brief + tratamento do spec (retangular editorial, circular avatar, full-bleed). Se reference-driven mode pediu retangular editorial 360×520, mantenha proporção e tratamento.
-- **Carousel chrome (opcional)**: se `brief.md` tem `## Carousel chrome: yes`, consulte [`references/carousel-chrome.md`](./references/carousel-chrome.md) e adicione progress bar + seta de swipe em cada slide (seta omitida no último). Use as cores adaptadas a slide LIGHT/DARK/Brand. O fill da progress bar do slide N é proporcional a `N/total`. Se `## Carousel chrome: no`, **não** adicione nada.
+- **Carousel chrome (opt-in, não default)**: leia o valor exato em `## Carousel chrome` no `brief.md`. Se `yes`, consulte [`references/carousel-chrome.md`](./references/carousel-chrome.md) e adicione progress bar + seta de swipe (seta omitida no último slide), usando cores adaptadas a slide LIGHT/DARK/Brand e fill proporcional a `N/total`. Se `no`, **não invente chrome** — a maioria dos templates é `no` por design (Instagram já tem indicador nativo de slides). Se você acha que o template ficaria melhor com chrome contra o que o brief diz, registre em `notes.md` para o reviewer julgar; não force.
 
 Renderize e auto-check:
 

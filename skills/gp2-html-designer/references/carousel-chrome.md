@@ -11,21 +11,22 @@ Adaptado da skill `instagram-carousel` (https://github.com/marcolang/Marketing-S
 
 ## Quando usar
 
-| Sequência | Default em `auto` |
-|-----------|-------------------|
-| Standard | `yes` |
-| Tutorial | `yes` |
-| Listicle | `yes` |
-| Comparação | `no` |
-| Single-post | `no` (1 slide só, chrome é ruído) |
+A decisão (`yes` | `no`) já vem resolvida no `brief.md` produzido pelo `gp2-request-interpreter`. **O designer não decide aqui** — só executa.
 
-Quando `yes`:
+Critério usado pelo interpreter (resumido para contexto, completo em `gp2-request-interpreter/SKILL.md` §"Carousel chrome"):
+
+- Sinal explícito do user vence (positivo: "progress bar", "indicador"; negativo: "minimalista", "premium clean").
+- Reference-driven: se a referência mostra chrome, force `yes`; se não mostra, force `no`.
+- Sem sinal: chrome só quando **2 de 3** forem verdadeiros — (a) `≥ 6 slides`, (b) tom didático sequencial real (passo→passo, lista enumerada longa), (c) ausência de outros indicadores visuais de progresso já no design (eyebrow numerado "01/07" etc).
+- Em dúvida: `no`. A maioria dos templates não precisa.
+
+**Quando `brief.md` diz `## Carousel chrome: yes`:**
 
 - Adicione **progress bar** em **todos** os slides.
 - Adicione **swipe arrow** em **todos** os slides **exceto o último**.
 - O contador "N/T" acompanha a barra.
 
-Quando `no`: nenhum chrome. Pule esta referência.
+**Quando `brief.md` diz `## Carousel chrome: no`:** nenhum chrome. Pule esta referência inteira. **Não invente chrome "porque parece padrão"** — o default da pipeline é não ter.
 
 ## Cores adaptadas a slide LIGHT vs DARK
 
@@ -183,8 +184,10 @@ O `CLAUDE_DESIGN_RULES.md` exige `position: absolute` com `left/top/width/height
 
 Mantém ~50px de margem do rodapé e ~28px da borda direita em qualquer formato.
 
-## Por que tudo isso vale o esforço
+## Por que chrome é opt-in (não default)
 
-Carrossel longo (5+ slides) sem progress bar deixa o usuário perdido. Slide-counter no rodapé mostra "estou na metade", "falta 1", criando senso de progresso. Seta de swipe é affordance — diz "tem mais aqui". Em conteúdo educativo (Tutorial, Listicle, Standard), isso aumenta retenção entre slides.
+Lembre que o Instagram já mostra seu próprio indicador nativo de slides (a barra de pontos no topo). Adicionar chrome custom em todo template gera **redundância visual** e padroniza demais a aparência da biblioteca.
 
-Em carrosséis curtos (Comparação 5 slides) ou Single-post, o chrome compete visualmente com o conteúdo principal — daí ser opt-in.
+Chrome compensa o esforço quando: (a) o carrossel é longo (6+ slides) e o user precisa de senso explícito de progresso, (b) o conteúdo é didático sequencial real (tutorial passo a passo) e a seta reforça "tem próximo passo", (c) a referência do user mostra chrome explicitamente.
+
+Em qualquer outro caso, o chrome compete visualmente com o conteúdo principal e cansa quando o usuário vê 5 templates da plataforma com a mesma barrinha no rodapé.

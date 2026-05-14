@@ -192,7 +192,7 @@ O Slide 1 tem 1 segundo para parar o scroll. Entregue o hook **já escrito** no 
 
 ## Carousel chrome (opcional)
 
-Progress bar (3px no rodapé) + seta de swipe à direita são **UI consistente** de carrossel, comum em conteúdo educativo longo. Vamos torná-los opt-in.
+Progress bar (3px no rodapé) + seta de swipe à direita ajudam em carrosséis longos onde o leitor pode se perder. **Não é default.** Aplicar em todo template torna a UI repetitiva e compete visualmente com o conteúdo. A escolha é feita por **avaliação qualitativa**, não tabela mecânica por sequência.
 
 Valores possíveis para `## Carousel chrome` no brief:
 
@@ -200,19 +200,40 @@ Valores possíveis para `## Carousel chrome` no brief:
 |-------|-------------|
 | `yes` | Designer adiciona progress bar + seta em todos os slides exceto o último |
 | `no` | Designer **não** adiciona chrome |
-| `auto` | Interpreter decide pela sequência |
+| `auto` | Interpreter decide caso a caso (ver critério abaixo) |
 
-### Decisão automática (modo `auto`)
+### Como decidir em modo `auto`
 
-| Sequência | Chrome em `auto` |
-|-----------|------------------|
-| Standard | `yes` |
-| Tutorial | `yes` |
-| Listicle | `yes` |
-| Comparação | `no` (foco no contraste A/B) |
-| Single-post | `no` (1 slide só, chrome seria ruído) |
+**Sinais explícitos do user vencem sempre:**
 
-Em **Reference-driven mode**, se a referência tem progress bar visível, force `yes` independente da sequência. Se a referência não tem, force `no`. Anote no `reference-spec.md`.
+| Sinal no pedido | Decisão |
+|-----------------|---------|
+| User pediu "progress bar", "barra de progresso", "indicador de slides", "contador", "navegação", "seta de swipe" | `yes` |
+| User pediu "limpo", "minimalista", "sem distração", "premium", "clean", "sem elementos extras" | `no` |
+| Reference-driven mode + a referência mostra progress bar/setas/contador "1/N" | `yes` (force, anote no `reference-spec.md`) |
+| Reference-driven mode + referência sem chrome de navegação visível | `no` (force, anote no `reference-spec.md`) |
+
+**Sem sinal explícito**, decida pesando 3 critérios. Aplique chrome **somente se 2 dos 3 forem verdadeiros**:
+
+1. **Volume**: `≥ 6 slides`. Carrosséis curtos (≤ 5) o leitor mantém orientação naturalmente — Instagram já mostra os pontos no topo.
+2. **Tom didático sequencial**: o conteúdo é uma progressão real (passo 1 → passo 2 → ... → passo N de um tutorial; "5 sinais que..." enumerado; "antes do exame, durante, depois"). Não é didático sequencial: educação solta sem ordem rígida, post de citação, lista de benefícios sem numeração, mensagem de marca, data comemorativa.
+3. **Ausência de outros indicadores visuais de progresso**: se o template já tem número grande de slide (`01/07`, `Passo 3 de 5`, eyebrow numerado), chrome adicional é redundância. Aplique chrome só se o conteúdo não auto-numerar.
+
+**Exemplos práticos:**
+
+| Pedido | Slides | Análise | Decisão |
+|--------|--------|---------|---------|
+| "Carrossel sobre nutrição infantil" | 5 | Volume: ✗ (5). Didático: ✓. Sem auto-numeração: ✓ → 2/3, mas falha volume. | `no` |
+| "Tutorial de skincare em 7 passos" | 7 | Volume: ✓ (7). Didático: ✓ (passos). Sem auto-numeração: a depender do design. | `yes` |
+| "5 sinais de que você precisa de fisio" | 5 | Volume: ✗. Didático: ✓ (enumerado). Sem auto-numeração: ✗ (vai ter "01"..."05"). | `no` |
+| "Comparação plano A vs plano B" | 5 | Volume: ✗. Didático: ✗ (paralelo, não sequencial). | `no` |
+| "Carrossel educativo longo sobre menopausa, 8 slides" | 8 | Volume: ✓. Didático: ✓. Sem auto-numeração: ✓ provável. | `yes` |
+| "Post de feliz dia das mães" | 1 | Single-post. | `no` |
+| "Carrossel premium minimalista sobre estética facial" | 6 | Volume: ✓. Mas user pediu "premium minimalista" = sinal explícito. | `no` |
+
+**Regra de proporção esperada**: em pedidos genéricos (sem sinal forte), espere ~30% dos templates terminarem com `yes`. Se você está marcando `yes` em mais que isso, está caindo no viés antigo.
+
+**Em qualquer dúvida, prefira `no`.** Falta de chrome nunca quebra um carrossel; chrome em carrossel curto/inadequado polui sempre.
 
 ## Output
 

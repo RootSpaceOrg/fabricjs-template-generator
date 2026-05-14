@@ -61,7 +61,8 @@ Toda regra abaixo está detalhada em `CLAUDE_DESIGN_RULES.md` e `claude_design_t
 | Spans | inline `<span>` em texto editável → **uma** textbox com `styles[lineIndex][charIndex]`; **nunca** uma textbox por span |
 | Profile vars | `data-text-type` → `textType: "..."` no objeto, sem `isTemplateElement` |
 | Templates | `data-template-element="true"` → `isTemplateElement: true` + bloco `templateElement` |
-| Imagens cropadas | `data-image-crop="true"` ou `border-radius != 0` ou `object-fit:cover` → `ClippableImage` (não `image`) |
+| Imagens cropadas (cover) | `data-image-crop="true"` ou `border-radius != 0` ou `object-fit:cover` → `ClippableImage` com crop centrado |
+| Imagens cutout (contain) | `object-fit:contain` em `data-image-type="professionalPhoto"` → `ClippableImage` **sem crop** + `originY:"bottom"` quando `object-position` inclui `bottom` (ver seção dedicada abaixo) |
 | Gradientes | `type: "linear"\|"radial"` (NUNCA `linearGradient`); inclui `coords`, `colorStops`, `offsetX`, `offsetY`, `gradientUnits: "percentage"`, `gradientTransform: null` |
 | Background gradiente | emitido como objeto Fabric gradient, NUNCA string `"linear-gradient(...)"` |
 
@@ -114,6 +115,97 @@ const scale = visualWidth / cropW;
 ```
 
 `width`/`height` são as dimensões do crop **na fonte original**, NÃO o frame visual. O frame visível é `width * scaleX` por `height * scaleY`.
+
+## ClippableImage cutout — `object-fit: contain` (CRÍTICO para `professionalPhoto`)
+
+**Quando aplicar:** `<img>` com `object-fit: contain` (default da pipeline v2 para `data-image-type="professionalPhoto"` — ver `gp2-html-designer/references/professional-photo-placements.md`). O PNG é cutout transparente e a figura inteira deve aparecer dentro do slot, ancorada na borda escolhida via `object-position`.
+
+**A diferença em uma frase:** em `cover` o frame é o slot e a imagem é cropada para preencher; em `contain` o frame é a própria imagem natural e o slot apenas restringe a área onde ela cabe — sem crop.
+
+**Anti-pattern observado em produção:** emitir cutout como se fosse cover (frame = slot, `originWidth/Height` inventados a partir do slot). O placeholder renderiza a figura distorcida ou ocupando metade do slot, e quando o usuário sobe a foto real o `image-variable.ts:84-94` calcula scale com base nas dimensões erradas e arruina o resultado. **Sintoma típico:** `originWidth/originHeight = 1200/1800` (proporção do slot) quando o PNG cutout fonte é ~700×900 (proporção 0.78). A figura aparece ancorada no topo cobrindo só metade do slot.
+
+**Algoritmo correto:**
+
+```js
+// 1. Dimensões NATURAIS do PNG (não do slot!).
+//    Para placeholders base64, use ImageBitmap/Image API para ler.
+const naturalW = imgEl.naturalWidth;   // ex: 700
+const naturalH = imgEl.naturalHeight;  // ex: 900
+
+// 2. Slot do HTML (apenas usado para posicionar; NÃO vira originW/H)
+const slotW = parsePx(style.width);    // ex: 1200
+const slotH = parsePx(style.height);   // ex: 2365.71
+const slotL = parsePx(style.left);
+const slotT = parsePx(style.top);
+
+// 3. Scale "contain": preserva aspect ratio do PNG dentro do slot
+const scale = Math.min(slotW / naturalW, slotH / naturalH);
+
+// 4. Resolver object-position
+//    Padrão da pipeline v2: "bottom center"
+const objPos = style.objectPosition || 'center center';
+const anchorY = objPos.includes('bottom') ? 'bottom'
+              : objPos.includes('top')    ? 'top'
+              : 'center';
+const anchorX = objPos.includes('right') ? 'right'
+              : objPos.includes('left')  ? 'left'
+              : 'center';
+
+// 5. Calcular left/top em coords Fabric (com originX/Y já considerado)
+//    Fabric: left/top é o ponto de origin; com originY:"bottom" o top é a borda inferior visual.
+const cx = slotL + slotW / 2;                    // centro horizontal do slot
+const topByAnchor = anchorY === 'bottom' ? slotT + slotH
+                   : anchorY === 'top'   ? slotT
+                   : slotT + slotH / 2;
+const fabricOriginY = anchorY === 'bottom' ? 'bottom'
+                     : anchorY === 'top'    ? 'top'
+                     : 'center';
+```
+
+**JSON emitido:**
+
+```json
+{
+  "type": "ClippableImage",
+  "name": "Foto profissional",
+  "imageType": "professionalPhoto",
+  "isTemplateElement": true,
+  "templateElement": {
+    "description": "<descrição do marker>",
+    "removeBackground": false
+  },
+
+  "originWidth":  700,    // ← naturalW do PNG, NÃO do slot
+  "originHeight": 900,    // ← naturalH do PNG, NÃO do slot
+  "width":        700,    // ← idem (não há crop em contain)
+  "height":       900,    // ← idem
+  "cropX": 0, "cropY": 0,
+
+  "scaleX": 0.857,        // ← Math.min(slotW/700, slotH/900)
+  "scaleY": 0.857,        // ← idem (mesmo valor — preserva ratio)
+
+  "left": 660,            // ← centro horizontal do slot
+  "top":  3270.71,        // ← borda inferior do slot (slotT + slotH)
+  "originX": "center",
+  "originY": "bottom",    // ← chave! reflete object-position: bottom
+
+  "topLeft": 0, "topRight": 0, "bottomRight": 0, "bottomLeft": 0,
+  "src": "data:image/png;base64,...",
+  "crossOrigin": "anonymous"
+}
+```
+
+**Por que isso funciona em produção:**
+
+- `originWidth/Height` reflete o PNG real → quando o usuário sobe a foto e o runtime executa `Math.min(maxOriginalWidth/newWidth, maxOriginalHeight/newHeight)` (`image-variable.ts:84`), os ratios batem e a foto entra com escala correta.
+- `originY: "bottom"` faz a figura ancorar no rodapé do slot, espelhando o anchor `bottom-center` do runtime para `professionalPhoto`. A face fica na zona superior, sem distorção.
+- `width === originWidth` e `cropX/Y = 0` indicam ao Fabric que **não há crop** — toda a textura PNG é desenhada.
+
+**Tabela de exceção da regra geral de origin:**
+
+A regra "todo objeto: `originX: "center"`, `originY: "center"`" aplica-se a todos os tipos exceto `ClippableImage` cutout, que usa `originY: "bottom"` (ou `"top"`) conforme `object-position` do HTML. O validador (`validate-slides.js`) já aceita `originY` ≠ `"center"` para imagens; só textboxes/shapes são forçados a center/center.
+
+**Avatar circular (exceção da exceção):** quando `professionalPhoto` é avatar circular (`border-radius: 50%; object-fit: cover`), volta para a regra de cover acima — usa crop centrado, frame = slot, `originX/Y: "center"`.
 
 ## Workflow
 
