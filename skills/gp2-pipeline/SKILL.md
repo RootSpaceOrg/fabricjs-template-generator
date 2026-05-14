@@ -1,6 +1,6 @@
 ---
 name: gp2-pipeline
-description: "Orchestrator da Pipeline GetPosts v2. Roda em sequência: gp2-request-interpreter → gp2-html-designer → gp2-html-reviewer → gp2-template-marker → gp2-template-converter → gp2-template-result-reviewer → getposts-template-uploader (delegado para v1) → editor save/thumbnails. Aplica iteration policy, decide quando seguir/refazer/escalar, e consolida evidências. Use sempre que o usuário pedir para criar um template HealthMarket de ponta a ponta."
+description: "Orchestrator da Pipeline GetPosts v2. Roda em sequência: gp2-request-interpreter → gp2-html-designer → gp2-html-reviewer → gp2-template-marker → gp2-template-converter → gp2-template-result-reviewer → gp2-template-uploader → editor save/thumbnails. Aplica iteration policy, decide quando seguir/refazer/escalar, e consolida evidências. Use sempre que o usuário pedir para criar um template HealthMarket de ponta a ponta."
 ---
 
 # gp2-pipeline
@@ -25,12 +25,10 @@ Sempre que o usuário pedir para criar um template HealthMarket completo (post, 
 4. gp2-template-marker               → template.html marcado + template-summary.md
 5. gp2-template-converter            → slide-N.json + manifest.json
 6. gp2-template-result-reviewer      → PASS|PASS_WITH_WARNINGS|FAIL
-7. getposts-template-uploader (v1)   → upload S3 + Supabase
+7. gp2-template-uploader             → upload S3 + Supabase
 8. editor save/thumbnails            → via flag --execute --generate-thumbnails do uploader
 9. Relatório consolidado
 ```
-
-A skill `getposts-template-uploader` da pipeline v1 é **reaproveitada tal qual** — não recriada. Ela já funciona em produção e gera thumbnails via editor save.
 
 ## Iteration policy
 
@@ -75,11 +73,11 @@ Quando os gates passam, suba **automaticamente** com:
 
 Em seguida, abra o editor (via `--execute --generate-thumbnails` do uploader) e clique "Salvar Alterações" para gerar thumbnails. Não pergunte confirmação — é a regra padrão.
 
-## Comando de upload (delegado para uploader v1)
+## Comando de upload
 
 ```bash
 GETPOSTS_EDITOR_PASSWORD='<password>' \
-python /root/.openclaw/workspace/skills/getposts-template-uploader/scripts/import-template.py \
+python skills/gp2-template-uploader/scripts/import-template.py \
   artifacts/gp2-template-converter/<slug>/ \
   --name "<Nome do Template>" \
   --business-type multi-nicho \
@@ -91,7 +89,7 @@ python /root/.openclaw/workspace/skills/getposts-template-uploader/scripts/impor
   --generate-thumbnails
 ```
 
-Use sempre `--description-hint` apontando para o `template-summary.md` produzido pelo marker (substitui o `context-analysis.json` da v1).
+Use sempre `--description-hint` apontando para o `template-summary.md` produzido pelo marker. Consulte `skills/gp2-template-uploader/SKILL.md` para detalhes de dry-run, blockers e checklist.
 
 **Nunca exiba secrets em log.** Senha sempre via env var.
 
