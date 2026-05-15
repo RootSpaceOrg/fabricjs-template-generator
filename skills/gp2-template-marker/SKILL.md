@@ -102,6 +102,8 @@ python3 ../../scripts/audit-template-markup.py artifacts/gp2-template-marker/<sl
 > **Nota sobre `professionalPhoto` cutout PNG:** quando a `<img data-image-type="professionalPhoto">` usa `object-fit: contain` e `object-position: bottom center` (PNG cutout transparente — ver [`gp2-html-designer/references/professional-photo-placements.md`](../gp2-html-designer/references/professional-photo-placements.md)), a classificação no marker **não muda** — continua `data-static="true"`. Mas o converter precisa emitir o `ClippableImage` em modo cutout: `originWidth/Height` = dimensões naturais do PNG (não do slot), `width === originWidth`, `cropX/Y = 0`, `originY: "bottom"`. Ver `gp2-template-converter/SKILL.md` §"ClippableImage cutout (CRÍTICO)". O reviewer (`scripts/review-fabric-json.py`) tem check deterministica que flagra cutout mal-emitido (`width !== originWidth` com `cropX/Y = 0`).
 >
 > **Antes de marcar, confirme**: o slot da `<img>` cutout no HTML tem aspect ratio `width/height` entre `0.55` e `1.10` (PNG cutout é ~3:4 = 0.78). Se estiver fora, devolva ao designer com `REVISE` indicando o ratio observado. Slots muito altos (ex: `540×1200` = 0.45) ou muito largos (ex: `540×400` = 1.35) deixam metade do slot vazia e induzem o converter a erro — sintoma observado em produção: figura cobrindo só metade do slot no editor com a face cortada.
+>
+> **Antes de marcar, verifique ancoragem**: a `<img data-image-type="professionalPhoto">` deve satisfazer **uma das duas condições** (fotos de usuário são busto/tronco — sem ancoragem a figura parece flutuar): (1) `top + height ≥ canvas_height − 80px` (borda inferior do slide), OU (2) outro elemento visível sobrepõe o terço inferior do slot. Se nenhuma condição for satisfeita, devolva ao designer com `REVISE` antes de marcar.
 
 ## Regras críticas
 
@@ -109,25 +111,50 @@ python3 ../../scripts/audit-template-markup.py artifacts/gp2-template-marker/<sl
 - **Neutros não viram brand variables.** Branco, off-white, cinza, preto de body — ficam literais.
 - **Acentos brand sem `data-variable` são bug.** Se há um botão laranja no design e a marca é azul, o usuário vai abrir o template no editor e o botão continua laranja. Isso quebra a promessa do produto.
 - **Conservador no editável.** Quando em dúvida entre static e template-element, escolha static.
-- **`data-te-description` é genérico, não específico.** Não escreva "Título sobre laserterapia premium". Escreva "Título principal da lâmina de abertura; apresenta a dor ou promessa central em formato de gancho curto". O template vai ser usado por dezenas de nichos.
+- **`data-te-description` é genérico, não específico, e segue fórmula estruturada.** Não escreva "Título sobre laserterapia premium" — escreva seguindo a fórmula `<role>; formato '<máscara>'; <bound>; ex: '<a>', '<b>', '<c>'`. Catálogo canônico em [`references/element-descriptions.md`](./references/element-descriptions.md). Template vai ser usado por dezenas de nichos; description é reutilizável.
 - **`data-te-max-chars` calculado pelo box, não pelo texto atual.** Estimativa: `floor((width × lines) / (fontSize × 0.6))`. Arredonde para cima na próxima dezena.
 - **Repetidos entre slides usam mesma classificação.** Logo aparece em 5 slides? Todos com mesmo `data-image-type="brandLogo"`. Se o conteúdo deve ser o mesmo (logo, handle, foto profissional), use `data-te-link-id="logo"` (mesmo slug) em todos.
 - **Preserve `text-transform`.** Se CSS tem `text-transform: uppercase`, adicione `data-te-text-case="uppercase"` para que o converter mantenha a intenção quando o AI preencher.
 
-## Boas vs. más descrições (`data-te-description`)
+## `data-te-description` — fórmula dos 4 componentes
 
-✅ Boas (genéricas, reutilizáveis):
-- "Título principal da lâmina 1; apresenta a dor ou promessa central em formato de gancho curto"
-- "Eyebrow acima do título; rótulo curto que categoriza o tema do post"
-- "Subtítulo de apoio ao gancho; complementa a promessa em uma linha"
-- "Corpo de conteúdo da lâmina educativa; explica o conceito ou apresenta as evidências"
-- "Label do CTA final; ação explícita que o leitor deve tomar"
+A description **vai literal no prompt do LLM gerador de copy** (`healthmarket-lambda-ai-idea-to-template/copy_processor.py:_format_elements_context`). Description vaga gera output inconsistente entre slides; description estruturada com formato e exemplos guia o LLM para output consistente.
 
-❌ Ruins (específicas demais):
-- "Título sobre laserterapia premium"
-- "Tema: clínica de joelho — manter tom acolhedor"
-- "Foto da clínica do Dr. João"
-- "Texto explicando os 3 benefícios do whey"
+**Toda description segue a fórmula:**
+
+```
+<role narrativo>; formato '<máscara>'; <bound 1>; <bound 2>; ex: '<ex1>', '<ex2>', '<ex3>'
+```
+
+**Catálogo canônico de descriptions por role:** [`references/element-descriptions.md`](./references/element-descriptions.md). Cobre eyebrow numerado, eyebrow simples, hook, subtítulo, corpo educativo, bullet, dado numérico, caption, citação, CTA, linha de contato, foto contextual, foto profissional, logo. **Sempre consulte primeiro o catálogo** antes de compor uma description nova.
+
+**Exemplo (eyebrow numerado em todo slide do carrossel):**
+
+✅ Boa — formato + 3 exemplos genéricos:
+```
+Eyebrow editorial da lâmina; formato 'NN / TEMA' onde NN é o número
+sequencial do slide e TEMA é categoria curta em CAPS; até 30 chars;
+ex: '01 / DOR CRÔNICA', '03 / O ESTUDO', '07 / PRÓXIMO PASSO'
+```
+
+❌ Ruim — sem formato, sem exemplos:
+```
+Eyebrow editorial da lâmina; rótulo curto de seção
+```
+
+❌ Ruim — específica do nicho do template atual:
+```
+Eyebrow sobre laserterapia premium; rótulo da clínica do Dr. João
+```
+
+**Regras invioláveis:**
+
+1. **Slots equivalentes em slides diferentes recebem a mesma string.** Eyebrow do slide 1, slide 3 e slide 5 → mesma description. O LLM diferencia pelo contexto da página (mensagem-chave da narrative arc, que ele já vê separadamente).
+2. **Exemplos NUNCA citam o nicho atual do template.** Templates HealthMarket viram dezenas de nichos; descriptions são reutilizáveis. Use exemplos de formato (`'01 / DOR'`, `'03 / O ESTUDO'`), não de conteúdo (`'01 / FISIOTERAPIA'`).
+3. **Formato e conteúdo são coisas diferentes.** `formato 'NN / TEMA'` é estrutura; `ex:` mostra como aplicar.
+4. **3 exemplos é o sweet spot.** 1 vira regra rígida, 5+ vira ruído. 3 cobrem variação curto/médio/longo.
+5. **Sweet spot de tamanho: 200-300 chars por description.** Cada description vai pra cada elemento de cada template no prompt do LLM — pesar tokens importa.
+6. **Quando em dúvida, escolha o role canônico mais próximo do catálogo** em vez de inventar.
 
 ## `template-summary.md` (substitui context-analysis.json para o uploader)
 

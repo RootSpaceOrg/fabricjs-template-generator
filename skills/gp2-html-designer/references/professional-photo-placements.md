@@ -9,6 +9,10 @@ Catálogo de 3 padrões prontos para `<img data-image-type="professionalPhoto">`
 - **Sempre `border-radius: 0`**: cutout perde sentido em slot circular/arredondado. Avatar circular é exceção que precisa de pedido explícito (ver "Avatar circular" no fim).
 - **Evite cobrir a face**: a face fica na zona superior (~30% do slot). Não posicione textos ou outros elementos sobre ela.
 - **Aspect ratio do slot ≈ aspect ratio do PNG (~3:4 = `0.78`)**: o `gp2-html-reviewer` flagra slots com ratio fora de `0.55–1.10` como finding técnico. Por quê: com `object-fit: contain`, slots muito altos (ratio < 0.55) ou muito largos (ratio > 1.10) deixam metade do slot vazia e tornam fácil para o converter calcular `originWidth/Height` errado (sintoma típico: figura cobrindo só metade do slot no editor). Faixa saudável: `9:16` (0.56) até `1:1` (1.00). Para "ocupar mais espaço visual", aumente proporcionalmente width E height — não estique só uma das dimensões.
+- **A foto profissional nunca pode "voar"** — fotos de usuário são busto ou tronco, não corpo inteiro. Uma figura sem nada na parte inferior parece que a pessoa não tem pernas. Toda foto profissional deve satisfazer **uma das duas condições**:
+  1. **Ancorada na borda inferior**: `top + height` chega perto do rodapé do slide (margem máxima: 80px). A figura fica "plantada" no chão do slide.
+  2. **Parte inferior sobreposta**: outro elemento (faixa de cor, foto contextual, bloco CTA, rodapé) cobre o terço inferior do slot, tornando o corte visual natural — como se a pessoa estivesse atrás de uma bancada ou saindo pela moldura.
+  Se nenhuma das duas condições for possível no layout, prefira não usar a foto profissional nesse slide.
 
 ## Posição 1 — Hero cover full-figure (capa)
 
@@ -38,7 +42,9 @@ Foto ocupa metade do slide 1 (~50% da largura, ~88% da altura), texto na coluna 
     20 anos cuidando da sua mobilidade com fisioterapia ortopédica especializada.
   </p>
 
-  <!-- Coluna direita: foto profissional cutout. Slot 540x720 (ratio 0.75 ≈ PNG cutout 3:4). -->
+  <!-- Coluna direita: foto profissional cutout. Slot 540x720 (ratio 0.75 ≈ PNG cutout 3:4).
+       Anchoring: top(560) + height(720) = 1280 ≈ rodapé do slide (1350 - 70px margem).
+       A figura fica "plantada" no chão — satisfaz a regra de não-voar. -->
   <img class="professional-photo" alt="Foto profissional"
        data-image-type="professionalPhoto"
        style="position:absolute; left:540px; top:560px; width:540px; height:720px;
@@ -50,7 +56,7 @@ Foto ocupa metade do slide 1 (~50% da largura, ~88% da altura), texto na coluna 
 **Dimensões para canvas 1080×1350:**
 - Slot da foto: `left:540px; top:560px; width:540px; height:720px` (50% × 53%, ratio 0.75 ✓).
 - Texto: coluna esquerda em `left: 60px–520px`, deixando ~20px de gap entre as colunas.
-- O slot é colado no rodapé (`top + height = 1280`, deixando 70px do bottom). A figura sai do slot pela borda inferior porque `object-position: bottom center` ancora os pés no `bottom` do slot.
+- `top + height = 1280px` → 70px do rodapé do slide (1350px). Satisfaz **condição 1** (ancorada na borda inferior). A figura fica plantada no slide; o corte da cintura/joelho fica naturalizado porque não há espaço aberto abaixo.
 - **Não use slot 540×1200**: ratio 0.45 está fora da faixa `0.55–1.10` aceita pelo reviewer e o cutout fica espremido na metade superior do slot.
 
 **Para canvas 1080×1080 (feed quadrado):** slot `540×720` em `top:300`.
@@ -84,7 +90,9 @@ Foto ~37% da largura, altura ~67% do canvas, à direita do CTA. Aumenta confian�
     Atendimento presencial e online.<br>WhatsApp (11) 90000-0000.
   </p>
 
-  <!-- Coluna direita: foto profissional. Slot 400x540 (ratio 0.74 ≈ PNG cutout 3:4). -->
+  <!-- Coluna direita: foto profissional. Slot 400x540 (ratio 0.74 ≈ PNG cutout 3:4).
+       Anchoring: top(740) + height(540) = 1280 ≈ rodapé (1350 - 70px margem).
+       A figura fica plantada — satisfaz a regra de não-voar. -->
   <img class="professional-photo" alt="Foto profissional"
        data-image-type="professionalPhoto"
        style="position:absolute; left:660px; top:740px; width:400px; height:540px;
@@ -96,7 +104,7 @@ Foto ~37% da largura, altura ~67% do canvas, à direita do CTA. Aumenta confian�
 **Dimensões para canvas 1080×1350:**
 - Slot da foto: `left:660px; top:740px; width:400px; height:540px` (37% × 40%, ratio 0.74 ✓).
 - Texto à esquerda em `left: 60–620px`.
-- Slot colado no rodapé (`top + height = 1280`, deixando 70px). Figura ancorada nos pés via `object-position: bottom center`, criando alinhamento natural entre o "Agende" e a presença humana.
+- `top + height = 1280px` → 70px do rodapé. Satisfaz **condição 1** (ancorada na borda inferior). A figura fica plantada ao lado do texto "Agende sua consulta", criando alinhamento natural — presença do profissional no momento da decisão.
 - **Não use slot 400×900**: ratio 0.44 está fora da faixa aceita.
 
 ## Posição 3 — Overlap sobre foto contextual de apoio
@@ -130,7 +138,10 @@ Foto profissional pequena (~26% largura, ~53% altura) sobreposta no canto da ima
               object-fit:cover; border-radius:24px;"
        src="<URL ou placeholder diagonal SVG>">
 
-  <!-- Foto profissional sobreposta. Slot 300x400 (ratio 0.75 ≈ PNG cutout 3:4). -->
+  <!-- Foto profissional sobreposta. Slot 300x400 (ratio 0.75 ≈ PNG cutout 3:4).
+       Anchoring: a parte inferior da foto profissional (top:880 + height:400 = 1280) alinha com
+       o bottom da foto contextual (top:680 + height:600 = 1280). Ambas terminam na mesma linha —
+       a figura "sai" pelo topo da foto contextual (condição 2: parte inferior sobreposta pela foto contextual). -->
   <img class="professional-photo" alt="Foto profissional"
        data-image-type="professionalPhoto"
        style="position:absolute; left:740px; top:880px; width:300px; height:400px;
@@ -143,7 +154,8 @@ Foto profissional pequena (~26% largura, ~53% altura) sobreposta no canto da ima
 **Dimensões para canvas 1080×1350:**
 - Foto contextual (userAsset): `left:60px; top:680px; width:960px; height:600px` (89% × 44%).
 - Foto profissional sobreposta: `left:740px; top:880px; width:300px; height:400px` (28% × 30%, ratio 0.75 ✓).
-  - O `top: 880px` da foto profissional é **acima** do bottom da foto contextual (`top + height = 1280`), e ambas terminam na mesma linha de base — é assim que a figura "sai" pelo topo do retângulo da foto contextual.
+  - O `top: 880px` da foto profissional é **dentro** da foto contextual, mas o bottom de ambas coincide em `1280px`. A parte inferior da foto profissional fica sob a foto contextual (z-index:2 garante que a parte superior da figura sobressai). Satisfaz **condição 2** (parte inferior sobreposta).
+  - **Variante alternativa** — foto profissional saindo ainda mais: `top:800px; height:480px` (bottom em 1280). A figura "sobe" mais sobre a foto contextual, mas ratio 300/480 = 0.625 ainda ✓.
 - `z-index: 2` na foto profissional (foto contextual fica em `z-index: auto = 0`).
 - **Não use slot 280×720**: ratio 0.39 fora da faixa aceita.
 
@@ -175,8 +187,9 @@ Note: nesse caso `object-fit: cover` é correto (avatar circular não preserva f
 
 ## Anti-patterns
 
+- **Foto "voando" no slide**: figura posicionada no meio ou no topo do slide sem nada ancorado abaixo. Fotos de usuário são busto/tronco — sem ancoragem, parece que a pessoa não tem pernas. Corrija usando condição 1 (borda inferior) ou condição 2 (sobreposição na parte de baixo).
 - **Usar `object-fit: cover` em cutout**: corta pés/cabeça, perde o efeito.
 - **Usar `border-radius` arredondado em cutout**: o fundo arredondado aparece "em cima" da figura sem fundo, ficando estranho.
-- **Slot pequeno demais para mostrar a figura inteira**: se o slot tem `height < 600px` em canvas 1350, reconsidere se a foto profissional é realmente necessária aqui — pode ser um caso de avatar circular ou nenhuma foto.
+- **Slot pequeno demais para mostrar a figura inteira**: se o slot tem `height < 400px` em canvas 1350, reconsidere se a foto profissional é realmente necessária aqui — pode ser um caso de avatar circular ou nenhuma foto.
 - **Texto sobre a face**: gancho/título passando pela zona superior do slot. Reposicione.
 - **Mais de uma foto profissional por slide** (exceto template "Conheça nossa equipe"): polui a composição.
