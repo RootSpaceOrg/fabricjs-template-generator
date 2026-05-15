@@ -21,13 +21,14 @@ Sempre que o usuário pedir para criar um template HealthMarket completo (post, 
 ```
 1. gp2-request-interpreter          → brief.md
 2. gp2-html-designer                 → template.html (3 renders: low/mid/high-fi)
-3. gp2-html-reviewer                 → PASS|REVISE|FAIL (Impeccable separado: técnico vs estilístico)
+3. gp2-html-reviewer                 → PASS|REVISE|FAIL (gate técnico determinístico + julgamento visual do agente)
 4. gp2-template-marker               → template.html marcado + template-summary.md
 5. gp2-template-converter            → slide-N.json + manifest.json
 6. gp2-template-result-reviewer      → PASS|PASS_WITH_WARNINGS|FAIL
 7. gp2-template-uploader             → upload S3 + Supabase
 8. editor save/thumbnails            → via flag --execute --generate-thumbnails do uploader
-9. Relatório consolidado
+9. Cleanup de artifacts              → apaga pasta artifacts/<slug>/ após upload confirmado
+10. Relatório consolidado
 ```
 
 ## Iteration policy
@@ -53,7 +54,7 @@ artifacts: <lista de paths>
 
 Upload **só** acontece quando todos abaixo são verdadeiros:
 
-- `gp2-html-reviewer.status === "PASS"` (findings técnicos = 0; estilísticos podem ter `intentional: true`);
+- `gp2-html-reviewer.status === "PASS"` (findings técnicos críticos = 0; julgamento visual: adequado ou forte);
 - `gp2-template-marker` audit: `PASS`;
 - `gp2-template-converter` validator (`validate-slides.js`): exit 0;
 - `gp2-template-result-reviewer.status` ∈ {`PASS`, `PASS_WITH_WARNINGS`};
@@ -62,6 +63,31 @@ Upload **só** acontece quando todos abaixo são verdadeiros:
 Se algum falha:
 - Em casos seguros (mecânicos, óbvios), revise automaticamente dentro do loop.
 - Em casos que precisam de decisão criativa do usuário, pergunte. Não invente direção.
+
+## Cleanup de artifacts
+
+Após upload confirmado (template ID retornado + S3 keys carregadas + Supabase inserido), apague a pasta de artifacts do slug:
+
+```bash
+Remove-Item -Recurse -Force artifacts/<slug>
+```
+
+Ou em bash:
+
+```bash
+rm -rf artifacts/<slug>
+```
+
+**Condições para apagar:**
+- Upload retornou template ID (não dry-run).
+- Supabase insert confirmado (não falhou).
+- Se o editor save/thumbnails falhou mas upload completou, apague mesmo assim — o thumbnail pode ser regerado abrindo o editor manualmente.
+
+**Não apague se:**
+- Upload falhou (AccessDenied, Supabase error, etc.) — artifacts são a única evidência para debug.
+- Dry-run (sem `--execute`) — nunca apague em dry-run.
+
+Em **batch**, apague slug por slug individualmente à medida que cada um confirma upload. Não agrupe.
 
 ## Standing rule do Gustavo
 
@@ -157,17 +183,16 @@ artifacts/
 - **Artifact:** `artifacts/.../<slug>/`
 
 ### Gates
-- HTML reviewer: PASS (técnicos: 0, estilísticos: 2 intencionais)
+- HTML reviewer: PASS (técnicos: 0, julgamento visual: forte)
 - Marker audit: PASS
 - Converter validator: PASS (exit 0)
 - Result reviewer: PASS_WITH_WARNINGS (warnings: 1)
 - Upload: OK
 - Thumbnails: OK
+- Cleanup: OK (artifacts/<slug>/ removido)
 
 ### Evidências
-- `artifacts/gp2-html-designer/<slug>/screenshots/`
-- `artifacts/gp2-template-result-reviewer/<slug>/review-report.md`
-- `artifacts/gp2-template-marker/<slug>/template-summary.md`
+_(artifacts removidos após upload — template acessível pelo ID acima no editor HealthMarket)_
 ```
 
 Em batch, consolide todos os blocos com totais ao final.

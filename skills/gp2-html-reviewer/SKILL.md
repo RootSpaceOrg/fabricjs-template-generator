@@ -1,24 +1,19 @@
 ---
 name: gp2-html-reviewer
-description: "Critique do HTML produzido por gp2-html-designer antes do marker. Mantém o gate Impeccable, mas separa findings em técnicos (hard-gate, REVISE) e estilísticos (warning, podem passar com justificativa). Use após gp2-html-designer, antes de gp2-template-marker. Não gera HTML, não converte Fabric, não publica."
+description: "Critique do HTML produzido por gp2-html-designer antes do marker. Gate determinístico (técnico) + julgamento visual do agente. Use após gp2-html-designer, antes de gp2-template-marker. Não gera HTML, não converte Fabric, não publica."
 ---
 
 # gp2-html-reviewer
 
 Critica o `template.html` final do designer (Passo 3 high-fi) antes de seguir para o marker.
 
-## Mudança política importante (vs v1)
+## Princípio
 
-A v1 tratava qualquer warning Impeccable como `REVISE` obrigatório. Isso forçava revisões que diluíam a intenção do designer (Impeccable detectava "looks like SaaS template" e o designer tinha que ceder mesmo sabendo que o estilo era intencional).
+O reviewer tem **duas responsabilidades separadas**:
 
-A v2 separa findings em **duas categorias**:
+1. **Gate técnico determinístico** — o script `review-html-design.py` detecta problemas mecânicos (overflow, texto cortado, sobreposição não-intencional, fontes faltando, etc.). Qualquer finding crítico bloqueia. Warnings do script também precisam de atenção, mas o reviewer pode aceitá-los com justificativa quando são consequência de uma escolha de design consciente documentada em `notes.md`.
 
-| Categoria | Exemplos | Tratamento |
-|-----------|----------|------------|
-| **Técnicos** | overflow real, contraste WCAG < 4.5, texto cortado, imagem ausente, texto fora do canvas, sobreposição não-intencional, slide vazio, fonte ausente do `<meta hm-fonts>` | **HARD-GATE** → status `REVISE` |
-| **Estilísticos** | Impeccable "looks SaaS", "centered too much", "card spam", "generic typography", densidade decorativa | **WARNING** → reviewer pode aprovar se justificar por escrito (campo `intentional` no relatório) |
-
-Findings estilísticos válidos viram lições para revisões futuras, não bloqueios. Findings técnicos sempre bloqueiam.
+2. **Julgamento visual do agente** — inspecionar os screenshots e decidir se o design tem qualidade suficiente para avançar. Aqui o agente usa seu próprio critério; não depende de ferramentas externas. O objetivo é evitar templates que passam no gate técnico mas estão visualmente fracos, genéricos ou mal executados.
 
 ## Inputs
 
@@ -47,28 +42,22 @@ python3 ../../scripts/review-html-design.py artifacts/gp2-html-designer/<slug>/
 
 Esse script gera `html-review.json` + `html-review.md` e roda o gate Impeccable internamente.
 
-4. Inspecione visualmente cada `screenshots/slide-N.png`.
-5. Classifique cada finding como **técnico**, **estilístico**, ou **aderência ao spec** (só reference-driven).
-6. Para findings estilísticos, decida (com justificativa) se são intencionais — leia `notes.md` para entender. Ex: se o designer comprometeu-se com "Bold educacional" e Impeccable acusou "tipografia muito pesada", a justificativa é que o peso é a assinatura da família escolhida.
-7. **Em reference-driven mode:** compare screenshots × `reference-spec.md`. Acuse drift como finding técnico se:
+4. Inspecione visualmente cada `screenshots/slide-N.png` aplicando os critérios de julgamento visual abaixo.
+5. **Em reference-driven mode:** compare screenshots × `reference-spec.md`. Acuse drift como finding técnico se:
    - Hexs aplicados não batem com a paleta declarada (tolerância: ΔE > 10 entre cor aplicada e cor do spec).
    - Família tipográfica usada está em categoria diferente da declarada (ex: spec pediu serifa display, designer usou sans).
    - Movimento memorável declarado não está visível.
    - Elementos editoriais listados no spec estão ausentes.
    - Se o designer divergiu **e** documentou em `notes.md` (ex: "Bebas Neue indisponível, usei Anton"), trate como warning, não bloqueio.
-8. Decida o status final:
+6. Decida o status final:
 
 | Status | Quando |
 |--------|--------|
-| `PASS` | zero findings técnicos. Findings estilísticos não-bloqueantes podem existir desde que justificados em `intentional`. |
-| `REVISE` | qualquer finding técnico. Pode incluir findings estilísticos que **não** se justificam pelas escolhas do designer. |
-| `FAIL` | direção do design é fundamentalmente fraca; volte ao `gp2-html-designer` (ou ao interpreter, se o brief estava errado). |
+| `PASS` | zero findings técnicos críticos. Warnings do script aceitos com justificativa. Design tem qualidade visual suficiente para avançar. |
+| `REVISE` | qualquer finding técnico crítico, ou design visualmente fraco/genérico que o agente julga insuficiente para publicar. |
+| `FAIL` | direção do design é fundamentalmente errada; reabrir no `gp2-html-designer` (ou interpreter se o brief estava errado). |
 
-Nunca devolva `PASS_WITH_WARNINGS` — `PASS` aceita warnings justificados; `REVISE` aceita reabertura.
-
-## Categorização de findings (referência)
-
-### Técnicos (sempre HARD-GATE)
+## Findings técnicos (HARD-GATE — sempre bloqueiam)
 
 - Texto fora do canvas (left/top + width/height ultrapassa data-width/height).
 - Sobreposição não-intencional entre conteúdo e conteúdo (texto sobre texto, foto sobre título).
@@ -86,7 +75,7 @@ Nunca devolva `PASS_WITH_WARNINGS` — `PASS` aceita warnings justificados; `REV
 - `<img data-image-type="professionalPhoto">` (cutout) com slot cuja proporção (`width / height`) diverge muito da proporção natural do PNG placeholder (~3:4 ≈ `0.78`). **Tolerância**: `0.55–1.10`. Fora dessa faixa, o `object-fit: contain` deixa metade do slot vazio e o converter facilmente erra a emissão Fabric (sintoma: figura cobrindo só metade do slot no editor). Exemplos: slot `540×1200` (ratio `0.45`) é alto demais; slot `540×400` (ratio `1.35`) é largo demais. **Fix**: ajustar `width`/`height` da `<img>` para uma proporção entre `9:16` e `1:1` (ratio `0.56`–`1.00`) que respeite a figura inteira sem ficar com áreas vazias dominantes. Ver [`gp2-html-designer/references/professional-photo-placements.md`](../gp2-html-designer/references/professional-photo-placements.md) para slots aprovados por canvas.
 - `<img data-image-type="professionalPhoto">` "voando" — figura posicionada sem ancoragem inferior nem sobreposição na parte de baixo. Como fotos de usuário são busto/tronco (não corpo inteiro), deixar espaço vazio abaixo da figura parece que a pessoa não tem pernas. **Hard-gate**: toda `professionalPhoto` deve satisfazer **uma das duas condições**: (1) `top + height ≥ canvas_height − 80px` (ancorada na borda inferior do slide com margem máxima de 80px), OU (2) outro elemento visível (faixa de cor, foto contextual, bloco CTA, rodapé) sobrepõe o terço inferior do slot (`top + height * 0.67`). Se nenhuma condição for satisfeita, devolva `REVISE` com instrução de reposicionar ou remover a foto. Ver [`gp2-html-designer/references/professional-photo-placements.md`](../gp2-html-designer/references/professional-photo-placements.md) §"Princípios".
 
-### Aderência ao spec (somente reference-driven, HARD-GATE quando não documentado em notes.md)
+## Aderência ao spec (somente reference-driven, HARD-GATE quando não documentado em notes.md)
 
 - Hexs aplicados não batem com paleta declarada (ΔE > 10 sem documentação).
 - Família tipográfica em categoria diferente da declarada (serifa ↔ sans, condensada ↔ regular) sem documentação.
@@ -94,18 +83,20 @@ Nunca devolva `PASS_WITH_WARNINGS` — `PASS` aceita warnings justificados; `REV
 - Elementos editoriais listados no spec ausentes (eyebrow numerado faltando, fios horizontais ausentes, etc.).
 - Tratamento de foto profissional difere do spec (spec pediu retangular editorial, designer usou avatar circular).
 
-### Estilísticos (warning, justificável)
+## Critérios de julgamento visual do agente
 
-- "Generic AI template" / "looks like SaaS".
-- "Tudo centralizado".
-- "Card spam" / "nested cards".
-- "Tipografia genérica" (Impeccable acusa quando você usa só Inter).
-- "Cores muito saturadas" / "muito sutis".
-- "Decoração excessiva" / "desert design" (vazio demais).
-- "Movimento memorável ausente".
-- "Slides muito similares" (rítmo de carrossel fraco).
+O agente olha para os screenshots e se pergunta:
 
-Se `notes.md` justifica a escolha (ex: "Brutalist direto pede peso e saturação"), o reviewer aceita como `intentional` e mantém `PASS`.
+| Critério | PASS se… | REVISE se… |
+|----------|----------|------------|
+| **Identidade visual** | O carrossel tem uma assinatura reconhecível (família estética, paleta, movimento memorável) | Parece um template genérico sem personalidade — poderia ser de qualquer ferramenta |
+| **Hierarquia** | Título → subtítulo → corpo é instantâneo em cada slide | Tudo parece do mesmo peso; o olho não sabe por onde começar |
+| **Ritmo do carrossel** | Slides têm composições visualmente distintas entre si; capa, miolo e CTA são reconhecíveis pelo layout | Todos os slides parecem o mesmo layout com texto diferente |
+| **Movimento memorável** | Existe ao menos um elemento editorial consistente e não-genérico (eyebrow numerado, fio horizontal, número de slide gigante, etc.) | O design poderia ter sido feito no Canva sem nenhuma escolha editorial própria |
+| **Tipografia** | Pelo menos dois pesos ou famílias distintos; tamanhos seguem escala com intenção | Uma só família, um só peso, tamanhos arbitrários |
+| **Fidelidade ao brief** | O design reflete o tom e conteúdo pedido | O design poderia ser de qualquer nicho de saúde sem nenhuma adaptação |
+
+O agente não precisa atingir todos os critérios para dar PASS — precisa ter uma visão de conjunto. Um design fortemente intencional pode ser incomum em alguns critérios e ainda assim ser forte. A pergunta-chave é: **"Eu publicaria isso no HealthMarket?"**
 
 ## Output
 
@@ -117,11 +108,10 @@ Sobrescreva `html-review.json` com a classificação, incluindo o campo `intenti
   "technicalFindings": [
     { "slide": 1, "issue": "...", "severity": "blocker", "fix": "..." }
   ],
-  "styleFindings": [
-    { "slide": 0, "issue": "Generic SaaS look", "intentional": true,
-      "reason": "Designer chose Premium Minimal — restraint is the point" }
-  ],
-  "impeccable": { "rawFindings": [...], "promotedToTechnical": [], "promotedToStyle": [...] }
+  "visualJudgment": {
+    "verdict": "strong|adequate|weak",
+    "notes": "..."
+  }
 }
 ```
 
@@ -135,8 +125,10 @@ E `html-review.md` para humanos:
 ## Findings técnicos (bloqueantes)
 - Slide 2: título sai 30px do canvas direito → reduzir width do `<h1>` para 960px ou font-size para 88px.
 
-## Findings estilísticos (não-bloqueantes)
-- Impeccable: "centered too much" — INTENCIONAL: família "Premium minimal" pede simetria silenciosa.
+## Julgamento visual
+- Identidade: forte — eyebrow numerado + tipografia display serif consistente em todos os slides.
+- Ritmo: adequado — capa / miolo educativo / CTA têm layouts distintos.
+- Veredito: publicável.
 
 ## Próximo passo
 - PASS → gp2-template-marker

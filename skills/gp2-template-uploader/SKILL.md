@@ -228,4 +228,7 @@ Slides: <N>
 S3 keys: <lista>
 Supabase: inserido | falhou — <motivo>
 Thumbnails: OK | falhou — <motivo> | skipped
+Cleanup: aguardando orquestrador | (uploader não apaga — responsabilidade do gp2-pipeline)
 ```
+
+O uploader **não** apaga artifacts — ele só reporta o resultado. A limpeza é responsabilidade do orquestrador (`gp2-pipeline`) após receber o template ID confirmado.

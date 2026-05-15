@@ -207,6 +207,106 @@ A regra "todo objeto: `originX: "center"`, `originY: "center"`" aplica-se a todo
 
 **Avatar circular (exceção da exceção):** quando `professionalPhoto` é avatar circular (`border-radius: 50%; object-fit: cover`), volta para a regra de cover acima — usa crop centrado, frame = slot, `originX/Y: "center"`.
 
+## Gradientes — parsing e emissão Fabric
+
+A pipeline v2 usa gradientes em três padrões. Cada um tem uma forma diferente de chegar ao converter.
+
+### Padrão 1 — Overlay de legibilidade (`<div>` com `linear-gradient` transparente→preto)
+
+O designer escreve um `<div>` com `background: linear-gradient(...)` marcado com `data-static="true"`. Converta para `roundedRect` com fill gradient:
+
+```json
+{
+  "type": "roundedRect",
+  "name": "Overlay escurecimento",
+  "left": 540, "top": 675,
+  "width": 1080, "height": 1350,
+  "scaleX": 1, "scaleY": 1,
+  "originX": "center", "originY": "center",
+  "topLeft": 0, "topRight": 0, "bottomRight": 0, "bottomLeft": 0,
+  "fill": {
+    "type": "linear",
+    "coords": { "x1": 0, "y1": 0, "x2": 0, "y2": 1 },
+    "colorStops": [
+      { "offset": 0, "color": "rgba(0,0,0,0)" },
+      { "offset": 1, "color": "rgba(0,0,0,0.75)" }
+    ],
+    "offsetX": 0, "offsetY": 0,
+    "gradientUnits": "percentage",
+    "gradientTransform": null
+  },
+  "isStatic": true
+}
+```
+
+**Conversão de direção CSS → coords Fabric:**
+
+| CSS | `x1,y1 → x2,y2` |
+|-----|-----------------|
+| `to bottom` | `0,0 → 0,1` |
+| `to top` | `0,1 → 0,0` |
+| `to right` | `0,0 → 1,0` |
+| `to left` | `1,0 → 0,0` |
+| `135deg` (↘) | `0,0 → 1,1` |
+| `45deg` (↗) | `0,1 → 1,0` |
+
+Cores com `rgba(0,0,0,N)` → `"rgba(0,0,0,N)"` literal na string. **Nunca** use `#000000CC` (hex com alpha) nas colorStops — o validador espera string rgba ou hex sem alpha.
+
+### Padrão 2 — Fundo de slide brand com `data-variable-stops`
+
+O `<section>` tem `background: linear-gradient(...)` + `data-variable-stops="primary,secondary"`. Emita `backgroundVariableConfig` no root do slide JSON (não como objeto):
+
+```json
+{
+  "version": "5.5.2",
+  "background": "#2563EB",
+  "backgroundVariableConfig": {
+    "type": "linear",
+    "variable": "primary",
+    "angle": 135,
+    "colorStops": [
+      { "offset": 0, "variable": "primary",   "alpha": 1 },
+      { "offset": 1, "variable": "secondary",  "alpha": 1 }
+    ]
+  },
+  "objects": [...]
+}
+```
+
+O ângulo vem do CSS: `135deg` → `135`. `background` no root mantém o hex da primary como fallback para o editor antes de aplicar variáveis.
+
+Se `data-variable-stops` tiver só `"primary"` (fundo sólido brand), emita `backgroundVariableConfig: { type: "solid", variable: "primary", alpha: 1 }` em vez do formato com colorStops.
+
+### Padrão 3 — Faixa decorativa com fade-out
+
+`<div>` decorativo com gradiente de cor sólida → transparente. Sem `data-variable` (é cor literal, não brand). Emite como `roundedRect` com fill gradient, cores literais nos colorStops:
+
+```json
+{
+  "type": "roundedRect",
+  "fill": {
+    "type": "linear",
+    "coords": { "x1": 0, "y1": 0, "x2": 0, "y2": 1 },
+    "colorStops": [
+      { "offset": 0, "color": "#F4ECE2" },
+      { "offset": 1, "color": "rgba(244,236,226,0)" }
+    ],
+    "offsetX": 0, "offsetY": 0,
+    "gradientUnits": "percentage",
+    "gradientTransform": null
+  },
+  "isStatic": true
+}
+```
+
+### Regras críticas de gradiente
+
+- **`type`** deve ser `"linear"` ou `"radial"` — nunca `"linearGradient"` ou string CSS.
+- **`gradientUnits: "percentage"`** sempre — o validador rejeita outros valores.
+- **`gradientTransform: null`** sempre presente — mesmo que não haja transformação.
+- **Cor com alpha**: use `"rgba(R,G,B,A)"` nos colorStops; hex com alpha (`#RRGGBBAA`) não é suportado.
+- **Overlay sem `data-variable`**: nunca adicione `fillVariableConfig` a um overlay preto/branco — preto e branco são neutros literais, não brand variables.
+
 ## Workflow
 
 1. Confirme inputs prontos: `template.html` marcado existe, `marker-audit.json.status === "PASS"`.

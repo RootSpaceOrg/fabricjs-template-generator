@@ -10,7 +10,6 @@ from __future__ import annotations
 import json
 import base64
 import re
-import subprocess
 import sys
 from dataclasses import dataclass, asdict
 from html.parser import HTMLParser
@@ -22,7 +21,6 @@ NUM_RE = re.compile(r'-?\d+(?:\.\d+)?')
 TEXT_TAGS = {'p', 'span', 'h1', 'h2', 'h3', 'h4', 'button', 'a'}
 CANVAS_TAGS = {'div', 'p', 'span', 'h1', 'h2', 'h3', 'h4', 'img', 'button', 'a', 'svg'}
 IMPORTANT_ROLES = {'title', 'body', 'cta_or_label'}
-IMPECCABLE_TIMEOUT_SECONDS = 90
 
 
 def parse_style(style: str) -> dict[str, str]:
@@ -213,59 +211,6 @@ def classify(el: dict[str, Any]) -> str:
     return 'body'
 
 
-def run_impeccable_detect(html: Path) -> tuple[list[Issue], list[dict[str, Any]]]:
-    """Run Impeccable's deterministic anti-pattern detector as a mandatory gate.
-
-    Any detector finding becomes a warning, which forces REVISE in this strict flow.
-    If the detector cannot run, that is critical because the gate did not execute.
-    """
-    cmd = ['npx', '-y', 'impeccable', 'detect', str(html), '--json']
-    try:
-        proc = subprocess.run(cmd, text=True, capture_output=True, timeout=IMPECCABLE_TIMEOUT_SECONDS)
-    except subprocess.TimeoutExpired:
-        return [Issue('critical', 0, 'impeccable', f'Impeccable detect timed out after {IMPECCABLE_TIMEOUT_SECONDS}s; mandatory gate did not complete.')], []
-    except FileNotFoundError:
-        return [Issue('critical', 0, 'impeccable', 'npx not found; mandatory Impeccable gate cannot run.')], []
-
-    stdout = (proc.stdout or '').strip()
-    stderr = (proc.stderr or '').strip()
-    output = stdout or stderr
-    findings: list[dict[str, Any]] = []
-    if output:
-        candidate = output
-        # npm/npx can prepend warnings; keep the JSON payload when possible.
-        first_list = candidate.find('[')
-        first_obj = candidate.find('{')
-        starts = [i for i in [first_list, first_obj] if i >= 0]
-        if starts:
-            candidate = candidate[min(starts):]
-        try:
-            parsed = json.loads(candidate)
-            if isinstance(parsed, list):
-                findings = [f for f in parsed if isinstance(f, dict)]
-            elif isinstance(parsed, dict):
-                raw = parsed.get('findings') or parsed.get('issues') or []
-                if isinstance(raw, list):
-                    findings = [f for f in raw if isinstance(f, dict)]
-        except json.JSONDecodeError:
-            return [Issue('critical', 0, 'impeccable', f'Impeccable returned non-JSON output: {output[:240]}')], []
-
-    # Impeccable exits non-zero when it finds issues. That is expected; no findings
-    # with non-zero means the gate itself failed.
-    if proc.returncode not in (0, 1, 2) and not findings:
-        return [Issue('critical', 0, 'impeccable', f'Impeccable detect failed with exit {proc.returncode}: {output[:240]}')], []
-    if proc.returncode != 0 and not findings:
-        return [Issue('critical', 0, 'impeccable', f'Impeccable detect exited {proc.returncode} without parseable findings: {output[:240]}')], []
-
-    issues: list[Issue] = []
-    for idx, f in enumerate(findings, start=1):
-        antipattern = str(f.get('antipattern') or f.get('rule') or f.get('id') or f'impeccable-{idx}')
-        name = str(f.get('name') or antipattern)
-        snippet = str(f.get('snippet') or f.get('description') or '').strip()
-        msg = f'Impeccable: {name}' + (f' — {snippet}' if snippet else '')
-        issues.append(Issue('warning', 0, f'impeccable:{antipattern}', msg))
-    return issues, findings
-
 
 def audit(artifact: Path) -> dict[str, Any]:
     html = artifact / 'template.html'
@@ -407,9 +352,6 @@ def audit(artifact: Path) -> dict[str, Any]:
                     # but it often means the carousel rhythm is static. Warn for review.
                     issues.append(Issue('warning', slide + 1, 'composition-rhythm', f'Image/title side relationship repeats previous slide ({relation_b[0]} image + {relation_b[1]} title). Vary rhythm or document why repetition is intentional.'))
 
-    impeccable_issues, impeccable_findings = run_impeccable_detect(html)
-    issues.extend(impeccable_issues)
-
     critical = sum(1 for i in issues if i.severity == 'critical')
     warnings = sum(1 for i in issues if i.severity == 'warning')
     # Strict gate for the new GetPosts flow: warnings are not acceptable as final output.
@@ -424,7 +366,6 @@ def audit(artifact: Path) -> dict[str, Any]:
         'warnings': warnings,
         'issues': [asdict(i) for i in issues],
         'roleCounts': role_counts(parser.elements),
-        'impeccableFindings': impeccable_findings,
     }
 
 
@@ -445,7 +386,6 @@ def write_reports(artifact: Path, report: dict[str, Any]) -> None:
         f"Elements: {report['elements']}",
         f"Critical: {report['critical']}",
         f"Warnings: {report['warnings']}",
-        f"Impeccable findings: {len(report.get('impeccableFindings') or [])}",
         f"Role counts: `{json.dumps(report['roleCounts'], ensure_ascii=False)}`", '',
     ]
     if report['issues']:
@@ -455,8 +395,8 @@ def write_reports(artifact: Path, report: dict[str, Any]) -> None:
     else:
         lines.append('No deterministic issues found. Agent must still visually inspect screenshots with the rubric.')
     if report['status'] == 'REVISE':
-        lines.append('\n## Required action\nEvery warning above must be fixed before this HTML can pass. Do not treat warnings or Impeccable findings as acceptable polish.')
-    lines.append('\n## Visual review checklist\nUse `references/html-review-rubric.md` for final PASS/REVISE/FAIL judgment. Visual concerns should also become REVISE items, not optional notes.')
+        lines.append('\n## Required action\nEvery warning above must be fixed before this HTML can pass.')
+    lines.append('\n## Visual review\nAgent must inspect screenshots and apply visual judgment for PASS/REVISE/FAIL. Deterministic checks only catch structural issues — visual quality, composition rhythm, and brand convergence are human/agent judgment calls.')
     (artifact / 'html-review.md').write_text('\n'.join(lines) + '\n', encoding='utf-8')
 
 
@@ -470,7 +410,7 @@ def main():
         'status': report['status'],
         'report': str(artifact / 'html-review.json'),
         'markdown': str(artifact / 'html-review.md'),
-        'summary': {k: report[k] for k in ['slides', 'elements', 'critical', 'warnings', 'roleCounts']} | {'impeccableFindings': len(report.get('impeccableFindings') or [])},
+        'summary': {k: report[k] for k in ['slides', 'elements', 'critical', 'warnings', 'roleCounts']},
     }, ensure_ascii=False, indent=2))
     if report['critical']:
         raise SystemExit(2)

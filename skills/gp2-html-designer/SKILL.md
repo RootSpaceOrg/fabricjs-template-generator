@@ -216,6 +216,74 @@ Anti-patterns críticos:
 - **`border-radius` arredondado em cutout** mostra o fundo recortado por cima da figura sem fundo.
 - **Texto sobre a face** (zona superior do slot, ~30%) cobre o que dá confiança ao leitor.
 
+## Gradientes — quando e como usar
+
+Gradiente tem **três usos legítimos** na pipeline. Fora desses casos, não use.
+
+### 1. Overlay de legibilidade sobre foto (uso mais comum)
+
+Um `<div>` transparente sobreposto a uma `<img>` para criar contraste e tornar texto branco legível sobre a foto. Direção depende de onde o texto fica:
+
+```html
+<!-- Texto no rodapé do slide → escurecer de baixo para cima -->
+<img style="position:absolute; left:0; top:0; width:1080px; height:1350px;
+            object-fit:cover;"
+     src="<placeholder diagonal>">
+
+<div style="position:absolute; left:0; top:0; width:1080px; height:1350px;
+            background:linear-gradient(to bottom, transparent 30%, rgba(0,0,0,0.75) 100%);">
+</div>
+
+<!-- Texto sobre o overlay, z-index implícito pelo DOM order -->
+<h1 style="position:absolute; left:60px; top:980px; ...">Título legível</h1>
+```
+
+Outras direções:
+- Texto na coluna esquerda → `linear-gradient(to right, rgba(0,0,0,0.75) 0%, transparent 60%)`
+- Texto no topo → `linear-gradient(to top, transparent 40%, rgba(0,0,0,0.70) 100%)`
+- Texto na coluna direita → `linear-gradient(to left, rgba(0,0,0,0.75) 0%, transparent 60%)`
+
+**Opacidade orientativa:** `rgba(0,0,0,0.65–0.80)` para texto branco peso 400; `0.45–0.60` para texto pesado (700+). Não passe de `0.85` — a foto some.
+
+**O marker vai marcar este `<div>` com `data-static="true"`.** O converter emite como `roundedRect` com fill gradient.
+
+### 2. Fundo de slide com gradiente brand (`primary → secondary`)
+
+Substitui o fundo sólido brand quando o brief decidiu usar duas cores. Use no `<section>` diretamente via `background`:
+
+```html
+<section class="slide" data-width="1080" data-height="1350"
+         style="position:relative; width:1080px; height:1350px;
+                background:linear-gradient(135deg, #2563EB 0%, #0EA5E9 100%);"
+         data-variable-stops="primary,secondary">
+```
+
+`data-variable-stops="primary,secondary"` é o sinal para o converter transformar os hexs em `fillVariableConfig` com `variable: "primary"` e `variable: "secondary"` nos `colorStops`. **Sem esse atributo**, o gradiente vira hexadecimal literal e não troca com a paleta do usuário.
+
+Ângulos típicos: `135deg` (diagonal ↘), `180deg` (↓), `90deg` (→). Escolha o que casa com o movimento memorável do template.
+
+**Quando usar:** capa com fundo brand intenso, slide de CTA com identidade de cor forte, slide de dado numérico onde o número branco precisa de fundo saturado. **Não use em todos os slides** — o gradiente brand em excesso fica enjoativo e tira o contraste do carrossel.
+
+### 3. Faixa decorativa com fade-out (transição tonal)
+
+Um elemento que dissolve sua borda para criar suavidade entre seções do slide. Uso moderado — só quando a transição abrupta entre dois blocos de cor é um problema visual real.
+
+```html
+<!-- Faixa que dissolve o rodapé de um bloco claro antes do rodapé escuro -->
+<div style="position:absolute; left:0; top:860px; width:1080px; height:120px;
+            background:linear-gradient(to bottom, #F4ECE2 0%, transparent 100%);">
+</div>
+```
+
+**Regra:** nunca use faixa decorativa como substituto de decisão de layout. Se você está usando para "tapar" uma junção feia entre dois elementos, corrija o layout em vez de esconder.
+
+### Anti-patterns de gradiente (nunca faça)
+
+- **Gradiente brand sem `data-variable-stops`**: vira literal no JSON, não troca com paleta do usuário.
+- **Gradiente multi-cor decorativo sem motivo** (roxo→rosa→laranja): é kitsch, não editorial. Os presets vibrant existem no editor mas não devem ser movimento memorável de template clínico.
+- **Gradiente como fundo de texto sobre gradiente**: texto sobre gradiente sobre gradiente — contraste imprevisível, WCAG impossível de garantir.
+- **`linear-gradient` em `color:` de texto**: CSS inválido para text, não renderiza e quebra o converter.
+
 ## Famílias tipográficas seguras
 
 Use Google Fonts via `<link>` no `<head>`. Quando preferir stack do sistema, sugestões em [`references/aesthetic-families.md`](./references/aesthetic-families.md). **Nunca** use Inter/Arial/Roboto/system-ui como **única** família para o design todo — emparelhe.

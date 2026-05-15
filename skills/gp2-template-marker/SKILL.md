@@ -95,8 +95,10 @@ python3 ../../scripts/audit-template-markup.py artifacts/gp2-template-marker/<sl
 | Carousel chrome — fill da progress bar em slide LIGHT | `data-static="true"` + `data-variable="primary" data-variable-target="background"` (track e counter não recebem variable) |
 | Carousel chrome — swipe arrow (background sutil + chevron SVG) | `data-static="true"` (em todos os slides exceto o último) |
 | Formas decorativas (linhas, faixas, fundos, divisores) | nada (auto-detect como decoração) ou `data-static="true"` se ambíguo |
+| Overlay de legibilidade sobre foto (`<div>` com `linear-gradient` transparente→preto) | `data-static="true"` (nunca template-element; o converter emite como `roundedRect` com fill gradient) |
+| Fundo de slide com gradiente brand (`<section data-variable-stops="primary,secondary">`) | no `<section>`: `data-variable-stops="primary,secondary"` já aplicado pelo designer — **não remova**; o converter converte para `backgroundVariableConfig` com dois colorStops |
 | Acento de cor que troca com preset (botão, headline colorido, faixa) | `data-variable="primary\|secondary"` + opcional `data-variable-target="fill\|stroke\|background"` |
-| Slide background colorido brand | no `<section>`: `data-variable="primary"` + `data-variable-target="background"` |
+| Slide background sólido brand | no `<section>`: `data-variable="primary"` + `data-variable-target="background"` |
 | Span dentro de título com cor diferente | `<span data-variable="..." style="color:...">` (não é elemento separado!) |
 
 > **Nota sobre `professionalPhoto` cutout PNG:** quando a `<img data-image-type="professionalPhoto">` usa `object-fit: contain` e `object-position: bottom center` (PNG cutout transparente — ver [`gp2-html-designer/references/professional-photo-placements.md`](../gp2-html-designer/references/professional-photo-placements.md)), a classificação no marker **não muda** — continua `data-static="true"`. Mas o converter precisa emitir o `ClippableImage` em modo cutout: `originWidth/Height` = dimensões naturais do PNG (não do slot), `width === originWidth`, `cropX/Y = 0`, `originY: "bottom"`. Ver `gp2-template-converter/SKILL.md` §"ClippableImage cutout (CRÍTICO)". O reviewer (`scripts/review-fabric-json.py`) tem check deterministica que flagra cutout mal-emitido (`width !== originWidth` com `cropX/Y = 0`).
