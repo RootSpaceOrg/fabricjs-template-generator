@@ -218,9 +218,28 @@ ex: 'Clínica Vita logo horizontal', 'Dr. Marca monograma circular',
 ## Como o marker usa este catálogo
 
 1. Ao caminhar pelos slides, o marker identifica o role de cada elemento (eyebrow, hook, corpo, dado etc).
-2. Para cada elemento `data-template-element="true"`, copia a description canônica do catálogo correspondente para `data-te-description`.
+2. Para cada elemento `data-template-element="true"`, **usa o catálogo como base** e **contextualiza** com o texto real do elemento e seus vizinhos:
+   a. Escolha o role canônico mais próximo do catálogo.
+   b. **Derive o primeiro exemplo do texto atual** do elemento (generalizado — sem referência ao vertical específico do template). O texto no HTML é o melhor sinal do formato que o LLM deve produzir.
+   c. **Adicione hint de sequência narrativa** quando o elemento funciona em par com vizinhos: `após eyebrow categórico; seguido de subtítulo de apoio`. Isso mantém coerência entre elementos adjacentes no prompt do LLM.
+   d. Adicione 2 exemplos genéricos adicionais para cobrir variação.
 3. Se um role não bate exatamente com nenhum do catálogo, o marker compõe seguindo a fórmula dos 4 componentes.
 4. Para slots equivalentes em slides diferentes (ex: eyebrow do slide 1, slide 3, slide 5), aplica **a mesma string**. O LLM diferencia pelo contexto da página.
+
+### Exemplo de contextualização
+
+Texto no HTML: `"Paciente não compra 'técnica'."`
+Eyebrow acima: `"insight"` | Corpo abaixo: `"Ele entende dor, segurança, clareza e próximo passo."`
+
+Description contextualizada (baseada no catálogo "Título de slide intermediário"):
+```
+Título da lâmina intermediária; formato afirmação direta OU inversão de
+expectativa; 1 frase em 2 linhas; após eyebrow categórico; seguido de
+corpo educativo de apoio; 30-60 chars; ex: 'Paciente não compra
+expertise', 'O corpo fala antes de doer', 'Resultado não é só número'
+```
+
+Note: o primeiro exemplo (`'Paciente não compra expertise'`) é derivado do texto real generalizado, não inventado do zero.
 
 ## Como o LLM consome (referência)
 

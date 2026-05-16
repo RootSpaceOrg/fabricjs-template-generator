@@ -309,7 +309,7 @@ Substitui o fundo sólido brand quando o brief decidiu usar duas cores. Use no `
          data-variable-stops="primary,secondary">
 ```
 
-`data-variable-stops="primary,secondary"` é o sinal para o converter transformar os hexs em `fillVariableConfig` com `variable: "primary"` e `variable: "secondary"` nos `colorStops`. **Sem esse atributo**, o gradiente vira hexadecimal literal e não troca com a paleta do usuário.
+`data-variable-stops="primary,secondary"` é o sinal para o converter emitir um `roundedRect` na camada 0 (cobrindo o slide inteiro) com gradient `fill` + `fillVariableConfig` gradient — o que permite troca de paleta. O root `background` fica sólido (hex primary) com `backgroundVariableConfig` sólido, porque o editor (`updateBackground()`) só suporta config sólido. **Sem `data-variable-stops`**, o gradiente vira hexadecimal literal e não troca com a paleta do usuário.
 
 Ângulos típicos: `135deg` (diagonal ↘), `180deg` (↓), `90deg` (→). Escolha o que casa com o movimento memorável do template.
 

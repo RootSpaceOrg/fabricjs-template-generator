@@ -253,7 +253,7 @@ Elementos data-variable:
 
 **O que SEMPRE deve ser mapeado quando presente:**
 - Fundo sólido de slides Brand/CTA → `data-variable="primary" data-variable-target="background"`
-- Fundo gradiente brand → `data-variable-stops="primary,secondary"`
+- Fundo gradiente brand → `data-variable-stops="primary,secondary"` (o converter emite como `roundedRect` camada 0 com gradient `fillVariableConfig`, NÃO como `backgroundVariableConfig` gradient — o editor só suporta `backgroundVariableConfig` sólido)
 - Eyebrow colorido (quando não é neutro) → `data-variable="secondary"` ou `"primary"`
 - CTA button / bloco de destaque → `data-variable="primary" data-variable-target="background"`
 - Número de slide ou dado colorido → `data-variable="primary"`
@@ -320,7 +320,7 @@ free
 | Elemento | Atributo |
 |----------|----------|
 | Fundo slides Brand/CTA | `data-variable="primary" data-variable-target="background"` |
-| Fundo gradiente brand | `data-variable-stops="primary,secondary"` |
+| Fundo gradiente brand | `data-variable-stops="primary,secondary"` (converter → roundedRect camada 0 com gradient fill) |
 | Eyebrow colorido | `data-variable="secondary"` |
 | ... | ... |
 
@@ -399,7 +399,7 @@ reference-driven
 | Elemento | Atributo |
 |----------|----------|
 | Fundo slides Brand/CTA | `data-variable="primary" data-variable-target="background"` |
-| Fundo gradiente brand | `data-variable-stops="primary,secondary"` |
+| Fundo gradiente brand | `data-variable-stops="primary,secondary"` (converter → roundedRect camada 0 com gradient fill) |
 | Eyebrow colorido | `data-variable="secondary"` |
 | ... | ... |
 

@@ -96,7 +96,7 @@ python3 ../../scripts/audit-template-markup.py artifacts/gp2-template-marker/<sl
 | Carousel chrome — swipe arrow (background sutil + chevron SVG) | `data-static="true"` (em todos os slides exceto o último) |
 | Formas decorativas (linhas, faixas, fundos, divisores) | nada (auto-detect como decoração) ou `data-static="true"` se ambíguo |
 | Overlay de legibilidade sobre foto (`<div>` com `linear-gradient` transparente→preto) | `data-static="true"` (nunca template-element; o converter emite como `roundedRect` com fill gradient) |
-| Fundo de slide com gradiente brand (`<section data-variable-stops="primary,secondary">`) | no `<section>`: `data-variable-stops="primary,secondary"` já aplicado pelo designer — **não remova**; o converter converte para `backgroundVariableConfig` com dois colorStops |
+| Fundo de slide com gradiente brand (`<section data-variable-stops="primary,secondary">`) | no `<section>`: `data-variable-stops="primary,secondary"` já aplicado pelo designer — **não remova**; o converter emite `roundedRect` camada 0 com gradient fill + `fillVariableConfig` (NÃO `backgroundVariableConfig` gradient — editor só suporta sólido) |
 | Acento de cor que troca com preset (botão, headline colorido, faixa) | `data-variable="primary\|secondary"` + opcional `data-variable-target="fill\|stroke\|background"` |
 | Slide background sólido brand | no `<section>`: `data-variable="primary"` + `data-variable-target="background"` |
 | Span dentro de título com cor diferente | `<span data-variable="..." style="color:...">` (não é elemento separado!) |
@@ -113,7 +113,7 @@ python3 ../../scripts/audit-template-markup.py artifacts/gp2-template-marker/<sl
 - **Neutros não viram brand variables.** Branco, off-white, cinza, preto de body — ficam literais.
 - **Acentos brand sem `data-variable` são bug.** Se há um botão laranja no design e a marca é azul, o usuário vai abrir o template no editor e o botão continua laranja. Isso quebra a promessa do produto.
 - **Conservador no editável.** Quando em dúvida entre static e template-element, escolha static.
-- **`data-te-description` é genérico, não específico, e segue fórmula estruturada.** Não escreva "Título sobre laserterapia premium" — escreva seguindo a fórmula `<role>; formato '<máscara>'; <bound>; ex: '<a>', '<b>', '<c>'`. Catálogo canônico em [`references/element-descriptions.md`](./references/element-descriptions.md). Template vai ser usado por dezenas de nichos; description é reutilizável.
+- **`data-te-description` é genérico no role, mas contextualizado nos exemplos.** Não escreva "Título sobre laserterapia premium" — escreva seguindo a fórmula `<role>; formato '<máscara>'; <bound>; ex: '<a>', '<b>', '<c>'`. Catálogo canônico em [`references/element-descriptions.md`](./references/element-descriptions.md). Template vai ser usado por dezenas de nichos; descriptions são reutilizáveis. **Porém:** use o **texto atual do elemento** como primeiro exemplo (generalizado), e descreva a **relação com elementos vizinhos** (anterior/posterior) para que o LLM entenda a sequência narrativa (ver regras de contextualização abaixo).
 - **`data-te-max-chars` calculado pelo box, não pelo texto atual.** Estimativa: `floor((width × lines) / (fontSize × 0.6))`. Arredonde para cima na próxima dezena.
 - **Repetidos entre slides usam mesma classificação.** Logo aparece em 5 slides? Todos com mesmo `data-image-type="brandLogo"`. Se o conteúdo deve ser o mesmo (logo, handle, foto profissional), use `data-te-link-id="logo"` (mesmo slug) em todos.
 - **Preserve `text-transform`.** Se CSS tem `text-transform: uppercase`, adicione `data-te-text-case="uppercase"` para que o converter mantenha a intenção quando o AI preencher.
@@ -157,6 +157,33 @@ Eyebrow sobre laserterapia premium; rótulo da clínica do Dr. João
 4. **3 exemplos é o sweet spot.** 1 vira regra rígida, 5+ vira ruído. 3 cobrem variação curto/médio/longo.
 5. **Sweet spot de tamanho: 200-300 chars por description.** Cada description vai pra cada elemento de cada template no prompt do LLM — pesar tokens importa.
 6. **Quando em dúvida, escolha o role canônico mais próximo do catálogo** em vez de inventar.
+
+**Regras de contextualização (NEW — evita descriptions desconexas):**
+
+7. **Use o texto atual do elemento para derivar o primeiro exemplo.** O texto no HTML é o melhor sinal do formato esperado. Generalize-o (remova referências ao vertical) e use como `ex1`. Depois adicione 2 exemplos genéricos. Ex: se o texto é "Seu conhecimento clínico está virando pacientes?", o ex1 fica `'Seu conhecimento está virando resultados?'` (generalizado) e não um exemplo desconexo como `'O erro está no recorte'`.
+
+8. **Descreva a relação com vizinhos.** Quando o elemento funciona como par narrativo com o anterior ou posterior (eyebrow→título, título→subtítulo, dado→caption), adicione um hint de sequência na description: `após eyebrow categórico; seguido de subtítulo de apoio`. Isso ajuda o LLM a manter coerência entre elementos adjacentes.
+
+**Exemplo de description contextualizada:**
+
+Texto no HTML: `"Seu conhecimento clínico está virando pacientes?"`
+Eyebrow acima: `"conteúdo clínico"` | Subtítulo abaixo: body educativo
+
+✅ Boa — usa o texto real generalizado + relação com vizinhos:
+```
+Gancho principal da lâmina; formato pergunta provocativa OU afirmação
+que gera curiosidade; 1 frase em 2-3 linhas; após eyebrow categórico;
+seguido de corpo educativo; 50-90 chars; ex: 'Seu conhecimento está
+virando resultados?', 'Você sabe o que seu paciente realmente busca?',
+'O que faz um conteúdo converter de verdade?'
+```
+
+❌ Ruim — exemplos desconexos do contexto real:
+```
+Gancho principal da lâmina; formato pergunta provocativa; 1 frase;
+ex: 'Sua ideia ficou clara?', 'O erro está no recorte',
+'Mostre o próximo passo'
+```
 
 ## `template-summary.md` (substitui context-analysis.json para o uploader)
 

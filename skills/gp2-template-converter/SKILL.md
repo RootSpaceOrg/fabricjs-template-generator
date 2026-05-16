@@ -58,14 +58,16 @@ Toda regra abaixo está detalhada em `CLAUDE_DESIGN_RULES.md` e `claude_design_t
 | `charSpacing` | clampado a >= -150 (abaixo, texto colapsa) |
 | `text-transform` | aplicado direto na string (`text.toUpperCase()`); **não emita `textTransform`** |
 | Cores brand | `data-variable="primary\|secondary"` → `fillVariableConfig`/`strokeVariableConfig`/`backgroundVariableConfig` `{type:"solid", variable, alpha}` |
-| Background brand | `<section data-variable="primary" data-variable-target="background">` → root `backgroundVariableConfig` |
+| `textAlign` | `text-align: center\|right\|left\|justify` → `textAlign: "center"\|"right"\|"left"\|"justify"` no textbox. Default: `"left"`. **Nunca omita** — se o HTML tem `text-align:center`, o JSON **deve** ter `textAlign: "center"` |
+| Background brand sólido | `<section data-variable="primary" data-variable-target="background">` → root `backgroundVariableConfig: { type: "solid", variable, alpha }` |
+| Background brand gradiente | `<section data-variable-stops="primary,secondary">` com `linear-gradient(...)` → **NÃO use `backgroundVariableConfig` gradient** (editor só suporta sólido). Em vez disso: root `background` = hex sólido primary + `backgroundVariableConfig` sólido + `roundedRect` como **primeiro objeto** com gradient fill + `fillVariableConfig` gradient (ver Padrão 2 abaixo) |
 | Spans | inline `<span>` em texto editável → **uma** textbox com `styles[lineIndex][charIndex]`; **nunca** uma textbox por span |
 | Profile vars | `data-text-type` → `textType: "..."` no objeto, sem `isTemplateElement` |
 | Templates | `data-template-element="true"` → `isTemplateElement: true` + bloco `templateElement` |
 | Imagens cropadas (cover) | `data-image-crop="true"` ou `border-radius != 0` ou `object-fit:cover` → `ClippableImage` com crop centrado |
 | Imagens cutout (contain) | `object-fit:contain` em `data-image-type="professionalPhoto"` → `ClippableImage` **sem crop** + `originY:"bottom"` quando `object-position` inclui `bottom` (ver seção dedicada abaixo) |
 | Gradientes | `type: "linear"\|"radial"` (NUNCA `linearGradient`); inclui `coords`, `colorStops`, `offsetX`, `offsetY`, `gradientUnits: "percentage"`, `gradientTransform: null` |
-| Background gradiente | emitido como objeto Fabric gradient, NUNCA string `"linear-gradient(...)"` |
+| Background gradiente | **Nunca** string CSS `"linear-gradient(...)"`. Se overlay/decorativo → `roundedRect` com gradient fill. Se fundo brand com `data-variable-stops` → roundedRect camada 0 com gradient fill + `fillVariableConfig` (ver Padrão 2). **Nunca** emita `backgroundVariableConfig` gradient — o editor só suporta sólido |
 
 ## ClippableImage crop (CRÍTICO)
 
@@ -255,28 +257,66 @@ Cores com `rgba(0,0,0,N)` → `"rgba(0,0,0,N)"` literal na string. **Nunca** use
 
 ### Padrão 2 — Fundo de slide brand com `data-variable-stops`
 
-O `<section>` tem `background: linear-gradient(...)` + `data-variable-stops="primary,secondary"`. Emita `backgroundVariableConfig` no root do slide JSON (não como objeto):
+O `<section>` tem `background: linear-gradient(...)` + `data-variable-stops="primary,secondary"`.
+
+**CRÍTICO: o `updateBackground()` do editor (`colors.ts:248-262`) só suporta `backgroundVariableConfig` sólido** — ele lê `.variable` e `.alpha`, chama `setBackgroundColor` com um TinyColor. Um `backgroundVariableConfig` gradient é silenciosamente ignorado. Por isso, gradiente de fundo brand é emitido como **roundedRect na camada 0**, não no `background` root.
+
+Emita:
+
+1. **`background`** no root: hex sólido da primary (fallback visual)
+2. **`backgroundVariableConfig`** no root: `{ type: "solid", variable: "primary", alpha: 1 }` (para troca de marca — o editor pinta o fundo sólido; o roundedRect gradient cobre por cima)
+3. **`roundedRect` como PRIMEIRO objeto** em `objects[]`: cobre o slide inteiro com gradient fill + `fillVariableConfig` gradient
 
 ```json
 {
   "version": "5.5.2",
   "background": "#2563EB",
   "backgroundVariableConfig": {
-    "type": "linear",
+    "type": "solid",
     "variable": "primary",
-    "angle": 135,
-    "colorStops": [
-      { "offset": 0, "variable": "primary",   "alpha": 1 },
-      { "offset": 1, "variable": "secondary",  "alpha": 1 }
-    ]
+    "alpha": 1
   },
-  "objects": [...]
+  "objects": [
+    {
+      "type": "roundedRect",
+      "name": "Gradiente de fundo",
+      "left": 540,
+      "top": 675,
+      "width": 1080,
+      "height": 1350,
+      "originX": "center",
+      "originY": "center",
+      "topLeft": 0,
+      "topRight": 0,
+      "bottomRight": 0,
+      "bottomLeft": 0,
+      "fill": {
+        "type": "linear",
+        "coords": { "x1": 0, "y1": 0, "x2": 1, "y2": 1 },
+        "colorStops": [
+          { "offset": 0, "color": "#2563EB" },
+          { "offset": 1, "color": "#0EA5E9" }
+        ],
+        "offsetX": 0,
+        "offsetY": 0,
+        "gradientUnits": "percentage",
+        "gradientTransform": null
+      },
+      "fillVariableConfig": {
+        "type": "gradient",
+        "colorStops": [
+          { "variable": "primary", "alpha": 1 },
+          { "variable": "secondary", "alpha": 1 }
+        ]
+      }
+    }
+  ]
 }
 ```
 
-O ângulo vem do CSS: `135deg` → `135`. `background` no root mantém o hex da primary como fallback para o editor antes de aplicar variáveis.
+O ângulo CSS → coords Fabric (ver tabela na seção de Padrão 1). `background` no root mantém o hex da primary como fallback sólido. O `roundedRect` gradient fica na camada acima e troca via `fillVariableConfig` quando o usuário muda a paleta.
 
-Se `data-variable-stops` tiver só `"primary"` (fundo sólido brand), emita `backgroundVariableConfig: { type: "solid", variable: "primary", alpha: 1 }` em vez do formato com colorStops.
+Se `data-variable-stops` tiver só `"primary"` (fundo sólido brand), **não crie roundedRect** — emita apenas `backgroundVariableConfig: { type: "solid", variable: "primary", alpha: 1 }` no root.
 
 ### Padrão 3 — Faixa decorativa com fade-out
 
