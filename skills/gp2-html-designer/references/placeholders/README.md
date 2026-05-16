@@ -1,32 +1,28 @@
-# Placeholders de foto profissional
+# Placeholders da pipeline
 
-Dois retratos cutout (PNG com fundo transparente, ~3:4 portrait) que o `gp2-html-designer` embute no `template.html` quando o brief pede `professionalPhoto`.
+Arquivos base64 prontos para uso no `src` de `<img>`. Nunca gere SVG inline nem invente imagens com CSS.
 
 ## Arquivos
 
-| Arquivo | Perfil | Tamanho |
-|---------|--------|---------|
-| `professional-photo-1.b64.txt` | Masculino, jaleco médico, postura formal | ~210 KB |
-| `professional-photo-2.b64.txt` | Feminino, blazer casual, postura acolhedora | ~205 KB |
+| Arquivo | Uso | Tamanho |
+|---------|-----|---------|
+| `image-placeholder.b64.txt` | Imagens contextuais (`userAsset`) — fallback quando URL pública não disponível | ~3.5 KB |
+| `professional-photo-1.b64.txt` | Foto profissional cutout — masculino, jaleco formal | ~210 KB |
+| `professional-photo-2.b64.txt` | Foto profissional cutout — feminino, blazer casual | ~205 KB |
 
 Cada arquivo contém uma única linha no formato `data:image/png;base64,XXXX...` pronta para colar em `src=""`.
 
 ## Quando usar cada um
 
-O `gp2-request-interpreter` sugere o placeholder no `brief.md` baseado no segmento HealthMarket:
+O `gp2-request-interpreter` sugere o placeholder no `brief.md` com base no contexto do vertical inferido. A heurística geral:
 
-| Segmento | Placeholder sugerido |
-|----------|----------------------|
-| Clínicas Médicas | photo-1 (masculino, jaleco) |
-| Laboratórios | photo-1 (masculino, jaleco) |
-| Farmácias | qualquer dos dois |
-| Nutricionistas | photo-2 (feminino, casual) |
-| Fisioterapia | photo-1 (masculino, jaleco) |
-| Psicologia | photo-2 (feminino, casual) |
-| Odontologia | photo-1 (masculino, jaleco) |
-| Estética e Bem-Estar | photo-2 (feminino, casual) |
+| Perfil predominante do vertical | Placeholder sugerido |
+|---------------------------------|----------------------|
+| Profissional de traje formal / jaleco / uniforme técnico | photo-1 (masculino, jaleco) |
+| Profissional de traje casual / blazer / lifestyle | photo-2 (feminino, casual) |
+| Ambíguo ou misto | qualquer dos dois |
 
-A heurística é só ponto de partida. Se a referência anexada mostra um perfil específico, ou se a composição/tom do template pede o outro perfil, o designer pode trocar livremente.
+Se a referência anexada mostra um perfil específico, ou se a composição/tom do template pede o outro perfil, o designer pode trocar livremente.
 
 ## Como usar no HTML
 
@@ -41,7 +37,7 @@ Cole o conteúdo do arquivo direto no `src` da `<img>`:
 
 Sempre acompanhe de:
 - `object-fit: contain` (não `cover`) — preserva a figura inteira sem cortar.
-- `object-position: bottom center` — alinha pés ao rodapé do slot, espelhando o anchor `bottom-center` que o runtime do HealthMarket aplica em `image-variable.ts`.
+- `object-position: bottom center` — alinha pés ao rodapé do slot, espelhando o anchor `bottom-center` que o runtime aplica em `image-variable.ts`.
 - `border-radius: 0` — cutout perde o sentido se o slot for circular ou arredondado.
 
 Padrões prontos de posição (hero cover, CTA lateral, overlap): ver [`../professional-photo-placements.md`](../professional-photo-placements.md).

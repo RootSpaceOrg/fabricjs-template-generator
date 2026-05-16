@@ -8,7 +8,7 @@ Anote a escolhida em `notes.md`.
 
 ## Editorial clínico
 
-Visual de revista médica premium. Bom para clínicas que querem se posicionar como autoridade.
+Visual de revista médica premium. Bom para marcas técnicas ou reguladas que querem se posicionar como autoridade (saúde, finanças, educação, jurídico).
 
 - **Tipografia:** display serifa moderna (Playfair Display, DM Serif Display) + body sans neutra (Inter, DM Sans).
 - **Paleta:** brancos cremosos (#F7F3EE), pretos profundos (#1A1A1A), um único acento de marca em pontos cirúrgicos.
@@ -35,7 +35,7 @@ Visual de conta de educação no Instagram (Anitta-ensina-tudo, escolas modernas
 
 ## Soft wellness
 
-Estética spa/yoga/nutrição funcional. Bom para nutricionistas, estética, bem-estar.
+Estética spa/yoga/lifestyle. Bom para marcas com apelo emocional e visual orgânico (bem-estar, gastronomia natural, moda slow, turismo).
 
 - **Tipografia:** display serifa orgânica (Cormorant Garamond, Crimson Pro) + body sans suave (Lato, Open Sans, Nunito 300-400).
 - **Paleta:** tons terra (bege, oliva, ferrugem suave), brancos quentes (#FAF8F5), acentos primary em verde-musgo / coral pessego / vinho suave.
@@ -62,7 +62,7 @@ Visual de relatório/whitepaper/insight. Bom para laboratórios, conteúdo técn
 
 ## Luxury refinado
 
-Visual de luxo silencioso (silent luxury). Bom para odontologia premium, estética alto padrão.
+Visual de luxo silencioso (silent luxury). Bom para marcas premium de nicho (joalheria, arquitetura, moda alto padrão, serviços exclusivos).
 
 - **Tipografia:** serifa de alto contraste (Bodoni Moda, Cormorant SC) + sans extra-light (Manrope 200-300).
 - **Paleta:** off-whites, dourados muito sutis, pretos profundos. Sem cor saturada.
@@ -93,7 +93,7 @@ Quando o ambiente não permite Google Fonts e você precisa de fallback do siste
 | Luxury refinado | Georgia, "Times New Roman" | "Trebuchet MS", "Segoe UI" |
 | Brutalist | "Arial Black", Impact | Arial, "Helvetica Neue" |
 
-Quando possível, **importe Google Fonts** via `<link>` no `<head>` — a qualidade é muito maior que os stacks do sistema. O editor HealthMarket resolve fontes na carga.
+Quando possível, **importe Google Fonts** via `<link>` no `<head>` — a qualidade é muito maior que os stacks do sistema. O editor resolve fontes na carga.
 
 ---
 

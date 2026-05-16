@@ -1,11 +1,11 @@
 # Professional photo — posições estratégicas (cutout PNG)
 
-Catálogo de 3 padrões prontos para `<img data-image-type="professionalPhoto">` em templates HealthMarket. Todos assumem PNG cutout (fundo transparente) — placeholders em [`./placeholders/`](./placeholders/).
+Catálogo de 3 padrões prontos para `<img data-image-type="professionalPhoto">`. Todos assumem PNG cutout (fundo transparente) — placeholders em [`./placeholders/`](./placeholders/).
 
 ## Princípios
 
 - **Sempre `object-fit: contain`** (nunca `cover`): cutout precisa preservar a figura inteira. `cover` recortaria pés/cabeça e quebraria o efeito.
-- **Sempre `object-position: bottom center`**: o runtime do HealthMarket (`image-variable.ts:92-94`) ancora `bottom-center` por padrão para `professionalPhoto`. O HTML deve refletir o mesmo anchor para evitar surpresa visual quando o usuário sobe sua foto real.
+- **Sempre `object-position: bottom center`**: o runtime (`image-variable.ts:92-94`) ancora `bottom-center` por padrão para `professionalPhoto`. O HTML deve refletir o mesmo anchor para evitar surpresa visual quando o usuário sobe sua foto real.
 - **Sempre `border-radius: 0`**: cutout perde sentido em slot circular/arredondado. Avatar circular é exceção que precisa de pedido explícito (ver "Avatar circular" no fim).
 - **Evite cobrir a face**: a face fica na zona superior (~30% do slot). Não posicione textos ou outros elementos sobre ela.
 - **Aspect ratio do slot ≈ aspect ratio do PNG (~3:4 = `0.78`)**: o `gp2-html-reviewer` flagra slots com ratio fora de `0.55–1.10` como finding técnico. Por quê: com `object-fit: contain`, slots muito altos (ratio < 0.55) ou muito largos (ratio > 1.10) deixam metade do slot vazia e tornam fácil para o converter calcular `originWidth/Height` errado (sintoma típico: figura cobrindo só metade do slot no editor). Faixa saudável: `9:16` (0.56) até `1:1` (1.00). Para "ocupar mais espaço visual", aumente proporcionalmente width E height — não estique só uma das dimensões.
@@ -18,7 +18,7 @@ Catálogo de 3 padrões prontos para `<img data-image-type="professionalPhoto">`
 
 Foto ocupa metade do slide 1 (~50% da largura, ~88% da altura), texto na coluna oposta. Aproveita o cutout para a figura "respirar" sem moldura.
 
-**Quando usar**: capa de carrossel de apresentação ("Conheça o Dr. João"), slide hero de single-post sobre o profissional, qualquer abertura onde a presença humana é o protagonista visual.
+**Quando usar**: capa de carrossel de apresentação ("Conheça [nome]"), slide hero de single-post sobre o profissional/fundador, qualquer abertura onde a presença humana é o protagonista visual.
 
 ```html
 <!-- Slide 1 (capa) — canvas 1080x1350 -->
@@ -39,7 +39,7 @@ Foto ocupa metade do slide 1 (~50% da largura, ~88% da altura), texto na coluna 
   <p style="position:absolute; left:60px; top:760px; width:480px;
             font-family:'Inter'; font-size:24px; font-weight:400;
             color:#3A3A3A; line-height:1.4;">
-    20 anos cuidando da sua mobilidade com fisioterapia ortopédica especializada.
+    20 anos de experiência transformando resultados de quem confia no nosso trabalho.
   </p>
 
   <!-- Coluna direita: foto profissional cutout. Slot 540x720 (ratio 0.75 ≈ PNG cutout 3:4).

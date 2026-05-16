@@ -1,6 +1,6 @@
 ---
 name: gp2-pipeline
-description: "Orchestrator da Pipeline GetPosts v2. Roda em sequência: gp2-request-interpreter → gp2-html-designer → gp2-html-reviewer → gp2-template-marker → gp2-template-converter → gp2-template-result-reviewer → gp2-template-uploader → editor save/thumbnails. Aplica iteration policy, decide quando seguir/refazer/escalar, e consolida evidências. Use sempre que o usuário pedir para criar um template HealthMarket de ponta a ponta."
+description: "Orchestrator da Pipeline GetPosts v2. Roda em sequência: gp2-request-interpreter → gp2-art-director → gp2-html-designer → gp2-html-reviewer → gp2-template-marker → gp2-template-converter → gp2-template-result-reviewer → gp2-template-uploader → editor save/thumbnails. Aplica iteration policy, decide quando seguir/refazer/escalar, e consolida evidências. Pipeline agnóstica a vertical — funciona para qualquer segmento de marca. Use sempre que o usuário pedir para criar um template de social media de ponta a ponta."
 ---
 
 # gp2-pipeline
@@ -9,34 +9,36 @@ Orchestrator oficial da Pipeline GetPosts v2.
 
 ## Quando usar
 
-Sempre que o usuário pedir para criar um template HealthMarket completo (post, carrossel, story) e quiser ele publicado no editor. Frases-gatilho:
+Sempre que o usuário pedir para criar um template de social media completo (post, carrossel, story) e quiser ele publicado no editor. Frases-gatilho:
 
 - "cria um carrossel sobre…"
-- "faz um post para clínica de…"
+- "faz um post para [qualquer vertical]…"
 - "gera um template de…"
 - "publica como draft…"
 
 ## Sequência oficial
 
 ```
-1. gp2-request-interpreter          → brief.md
-2. gp2-html-designer                 → template.html (3 renders: low/mid/high-fi)
-3. gp2-html-reviewer                 → PASS|REVISE|FAIL (gate técnico determinístico + julgamento visual do agente)
-4. gp2-template-marker               → template.html marcado + template-summary.md
-5. gp2-template-converter            → slide-N.json + manifest.json
-6. gp2-template-result-reviewer      → PASS|PASS_WITH_WARNINGS|FAIL
-7. gp2-template-uploader             → upload S3 + Supabase
-8. editor save/thumbnails            → via flag --execute --generate-thumbnails do uploader
-9. Cleanup de artifacts              → apaga pasta artifacts/<slug>/ após upload confirmado
-10. Relatório consolidado
+1. gp2-request-interpreter          → brief.md (+ reference-spec.md em reference-driven mode)
+2. gp2-art-director                 → visual-plan.md (família, paleta, composição por slide, movimento memorável, mapeamento data-variable)
+3. gp2-html-designer                → template.html (3 renders: low/mid/high-fi executando o visual-plan)
+4. gp2-html-reviewer                → PASS|REVISE|FAIL (gate técnico + fidelidade ao visual-plan)
+5. gp2-template-marker              → template.html marcado + template-summary.md
+6. gp2-template-converter           → slide-N.json + manifest.json
+7. gp2-template-result-reviewer     → PASS|PASS_WITH_WARNINGS|FAIL
+8. gp2-template-uploader            → upload S3 + Supabase
+9. editor save/thumbnails           → via flag --execute --generate-thumbnails do uploader
+10. Cleanup de artifacts            → apaga pasta artifacts/<slug>/ após upload confirmado
+11. Relatório consolidado
 ```
 
 ## Iteration policy
 
 | Etapa | Loop interno | Loop externo (orquestrador) |
 |-------|--------------|----------------------------|
+| Art-director | — | reexecuta se plano estiver incompleto (raro) |
 | Designer (low/mid/high-fi) | passos fixos; refaz 1× cada passo se auto-check falhar | — |
-| HTML reviewer | — | máx 2 revisões antes de FAIL |
+| HTML reviewer | — | máx 2 revisões antes de FAIL; se reviewer apontar problema de plano → volta ao art-director |
 | Marker audit | — | máx 2 fixes antes de escalar |
 | Converter validator | — | máx 2 fixes antes de escalar |
 | Result reviewer | — | máx 2 fixes (devolvidos ao converter) |
@@ -54,7 +56,8 @@ artifacts: <lista de paths>
 
 Upload **só** acontece quando todos abaixo são verdadeiros:
 
-- `gp2-html-reviewer.status === "PASS"` (findings técnicos críticos = 0; julgamento visual: adequado ou forte);
+- `gp2-art-director` produziu `visual-plan.md` completo (família, paleta, plano de slides, movimento memorável, mapeamento data-variable);
+- `gp2-html-reviewer.status === "PASS"` (findings técnicos críticos = 0; fidelidade ao plano: faithful ou partial com divergências documentadas; execução: adequada ou forte);
 - `gp2-template-marker` audit: `PASS`;
 - `gp2-template-converter` validator (`validate-slides.js`): exit 0;
 - `gp2-template-result-reviewer.status` ∈ {`PASS`, `PASS_WITH_WARNINGS`};
@@ -63,6 +66,7 @@ Upload **só** acontece quando todos abaixo são verdadeiros:
 Se algum falha:
 - Em casos seguros (mecânicos, óbvios), revise automaticamente dentro do loop.
 - Em casos que precisam de decisão criativa do usuário, pergunte. Não invente direção.
+- Se o reviewer apontar `planFidelity: "diverged"` com divergências não documentadas → devolva ao designer com instrução específica (não ao art-director, a menos que o plano seja o problema).
 
 ## Cleanup de artifacts
 
@@ -135,25 +139,30 @@ Por template processado:
 - template ID (do Supabase);
 - nome;
 - contagem de slides;
-- HTML reviewer status + contagem de findings (técnicos vs estilísticos);
+- art-director: família estética + composições usadas (A1–A8 por slide);
+- HTML reviewer status + findings técnicos + fidelidade ao plano + data-variable cobertura;
 - marker audit status;
 - converter validator status (exit code);
 - result reviewer status;
 - upload status;
 - thumbnail/editor save status;
 - pasta de artifacts;
-- paths de evidência (screenshots, relatórios, `template-summary.md`).
+- paths de evidência (screenshots, visual-plan.md, html-review.md, `template-summary.md`).
 
 ## Estrutura de artifacts esperada
 
 ```
 artifacts/
-├── gp2-request-interpreter/<slug>/brief.md
+├── gp2-request-interpreter/<slug>/
+│   ├── brief.md
+│   └── reference-spec.md      ← somente reference-driven
+├── gp2-art-director/<slug>/
+│   └── visual-plan.md         ← família, paleta, composição por slide, movimento, data-variable
 ├── gp2-html-designer/<slug>/
 │   ├── template.html
 │   ├── template-v1.html, template-v2.html
 │   ├── screenshots/
-│   └── notes.md
+│   └── notes.md               ← divergências do plano documentadas
 ├── gp2-template-marker/<slug>/
 │   ├── template.html (marcado)
 │   ├── marker-audit.json/.md
@@ -171,7 +180,8 @@ artifacts/
 
 - **Não suba template com design fraco**, mesmo que todos os gates técnicos passem. Se você (orquestrador) olhar para os screenshots high-fi do designer e perceber que está medíocre, devolva ao designer com instrução clara em vez de prosseguir.
 - **Não force secondary brand color** quando o brief decidiu por primária somente.
-- **Não invente skills** que não estão na lista oficial. A v2 tem 7 skills. Se você sente falta de uma 8ª, é provavelmente cerimônia (foi essa lição que fundiu o context-analyzer no marker).
+- **Não invente skills** que não estão na lista oficial. A v2 tem 8 skills (incluindo gp2-art-director). Se você sente falta de uma 9ª, é provavelmente cerimônia.
+- **Não pule o art-director** mesmo que o pedido pareça simples. Sem visual-plan.md, o designer cai de volta no modo v1 (viés de repetição, cores sem papel explícito, data-variable descobertos pelo marker).
 
 ## Resposta final por template
 
@@ -182,8 +192,16 @@ artifacts/
 - **Slides:** <N>
 - **Artifact:** `artifacts/.../<slug>/`
 
+### Direção criativa (art-director)
+- Família estética: <nome>
+- Paleta: primary `<hex>` / secondary `<hex>`
+- Composições: slide1=<A?>, slide2=<A?>, ... (diversidade: <N> tipos distintos)
+- Movimento memorável: <nome>
+- data-variable mapeados: <N> elementos
+
 ### Gates
-- HTML reviewer: PASS (técnicos: 0, julgamento visual: forte)
+- Art-director: PASS (visual-plan.md completo)
+- HTML reviewer: PASS (técnicos: 0, fidelidade ao plano: faithful, execução: forte)
 - Marker audit: PASS
 - Converter validator: PASS (exit 0)
 - Result reviewer: PASS_WITH_WARNINGS (warnings: 1)
@@ -192,7 +210,7 @@ artifacts/
 - Cleanup: OK (artifacts/<slug>/ removido)
 
 ### Evidências
-_(artifacts removidos após upload — template acessível pelo ID acima no editor HealthMarket)_
+_(artifacts removidos após upload — template acessível pelo ID acima no editor)_
 ```
 
 Em batch, consolide todos os blocos com totais ao final.

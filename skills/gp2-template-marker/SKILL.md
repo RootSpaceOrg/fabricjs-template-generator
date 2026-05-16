@@ -61,7 +61,7 @@ artifacts/gp2-template-marker/<slug>/
 1. Confirme `html-review.json.status === "PASS"`. Se não, recuse e devolva ao reviewer.
 2. Copie `template.html` para `artifacts/gp2-template-marker/<slug>/template.html`. A original do designer fica intocada.
 3. Garanta o cabeçalho do template está correto:
-   - `<html lang="pt-BR" data-template-name="..." data-segment="...">` (8 segmentos HealthMarket).
+   - `<html lang="pt-BR" data-template-name="..." data-segment="...">` (slug do vertical inferido do brief — kebab-case).
    - `<meta charset="utf-8">`.
    - `<meta name="hm-fonts" content="Fonte1,Fonte2">` listando todas as famílias usadas no CSS.
    - Opcional: `<meta name="hm-detected-primary" content="#...">` e `secondary` se você quiser fixar e pular auto-detecção.
@@ -152,7 +152,7 @@ Eyebrow sobre laserterapia premium; rótulo da clínica do Dr. João
 **Regras invioláveis:**
 
 1. **Slots equivalentes em slides diferentes recebem a mesma string.** Eyebrow do slide 1, slide 3 e slide 5 → mesma description. O LLM diferencia pelo contexto da página (mensagem-chave da narrative arc, que ele já vê separadamente).
-2. **Exemplos NUNCA citam o nicho atual do template.** Templates HealthMarket viram dezenas de nichos; descriptions são reutilizáveis. Use exemplos de formato (`'01 / DOR'`, `'03 / O ESTUDO'`), não de conteúdo (`'01 / FISIOTERAPIA'`).
+2. **Exemplos NUNCA citam o vertical atual do template.** O template vai ser usado em dezenas de verticais diferentes; descriptions são reutilizáveis. Use exemplos de formato (`'01 / DOR'`, `'03 / O ESTUDO'`), não de conteúdo específico de vertical (`'01 / FISIOTERAPIA'`).
 3. **Formato e conteúdo são coisas diferentes.** `formato 'NN / TEMA'` é estrutura; `ex:` mostra como aplicar.
 4. **3 exemplos é o sweet spot.** 1 vira regra rígida, 5+ vira ruído. 3 cobrem variação curto/médio/longo.
 5. **Sweet spot de tamanho: 200-300 chars por description.** Cada description vai pra cada elemento de cada template no prompt do LLM — pesar tokens importa.

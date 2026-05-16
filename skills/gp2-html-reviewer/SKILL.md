@@ -1,6 +1,6 @@
 ---
 name: gp2-html-reviewer
-description: "Critique do HTML produzido por gp2-html-designer antes do marker. Gate determinístico (técnico) + julgamento visual do agente. Use após gp2-html-designer, antes de gp2-template-marker. Não gera HTML, não converte Fabric, não publica."
+description: "Critique do HTML produzido por gp2-html-designer antes do marker. Gate determinístico (técnico via script) + julgamento visual baseado no visual-plan.md do art-director. Sem Impeccable. Use após gp2-html-designer, antes de gp2-template-marker. Não gera HTML, não converte Fabric, não publica."
 ---
 
 # gp2-html-reviewer
@@ -13,15 +13,19 @@ O reviewer tem **duas responsabilidades separadas**:
 
 1. **Gate técnico determinístico** — o script `review-html-design.py` detecta problemas mecânicos (overflow, texto cortado, sobreposição não-intencional, fontes faltando, etc.). Qualquer finding crítico bloqueia. Warnings do script também precisam de atenção, mas o reviewer pode aceitá-los com justificativa quando são consequência de uma escolha de design consciente documentada em `notes.md`.
 
-2. **Julgamento visual do agente** — inspecionar os screenshots e decidir se o design tem qualidade suficiente para avançar. Aqui o agente usa seu próprio critério; não depende de ferramentas externas. O objetivo é evitar templates que passam no gate técnico mas estão visualmente fracos, genéricos ou mal executados.
+2. **Julgamento visual do agente baseado no visual-plan** — inspecionar os screenshots e decidir se o designer executou o plano do art-director corretamente e com qualidade suficiente. O critério não é genérico ("parece bom?") — é específico ("o plano dizia A3 split assimétrico para o slide 2; está assim?"). Isso evita tanto templates fracos quanto templates fortes que fogem do plano definido.
+
+Sem Impeccable. Sem ferramentas externas de julgamento visual. Apenas o script técnico + o agente comparando screenshots × visual-plan.
 
 ## Inputs
 
 ```
+artifacts/gp2-art-director/<slug>/visual-plan.md   ← plano do art-director (LEIA PRIMEIRO)
 artifacts/gp2-html-designer/<slug>/
 ├── template.html          ← high-fi final
 ├── screenshots/slide-N.png
-└── notes.md               ← decisões do designer (família estética, movimento memorável)
+└── notes.md               ← divergências documentadas pelo designer
+artifacts/gp2-request-interpreter/<slug>/reference-spec.md  ← somente reference-driven
 ```
 
 Se faltar screenshots, renderize antes:
@@ -32,24 +36,25 @@ node ../../scripts/render-html-screenshots.js artifacts/gp2-html-designer/<slug>
 
 ## Workflow
 
-1. Leia `notes.md` para entender as escolhas conscientes do designer.
-2. **Detecte o modo:** verifique se `artifacts/gp2-request-interpreter/<slug>/reference-spec.md` existe. Se sim, é reference-driven — você precisa checar aderência ao spec além das checagens normais.
-3. Rode o preflight determinístico:
+1. **Leia `visual-plan.md` inteiro.** Este é o plano que o designer deveria ter executado. Internalize: família estética, hexs de primary/secondary, tipo compositivo de cada slide (A1–A8), instrução do movimento memorável, tabela de data-variable.
+2. Leia `notes.md` para entender divergências documentadas pelo designer (fonte substituída, ajuste de composição, etc.).
+3. **Detecte o modo:** verifique se `reference-spec.md` existe. Se sim, é reference-driven — check adicional de aderência ao spec.
+4. Rode o preflight determinístico:
 
 ```bash
 python3 ../../scripts/review-html-design.py artifacts/gp2-html-designer/<slug>/
 ```
 
-Esse script gera `html-review.json` + `html-review.md` e roda o gate Impeccable internamente.
+O script gera `html-review.json` + `html-review.md`. Leia os findings antes de prosseguir.
 
-4. Inspecione visualmente cada `screenshots/slide-N.png` aplicando os critérios de julgamento visual abaixo.
-5. **Em reference-driven mode:** compare screenshots × `reference-spec.md`. Acuse drift como finding técnico se:
-   - Hexs aplicados não batem com a paleta declarada (tolerância: ΔE > 10 entre cor aplicada e cor do spec).
-   - Família tipográfica usada está em categoria diferente da declarada (ex: spec pediu serifa display, designer usou sans).
+5. Inspecione visualmente cada `screenshots/slide-N.png` comparando com o visual-plan (ver critérios abaixo).
+6. **Em reference-driven mode:** compare screenshots × `reference-spec.md` adicionalmente. Acuse drift como finding técnico se:
+   - Hexs aplicados não batem com a paleta declarada (tolerância: ΔE > 10 sem documentação em notes.md).
+   - Família tipográfica está em categoria diferente da declarada (serifa ↔ sans, condensada ↔ regular) sem documentação.
    - Movimento memorável declarado não está visível.
    - Elementos editoriais listados no spec estão ausentes.
-   - Se o designer divergiu **e** documentou em `notes.md` (ex: "Bebas Neue indisponível, usei Anton"), trate como warning, não bloqueio.
-6. Decida o status final:
+   - Se divergiu **e** documentou em `notes.md`, trate como warning, não bloqueio.
+7. Decida o status final:
 
 | Status | Quando |
 |--------|--------|
@@ -83,24 +88,42 @@ Esse script gera `html-review.json` + `html-review.md` e roda o gate Impeccable 
 - Elementos editoriais listados no spec ausentes (eyebrow numerado faltando, fios horizontais ausentes, etc.).
 - Tratamento de foto profissional difere do spec (spec pediu retangular editorial, designer usou avatar circular).
 
-## Critérios de julgamento visual do agente
+## Critérios de julgamento visual baseados no visual-plan
 
-O agente olha para os screenshots e se pergunta:
+O agente compara os screenshots com o `visual-plan.md`. A pergunta não é "parece bom?" — é "o designer executou o plano corretamente e com qualidade?"
+
+### Checklist de fidelidade ao plano (verificar slide por slide)
+
+Para cada slide, abra o screenshot e compare com o plano:
 
 | Critério | PASS se… | REVISE se… |
 |----------|----------|------------|
-| **Identidade visual** | O carrossel tem uma assinatura reconhecível (família estética, paleta, movimento memorável) | Parece um template genérico sem personalidade — poderia ser de qualquer ferramenta |
-| **Hierarquia** | Título → subtítulo → corpo é instantâneo em cada slide | Tudo parece do mesmo peso; o olho não sabe por onde começar |
-| **Ritmo do carrossel** | Slides têm composições visualmente distintas entre si; capa, miolo e CTA são reconhecíveis pelo layout | Todos os slides parecem o mesmo layout com texto diferente |
-| **Movimento memorável** | Existe ao menos um elemento editorial consistente e não-genérico (eyebrow numerado, fio horizontal, número de slide gigante, etc.) | O design poderia ter sido feito no Canva sem nenhuma escolha editorial própria |
-| **Tipografia** | Pelo menos dois pesos ou famílias distintos; tamanhos seguem escala com intenção | Uma só família, um só peso, tamanhos arbitrários |
-| **Fidelidade ao brief** | O design reflete o tom e conteúdo pedido | O design poderia ser de qualquer nicho de saúde sem nenhuma adaptação |
+| **Tipo compositivo** | O slide usa o código A1–A8 definido no plano (zona de headline, zona de imagem, densidade) | O layout é diferente do planejado sem justificativa em notes.md |
+| **Paleta** | Os hexs de primary/secondary do plano estão aplicados corretamente; slides LIGHT/DARK/Brand usam os neutros/fundos definidos | Paleta diferente do plano; cinzas frios genéricos em vez dos neutros do plano |
+| **Movimento memorável** | A instrução composicional do plano foi executada (posição, tamanho, cor, spacing conforme especificado) | Elemento ausente ou executado de forma diferente do que a instrução descreve |
+| **data-variable** | Elementos da tabela de mapeamento têm os atributos `data-variable` / `data-variable-stops` no HTML | Elementos brand-color sem atributo; gradiente brand sem `data-variable-stops` |
+| **Diversidade compositiva** | Slides consecutivos têm layouts visivelmente distintos; não é "mesmo layout com texto diferente" | 3+ slides consecutivos com composição idêntica ou quase idêntica |
 
-O agente não precisa atingir todos os critérios para dar PASS — precisa ter uma visão de conjunto. Um design fortemente intencional pode ser incomum em alguns critérios e ainda assim ser forte. A pergunta-chave é: **"Eu publicaria isso no HealthMarket?"**
+### Checklist de qualidade de execução
+
+| Critério | PASS se… | REVISE se… |
+|----------|----------|------------|
+| **Hierarquia** | Título → subtítulo → corpo é instantâneo em cada slide | Tudo parece do mesmo peso; o olho não sabe por onde começar |
+| **Tipografia** | Pelo menos dois pesos ou famílias distintos; tamanhos seguem escala com intenção | Uma só família, um só peso, tamanhos arbitrários |
+| **Identidade visual** | O carrossel tem uma assinatura reconhecível pela execução do plano | Parece template genérico — o plano não foi executado com fidelidade suficiente |
+| **Fidelidade ao brief** | O design reflete o tom e vertical pedido | O design poderia ser de qualquer vertical sem nenhuma adaptação ao contexto |
+
+### Como ponderar divergências documentadas
+
+- Divergência documentada em `notes.md` com justificativa técnica válida (fonte indisponível, contraste obrigou ajuste) → trate como **warning**, não bloqueio.
+- Divergência não documentada → trate como **finding técnico** (mesmo que pareça visualmente ok — a rastreabilidade importa).
+- Divergência que melhora objetivamente o resultado → aceite, documente no `html-review.md`, e instrua o designer a atualizar o `notes.md`.
+
+A pergunta-chave é: **"O designer executou o plano do art-director e o resultado está publicável?"**
 
 ## Output
 
-Sobrescreva `html-review.json` com a classificação, incluindo o campo `intentional`:
+Sobrescreva `html-review.json`:
 
 ```json
 {
@@ -108,6 +131,12 @@ Sobrescreva `html-review.json` com a classificação, incluindo o campo `intenti
   "technicalFindings": [
     { "slide": 1, "issue": "...", "severity": "blocker", "fix": "..." }
   ],
+  "planFidelity": {
+    "verdict": "faithful|partial|diverged",
+    "divergences": [
+      { "slide": 2, "expected": "composição A3 split assimétrico", "found": "composição A2 split 50/50", "documented": false }
+    ]
+  },
   "visualJudgment": {
     "verdict": "strong|adequate|weak",
     "notes": "..."
@@ -125,15 +154,21 @@ E `html-review.md` para humanos:
 ## Findings técnicos (bloqueantes)
 - Slide 2: título sai 30px do canvas direito → reduzir width do `<h1>` para 960px ou font-size para 88px.
 
-## Julgamento visual
-- Identidade: forte — eyebrow numerado + tipografia display serif consistente em todos os slides.
-- Ritmo: adequado — capa / miolo educativo / CTA têm layouts distintos.
-- Veredito: publicável.
+## Fidelidade ao plano (visual-plan.md)
+- Composições: slide 1 A1 ✓ | slide 2 A3 → implementado como A2 (não documentado) | slide 3 A2 ✓
+- Paleta: hexs corretos em todos os slides ✓
+- Movimento memorável: instrução executada ✓
+- data-variable: 3 de 5 elementos marcados — faltou fundo do slide 3 Brand e eyebrow do slide 2
+
+## Julgamento de execução
+- Hierarquia: forte — título > subtítulo > corpo instantâneo.
+- Diversidade compositiva: adequada — 3 tipos diferentes de composição.
+- Veredito: publicável com correções dos data-variable faltantes.
 
 ## Próximo passo
 - PASS → gp2-template-marker
 - REVISE → gp2-html-designer com lista acima
-- FAIL → reabrir brief com gp2-request-interpreter
+- FAIL → reabrir com gp2-art-director (plano ruim) ou gp2-request-interpreter (brief errado)
 ```
 
 ## Loop de revisão
@@ -145,10 +180,12 @@ Máximo **2 revisões**. Após o segundo `REVISE` ainda falhar, devolva `FAIL` e
 ```markdown
 Revisão HTML: PASS|REVISE|FAIL
 Artifact: <path>
-Findings técnicos: <N>
-Findings estilísticos: <N> (sendo <M> intencionais)
+Findings técnicos: <N> críticos, <M> warnings
+Fidelidade ao plano: faithful|partial|diverged (<N> divergências — <M> documentadas)
+data-variable: <N> de <total> elementos marcados corretamente
+Julgamento de execução: strong|adequate|weak
 Evidência: <path>/html-review.md
-Próximo passo: gp2-template-marker | gp2-html-designer (revisão) | gp2-request-interpreter (fail)
+Próximo passo: gp2-template-marker | gp2-html-designer (revisão) | gp2-art-director (plano inadequado) | gp2-request-interpreter (brief errado)
 ```
 
 ## O que esta skill NÃO faz
@@ -157,3 +194,4 @@ Próximo passo: gp2-template-marker | gp2-html-designer (revisão) | gp2-request
 - Não aplica correções; produz lista para o designer.
 - Não roda o validador Fabric (`validate-slides.js`) — esse é o `gp2-template-converter`.
 - Não decide se o template tem mercado/funcionalidade — só visual + estrutural.
+- Não usa Impeccable nem nenhuma ferramenta externa de julgamento visual — apenas script técnico + agente lendo screenshots × visual-plan.

@@ -32,7 +32,7 @@ Toda description segue a fórmula:
 
 ## Regras invioláveis
 
-1. **Exemplos são genéricos, não do nicho atual.** Template é de fisioterapia? Exemplos do eyebrow continuam `'01 / DOR', '03 / O ESTUDO', '07 / PRÓXIMO PASSO'` — nunca `'01 / FISIOTERAPIA'`. Templates HealthMarket viram dezenas de nichos; descriptions são reutilizáveis.
+1. **Exemplos são genéricos, não do vertical atual.** Template é de qualquer nicho? Exemplos do eyebrow continuam `'01 / DOR', '03 / O ESTUDO', '07 / PRÓXIMO PASSO'` — nunca `'01 / FISIOTERAPIA'` ou qualquer referência ao vertical específico. O template vai ser usado em dezenas de verticais; descriptions são reutilizáveis.
 2. **Formato e conteúdo são coisas diferentes.** `formato 'NN / TEMA'` define a estrutura. `ex:` mostra como aplicar. Nunca escrever `formato 'NN / nutrição'` (mistura).
 3. **3 exemplos é o sweet spot.** 1 vira regra rígida. 5+ vira ruído. 3 cobrem curto/médio/longo.
 4. **Mesma description para slots equivalentes.** Eyebrow no slide 1 e eyebrow no slide 5 recebem **a mesma string**. O número do slide vem do contexto da página (mensagem-chave da narrative arc), que o LLM já vê separadamente.
@@ -44,7 +44,7 @@ Toda description segue a fórmula:
 
 ### Eyebrow numerado
 
-Pequeno rótulo acima do título com numeração sequencial. ALL CAPS. Geralmente em cor primary brand. Movimento memorável comum em estética editorial clínica.
+Pequeno rótulo acima do título com numeração sequencial. ALL CAPS. Geralmente em cor primary brand. Movimento memorável comum em estética editorial e magazine.
 
 ```
 Eyebrow editorial da lâmina; formato 'NN / TEMA' onde NN é o número
@@ -59,8 +59,8 @@ Rótulo categórico curto, sem número. ALL CAPS. Categoriza o tema do slide ou 
 
 ```
 Eyebrow categórico; formato 'TEMA EM CAPS' sem numeração; rótulo curto
-que categoriza o slide; até 25 chars; ex: 'SAÚDE INTEGRATIVA',
-'EM 5 PASSOS', 'PARA VOCÊ'
+que categoriza o slide; até 25 chars; ex: 'EM 5 PASSOS',
+'PARA VOCÊ', 'TEMA CENTRAL'
 ```
 
 ### Hook do Slide 1
@@ -82,7 +82,7 @@ Linha curta abaixo do hook que complementa a promessa. Sans-serif body.
 ```
 Subtítulo de apoio ao hook do slide 1; formato frase corrida que
 complementa a promessa; 1 linha; 40-70 chars; ex: 'Por Dra. Ana Lima',
-'Um guia em 5 passos práticos', 'Baseado em 8 anos de prática clínica'
+'Um guia em 5 passos práticos', 'Baseado em anos de experiência'
 ```
 
 ### Título de slide intermediário (subtítulo da lâmina)

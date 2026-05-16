@@ -26,7 +26,7 @@ A regra "não prescreva direção estética" só vale no Free mode.
 | Decision | Why it belongs here |
 |----------|---------------------|
 | Asset type, dimensions, slide count | Hard input; can't be inferred later |
-| Health segment (one of 8) | Drives editor metadata and `data-segment` |
+| **Vertical / segmento de marca** (livre — inferido do pedido) | Drives editor metadata and `data-segment`; não há lista fixa de valores |
 | **Sequência narrativa** (Standard / Listicle / Tutorial / Comparação / Single-post) | Determina arco do carrossel e alternância de background — ver "Sequências narrativas" abaixo |
 | Per-slide narrative role (1–2 lines) | Story arc — derivado da sequência mas pode customizar |
 | **Hook do Slide 1** (fórmula + 1 linha de copy) | Slide 1 mata ou salva o carrossel — ver "Hook do Slide 1" abaixo |
@@ -164,7 +164,7 @@ Convenções de cor por slide (designer pode ajustar no Passo 2, mas o esqueleto
 - **Single-post:** o slide pode ser LIGHT, DARK ou Brand — escolha pelo tom do post
 
 Onde:
-- **LIGHT** = neutro claro derivado do preset HealthMarket (off-white quente)
+- **LIGHT** = neutro claro derivado do preset da marca (off-white quente)
 - **DARK** = neutro escuro derivado do preset (near-black com tint brand)
 - **Brand** = primary sólido OU gradient primary→secondary (se brief decidir 2 cores)
 
@@ -174,17 +174,17 @@ No Free mode os hexs ficam abertos para o designer materializar. No Reference-dr
 
 O Slide 1 tem 1 segundo para parar o scroll. Entregue o hook **já escrito** no brief, não só "o papel narrativo". Use uma das 5 fórmulas:
 
-| Fórmula | Quando funciona | Exemplo HealthMarket |
-|---------|-----------------|----------------------|
-| **Afirmação polêmica** | desafia crença comum do nicho | "Você está fazendo skincare errado" |
-| **Número + benefício** | educativo / listicle | "7 sinais de que você precisa de um nutricionista" |
-| **Pergunta que dói** | toca em dor real do segmento | "Por que sua clínica não tem agenda cheia?" |
-| **Resultado concreto** | prova social / case | "Como triplicamos os agendamentos em 30 dias" |
-| **Inversão de expectativa** | educativo com viés contraintuitivo | "Treinar mais não vai melhorar sua postura" |
+| Fórmula | Quando funciona | Exemplo |
+|---------|-----------------|---------|
+| **Afirmação polêmica** | desafia crença comum do vertical | "Você está fazendo skincare errado" |
+| **Número + benefício** | educativo / listicle | "7 sinais de que você precisa rever sua rotina" |
+| **Pergunta que dói** | toca em dor real do público | "Por que seu negócio ainda não tem agenda cheia?" |
+| **Resultado concreto** | prova social / case | "Como triplicamos os resultados em 30 dias" |
+| **Inversão de expectativa** | educativo com viés contraintuitivo | "Trabalhar mais não vai melhorar sua performance" |
 
 ### Regras do hook
 
-- **Nunca** comece com o nome da marca como headline ("Clínica X apresenta…" é frio).
+- **Nunca** comece com o nome da marca como headline ("Marca X apresenta…" é frio).
 - O hook deve **prometer um valor** que os slides seguintes entregam — não invente promessa que o conteúdo não cumpre.
 - Prefira hooks que admitam **prova visual** no slide (foto, número, frase curta) quando aplicável.
 - Em **Single-post**, o hook é o ponto central da arte (ex: o título principal do post de Dia das Mães).
@@ -253,7 +253,7 @@ Write `artifacts/gp2-request-interpreter/<slug>/brief.md`:
 - Slides: <N>
 
 ## Segmento
-<um dos 8: clinicas-medicas | laboratorios | farmacias | nutricionistas | fisioterapia | psicologia | odontologia | estetica-bem-estar>
+<vertical da marca inferido do pedido — slug em kebab-case, ex: clinicas-medicas, ecommerce-moda, academias, restaurantes, tech-saas, etc.>
 
 ## Sequência
 <Standard | Listicle | Tutorial | Comparação | Single-post>
@@ -370,20 +370,16 @@ Em condicional: declare a regra ("usar somente se o usuário enviar foto") para 
 
 ### Placeholder sugerido (quando há foto profissional)
 
-Sugira ao designer qual placeholder usar baseado no segmento HealthMarket. O designer embute a base64 inline no `template.html`; em produção o runtime troca pela foto real do usuário.
+Sugira ao designer qual placeholder usar. O designer embute a base64 inline no `template.html`; em produção o runtime troca pela foto real do usuário.
 
-| Segmento | Placeholder sugerido |
-|----------|----------------------|
-| Clínicas Médicas | `professional-photo-1.b64.txt` (masculino, jaleco) |
-| Laboratórios | `professional-photo-1.b64.txt` (masculino, jaleco) |
-| Farmácias | qualquer dos dois |
-| Nutricionistas | `professional-photo-2.b64.txt` (feminino, casual) |
-| Fisioterapia | `professional-photo-1.b64.txt` (masculino, jaleco) |
-| Psicologia | `professional-photo-2.b64.txt` (feminino, casual) |
-| Odontologia | `professional-photo-1.b64.txt` (masculino, jaleco) |
-| Estética e Bem-Estar | `professional-photo-2.b64.txt` (feminino, casual) |
+Há dois placeholders disponíveis — escolha pelo perfil mais provável do profissional da marca:
 
-A sugestão é heurística — o designer pode trocar se a composição/tom do template pedir o outro perfil. Em **reference-driven mode**, se a referência mostra um perfil específico (ex: dentista feminina, nutricionista masculino), priorize o placeholder mais próximo do que a referência mostra e anote no `reference-spec.md`.
+| Placeholder | Perfil |
+|-------------|--------|
+| `professional-photo-1.b64.txt` | Masculino, traje formal/jaleco |
+| `professional-photo-2.b64.txt` | Feminino, traje casual/blazer |
+
+Inferir pelo contexto do pedido: segmentos com predominância de profissionais de jaleco (medicina, odontologia, laboratório) → photo-1; segmentos com predominância casual ou feminino (bem-estar, nutrição, psicologia, moda) → photo-2; ambíguo → qualquer um. Em **reference-driven mode**, priorize o perfil que a referência mostra e anote no `reference-spec.md`.
 
 ### Posição sugerida
 
@@ -391,7 +387,7 @@ Sugira no `brief.md` qual das 3 posições estratégicas combina melhor com o pe
 
 - **Hero cover full-figure** — quando o slide 1 deve apresentar o profissional/marca antes de qualquer mensagem educativa ("Conheça o Dr. João", "Sou a Dra. Maria, especialista em…").
 - **CTA final lateral** — quando o último slide é "agende com" e o nome do profissional aparece na chamada.
-- **Overlap sobre foto contextual** — quando há foto de ambiente/clínica/asset que ganha com presença humana ancorando a cena (mostrar consultório + quem atende, equipamento + quem opera).
+- **Overlap sobre foto contextual** — quando há foto de ambiente/espaço/asset que ganha com presença humana ancorando a cena (mostrar o espaço + quem atende, equipamento + quem opera).
 - **Outra** — defina livremente se nenhuma das 3 cabe (ex: avatar circular pequeno em assinatura).
 
 Em templates com 2+ slots de foto profissional (ex: hero cover no slide 1 + CTA no slide N), use a mesma combinação em todos para o produto mostrar a foto real do usuário consistentemente.
@@ -402,7 +398,7 @@ Use **somente primária** quando:
 
 - o design pede impacto monocromático;
 - só um elemento precisa trocar com o preset de marca;
-- segmento sugere paleta enxuta (clínicas premium, psicologia introspectiva).
+- o vertical sugere paleta enxuta (marcas premium, serviços de alta percepção de valor).
 
 Use **primária + secundária** quando:
 
