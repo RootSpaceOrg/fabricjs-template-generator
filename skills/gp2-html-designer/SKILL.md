@@ -84,6 +84,17 @@ Escreva `template-v1.html` com:
 - **Zero cor de marca, zero gradiente, zero textura.**
 - **Implemente o tipo compositivo** de cada slide conforme o visual-plan (A1–A8): se o plano diz A3 (split assimétrico) para o slide 2, o esboço já deve ter a divisão 40/60 com imagem e texto nas zonas corretas.
 
+**⚠️ Gate de diferenciação v1 (OBRIGATÓRIO):** O template-v1 DEVE ter estas características que o diferenciam visivelmente dos passos seguintes:
+- Fundo de todos os slides = `#FFFFFF` (branco puro). Nenhum fundo escuro, brand ou gradiente.
+- Toda tipografia = uma única família system-ui. Sem Google Fonts, sem `<link>` de fonte.
+- Toda cor de texto = `#333333`. Sem cores brand, sem variação tonal.
+- Áreas de foto = `<div>` com `background: #E5E5E5`. Sem `<img>`, sem URLs.
+- Nenhum `data-variable`, `data-variable-stops`, ou `data-variable-target`. Zero variáveis.
+- Nenhum efeito: sem `box-shadow`, sem `opacity` parcial, sem gradiente, sem glow.
+- CSS inline simples — sem `<style>` block complexo com classes reutilizáveis.
+
+Se o template-v1 já tiver cores brand, gradientes, fontes finais ou imagens, **ele não é low-fi — é o template final disfarçado**. Refaça.
+
 Renderize com:
 
 ```bash
@@ -108,6 +119,8 @@ Se algo falhar, refaça **uma vez** (template-v1.1.html). Se ainda falhar, anote
 ### Passo 2 — Atmosfera visual (mid-fi)
 
 Objetivo: aplicar a paleta, tipografia e movimento memorável **conforme o visual-plan**.
+
+**⚠️ Pré-condição:** Antes de começar o Passo 2, confirme que `template-v1.html` **não** tem cores brand, gradientes ou fontes finais. Se tem, o Passo 1 foi feito errado — o Passo 2 não tem o que evoluir. Volte ao Passo 1.
 
 Em cima do `template-v1.html`, gere `template-v2.html` aplicando:
 
@@ -154,6 +167,8 @@ Refaça **uma vez** (template-v2.1.html) se falhar. Se ainda falhar, anote e sig
 ### Passo 3 — Polimento (high-fi)
 
 Objetivo: detalhes finos que separam design "ok" de "publicável".
+
+**⚠️ Gate de diferenciação v2→v3 (OBRIGATÓRIO):** O template.html DEVE ter pelo menos 3 diferenças visíveis em relação ao template-v2.html. Mudanças típicas do Passo 3: letter-spacing ajustado, tamanhos de fonte afinados, micro-alinhamentos corrigidos, opacidades sutis adicionadas, espaçamentos refinados. Se `diff template-v2.html template.html` não mostrar diferenças, o Passo 3 não aconteceu — refaça.
 
 Em cima de `template-v2.html`, escreva `template.html` aplicando:
 
@@ -315,7 +330,31 @@ Substitui o fundo sólido brand quando o brief decidiu usar duas cores. Use no `
 
 **Quando usar:** capa com fundo brand intenso, slide de CTA com identidade de cor forte, slide de dado numérico onde o número branco precisa de fundo saturado. **Não use em todos os slides** — o gradiente brand em excesso fica enjoativo e tira o contraste do carrossel.
 
-### 3. Faixa decorativa com fade-out (transição tonal)
+### 3. Escurecimento atmosférico de fundo brand (vinheta/profundidade)
+
+Fundo brand sólido + overlay transparente→escuro por cima. Cria profundidade e vinheta SEM usar cores brand no gradiente — o escurecimento se adapta a qualquer paleta.
+
+```html
+<!-- Fundo brand sólido que troca com a paleta -->
+<section class="slide" data-width="1080" data-height="1350"
+         style="position:relative; width:1080px; height:1350px;
+                background:#FF0066;"
+         data-variable="primary" data-variable-target="background">
+
+  <!-- Overlay de vinheta/escurecimento — cores neutras, NÃO brand -->
+  <div style="position:absolute; left:0; top:0; width:1080px; height:1350px;
+              background:radial-gradient(circle at 22% 0%, transparent 0%, rgba(0,0,0,0.85) 70%);">
+  </div>
+
+  <!-- Card, textos, etc. por cima -->
+</section>
+```
+
+**Anti-pattern:** usar cores brand literais no gradiente de escurecimento (`radial-gradient(... #FF0066 0%, #7A0730 28%, #120711 70%)`). Quando o usuário troca a paleta para azul, o gradiente continua rosa→vinho→escuro. Use `transparent→rgba(0,0,0,N)` para que o escurecimento se adapte.
+
+**Quando usar:** quando o visual-plan diz "escurecimento atmosférico" ou "vinheta" no campo de gradientes do slide. **NÃO use** `data-variable-stops` — o overlay é neutro. O fundo sólido já tem `data-variable="primary" data-variable-target="background"`.
+
+### 4. Faixa decorativa com fade-out (transição tonal)
 
 Um elemento que dissolve sua borda para criar suavidade entre seções do slide. Uso moderado — só quando a transição abrupta entre dois blocos de cor é um problema visual real.
 
@@ -327,6 +366,29 @@ Um elemento que dissolve sua borda para criar suavidade entre seções do slide.
 ```
 
 **Regra:** nunca use faixa decorativa como substituto de decisão de layout. Se você está usando para "tapar" uma junção feia entre dois elementos, corrija o layout em vez de esconder.
+
+### Glow / neon — como fazer no Fabric (CRÍTICO)
+
+Efeito de glow (brilho neon ao redor de um elemento) **não funciona** como círculo translúcido (`opacity: 0.16`) no Fabric — isso gera apenas um disco colorido. O glow real usa `box-shadow` no CSS:
+
+```html
+<!-- Glow neon ao redor de um painel -->
+<div style="position:absolute; left:123px; top:260px; width:834px; height:770px;
+            border-radius:34px; background:#10151D; border:2px solid #1B2028;
+            box-shadow: 0 0 60px 20px rgba(255,0,102,0.25);">
+</div>
+
+<!-- Glow neon ao redor de texto -->
+<h1 style="position:absolute; left:170px; top:392px; width:720px;
+           font-family:Montserrat; font-size:72px; font-weight:900;
+           color:#F4F4F6; text-shadow: 0 0 40px rgba(255,0,102,0.4);">
+  Título com glow
+</h1>
+```
+
+O converter traduz `box-shadow` para `shadow: { color: "rgba(255,0,102,0.25)", blur: 60, offsetX: 0, offsetY: 0 }` no objeto Fabric. `text-shadow` vira a mesma propriedade `shadow` no textbox.
+
+**Nunca use:** `<div>` circular com `opacity: 0.16` como substituto de glow — no editor isso renderiza como disco sólido translúcido sem bloom.
 
 ### Anti-patterns de gradiente (nunca faça)
 

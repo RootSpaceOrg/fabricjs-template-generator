@@ -119,6 +119,8 @@ const scale = visualWidth / cropW;
 
 `width`/`height` são as dimensões do crop **na fonte original**, NÃO o frame visual. O frame visível é `width * scaleX` por `height * scaleY`.
 
+**Quando a imagem fonte é menor que o frame visual (CRÍTICO):** Se a URL da imagem entrega dimensões menores que o frame no HTML (ex: imagem 400×300 num slot de 834×660), a imagem precisa ser **escalada para cima** para preencher o frame. O cálculo de `object-fit: cover` já trata isso — `scale = visualWidth / cropW` será > 1.0 (zoom in). Nunca emita `scaleX: 1.0, scaleY: 1.0` quando a imagem é menor que o frame — o resultado seria uma imagem pequena centralizada em vez de preencher o slot. Para URLs `picsum.photos/id/{ID}/{W}/{H}`, o W×H pedido deve coincidir com o frame visual para evitar esse problema.
+
 ## ClippableImage cutout — `object-fit: contain` (CRÍTICO para `professionalPhoto`)
 
 **Quando aplicar:** `<img>` com `object-fit: contain` (default da pipeline v2 para `data-image-type="professionalPhoto"` — ver `gp2-html-designer/references/professional-photo-placements.md`). O PNG é cutout transparente e a figura inteira deve aparecer dentro do slot, ancorada na borda escolhida via `object-position`.
@@ -318,6 +320,47 @@ O ângulo CSS → coords Fabric (ver tabela na seção de Padrão 1). `backgroun
 
 Se `data-variable-stops` tiver só `"primary"` (fundo sólido brand), **não crie roundedRect** — emita apenas `backgroundVariableConfig: { type: "solid", variable: "primary", alpha: 1 }` no root.
 
+### Padrão 2b — Escurecimento atmosférico de fundo brand
+
+O `<section>` tem `background` sólido brand + `data-variable="primary" data-variable-target="background"` + um `<div>` overlay com gradiente `transparent→rgba(0,0,0,N)` (sem `data-variable-stops`). O overlay é neutro (preto/transparente) — não brand.
+
+Emita:
+
+1. **`background`** no root: hex sólido da primary
+2. **`backgroundVariableConfig`** no root: `{ type: "solid", variable: "primary", alpha: 1 }`
+3. **`roundedRect` overlay** como primeiro objeto com gradient fill **literal** (sem `fillVariableConfig` — o overlay é neutro)
+
+```json
+{
+  "version": "5.5.2",
+  "background": "#FF0066",
+  "backgroundVariableConfig": { "type": "solid", "variable": "primary", "alpha": 1 },
+  "objects": [
+    {
+      "type": "roundedRect",
+      "name": "Escurecimento atmosferico",
+      "left": 540, "top": 675,
+      "width": 1080, "height": 1350,
+      "originX": "center", "originY": "center",
+      "topLeft": 0, "topRight": 0, "bottomRight": 0, "bottomLeft": 0,
+      "fill": {
+        "type": "radial",
+        "coords": { "x1": 0.22, "y1": 0, "x2": 0.22, "y2": 0, "r1": 0, "r2": 1 },
+        "colorStops": [
+          { "offset": 0, "color": "rgba(0,0,0,0)" },
+          { "offset": 0.7, "color": "rgba(0,0,0,0.85)" }
+        ],
+        "offsetX": 0, "offsetY": 0,
+        "gradientUnits": "percentage",
+        "gradientTransform": null
+      }
+    }
+  ]
+}
+```
+
+A diferença do Padrão 2: aqui o overlay NÃO tem `fillVariableConfig` porque é neutro (preto). Trocar a paleta muda o fundo sólido via `backgroundVariableConfig`; o escurecimento se adapta sozinho.
+
 ### Padrão 3 — Faixa decorativa com fade-out
 
 `<div>` decorativo com gradiente de cor sólida → transparente. Sem `data-variable` (é cor literal, não brand). Emite como `roundedRect` com fill gradient, cores literais nos colorStops:
@@ -360,7 +403,22 @@ Se `data-variable-stops` tiver só `"primary"` (fundo sólido brand), **não cri
    - Emita gradient configs corretos.
    - Para textboxes com `<span>`, calcule `styles[lineIndex][charIndex]` contando caracteres exatos (sem aproximar).
    - Adicione `name` PT-BR descritivo a cada objeto.
-4. Escreva `manifest.json`:
+4. **Checklist de variable configs (OBRIGATÓRIO — rodar após emitir cada slide):**
+
+   Para cada slide emitido, verifique manualmente:
+
+   | Condição no HTML | O que DEVE existir no JSON | Bug se ausente |
+   |------------------|---------------------------|----------------|
+   | `<section data-variable="X" data-variable-target="background">` | root `backgroundVariableConfig: { type: "solid", variable: "X", alpha: 1 }` | Trocar paleta não muda o fundo |
+   | `<section data-variable-stops="primary,secondary">` com `linear-gradient` | root `backgroundVariableConfig` sólido + roundedRect camada 0 com `fillVariableConfig` gradient (Padrão 2) | Gradiente fica literal, não troca com paleta |
+   | `<div data-variable="X">` (shape) | `fillVariableConfig: { type: "solid", variable: "X", alpha: 1 }` no objeto | Cor fica literal |
+   | `<div data-variable="X" data-variable-target="background">` (não-section) | `fillVariableConfig` no roundedRect correspondente | Cor fica literal |
+   | `<div data-variable-stops="primary,secondary">` (shape com gradiente) | `fillVariableConfig: { type: "gradient", colorStops: [...] }` no roundedRect | Gradiente fica literal |
+   | `<p data-variable="X">` / `<h1 data-variable="X">` | `fillVariableConfig` no textbox | Cor do texto fica literal |
+
+   **Se qualquer condição falhar, corrija antes de prosseguir.** Esta checklist pega o bug mais comum da pipeline: `data-variable` presente no HTML mas `variableConfig` ausente no JSON.
+
+5. Escreva `manifest.json`:
 
 ```json
 {
@@ -401,6 +459,7 @@ Tabela de erros e fixes em [`../../../claude_design_to_fabric/skill.md`](../../.
 | `variable must be "primary"\|"secondary"` | corrija valor |
 | `charSpacing X is below -150` | clampe para `-150` |
 | `CSS gradient string … is not valid` | substitua por objeto Fabric gradient |
+| glow/neon como div translúcido | substitua por `shadow` no objeto alvo: `box-shadow: 0 0 60px 20px rgba(R,G,B,A)` → `shadow: { color, blur, offsetX: 0, offsetY: 0 }`. Remova o div de glow separado |
 | `gradient type must be "linear" or "radial"` | corrija e adicione campos faltantes |
 
 ## O que NÃO fazer
