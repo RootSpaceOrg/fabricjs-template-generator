@@ -18,7 +18,8 @@ Não duplique regras aqui — só referencie. Quando o contrato evoluir, ele evo
 | Imagens | uma `<img>` por região; `data-image-type="brandLogo\|professionalPhoto\|userAsset"` |
 | Texto multiestilo | `<span>` por trecho com estilo distinto |
 | Formas | `<div>` com `border-radius` para retângulos arredondados; `<svg>` para vetores |
-| Gradientes | `linear-gradient(...)` com `data-variable-stops="primary,secondary"` quando aplicável |
+| Estilo | Todo CSS inline nos elementos (`style="..."`). Proibido `<style>` blocks com classes |
+| Gradientes | `linear-gradient(...)` inline + `data-gradient` JSON obrigatório. `data-variable-stops="primary,secondary"` quando aplicável |
 | Fontes | `<meta name="hm-fonts" content="...">` listando todas |
 | Segmento | `<html data-segment="...">` (um dos 8 segmentos HealthMarket) |
 | Elementos AI-fillable | `data-template-element`, `data-te-description`, `data-te-max-chars` etc. |

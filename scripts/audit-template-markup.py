@@ -109,6 +109,16 @@ def main() -> int:
     if duplicate_style:
         issues.append({"line": 0, "tag": "html", "message": f"Found {duplicate_style} elements with duplicate style attributes."})
 
+    # Inline CSS enforcement: <style> blocks are forbidden (converter can't read class-based styles)
+    style_blocks = re.findall(r'<style\b[^>]*>(.*?)</style>', html, re.S | re.I)
+    for block in style_blocks:
+        # Allow minimal reset only (* { margin:0; box-sizing:border-box })
+        stripped = re.sub(r'/\*.*?\*/', '', block, flags=re.S).strip()
+        lines = [l.strip() for l in stripped.split('\n') if l.strip() and not l.strip().startswith('//')]
+        # If it's more than a basic reset, it's a problem
+        if any(prop in stripped for prop in ['background', 'color:', 'font-', 'border', 'width:', 'height:', 'position', 'left:', 'top:', 'gradient']):
+            issues.append({"line": 0, "tag": "style", "message": "Found <style> block with layout/visual CSS. All styles MUST be inline (style=\"...\"). The converter cannot read class-based styles — gradients, positions, and colors in <style> blocks are lost during conversion."})
+
     # Gradient determinism: elements with CSS gradient in style must have data-gradient
     GRADIENT_RE = re.compile(r'(linear|radial)-gradient\s*\(', re.I)
     for n in nodes:

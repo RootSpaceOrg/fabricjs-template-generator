@@ -122,6 +122,8 @@ Objetivo: aplicar a paleta, tipografia e movimento memorável **conforme o visua
 
 **⚠️ Pré-condição:** Antes de começar o Passo 2, confirme que `template-v1.html` **não** tem cores brand, gradientes ou fontes finais. Se tem, o Passo 1 foi feito errado — o Passo 2 não tem o que evoluir. Volte ao Passo 1.
 
+**⚠️ REGRA DE ESTILO INLINE (OBRIGATÓRIO em TODOS os passos):** Todo CSS deve estar nos atributos `style="..."` dos elementos. **PROIBIDO usar `<style>` blocks** no `<head>` com classes CSS. O conversor Fabric não consegue ler estilos de classes — apenas inline styles. Se você usar `.card { background: ... }`, o conversor perde cor, posição e gradiente desse elemento. O audit-template-markup.py bloqueia a pipeline se encontrar `<style>` blocks.
+
 Em cima do `template-v1.html`, gere `template-v2.html` aplicando:
 
 - **Paleta de marca — use os hexs do visual-plan, sem substituição:**
@@ -195,6 +197,8 @@ Vêm direto de [`../../CONTRACT.md`](../../CONTRACT.md) que aponta para `CLAUDE_
 9. `<meta name="hm-fonts" content="Fonte1,Fonte2">` no `<head>` listando **todas** as famílias usadas.
 10. `<html data-template-name="..." data-segment="...">` com o slug do vertical inferido do brief (kebab-case, ex: `clinicas-medicas`, `ecommerce-moda`, `academias`).
 11. Rotação só via `transform: rotate(Ndeg)` (origin default 50% 50%).
+12. **Todo CSS deve ser inline (`style="..."`) — PROIBIDO usar `<style>` blocks ou classes CSS.** O conversor lê estilos diretamente dos atributos `style` de cada elemento. Bloco `<style>` no `<head>` impede o conversor de detectar gradientes, posições, cores e tamanhos. Única exceção: um reset mínimo `* { margin:0; box-sizing:border-box; }` é tolerado mas não recomendado.
+13. Todo elemento com `linear-gradient` ou `radial-gradient` no `style` DEVE ter atributo `data-gradient` com JSON FabricJS válido (ver seção "data-gradient" abaixo).
 
 ## Imagens contextuais (userAsset) — fluxo obrigatório
 
