@@ -284,7 +284,9 @@ Anti-patterns críticos:
 
 ## Gradientes — quando e como usar
 
-Gradiente tem **três usos legítimos** na pipeline. Fora desses casos, não use.
+Gradiente tem **quatro usos legítimos** na pipeline. Fora desses casos, não use.
+
+**REGRA ZERO (aplica a TODOS os gradientes de fundo/moldura de slide):** Se o gradiente serve para criar profundidade, vinheta, ou escurecimento — NUNCA use cores brand hex. Use SEMPRE `transparent→rgba(0,0,0,N)` sobre um fundo sólido brand. Cores hex em gradientes de escurecimento quebram a adaptabilidade de paleta.
 
 ### 1. Overlay de legibilidade sobre foto (uso mais comum)
 
@@ -350,9 +352,17 @@ Fundo brand sólido + overlay transparente→escuro por cima. Cria profundidade 
 </section>
 ```
 
-**Anti-pattern:** usar cores brand literais no gradiente de escurecimento (`radial-gradient(... #FF0066 0%, #7A0730 28%, #120711 70%)`). Quando o usuário troca a paleta para azul, o gradiente continua rosa→vinho→escuro. Use `transparent→rgba(0,0,0,N)` para que o escurecimento se adapte.
+**Anti-pattern:** usar cores brand literais no gradiente de escurecimento (`radial-gradient(... #FF0066 0%, #7A0730 28%, #120711 70%)` ou `linear-gradient(145deg, #3A0824 0%, #180914 52%, #D91B7D 140%)`). Quando o usuário troca a paleta para azul, o gradiente continua com cores fixas. Use `transparent→rgba(0,0,0,N)` para que o escurecimento se adapte.
 
-**Quando usar:** quando o visual-plan diz "escurecimento atmosférico" ou "vinheta" no campo de gradientes do slide. **NÃO use** `data-variable-stops` — o overlay é neutro. O fundo sólido já tem `data-variable="primary" data-variable-target="background"`.
+**⚠️ HARD GATE — gradientes de fundo/moldura (OBRIGATÓRIO):**
+Antes de emitir QUALQUER gradiente no `<section>` background ou em div de moldura externa:
+1. O gradiente contém algum hex de cor brand (primary, secondary, ou derivados escurecidos dessas cores)? → **PROIBIDO para escurecimento.** Reescreva como fundo sólido brand + overlay `transparent→rgba(0,0,0,N)`.
+2. O gradiente usa APENAS `transparent` e `rgba(0,0,0,N)` (ou `rgba(255,255,255,N)` para clarear)? → Aprovado.
+3. O gradiente mostra primary→secondary ambas visíveis (brand gradiente intencional)? → Aprovado, use `data-variable-stops="primary,secondary"`.
+
+**Se o visual-plan descreve o fundo como "gradiente vinho/magenta/escuro" ou qualquer nome de cor brand, interprete como escurecimento atmosférico** — o art-director pode ter errado a nomenclatura mas a intenção é sempre profundidade adaptável. Use: fundo sólido primary com `data-variable="primary" data-variable-target="background"` + overlay neutro.
+
+**Quando usar:** quando o visual-plan diz "escurecimento atmosférico", "vinheta", ou descreve um fundo que "escurece" no campo de gradientes do slide. **NÃO use** `data-variable-stops` — o overlay é neutro. O fundo sólido já tem `data-variable="primary" data-variable-target="background"`.
 
 ### 4. Faixa decorativa com fade-out (transição tonal)
 

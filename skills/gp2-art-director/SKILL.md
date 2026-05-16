@@ -79,7 +79,8 @@ O orquestrador passa as imagens de referência no contexto. Use a image tool par
 
 #### Gradientes
 - Há overlay de escurecimento sobre foto (transparent→preto para legibilidade do texto)? Se sim: direção (to bottom / to right / to top), opacidade máxima (~0.65–0.80).
-- Há fundo de slide com gradiente brand (primary→secondary)? Se sim: ângulo (135deg, 180deg, etc.), em quais slides.
+- Há **escurecimento atmosférico do fundo** (fundo parece escurecer nas bordas/cantos criando profundidade)? Se sim: anote como `escurecimento-atmosférico radial|linear, opacidade máxima N`. **NUNCA descreva com nomes de cor brand** (vinho, magenta, rosa) — o escurecimento é sempre `transparent→rgba(0,0,0,N)`. Se a referência mostra um fundo colorido que escurece, isso é fundo brand sólido + overlay transparente→preto.
+- Há fundo de slide com gradiente brand (primary→secondary **ambas visíveis**)? Se sim: ângulo (135deg, 180deg, etc.), em quais slides.
 - Há faixa decorativa com fade-out (cor sólida → transparent)? Se sim: posição, direção, cor.
 - Se não há gradientes visíveis, anote "sem gradientes" — para que o designer não invente.
 
@@ -220,6 +221,8 @@ O movimento memorável não pode ser apenas um nome — deve ser uma instrução
 
 **Em free mode:** você escolhe o movimento e escreve a instrução. **Em reference-driven mode:** você identifica o movimento na referência (passo 1b) e escreve a instrução composicional de como executá-lo (posição, tamanho, fonte, cor, spacing).
 
+**CUIDADO com vocabulário de cor na descrição do movimento:** Se o movimento inclui uma moldura/fundo que escurece, descreva como "fundo sólido primary com escurecimento atmosférico" — NUNCA como "gradiente vinho/magenta" ou "gradiente [nome-de-cor]→escuro". Usar nomes de cor brand na descrição do movimento faz o designer implementar com hex literais em vez de overlay adaptável.
+
 **Formato:**
 ```
 Movimento memorável: <nome>
@@ -309,7 +312,7 @@ free
 - **Zona headline:** <top | center | bottom | esquerda>
 - **Zona imagem:** <left | right | full-bleed | ausente>
 - **Densidade:** <densa | equilibrada | aberta>
-- **Gradientes:** <nenhum | overlay to bottom 0.70 | brand-gradiente 135deg primary→secondary | faixa decorativa...>
+- **Gradientes:** <nenhum | overlay to bottom 0.70 | escurecimento-atmosférico radial opacidade 0.85 | brand-gradiente 135deg primary→secondary | faixa decorativa...>
 - **Elementos-chave:** <o que o designer deve priorizar neste slide>
 - **Copy orientativo:** <copy real do brief para este slide>
 
@@ -369,8 +372,11 @@ reference-driven
 
 ### Gradientes observados
 - <ex: overlay to bottom rgba(0,0,0,0.70) nos slides com foto full-bleed>
+- <ex: escurecimento-atmosférico radial transparent→rgba(0,0,0,0.85) no fundo externo de todos os slides>
 - <ex: fundo brand gradiente 135deg primary→secondary nos slides de CTA>
 - <ex: sem gradientes>
+
+**REGRA CRÍTICA:** Se a referência mostra um fundo que "escurece" criando profundidade/vinheta, classifique SEMPRE como `escurecimento-atmosférico` — nunca descreva com cores brand (ex: "gradiente vinho/magenta"). O fundo escurecido = cor sólida brand + overlay neutro `transparent→rgba(0,0,0,N)`. Descrever como "gradiente vinho→escuro" faz o designer usar hex literais e o template não se adapta a outras paletas.
 
 ### Tratamento de imagem observado
 - **Foto profissional:** <cutout PNG full-figure | retangular editorial | circular avatar | full-bleed | ausente>
@@ -388,7 +394,7 @@ reference-driven
 - **Zona headline:** <top | center | bottom | esquerda>
 - **Zona imagem:** <left | right | full-bleed | ausente>
 - **Densidade:** <densa | equilibrada | aberta>
-- **Gradientes:** <nenhum | overlay to bottom 0.70 | brand-gradiente 135deg primary→secondary | conforme referência>
+- **Gradientes:** <nenhum | overlay to bottom 0.70 | escurecimento-atmosférico radial opacidade 0.85 | brand-gradiente 135deg primary→secondary | conforme referência>
 - **Elementos-chave:** <o que o designer deve priorizar + quais elementos editoriais aplicar aqui>
 - **Copy orientativo:** <copy real do brief para este slide>
 
