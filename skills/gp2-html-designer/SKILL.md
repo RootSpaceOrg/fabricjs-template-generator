@@ -185,21 +185,27 @@ Vêm direto de [`../../CONTRACT.md`](../../CONTRACT.md) que aponta para `CLAUDE_
 
 Para slots de `userAsset` (foto contextual, foto de ambiente, imagem ilustrativa), siga esta ordem:
 
-### 1. Tente buscar uma imagem online de referência
+### 1. Tente buscar uma imagem online estável
 
-Antes de usar o placeholder, tente baixar uma imagem relevante via URL pública. Fontes aceitas:
+Antes de usar o placeholder, tente usar uma URL pública **estável e determinística** (mesma URL = mesma imagem em todo carregamento). Fontes aceitas:
 
 ```
-https://picsum.photos/{width}/{height}?random={N}          ← foto aleatória, sempre funciona
-https://source.unsplash.com/{width}x{height}/?{keyword}    ← foto temática (pode falhar)
+https://picsum.photos/id/{ID}/{width}/{height}              ← foto fixa por ID (determinística)
 ```
+
+**Regras de URL de imagem (OBRIGATÓRIAS):**
+- **Sempre use URLs determinísticas** — a mesma URL deve retornar a mesma imagem em todo carregamento. Isso é crítico para cache do navegador e para que o editor não regenere imagens a cada abertura.
+- **Nunca use query parameters de randomização** (`?random=N`, `?grayscale`, `?blur`). Eles fazem o CDN/browser tratar cada request como novo.
+- **Nunca use `https://picsum.photos/{W}/{H}` sem ID** — sem `/id/{N}/`, o picsum retorna foto diferente a cada request.
+- **Nunca use `https://source.unsplash.com/`** — este endpoint é deprecated e instável.
+- Para picsum, use IDs numéricos fixos (ex: `/id/10/`, `/id/237/`, `/id/1015/`). Escolha IDs variados entre slides para diversidade visual.
 
 Use no `src` diretamente — não embuta base64 de imagens online:
 
 ```html
 <img class="image-placeholder" alt="Foto contextual"
      style="position:absolute; left:60px; top:200px; width:480px; height:580px; object-fit:cover;"
-     src="https://picsum.photos/480/580?random=1">
+     src="https://picsum.photos/id/1015/480/580">
 ```
 
 Se o ambiente não tiver acesso à internet ou a URL retornar erro: **vá para o passo 2**.

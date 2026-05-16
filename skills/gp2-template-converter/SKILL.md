@@ -52,6 +52,7 @@ Toda regra abaixo está detalhada em `CLAUDE_DESIGN_RULES.md` e `claude_design_t
 | Origem | todo objeto: `originX: "center"`, `originY: "center"` |
 | Conversão de coords | HTML top-left → Fabric center: `left = htmlLeft + width/2`, `top = htmlTop + height/2` |
 | Nomes | todo objeto tem `name` (rótulo PT-BR, ver tabela em `claude_design_to_fabric/skill.md` §Object Naming) |
+| **border-radius → corners** | `roundedRect` corners são **percentagens de `min(width, height)/2`**. Fórmula: `corner = (border_radius_px / (min(width, height) / 2)) * 100`, clampado a 0–100. Ex: `border-radius: 46px` num card 964×1210 → `(46 / 482) * 100 = 9.54` → `topLeft: 9.54`. **Nunca passe o valor px direto** — `46` significa 46%, não 46px |
 | Textbox | sempre `styles: {}` (mesmo vazio); sem `styles` quebra Fabric |
 | `lineHeight` | clampado a >= 1.0 (Fabric 5.x renderiza < 1.0 inconsistente) |
 | `charSpacing` | clampado a >= -150 (abaixo, texto colapsa) |
@@ -356,7 +357,7 @@ Tabela de erros e fixes em [`../../../claude_design_to_fabric/skill.md`](../../.
 | `lineHeight X is below 1.0` | clampe para `1.0` |
 | `originX/Y must be "center"` | corrija |
 | `ClippableImage missing "originWidth"` etc. | adicione campo, recalcule crop |
-| `roundedRect corner X must be 0–100` | recalcule percentual |
+| `roundedRect corner X must be 0–100` | recalcule: `corner = (border_radius_px / (min(width, height) / 2)) * 100` |
 | `variable must be "primary"\|"secondary"` | corrija valor |
 | `charSpacing X is below -150` | clampe para `-150` |
 | `CSS gradient string … is not valid` | substitua por objeto Fabric gradient |

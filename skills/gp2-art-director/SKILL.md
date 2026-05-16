@@ -77,6 +77,12 @@ O orquestrador passa as imagens de referência no contexto. Use a image tool par
 - Listar **todos** os elementos visuais distintivos: eyebrow numerado, fios horizontais finos, faixa diagonal, número de slide gigante, ícone repetido, badge no canto, divisor vertical, bullet customizado, etc.
 - Identificar **o** movimento memorável (o elemento que dá identidade ao design).
 
+#### Gradientes
+- Há overlay de escurecimento sobre foto (transparent→preto para legibilidade do texto)? Se sim: direção (to bottom / to right / to top), opacidade máxima (~0.65–0.80).
+- Há fundo de slide com gradiente brand (primary→secondary)? Se sim: ângulo (135deg, 180deg, etc.), em quais slides.
+- Há faixa decorativa com fade-out (cor sólida → transparent)? Se sim: posição, direção, cor.
+- Se não há gradientes visíveis, anote "sem gradientes" — para que o designer não invente.
+
 #### Imagens / fotos
 - Há foto profissional/retrato? Se sim: tratamento (retangular editorial? circular avatar? full-bleed?), posição, proporção.
 - Há foto contextual (produto, ambiente, ilustração)? Se sim: tratamento.
@@ -166,7 +172,24 @@ Para **cada slide** do brief, defina:
 2. **Zona do headline** — onde fica o título principal (top / center / bottom / esquerda / direita)
 3. **Zona da imagem** — onde fica a foto/placeholder (left / right / full-bleed / ausente / background)
 4. **Densidade** — densa (pouco espaço, muita informação) / equilibrada / aberta (muito espaço, pouca informação)
-5. **Background** — LIGHT / DARK / Brand (primário sólido ou gradiente)
+5. **Background** — LIGHT / DARK / Brand-sólido / Brand-gradiente
+6. **Gradientes** (se aplicável) — especifique quais gradientes este slide usa (ver catálogo abaixo)
+
+### Catálogo de gradientes — use com parcimônia
+
+O designer conhece **3 padrões legítimos** de gradiente. Se o plano não especifica gradiente, o designer usa cor sólida. Seja explícito:
+
+| Padrão | Quando usar | O que especificar no plano |
+|--------|------------|---------------------------|
+| **Overlay de legibilidade** | Slides com foto full-bleed (A5) onde o texto precisa de contraste | Direção (to bottom / to right / to top / to left), opacidade máxima (0.65–0.80 para texto 400; 0.45–0.60 para texto 700+) |
+| **Fundo brand gradiente** | Slides Brand onde o gradiente primary→secondary adiciona profundidade | Ângulo (135deg ↘, 180deg ↓, 90deg →), hexs (primary→secondary). Não use em todos os slides Brand — sólido é o default |
+| **Faixa decorativa fade-out** | Transição suave entre blocos visuais (raro — só se a referência usa ou se resolve um problema de layout) | Posição (top/bottom), direção, cor, altura |
+
+**Regras:**
+- **Brand-gradiente NÃO é o default** — slides Brand usam primary sólido a menos que o plano diga "Brand-gradiente". Se o brief decidiu `primária somente`, gradiente brand é impossível (requer primary + secondary).
+- **Overlay de legibilidade é obrigatório** em A5 (full-bleed foto) — sem overlay o texto fica ilegível. Mas o art-director deve escolher a direção com base na zona do texto (texto no rodapé → `to bottom`; texto no topo → `to top`).
+- **Faixa decorativa é rara** — só use se a referência mostra ou se resolve um problema concreto de layout. Nunca como enfeite gratuito.
+- **Em reference-driven mode:** se a referência usa gradientes, capture-os no passo 1b e replique. Se não usa, anote "sem gradientes".
 
 **Catálogo de tipos compositivos — use variedade, nunca repita o mesmo tipo em slides consecutivos sem motivo:**
 
@@ -276,19 +299,20 @@ free
 
 ## Plano de slides
 
-### Slide 1 — <papel narrativo> (background: LIGHT/DARK/Brand)
+### Slide 1 — <papel narrativo> (background: LIGHT/DARK/Brand-sólido/Brand-gradiente)
 - **Composição:** <código + nome: ex: A1 — Full-bleed headline>
 - **Zona headline:** <top | center | bottom | esquerda>
 - **Zona imagem:** <left | right | full-bleed | ausente>
 - **Densidade:** <densa | equilibrada | aberta>
+- **Gradientes:** <nenhum | overlay to bottom 0.70 | brand-gradiente 135deg primary→secondary | faixa decorativa...>
 - **Elementos-chave:** <o que o designer deve priorizar neste slide>
 - **Copy orientativo:** <copy real do brief para este slide>
 
-### Slide 2 — <papel narrativo> (background: LIGHT/DARK/Brand)
+### Slide 2 — <papel narrativo> (background: LIGHT/DARK/Brand-sólido/Brand-gradiente)
 - **Composição:** <código + nome>
 ...
 
-### Slide N (CTA) — <papel narrativo> (background: Brand)
+### Slide N (CTA) — <papel narrativo> (background: Brand-sólido)
 ...
 
 ## Mapeamento de data-variable
@@ -296,6 +320,7 @@ free
 | Elemento | Atributo |
 |----------|----------|
 | Fundo slides Brand/CTA | `data-variable="primary" data-variable-target="background"` |
+| Fundo gradiente brand | `data-variable-stops="primary,secondary"` |
 | Eyebrow colorido | `data-variable="secondary"` |
 | ... | ... |
 
@@ -337,6 +362,11 @@ reference-driven
 - <ex: fio horizontal fino abaixo de cada título>
 - <ex: número de slide gigante no canto inferior direito>
 
+### Gradientes observados
+- <ex: overlay to bottom rgba(0,0,0,0.70) nos slides com foto full-bleed>
+- <ex: fundo brand gradiente 135deg primary→secondary nos slides de CTA>
+- <ex: sem gradientes>
+
 ### Tratamento de imagem observado
 - **Foto profissional:** <cutout PNG full-figure | retangular editorial | circular avatar | full-bleed | ausente>
 - **Foto contextual:** <ausente | crop editorial | ilustração>
@@ -348,19 +378,20 @@ reference-driven
 
 ## Plano de slides
 
-### Slide 1 — <papel narrativo> (background: LIGHT/DARK/Brand)
+### Slide 1 — <papel narrativo> (background: LIGHT/DARK/Brand-sólido/Brand-gradiente)
 - **Composição:** <código + nome: ex: A1 — Full-bleed headline>
 - **Zona headline:** <top | center | bottom | esquerda>
 - **Zona imagem:** <left | right | full-bleed | ausente>
 - **Densidade:** <densa | equilibrada | aberta>
+- **Gradientes:** <nenhum | overlay to bottom 0.70 | brand-gradiente 135deg primary→secondary | conforme referência>
 - **Elementos-chave:** <o que o designer deve priorizar + quais elementos editoriais aplicar aqui>
 - **Copy orientativo:** <copy real do brief para este slide>
 
-### Slide 2 — <papel narrativo> (background: LIGHT/DARK/Brand)
+### Slide 2 — <papel narrativo> (background: LIGHT/DARK/Brand-sólido/Brand-gradiente)
 - **Composição:** <código + nome>
 ...
 
-### Slide N (CTA) — <papel narrativo> (background: Brand)
+### Slide N (CTA) — <papel narrativo> (background: Brand-sólido)
 ...
 
 ## Mapeamento de data-variable
@@ -368,6 +399,7 @@ reference-driven
 | Elemento | Atributo |
 |----------|----------|
 | Fundo slides Brand/CTA | `data-variable="primary" data-variable-target="background"` |
+| Fundo gradiente brand | `data-variable-stops="primary,secondary"` |
 | Eyebrow colorido | `data-variable="secondary"` |
 | ... | ... |
 
