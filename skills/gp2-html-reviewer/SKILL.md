@@ -25,7 +25,6 @@ artifacts/gp2-html-designer/<slug>/
 ├── template.html          ← high-fi final
 ├── screenshots/slide-N.png
 └── notes.md               ← divergências documentadas pelo designer
-artifacts/gp2-request-interpreter/<slug>/reference-spec.md  ← somente reference-driven
 ```
 
 Se faltar screenshots, renderize antes:
@@ -38,7 +37,7 @@ node ../../scripts/render-html-screenshots.js artifacts/gp2-html-designer/<slug>
 
 1. **Leia `visual-plan.md` inteiro.** Este é o plano que o designer deveria ter executado. Internalize: família estética, hexs de primary/secondary, tipo compositivo de cada slide (A1–A8), instrução do movimento memorável, tabela de data-variable.
 2. Leia `notes.md` para entender divergências documentadas pelo designer (fonte substituída, ajuste de composição, etc.).
-3. **Detecte o modo:** verifique se `reference-spec.md` existe. Se sim, é reference-driven — check adicional de aderência ao spec.
+3. **Detecte o modo:** verifique se `visual-plan.md` tem `## Modo` = `reference-driven`. Se sim, o plano contém vocabulário visual extraído da referência — check adicional de aderência.
 4. Rode o preflight determinístico:
 
 ```bash
@@ -48,11 +47,11 @@ python3 ../../scripts/review-html-design.py artifacts/gp2-html-designer/<slug>/
 O script gera `html-review.json` + `html-review.md`. Leia os findings antes de prosseguir.
 
 5. Inspecione visualmente cada `screenshots/slide-N.png` comparando com o visual-plan (ver critérios abaixo).
-6. **Em reference-driven mode:** compare screenshots × `reference-spec.md` adicionalmente. Acuse drift como finding técnico se:
-   - Hexs aplicados não batem com a paleta declarada (tolerância: ΔE > 10 sem documentação em notes.md).
+6. **Em reference-driven mode:** compare screenshots × seção "Vocabulário visual (extraído da referência)" do `visual-plan.md`. Acuse drift como finding técnico se:
+   - Hexs aplicados não batem com a paleta declarada no plano (tolerância: ΔE > 10 sem documentação em notes.md).
    - Família tipográfica está em categoria diferente da declarada (serifa ↔ sans, condensada ↔ regular) sem documentação.
    - Movimento memorável declarado não está visível.
-   - Elementos editoriais listados no spec estão ausentes.
+   - Elementos editoriais listados no plano estão ausentes.
    - Se divergiu **e** documentou em `notes.md`, trate como warning, não bloqueio.
 7. Decida o status final:
 

@@ -19,8 +19,8 @@ Sempre que o usuário pedir para criar um template de social media completo (pos
 ## Sequência oficial
 
 ```
-1. gp2-request-interpreter          → brief.md (+ reference-spec.md em reference-driven mode)
-2. gp2-art-director                 → visual-plan.md (família, paleta, composição por slide, movimento memorável, mapeamento data-variable)
+1. gp2-request-interpreter          → brief.md (conteúdo/intenção; em reference-driven mode, marca que há referência visual)
+2. gp2-art-director                 → visual-plan.md (família, paleta, composição por slide, movimento memorável, mapeamento data-variable; em reference-driven mode, analisa a(s) imagem(ns) de referência e extrai o vocabulário visual completo)
 3. gp2-html-designer                → template.html (3 renders: low/mid/high-fi executando o visual-plan)
 4. gp2-html-reviewer                → PASS|REVISE|FAIL (gate técnico + fidelidade ao visual-plan)
 5. gp2-template-marker              → template.html marcado + template-summary.md
@@ -56,7 +56,7 @@ artifacts: <lista de paths>
 
 Upload **só** acontece quando todos abaixo são verdadeiros:
 
-- `gp2-art-director` produziu `visual-plan.md` completo (família, paleta, plano de slides, movimento memorável, mapeamento data-variable);
+- `gp2-art-director` produziu `visual-plan.md` completo (família, paleta, plano de slides, movimento memorável, mapeamento data-variable; em reference-driven mode, inclui vocabulário visual extraído da referência);
 - `gp2-html-reviewer.status === "PASS"` (findings técnicos críticos = 0; fidelidade ao plano: faithful ou partial com divergências documentadas; execução: adequada ou forte);
 - `gp2-template-marker` audit: `PASS`;
 - `gp2-template-converter` validator (`validate-slides.js`): exit 0;
@@ -154,10 +154,9 @@ Por template processado:
 ```
 artifacts/
 ├── gp2-request-interpreter/<slug>/
-│   ├── brief.md
-│   └── reference-spec.md      ← somente reference-driven
+│   └── brief.md               ← conteúdo/intenção (sem reference-spec.md — análise visual migrou para art-director)
 ├── gp2-art-director/<slug>/
-│   └── visual-plan.md         ← família, paleta, composição por slide, movimento, data-variable
+│   └── visual-plan.md         ← família, paleta, composição por slide, movimento, data-variable (em reference-driven: inclui vocabulário visual extraído da referência)
 ├── gp2-html-designer/<slug>/
 │   ├── template.html
 │   ├── template-v1.html, template-v2.html

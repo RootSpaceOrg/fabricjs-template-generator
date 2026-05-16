@@ -1,6 +1,6 @@
 ---
 name: gp2-art-director
-description: "Segunda etapa da Pipeline v2 (após gp2-request-interpreter, antes de gp2-html-designer). Define o plano visual completo do template: composição slide-a-slide, paleta com hexs concretos e papéis brand, família estética com justificativa, movimento memorável com instrução composicional precisa, e mapeamento explícito dos elementos que devem receber data-variable. O designer executa — não inventa direção. Elimina o viés de repetição e garante que variáveis de cor sejam identificadas antes da codificação."
+description: "Segunda etapa da Pipeline v2 (após gp2-request-interpreter, antes de gp2-html-designer). Único dono de toda a direção visual do template. Em free mode: inventa família estética, paleta, composição, movimento memorável. Em reference-driven mode: analisa a(s) imagem(ns) de referência e extrai família, paleta hex, tipografia, movimento memorável e elementos editoriais, depois planeja composição slide-a-slide. Em ambos os modos: produz visual-plan.md completo com hexs concretos, instrução composicional precisa e mapeamento de data-variable. O designer executa — não inventa direção. Elimina o viés de repetição e garante que variáveis de cor sejam identificadas antes da codificação."
 ---
 
 # gp2-art-director
@@ -17,20 +17,20 @@ O art-director separa **direção criativa** de **execução técnica**:
 
 O designer não escolhe família, não decide composição, não inventa paleta. Ele recebe um plano e o executa com precisão.
 
-## Dois modos — responsabilidades distintas
+## Dois modos — responsabilidades consistentes
 
 | Modo | Quando | O que o art-director decide |
 |------|--------|-----------------------------|
-| **Free mode** | `brief.md` modo = free | Tudo: família estética, paleta com hexs, composição por slide, instrução do movimento memorável, mapeamento data-variable. Decisão criativa completa. |
-| **Reference-driven mode** | `reference-spec.md` existe | **Só o que o interpreter NÃO capturou:** composição por slide (A1–A8), instrução composicional do movimento já declarado no spec, e mapeamento data-variable. Família, paleta e movimento memorável já estão travados no `reference-spec.md` — o art-director **não os re-resolve**, apenas os referencia. |
+| **Free mode** | `brief.md` modo = free | Tudo: família estética, paleta com hexs, composição por slide, instrução do movimento memorável, mapeamento data-variable. Decisão criativa completa — inventada a partir do brief. |
+| **Reference-driven mode** | `brief.md` modo = reference-driven | Tudo: analisa a(s) imagem(ns) de referência e **extrai** família estética, paleta hex, tipografia, movimento memorável e elementos editoriais. Depois planeja composição por slide (A1–A8), escreve instrução composicional do movimento, e mapeia data-variable. Decisão criativa completa — extraída da referência. |
 
-A divisão é simples: o interpreter captura a **intenção** (conteúdo, narrativa, e em reference-driven mode o vocabulário visual da referência). O art-director converte em **plano executável** (composição, instrução, variáveis). Em reference-driven mode, parte do vocabulário visual já chegou do interpreter — o art-director não o reescreve, apenas o estende com o que falta.
+A divisão com o interpreter é simples: o interpreter captura **intenção de conteúdo** (narrativa, segmento, hook, chrome, foto profissional). O art-director é o **único dono de toda a direção visual** — em free mode inventa, em reference-driven mode extrai da referência. Resultado: o `visual-plan.md` é sempre o documento completo de direção visual, independente do modo.
 
 ## Inputs
 
 ```
 artifacts/gp2-request-interpreter/<slug>/brief.md
-artifacts/gp2-request-interpreter/<slug>/reference-spec.md  ← somente reference-driven
+Imagem(ns) de referência (passadas pelo orquestrador no contexto)  ← somente reference-driven
 ```
 
 ## Output
@@ -45,17 +45,65 @@ artifacts/gp2-art-director/<slug>/visual-plan.md
 
 ### 1. Leia o brief e detecte o modo
 
-Leia `brief.md` inteiro. Verifique se `reference-spec.md` existe. Leia também se existir.
+Leia `brief.md` inteiro. O campo `## Modo` indica `free` ou `reference-driven`.
 
-**Em reference-driven mode:** os passos 2 e 3 abaixo são pulados — família e paleta já estão no `reference-spec.md`. Vá direto para o passo 4 (composição por slide). O `visual-plan.md` vai referenciar o spec em vez de reescrever o que ele já decidiu.
+**Em reference-driven mode:** antes de qualquer decisão criativa, execute o **passo 1b** abaixo (análise visual da referência). Depois siga os passos 2–6 normalmente — mas preenchendo família, paleta e movimento a partir do que extraiu da referência em vez de inventar.
 
 ---
 
-### 2. Escolha a família estética — FREE MODE ONLY
+### 1b. Analise a(s) imagem(ns) de referência — REFERENCE-DRIVEN MODE ONLY
 
-Em free mode, escolha **uma** das 8 famílias em [`../gp2-html-designer/references/aesthetic-families.md`](../gp2-html-designer/references/aesthetic-families.md).
+O orquestrador passa as imagens de referência no contexto. Use a image tool para inspecioná-las e extraia **com precisão**:
 
-**Regras de escolha para evitar viés:**
+#### Paleta
+- Identifique os 2-4 hexs dominantes (ignore brancos puros e pretos puros). Use a image tool para ler cores se possível; senão, estime visualmente com a melhor precisão (`#RRGGBB`).
+- Marque qual hex parece ser **primário** (acento dominante, CTA, ou fundo de marca) e qual é **secundário** (apoio).
+- Anote neutros usados (off-white quente? cinza quente? preto profundo?) — o designer precisa saber para não trocar por neutros frios genéricos.
+
+#### Tipografia
+- Identifique a família **display** (títulos): serifa? sans? condensada? alto contraste? geométrica?
+- Identifique a família **body** (corpo): sans neutra? humanista? mono?
+- Se reconhecer a fonte, nomeie (ex: "Playfair Display", "Bebas Neue", "DM Sans"). Se não, descreva a categoria com precisão suficiente para o designer escolher uma família próxima.
+- Capture pesos (display 700? 800? body 400? 500?) e casing (UPPERCASE? Title Case? lowercase deliberado?).
+- Capture letter-spacing visivelmente diferente do default (eyebrow super-tracked? título com kerning negativo?).
+
+#### Composição e ritmo
+- Tipo de grade: 1 coluna? 2 colunas? assimétrica?
+- Alinhamentos dominantes: tudo à esquerda? centrado? direita?
+- Margens aparentes (densas? amplas?).
+- Hierarquia tipográfica: eyebrow + título gigante? título + corpo + CTA? número editorial gigante?
+
+#### Elementos editoriais e movimento memorável
+- Listar **todos** os elementos visuais distintivos: eyebrow numerado, fios horizontais finos, faixa diagonal, número de slide gigante, ícone repetido, badge no canto, divisor vertical, bullet customizado, etc.
+- Identificar **o** movimento memorável (o elemento que dá identidade ao design).
+
+#### Imagens / fotos
+- Há foto profissional/retrato? Se sim: tratamento (retangular editorial? circular avatar? full-bleed?), posição, proporção.
+- Há foto contextual (produto, ambiente, ilustração)? Se sim: tratamento.
+- Placeholder/textura?
+
+#### Tom geral → família estética
+- Premium silencioso? Bold direto-resposta? Editorial clínico? Soft wellness? — classifique na família estética mais próxima de [`../gp2-html-designer/references/aesthetic-families.md`](../gp2-html-designer/references/aesthetic-families.md).
+
+#### O que **não** copiar literalmente
+- Conteúdo/copy específico da referência (vai ser substituído).
+- Logo/marca da referência.
+- Fotos específicas (vão ser placeholders ou assets do usuário).
+- Eventuais erros visuais da referência (overflow, contraste ruim) — corrija no plano.
+
+Use os dados extraídos para preencher os passos 2, 3 e 5 abaixo (em vez de inventar).
+
+---
+
+### 2. Escolha a família estética
+
+**Em free mode:** escolha **uma** das 8 famílias em [`../gp2-html-designer/references/aesthetic-families.md`](../gp2-html-designer/references/aesthetic-families.md).
+
+**Em reference-driven mode:** use a família identificada no passo 1b (análise da referência). Classifique o estilo da referência na família mais próxima do catálogo. Se a referência não se encaixa perfeitamente, escolha a mais próxima e documente a diferença.
+
+Regras de escolha para free mode:
+
+**Regras de escolha para evitar viés (free mode):**
 
 Não há lista fixa de segmentos — o vertical vem do brief e pode ser qualquer marca. Use o **tom do brief** como critério primário de seleção, e o **contexto do vertical** como refinamento. Force diversidade: se você perceber que está escolhendo sempre a mesma família para verticais similares, opte por uma alternativa compatível.
 
@@ -83,9 +131,11 @@ Documente a família escolhida **com justificativa de 1-2 linhas** no visual-pla
 
 ---
 
-### 3. Resolva a paleta com hexs concretos — FREE MODE ONLY
+### 3. Resolva a paleta com hexs concretos
 
-Em free mode, resolva a paleta a partir do segmento + família estética. Nunca deixe aberto — o designer não deve escolher cor.
+**Em free mode:** resolva a paleta a partir do segmento + família estética. Nunca deixe aberto — o designer não deve escolher cor.
+
+**Em reference-driven mode:** use os hexs extraídos no passo 1b. Atribua papéis (primary, secondary, neutros) conforme as regras abaixo. Se a referência tem cores ambíguas, resolva com base no uso observado (fundo brand = primary; acento de apoio = secondary).
 
 **Regras de paleta:**
 - Primary: o hex que vai nos fundos brand, CTA, elementos de destaque máximo
@@ -140,7 +190,7 @@ Para **cada slide** do brief, defina:
 
 O movimento memorável não pode ser apenas um nome — deve ser uma instrução executável que o designer implementa sem ambiguidade.
 
-**Em free mode:** você escolhe o movimento. **Em reference-driven mode:** o movimento já está declarado no `reference-spec.md` — você apenas escreve a instrução composicional de como executá-lo (o spec diz "eyebrow numerado"; você diz como: posição, tamanho, fonte, cor, spacing).
+**Em free mode:** você escolhe o movimento e escreve a instrução. **Em reference-driven mode:** você identifica o movimento na referência (passo 1b) e escreve a instrução composicional de como executá-lo (posição, tamanho, fonte, cor, spacing).
 
 **Formato:**
 ```
@@ -256,7 +306,7 @@ free
 
 ### Reference-driven mode
 
-Família e paleta já estão em `reference-spec.md` — não as repita. O visual-plan acrescenta apenas o que o spec não capturou: composição por slide e instrução composicional do movimento.
+O visual-plan contém TUDO — não há mais `reference-spec.md` separado. O art-director analisa a referência e grava o vocabulário visual extraído diretamente no plano.
 
 ```markdown
 # Plano Visual — <título do template>
@@ -264,12 +314,35 @@ Família e paleta já estão em `reference-spec.md` — não as repita. O visual
 ## Modo
 reference-driven
 
-## Vocabulário visual
-→ Ver `artifacts/gp2-request-interpreter/<slug>/reference-spec.md`
-(família estética, paleta hex, tipografia, movimento memorável e elementos editoriais já estão lá)
+## Vocabulário visual (extraído da referência)
 
-## Instrução composicional do movimento memorável
-**Nome:** <conforme declarado no reference-spec>
+### Família estética
+<nome> — <justificativa baseada na análise da referência>
+
+### Paleta (da referência)
+- **Primary:** `#RRGGBB` — <papel observado: fundo? CTA? acento?>
+- **Secondary:** `#RRGGBB` — <papel>
+- **Neutro claro:** `#RRGGBB` — <off-white quente / cinza quente / etc.>
+- **Neutro escuro:** `#RRGGBB` — <near-black / etc.>
+- **Não usar:** <cinzas frios genéricos, gradientes default, etc., se a referência os evita>
+
+### Tipografia (da referência)
+- **Display:** <família reconhecida ou descrição categórica> — peso <N> — <UPPERCASE | Title Case | lowercase>
+- **Body:** <família ou categoria> — peso <N>
+- **Letter-spacing notável:** <ex: eyebrow tracking +200; título kerning -2%>
+- **Stack fallback (se Google Fonts não disponível):** <ver aesthetic-families.md>
+
+### Elementos editoriais a replicar
+- <ex: eyebrow numerado em todos os slides>
+- <ex: fio horizontal fino abaixo de cada título>
+- <ex: número de slide gigante no canto inferior direito>
+
+### Tratamento de imagem observado
+- **Foto profissional:** <cutout PNG full-figure | retangular editorial | circular avatar | full-bleed | ausente>
+- **Foto contextual:** <ausente | crop editorial | ilustração>
+
+## Movimento memorável
+**Nome:** <identificado na referência>
 **Instrução:** <como executar concretamente — posição, tamanho, fonte, cor, spacing>
 **Presença:** <em quais slides>
 
@@ -280,7 +353,7 @@ reference-driven
 - **Zona headline:** <top | center | bottom | esquerda>
 - **Zona imagem:** <left | right | full-bleed | ausente>
 - **Densidade:** <densa | equilibrada | aberta>
-- **Elementos-chave:** <o que o designer deve priorizar + quais elementos editoriais do spec aplicar aqui>
+- **Elementos-chave:** <o que o designer deve priorizar + quais elementos editoriais aplicar aqui>
 - **Copy orientativo:** <copy real do brief para este slide>
 
 ### Slide 2 — <papel narrativo> (background: LIGHT/DARK/Brand)
@@ -300,7 +373,7 @@ reference-driven
 
 ## Notas para o designer
 
-<Instruções específicas: quais elementos editoriais do spec devem aparecer em quais slides, anti-patterns a evitar, foto profissional, etc.>
+<Instruções específicas: quais elementos editoriais devem aparecer em quais slides, anti-patterns a evitar, foto profissional, o que NÃO copiar da referência (logo, copy literal, fotos específicas), erros visuais da referência a corrigir.>
 ```
 
 ---
@@ -323,9 +396,11 @@ Próximo passo: gp2-html-designer
 ```markdown
 Plano visual gerado: `artifacts/gp2-art-director/<slug>/visual-plan.md`
 Modo: reference-driven
-Vocabulário visual: ver reference-spec.md (família, paleta, tipografia, movimento já capturados pelo interpreter)
-Instrução composicional escrita para: <nome do movimento memorável>
+Família estética: <nome> — <extraída da referência>
+Paleta: primary <hex> / secondary <hex> / neutro claro <hex> / neutro escuro <hex>
+Tipografia: display <família/categoria> / body <família/categoria>
 Slides planejados: <N> (composições: <A1, A3, A2, A4, A7, A1, A1 — exemplo>)
+Movimento memorável: <nome> (identificado na referência)
 Elementos data-variable mapeados: <N>
 Próximo passo: gp2-html-designer
 ```
