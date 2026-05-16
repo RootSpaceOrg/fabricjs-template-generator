@@ -198,7 +198,7 @@ Vêm direto de [`../../CONTRACT.md`](../../CONTRACT.md) que aponta para `CLAUDE_
 10. `<html data-template-name="..." data-segment="...">` com o slug do vertical inferido do brief (kebab-case, ex: `clinicas-medicas`, `ecommerce-moda`, `academias`).
 11. Rotação só via `transform: rotate(Ndeg)` (origin default 50% 50%).
 12. **Todo CSS deve ser inline (`style="..."`) — PROIBIDO usar `<style>` blocks ou classes CSS.** O conversor lê estilos diretamente dos atributos `style` de cada elemento. Bloco `<style>` no `<head>` impede o conversor de detectar gradientes, posições, cores e tamanhos. Única exceção: um reset mínimo `* { margin:0; box-sizing:border-box; }` é tolerado mas não recomendado.
-13. Todo elemento com `linear-gradient` ou `radial-gradient` no `style` DEVE ter atributo `data-gradient` com JSON FabricJS válido (ver seção "data-gradient" abaixo).
+13. Todo elemento com `linear-gradient` ou `radial-gradient` no `style` DEVE ter `data-darken="<preset>"` + `data-darken-opacity="<0.1-1.0>"` (ver seção "Gradientes" abaixo). NUNCA use cores brand em gradientes — fundo brand = sólido + darken overlay.
 
 ## Imagens contextuais (userAsset) — fluxo obrigatório
 
@@ -288,199 +288,100 @@ Anti-patterns críticos:
 
 ## Gradientes — quando e como usar
 
-Gradiente tem **quatro usos legítimos** na pipeline. Fora desses casos, não use.
+Gradiente tem **dois usos legítimos** na pipeline. Fora desses, não use.
 
-**REGRA ZERO (aplica a TODOS os gradientes de fundo/moldura de slide):** Se o gradiente serve para criar profundidade, vinheta, ou escurecimento — NUNCA use cores brand hex. Use SEMPRE `transparent→rgba(0,0,0,N)` sobre um fundo sólido brand. Cores hex em gradientes de escurecimento quebram a adaptabilidade de paleta.
+**REGRA ZERO:** NUNCA use cores brand hex em gradientes. Background brand = fundo SÓLIDO na cor primary + overlay de escurecimento neutro (`transparent→rgba(0,0,0,N)`). Gradientes primary→secondary são **PROIBIDOS** (`data-variable-stops` não existe mais).
 
-### 1. Overlay de legibilidade sobre foto (uso mais comum)
+**Se o visual-plan descreve o fundo como "gradiente vinho/magenta/escuro"**, interprete SEMPRE como: fundo sólido primary + overlay `data-darken`. O art-director quer profundidade adaptável, não cores literais no gradiente.
 
-Um `<div>` transparente sobreposto a uma `<img>` para criar contraste e tornar texto branco legível sobre a foto. Direção depende de onde o texto fica:
+### Sistema `data-darken` (OBRIGATÓRIO para todo gradiente)
 
-```html
-<!-- Texto no rodapé do slide → escurecer de baixo para cima -->
-<img style="position:absolute; left:0; top:0; width:1080px; height:1350px;
-            object-fit:cover;"
-     src="<placeholder diagonal>">
+Todo elemento com gradiente CSS DEVE ter `data-darken="<preset>"` + `data-darken-opacity="<0.1-1.0>"`. O converter lê estes atributos para gerar o Fabric JSON — se faltarem, o gradiente é **perdido**.
 
-<div style="position:absolute; left:0; top:0; width:1080px; height:1350px;
-            background:linear-gradient(to bottom, transparent 30%, rgba(0,0,0,0.75) 100%);">
-</div>
+**Presets válidos:**
 
-<!-- Texto sobre o overlay, z-index implícito pelo DOM order -->
-<h1 style="position:absolute; left:60px; top:980px; ...">Título legível</h1>
-```
+| `data-darken` | Direção | CSS equivalente |
+|---------------|---------|-----------------|
+| `bottom` | ↓ | `linear-gradient(to bottom, transparent, rgba(0,0,0,N))` |
+| `top` | ↑ | `linear-gradient(to top, transparent, rgba(0,0,0,N))` |
+| `right` | → | `linear-gradient(to right, transparent, rgba(0,0,0,N))` |
+| `left` | ← | `linear-gradient(to left, transparent, rgba(0,0,0,N))` |
+| `diagonal-se` | ↘ | `linear-gradient(135deg, transparent, rgba(0,0,0,N))` |
+| `diagonal-ne` | ↗ | `linear-gradient(45deg, transparent, rgba(0,0,0,N))` |
+| `vignette` | radial centro | `radial-gradient(circle at 50% 50%, transparent, rgba(0,0,0,N))` |
+| `vignette-top-left` | radial tl | `radial-gradient(circle at 20% 10%, transparent, rgba(0,0,0,N))` |
 
-Outras direções:
-- Texto na coluna esquerda → `linear-gradient(to right, rgba(0,0,0,0.75) 0%, transparent 60%)`
-- Texto no topo → `linear-gradient(to top, transparent 40%, rgba(0,0,0,0.70) 100%)`
-- Texto na coluna direita → `linear-gradient(to left, rgba(0,0,0,0.75) 0%, transparent 60%)`
+### 1. Fundo brand com profundidade (uso mais comum)
 
-**Opacidade orientativa:** `rgba(0,0,0,0.65–0.80)` para texto branco peso 400; `0.45–0.60` para texto pesado (700+). Não passe de `0.85` — a foto some.
-
-**O marker vai marcar este `<div>` com `data-static="true"`.** O converter emite como `roundedRect` com fill gradient.
-
-### 2. Fundo de slide com gradiente brand (`primary → secondary`)
-
-Substitui o fundo sólido brand quando o brief decidiu usar duas cores. Use no `<section>` diretamente via `background`:
+Fundo sólido na cor primary + overlay `data-darken` para criar escurecimento atmosférico:
 
 ```html
 <section class="slide" data-width="1080" data-height="1350"
-         style="position:relative; width:1080px; height:1350px;
-                background:linear-gradient(135deg, #2563EB 0%, #0EA5E9 100%);"
-         data-variable-stops="primary,secondary">
-```
+         data-variable="primary" data-variable-target="background"
+         style="position:relative; width:1080px; height:1350px; background:#E0005A;">
 
-`data-variable-stops="primary,secondary"` é o sinal para o converter emitir um `roundedRect` na camada 0 (cobrindo o slide inteiro) com gradient `fill` + `fillVariableConfig` gradient — o que permite troca de paleta. O root `background` fica sólido (hex primary) com `backgroundVariableConfig` sólido, porque o editor (`updateBackground()`) só suporta config sólido. **Sem `data-variable-stops`**, o gradiente vira hexadecimal literal e não troca com a paleta do usuário.
-
-Ângulos típicos: `135deg` (diagonal ↘), `180deg` (↓), `90deg` (→). Escolha o que casa com o movimento memorável do template.
-
-**Quando usar:** capa com fundo brand intenso, slide de CTA com identidade de cor forte, slide de dado numérico onde o número branco precisa de fundo saturado. **Não use em todos os slides** — o gradiente brand em excesso fica enjoativo e tira o contraste do carrossel.
-
-### 3. Escurecimento atmosférico de fundo brand (vinheta/profundidade)
-
-Fundo brand sólido + overlay transparente→escuro por cima. Cria profundidade e vinheta SEM usar cores brand no gradiente — o escurecimento se adapta a qualquer paleta.
-
-```html
-<!-- Fundo brand sólido que troca com a paleta -->
-<section class="slide" data-width="1080" data-height="1350"
-         style="position:relative; width:1080px; height:1350px;
-                background:#FF0066;"
-         data-variable="primary" data-variable-target="background">
-
-  <!-- Overlay de vinheta/escurecimento — cores neutras, NÃO brand -->
-  <div style="position:absolute; left:0; top:0; width:1080px; height:1350px;
-              background:radial-gradient(circle at 22% 0%, transparent 0%, rgba(0,0,0,0.85) 70%);">
+  <!-- Overlay de escurecimento — o converter lê data-darken e gera roundedRect com gradient fill -->
+  <div data-darken="diagonal-se" data-darken-opacity="0.8"
+       style="position:absolute; left:0; top:0; width:1080px; height:1350px;
+              background:linear-gradient(135deg, transparent 0%, rgba(0,0,0,0.8) 100%);">
   </div>
 
   <!-- Card, textos, etc. por cima -->
 </section>
 ```
 
-**Anti-pattern:** usar cores brand literais no gradiente de escurecimento (`radial-gradient(... #FF0066 0%, #7A0730 28%, #120711 70%)` ou `linear-gradient(145deg, #3A0824 0%, #180914 52%, #D91B7D 140%)`). Quando o usuário troca a paleta para azul, o gradiente continua com cores fixas. Use `transparent→rgba(0,0,0,N)` para que o escurecimento se adapte.
+O converter emite:
+- `background`: hex primary sólido
+- `backgroundVariableConfig`: `{ type: "solid", variable: "primary", alpha: 1 }`
+- Primeiro objeto: roundedRect full-canvas com fill gradient (preset diagonal-se, opacity 0.8)
 
-**⚠️ HARD GATE — gradientes de fundo/moldura (OBRIGATÓRIO):**
-Antes de emitir QUALQUER gradiente no `<section>` background ou em div de moldura externa:
-1. O gradiente contém algum hex de cor brand (primary, secondary, ou derivados escurecidos dessas cores)? → **PROIBIDO para escurecimento.** Reescreva como fundo sólido brand + overlay `transparent→rgba(0,0,0,N)`.
-2. O gradiente usa APENAS `transparent` e `rgba(0,0,0,N)` (ou `rgba(255,255,255,N)` para clarear)? → Aprovado.
-3. O gradiente mostra primary→secondary ambas visíveis (brand gradiente intencional)? → Aprovado, use `data-variable-stops="primary,secondary"`.
+**⚠️ HARD GATE:** Se o visual-plan diz "gradiente" no fundo, interprete SEMPRE como solid primary + darken overlay. NUNCA emita `linear-gradient(135deg, #E0005A 0%, #A0033F 55%, #300816 100%)` — isso usa cores brand no gradiente e quebra adaptabilidade.
 
-**Se o visual-plan descreve o fundo como "gradiente vinho/magenta/escuro" ou qualquer nome de cor brand, interprete como escurecimento atmosférico** — o art-director pode ter errado a nomenclatura mas a intenção é sempre profundidade adaptável. Use: fundo sólido primary com `data-variable="primary" data-variable-target="background"` + overlay neutro.
+### 2. Overlay de legibilidade sobre foto
 
-**Quando usar:** quando o visual-plan diz "escurecimento atmosférico", "vinheta", ou descreve um fundo que "escurece" no campo de gradientes do slide. **NÃO use** `data-variable-stops` — o overlay é neutro. O fundo sólido já tem `data-variable="primary" data-variable-target="background"`.
-
-### 4. Faixa decorativa com fade-out (transição tonal)
-
-Um elemento que dissolve sua borda para criar suavidade entre seções do slide. Uso moderado — só quando a transição abrupta entre dois blocos de cor é um problema visual real.
+`<div>` sobre `<img>` para contraste de texto. Direção conforme posição do texto:
 
 ```html
-<!-- Faixa que dissolve o rodapé de um bloco claro antes do rodapé escuro -->
-<div style="position:absolute; left:0; top:860px; width:1080px; height:120px;
-            background:linear-gradient(to bottom, #F4ECE2 0%, transparent 100%);">
+<img style="position:absolute; left:0; top:0; width:1080px; height:1350px; object-fit:cover;"
+     src="https://picsum.photos/id/10/1080/1350">
+
+<div data-static="true" data-darken="bottom" data-darken-opacity="0.75"
+     style="position:absolute; left:0; top:0; width:1080px; height:1350px;
+            background:linear-gradient(to bottom, transparent 30%, rgba(0,0,0,0.75) 100%);">
 </div>
+
+<h1 style="position:absolute; left:60px; top:980px; ...">Título legível</h1>
 ```
 
-**Regra:** nunca use faixa decorativa como substituto de decisão de layout. Se você está usando para "tapar" uma junção feia entre dois elementos, corrija o layout em vez de esconder.
+Direções típicas:
+- Texto no rodapé → `data-darken="bottom"`
+- Texto no topo → `data-darken="top"`
+- Texto na coluna esquerda → `data-darken="left"`
+- Texto na coluna direita → `data-darken="right"`
+
+**Opacidade orientativa:** `0.65–0.80` para texto peso 400; `0.45–0.60` para texto pesado (700+). Não passe de `0.85`.
 
 ### Glow / neon — como fazer no Fabric (CRÍTICO)
 
-Efeito de glow (brilho neon ao redor de um elemento) **não funciona** como círculo translúcido (`opacity: 0.16`) no Fabric — isso gera apenas um disco colorido. O glow real usa `box-shadow` no CSS:
+Efeito de glow **não funciona** como círculo translúcido no Fabric. Use `box-shadow` no CSS:
 
 ```html
-<!-- Glow neon ao redor de um painel -->
 <div style="position:absolute; left:123px; top:260px; width:834px; height:770px;
             border-radius:34px; background:#10151D; border:2px solid #1B2028;
             box-shadow: 0 0 60px 20px rgba(255,0,102,0.25);">
 </div>
-
-<!-- Glow neon ao redor de texto -->
-<h1 style="position:absolute; left:170px; top:392px; width:720px;
-           font-family:Montserrat; font-size:72px; font-weight:900;
-           color:#F4F4F6; text-shadow: 0 0 40px rgba(255,0,102,0.4);">
-  Título com glow
-</h1>
 ```
 
-O converter traduz `box-shadow` para `shadow: { color: "rgba(255,0,102,0.25)", blur: 60, offsetX: 0, offsetY: 0 }` no objeto Fabric. `text-shadow` vira a mesma propriedade `shadow` no textbox.
+O converter traduz `box-shadow` para `shadow: { color, blur, offsetX, offsetY }` no objeto Fabric.
 
-**Nunca use:** `<div>` circular com `opacity: 0.16` como substituto de glow — no editor isso renderiza como disco sólido translúcido sem bloom.
+### Anti-patterns de gradiente (nunca faça)
 
-### `data-gradient` — atributo obrigatório para todo gradiente (CRÍTICO)
-
-Todo elemento com `linear-gradient(...)` ou `radial-gradient(...)` no `style` **DEVE** também ter um atributo `data-gradient` contendo o objeto gradiente FabricJS-ready como JSON. O converter lê `data-gradient` diretamente — se estiver ausente, o gradiente é **perdido** (vira cor sólida).
-
-**Formato do `data-gradient`:**
-
-```json
-{
-  "type": "linear",
-  "coords": { "x1": 0, "y1": 0, "x2": 0, "y2": 1 },
-  "colorStops": [
-    { "offset": 0, "color": "rgba(0,0,0,0)" },
-    { "offset": 1, "color": "rgba(0,0,0,0.75)" }
-  ]
-}
-```
-
-**Vocabulário restrito — use APENAS estes padrões de gradiente:**
-
-| ID | CSS Pattern | coords |
-|----|-------------|--------|
-| darken-bottom | `to bottom, transparent X%→rgba(0,0,0,N) 100%` | `x1:0, y1:0, x2:0, y2:1` |
-| darken-top | `to top, transparent X%→rgba(0,0,0,N) 100%` | `x1:0, y1:1, x2:0, y2:0` |
-| darken-right | `to right, rgba(0,0,0,N) 0%→transparent X%` | `x1:0, y1:0, x2:1, y2:0` |
-| darken-left | `to left, rgba(0,0,0,N) 0%→transparent X%` | `x1:1, y1:0, x2:0, y2:0` |
-| darken-diagonal-se | `135deg, transparent→rgba(0,0,0,N)` | `x1:0, y1:0, x2:1, y2:1` |
-| brand-diagonal-se | `135deg, primary 0%→secondary 100%` | `x1:0, y1:0, x2:1, y2:1` |
-| brand-diagonal-ne | `45deg, primary 0%→secondary 100%` | `x1:0, y1:1, x2:1, y2:0` |
-| brand-horizontal | `90deg, primary 0%→secondary 100%` | `x1:0, y1:0, x2:1, y2:0` |
-| brand-vertical | `180deg, primary 0%→secondary 100%` | `x1:0, y1:0, x2:0, y2:1` |
-| vignette | `radial-gradient(circle at X% Y%, transparent 0%, rgba(0,0,0,N) R%)` | `x1:X/100, y1:Y/100, x2:X/100, y2:Y/100, r1:0, r2:1` |
-| fade-out-bottom | `to bottom, COLOR 0%→transparent 100%` | `x1:0, y1:0, x2:0, y2:1` |
-
-Gradientes fora deste vocabulário são **proibidos**. Se você precisa de um efeito mais complexo, decomponha em camadas empilhadas de gradientes simples desta tabela.
-
-**Exemplos completos por caso de uso:**
-
-**1. Overlay de legibilidade:**
-
-```html
-<div data-static="true"
-     data-gradient='{"type":"linear","coords":{"x1":0,"y1":0,"x2":0,"y2":1},"colorStops":[{"offset":0.3,"color":"rgba(0,0,0,0)"},{"offset":1,"color":"rgba(0,0,0,0.75)"}]}'
-     style="position:absolute; left:0; top:0; width:1080px; height:1350px;
-            background:linear-gradient(to bottom, transparent 30%, rgba(0,0,0,0.75) 100%);">
-</div>
-```
-
-**2. Fundo brand com gradiente (na `<section>`):**
-
-```html
-<section class="slide" data-width="1080" data-height="1350"
-         data-variable-stops="primary,secondary"
-         data-gradient='{"type":"linear","coords":{"x1":0,"y1":0,"x2":1,"y2":1},"colorStops":[{"offset":0,"color":"#2563EB"},{"offset":1,"color":"#0EA5E9"}]}'
-         style="position:relative; width:1080px; height:1350px;
-                background:linear-gradient(135deg, #2563EB 0%, #0EA5E9 100%);">
-```
-
-**3. Escurecimento atmosférico (overlay neutro):**
-
-```html
-<div data-gradient='{"type":"radial","coords":{"x1":0.22,"y1":0,"x2":0.22,"y2":0,"r1":0,"r2":1},"colorStops":[{"offset":0,"color":"rgba(0,0,0,0)"},{"offset":0.7,"color":"rgba(0,0,0,0.85)"}]}'
-     style="position:absolute; left:0; top:0; width:1080px; height:1350px;
-            background:radial-gradient(circle at 22% 0%, transparent 0%, rgba(0,0,0,0.85) 70%);">
-</div>
-```
-
-**4. Faixa decorativa com fade-out:**
-
-```html
-<div data-static="true"
-     data-gradient='{"type":"linear","coords":{"x1":0,"y1":0,"x2":0,"y2":1},"colorStops":[{"offset":0,"color":"#F4ECE2"},{"offset":1,"color":"rgba(244,236,226,0)"}]}'
-     style="position:absolute; left:0; top:860px; width:1080px; height:120px;
-            background:linear-gradient(to bottom, #F4ECE2 0%, transparent 100%);">
-</div>
-```
-
-**⚠️ HARD GATE:** O `audit-template-markup.py` bloqueia a pipeline se qualquer elemento com gradiente CSS não tiver `data-gradient` válido. Não prossegue sem este atributo.
+- **Cores brand hex em qualquer gradiente** — PROIBIDO. Use transparent→rgba(0,0,0,N) sobre fundo sólido brand.
+- **`data-variable-stops`** — eliminado da pipeline. Não use.
+- **Gradiente sem `data-darken`** — o converter não parseia CSS. Sem o atributo, o gradiente vira cor sólida.
+- **Gradiente multi-cor decorativo** (roxo→rosa→laranja) — kitsch, não editorial.
+- **`linear-gradient` em `color:` de texto** — CSS inválido.
+- **`<style>` block com gradientes** — converter não lê. Tudo inline.
 
 ### Anti-patterns de gradiente (nunca faça)
 

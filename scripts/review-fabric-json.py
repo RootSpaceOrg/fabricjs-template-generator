@@ -157,12 +157,13 @@ class ReviewHtmlParser(HTMLParser):
 
 def parse_source_html(path: Path | None) -> dict[str, Any]:
     if not path or not path.exists():
-        return {'byReviewId': {}, 'childTextRuns': {}, 'gradientElements': []}
+        return {'byReviewId': {}, 'childTextRuns': {}, 'gradientElements': [], 'darkenElements': []}
     parser = ReviewHtmlParser()
     parser.feed(path.read_text(encoding='utf-8'))
     by_id: dict[str, dict[str, Any]] = {}
     child_runs: dict[str, list[dict[str, Any]]] = {}
     gradient_elements: list[dict[str, Any]] = []
+    darken_elements: list[dict[str, Any]] = []
     text_tags = {'h1', 'h2', 'h3', 'h4', 'p', 'span', 'strong', 'em', 'div'}
     for n in parser.nodes:
         text = normalize_text(n.text)
@@ -188,13 +189,24 @@ def parse_source_html(path: Path | None) -> dict[str, Any]:
                 'tag': n.tag,
                 'hasDataGradient': bool(n.attrs.get('data-gradient')),
             })
+        # Track elements with data-darken for gradient overlay fidelity
+        if n.attrs.get('data-darken'):
+            darken_elements.append({
+                'reviewId': n.review_id,
+                'slide': n.slide,
+                'line': n.line,
+                'tag': n.tag,
+                'preset': n.attrs.get('data-darken'),
+                'opacity': n.attrs.get('data-darken-opacity'),
+                'isSection': n.tag == 'section' and 'slide' in n.attrs.get('class', ''),
+            })
         # Inline text runs do not need their own data-review-id. Claude Design's
         # contract says spans inside a text element become Fabric textbox.styles
         # ranges, not separate objects. Track them even without review ids.
         if n.parent_review_id and n.tag in text_tags and text:
             run_id = n.review_id or f'{n.parent_review_id}::inline-{n.tag}-{n.line}'
             child_runs.setdefault(n.parent_review_id, []).append(meta | {'reviewId': run_id, 'hasOwnReviewId': bool(n.review_id)})
-    return {'byReviewId': by_id, 'childTextRuns': child_runs, 'gradientElements': gradient_elements}
+    return {'byReviewId': by_id, 'childTextRuns': child_runs, 'gradientElements': gradient_elements, 'darkenElements': darken_elements}
 
 
 def find_output(path: Path) -> Path:
@@ -562,6 +574,32 @@ def review_object_semantics(path: Path, data: dict[str, Any], objects: list[dict
                     f'Gradient flattened to solid color: element had data-gradient but Fabric fill is "{fill}". '
                     f'The converter must use data-gradient JSON directly as the fill object.',
                 ))
+
+        # data-darken fidelity: elements with data-darken must produce a roundedRect with gradient fill.
+        darken_els = html_info.get('darkenElements') or []
+        for del_ in darken_els:
+            if slide_no and del_.get('slide') != slide_no:
+                continue
+            if del_.get('isSection'):
+                # Section with data-darken: first object in slide must be a roundedRect with gradient fill
+                if not objects:
+                    issues.append(issue('critical', path.name, 'darken-overlay', f'Section has data-darken="{del_.get("preset")}" but slide has no objects. Expected roundedRect gradient overlay as first object.'))
+                    continue
+                first_obj = objects[0]
+                first_fill = first_obj.get('fill')
+                if first_obj.get('type') not in ('roundedRect', 'rect'):
+                    issues.append(issue('critical', path.name, first_obj.get('name') or 'objects[0]', f'Section has data-darken="{del_.get("preset")}" but first object is type "{first_obj.get("type")}", expected roundedRect gradient overlay.'))
+                elif isinstance(first_fill, str):
+                    issues.append(issue('critical', path.name, first_obj.get('name') or 'objects[0]', f'Section has data-darken="{del_.get("preset")}" but first object fill is solid "{first_fill}". Must be a gradient object (transparent→rgba(0,0,0,opacity)).'))
+            else:
+                # Non-section data-darken div: look for matching reviewId or a roundedRect overlay
+                rid = del_.get('reviewId')
+                if rid:
+                    obj = by_review_id.get(rid)
+                    if obj:
+                        fill = obj.get('fill')
+                        if isinstance(fill, str):
+                            issues.append(issue('critical', path.name, rid, f'Element has data-darken="{del_.get("preset")}" but Fabric fill is solid "{fill}". Must be a gradient fill.'))
 
     # Duplicate/subset textboxes: common symptom of HTML span → extra Fabric textbox.
     for i, a in enumerate(textboxes):

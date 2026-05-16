@@ -1,6 +1,6 @@
 ---
 name: gp2-pipeline
-description: "Orchestrator da Pipeline GetPosts v2. Roda em sequência: gp2-request-interpreter → gp2-art-director → gp2-html-designer → gp2-html-reviewer → gp2-template-marker → gp2-template-converter → gp2-template-result-reviewer → gp2-template-uploader → editor save/thumbnails. Aplica iteration policy, decide quando seguir/refazer/escalar, e consolida evidências. Pipeline agnóstica a vertical — funciona para qualquer segmento de marca. Use sempre que o usuário pedir para criar um template de social media de ponta a ponta."
+description: "Orchestrator da Pipeline GetPosts v2. Roda em sequência: gp2-request-interpreter → gp2-art-director → gp2-html-designer → gp2-html-reviewer → gp2-template-marker → gp2-template-converter → gp2-template-uploader → editor save/thumbnails. Aplica iteration policy, decide quando seguir/refazer/escalar, e consolida evidências. Pipeline agnóstica a vertical — funciona para qualquer segmento de marca. Use sempre que o usuário pedir para criar um template de social media de ponta a ponta."
 ---
 
 # gp2-pipeline
@@ -24,12 +24,11 @@ Sempre que o usuário pedir para criar um template de social media completo (pos
 3. gp2-html-designer                → template.html (3 renders: low/mid/high-fi executando o visual-plan)
 4. gp2-html-reviewer                → PASS|REVISE|FAIL (gate técnico + fidelidade ao visual-plan)
 5. gp2-template-marker              → template.html marcado + template-summary.md
-6. gp2-template-converter           → slide-N.json + manifest.json
-7. gp2-template-result-reviewer     → PASS|PASS_WITH_WARNINGS|FAIL
-8. gp2-template-uploader            → upload S3 + Supabase
-9. editor save/thumbnails           → via flag --execute --generate-thumbnails do uploader
-10. Cleanup de artifacts            → apaga pasta artifacts/<slug>/ após upload confirmado
-11. Relatório consolidado
+6. gp2-template-converter           → slide-N.json + manifest.json (inclui self-validation pós-emissão)
+7. gp2-template-uploader            → upload S3 + Supabase
+8. editor save/thumbnails           → via flag --execute --generate-thumbnails do uploader
+9. Cleanup de artifacts             → apaga pasta artifacts/<slug>/ após upload confirmado
+10. Relatório consolidado
 ```
 
 ## Iteration policy
@@ -40,8 +39,7 @@ Sempre que o usuário pedir para criar um template de social media completo (pos
 | Designer (low/mid/high-fi) | passos fixos; refaz 1× cada passo se auto-check falhar | — |
 | HTML reviewer | — | máx 2 revisões antes de FAIL; se reviewer apontar problema de plano → volta ao art-director |
 | Marker audit | — | máx 2 fixes antes de escalar |
-| Converter validator | — | máx 2 fixes antes de escalar |
-| Result reviewer | — | máx 2 fixes (devolvidos ao converter) |
+| Converter (self-validation) | — | máx 2 fixes antes de escalar |
 | Editor save/thumbnails | — | 1 retry após reload/login |
 
 Ao exceder qualquer teto, pare e reporte:
@@ -59,14 +57,13 @@ Upload **só** acontece quando todos abaixo são verdadeiros:
 - `gp2-art-director` produziu `visual-plan.md` completo (família, paleta, plano de slides, movimento memorável, mapeamento data-variable; em reference-driven mode, inclui vocabulário visual extraído da referência);
 - `gp2-html-reviewer.status === "PASS"` (findings técnicos críticos = 0; fidelidade ao plano: faithful ou partial com divergências documentadas; execução: adequada ou forte);
 - `gp2-template-marker` audit: `PASS`;
-- `gp2-template-converter` validator (`validate-slides.js`): exit 0;
-- `gp2-template-result-reviewer.status` ∈ {`PASS`, `PASS_WITH_WARNINGS`};
+- `gp2-template-converter` validator (`validate-slides.js`): exit 0 + self-validation pós-emissão sem criticals;
 - nenhuma incompatibilidade catastrófica conhecida com o editor.
 
 Se algum falha:
 - Em casos seguros (mecânicos, óbvios), revise automaticamente dentro do loop.
 - Em casos que precisam de decisão criativa do usuário, pergunte. Não invente direção.
-- Se o reviewer apontar `planFidelity: "diverged"` com divergências não documentadas → devolva ao designer com instrução específica (não ao art-director, a menos que o plano seja o problema).
+- Se o HTML reviewer apontar `planFidelity: "diverged"` com divergências não documentadas → devolva ao designer com instrução específica (não ao art-director, a menos que o plano seja o problema).
 
 ## Cleanup de artifacts
 
@@ -143,7 +140,6 @@ Por template processado:
 - HTML reviewer status + findings técnicos + fidelidade ao plano + data-variable cobertura;
 - marker audit status;
 - converter validator status (exit code);
-- result reviewer status;
 - upload status;
 - thumbnail/editor save status;
 - pasta de artifacts;
@@ -166,20 +162,17 @@ artifacts/
 │   ├── template.html (marcado)
 │   ├── marker-audit.json/.md
 │   └── template-summary.md
-├── gp2-template-converter/<slug>/
-│   ├── output/slide-N.json
-│   ├── manifest.json
-│   └── conversion-report.md
-└── gp2-template-result-reviewer/<slug>/
-    ├── review-report.json/.md
-    └── (opcional) review/html|product|diff/slide-N.png
+└── gp2-template-converter/<slug>/
+    ├── output/slide-N.json
+    ├── manifest.json
+    └── conversion-report.md
 ```
 
 ## Política de qualidade
 
 - **Não suba template com design fraco**, mesmo que todos os gates técnicos passem. Se você (orquestrador) olhar para os screenshots high-fi do designer e perceber que está medíocre, devolva ao designer com instrução clara em vez de prosseguir.
 - **Não force secondary brand color** quando o brief decidiu por primária somente.
-- **Não invente skills** que não estão na lista oficial. A v2 tem 8 skills (incluindo gp2-art-director). Se você sente falta de uma 9ª, é provavelmente cerimônia.
+- **Não invente skills** que não estão na lista oficial. A v2 tem 7 skills (incluindo gp2-art-director). Se você sente falta de uma 8ª, é provavelmente cerimônia.
 - **Não pule o art-director** mesmo que o pedido pareça simples. Sem visual-plan.md, o designer cai de volta no modo v1 (viés de repetição, cores sem papel explícito, data-variable descobertos pelo marker).
 
 ## Resposta final por template
@@ -203,7 +196,6 @@ artifacts/
 - HTML reviewer: PASS (técnicos: 0, fidelidade ao plano: faithful, execução: forte)
 - Marker audit: PASS
 - Converter validator: PASS (exit 0)
-- Result reviewer: PASS_WITH_WARNINGS (warnings: 1)
 - Upload: OK
 - Thumbnails: OK
 - Cleanup: OK (artifacts/<slug>/ removido)

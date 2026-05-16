@@ -1,9 +1,18 @@
 ---
 name: gp2-template-result-reviewer
-description: "Verifica fidelidade entre o HTML aprovado e o Fabric JSON gerado pelo gp2-template-converter. Roda validate-slides.js (estrutura) + review-fabric-json.py (drift HTML→Fabric, spans duplicados, nomes fracos, metadados ausentes, brand color preserveda). Decide PASS/FAIL antes do uploader. Use após gp2-template-converter, antes do uploader v1 (getposts-template-uploader). Pixel diff opcional quando screenshots do editor estão disponíveis."
+description: "DEPRECATED — checks absorvidos no gp2-template-converter (self-validation pós-emissão). O script review-fabric-json.py continua disponível como ferramenta standalone de debug, mas não é mais um step da pipeline."
 ---
 
 # gp2-template-result-reviewer
+
+> **⚠️ DEPRECATED** — Este step foi removido da pipeline em 2026-05-16.
+>
+> Os checks úteis foram absorvidos pelo `gp2-template-converter` como self-validation pós-emissão.
+> O script `review-fabric-json.py` continua disponível para debug manual, mas não é invocado automaticamente.
+
+---
+
+_Conteúdo abaixo mantido apenas para referência histórica._
 
 Última checagem antes do upload. Garante que o Fabric JSON não tem drift relevante em relação ao HTML aprovado.
 

@@ -119,18 +119,41 @@ def main() -> int:
         if any(prop in stripped for prop in ['background', 'color:', 'font-', 'border', 'width:', 'height:', 'position', 'left:', 'top:', 'gradient']):
             issues.append({"line": 0, "tag": "style", "message": "Found <style> block with layout/visual CSS. All styles MUST be inline (style=\"...\"). The converter cannot read class-based styles — gradients, positions, and colors in <style> blocks are lost during conversion."})
 
-    # Gradient determinism: elements with CSS gradient in style must have data-gradient
+    # Brand gradients eliminated: data-variable-stops is now forbidden
+    for n in nodes:
+        if n.attrs.get("data-variable-stops"):
+            issue(n, "data-variable-stops is no longer supported. Brand gradients are eliminated. Use solid background with data-variable='primary' data-variable-target='background' + data-darken for depth.")
+
+    # Gradient determinism: elements with CSS gradient must have data-darken OR data-gradient
     GRADIENT_RE = re.compile(r'(linear|radial)-gradient\s*\(', re.I)
+    VALID_DARKEN_PRESETS = {"bottom", "top", "right", "left", "diagonal-se", "diagonal-ne", "vignette", "vignette-top-left"}
     for n in nodes:
         style_val = n.attrs.get("style", "")
         if not GRADIENT_RE.search(style_val):
             continue
-        dg = n.attrs.get("data-gradient")
-        if not dg:
-            issue(n, "Element has CSS gradient in style but missing data-gradient attribute. Every gradient MUST have data-gradient with FabricJS-compatible JSON.")
-        else:
+        has_darken = n.attrs.get("data-darken")
+        has_gradient = n.attrs.get("data-gradient")
+        if not has_darken and not has_gradient:
+            issue(n, "Element has CSS gradient in style but missing data-darken or data-gradient. Use data-darken='<preset>' for darkening overlays, or data-gradient JSON for custom overlays.")
+            continue
+        # Validate data-darken
+        if has_darken:
+            if has_darken not in VALID_DARKEN_PRESETS:
+                issue(n, f"data-darken='{has_darken}' is not a valid preset. Valid: {', '.join(sorted(VALID_DARKEN_PRESETS))}")
+            opacity_str = n.attrs.get("data-darken-opacity", "")
+            if opacity_str:
+                try:
+                    opacity_val = float(opacity_str)
+                    if not (0.1 <= opacity_val <= 1.0):
+                        issue(n, f"data-darken-opacity={opacity_str} must be between 0.1 and 1.0.")
+                except ValueError:
+                    issue(n, f"data-darken-opacity='{opacity_str}' is not a valid number.")
+            else:
+                issue(n, "Element with data-darken is missing data-darken-opacity (required, 0.1-1.0).")
+        # Validate data-gradient JSON (for custom overlays only)
+        if has_gradient and not has_darken:
             try:
-                grad = json.loads(dg)
+                grad = json.loads(has_gradient)
                 if not isinstance(grad, dict):
                     issue(n, "data-gradient: value must be a JSON object.")
                     continue
@@ -138,30 +161,9 @@ def main() -> int:
                     issue(n, "data-gradient: type must be 'linear' or 'radial'.")
                 if not isinstance(grad.get("coords"), dict):
                     issue(n, "data-gradient: missing or invalid 'coords' object.")
-                else:
-                    coords = grad["coords"]
-                    required_keys = ["x1", "y1", "x2", "y2"]
-                    for k in required_keys:
-                        if not isinstance(coords.get(k), (int, float)):
-                            issue(n, f"data-gradient: coords.{k} must be a number.")
-                            break
-                    if grad["type"] == "radial":
-                        for k in ["r1", "r2"]:
-                            if not isinstance(coords.get(k), (int, float)):
-                                issue(n, f"data-gradient: radial gradient coords.{k} must be a number.")
-                                break
                 stops = grad.get("colorStops")
                 if not isinstance(stops, list) or len(stops) == 0:
                     issue(n, "data-gradient: missing or empty 'colorStops' array.")
-                else:
-                    for i, stop in enumerate(stops):
-                        if not isinstance(stop, dict):
-                            issue(n, f"data-gradient: colorStops[{i}] must be an object.")
-                            break
-                        if not isinstance(stop.get("offset"), (int, float)):
-                            issue(n, f"data-gradient: colorStops[{i}] missing numeric 'offset'.")
-                        if not isinstance(stop.get("color"), str) or not stop.get("color"):
-                            issue(n, f"data-gradient: colorStops[{i}] missing string 'color'.")
             except (json.JSONDecodeError, TypeError):
                 issue(n, "data-gradient: value is not valid JSON.")
 

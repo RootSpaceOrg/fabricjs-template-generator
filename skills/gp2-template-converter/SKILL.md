@@ -212,51 +212,83 @@ A regra "todo objeto: `originX: "center"`, `originY: "center"`" aplica-se a todo
 
 **Avatar circular (exceção da exceção):** quando `professionalPhoto` é avatar circular (`border-radius: 50%; object-fit: cover`), volta para a regra de cover acima — usa crop centrado, frame = slot, `originX/Y: "center"`.
 
-## Gradientes — parsing e emissão Fabric
+## Gradientes — emissão Fabric via `data-darken`
 
-### REGRA ZERO DE GRADIENTES (CRÍTICO — leia antes de tudo)
+### REGRA ZERO (CRÍTICO)
 
-**Quando um elemento tem `data-gradient`, use o JSON diretamente como `fill`.** Não parseie CSS. Não use `getComputedStyle()`. Não gere scripts Playwright que leem `backgroundColor` computado para elementos com gradiente.
+**NUNCA use `getComputedStyle()` para extrair cores de gradiente.** A pipeline v2 usa `data-darken` para indicar presets de escurecimento. Você lê o atributo e emite o gradiente usando a lookup table abaixo — sem parsear CSS.
 
-Procedimento:
-1. Leia o valor de `data-gradient` do elemento (é JSON válido).
-2. Parse o JSON → objeto com `type`, `coords`, `colorStops`.
-3. Emita como `fill` do `roundedRect`, adicionando os campos obrigatórios do envelope Fabric:
+### Lookup table: `data-darken` → Fabric gradient fill
+
+| `data-darken` | type | coords |
+|---------------|------|--------|
+| `bottom` | linear | `{ x1: 0, y1: 0, x2: 0, y2: 1 }` |
+| `top` | linear | `{ x1: 0, y1: 1, x2: 0, y2: 0 }` |
+| `right` | linear | `{ x1: 0, y1: 0, x2: 1, y2: 0 }` |
+| `left` | linear | `{ x1: 1, y1: 0, x2: 0, y2: 0 }` |
+| `diagonal-se` | linear | `{ x1: 0, y1: 0, x2: 1, y2: 1 }` |
+| `diagonal-ne` | linear | `{ x1: 0, y1: 1, x2: 1, y2: 0 }` |
+| `vignette` | radial | `{ x1: 0.5, y1: 0.5, x2: 0.5, y2: 0.5, r1: 0, r2: 1 }` |
+| `vignette-top-left` | radial | `{ x1: 0.2, y1: 0.1, x2: 0.2, y2: 0.1, r1: 0, r2: 1 }` |
+
+**ColorStops padrão (linear):** `[{ offset: 0, color: "rgba(0,0,0,0)" }, { offset: 1, color: "rgba(0,0,0,<opacity>)" }]`
+**ColorStops padrão (vignette):** `[{ offset: 0, color: "rgba(0,0,0,0)" }, { offset: 0.7, color: "rgba(0,0,0,<opacity>)" }]`
+
+Onde `<opacity>` vem de `data-darken-opacity` (ex: "0.8" → `rgba(0,0,0,0.8)`).
+
+### Padrão único — Fundo brand com escurecimento atmosférico
+
+A `<section>` tem:
+- `data-variable="primary" data-variable-target="background"` (fundo sólido brand)
+- Um `<div>` filho com `data-darken="<preset>" data-darken-opacity="<N>"` (overlay)
+
+**Emita:**
+
+1. **`background`** no root: hex sólido da primary (leia do `style` da section)
+2. **`backgroundVariableConfig`** no root: `{ type: "solid", variable: "primary", alpha: 1 }`
+3. **roundedRect como PRIMEIRO objeto** em `objects[]`: cobre o slide inteiro com gradient fill
 
 ```json
 {
-  "type": "<valor de data-gradient.type>",
-  "coords": { "<valores de data-gradient.coords>" },
-  "colorStops": [ "<valores de data-gradient.colorStops>" ],
-  "offsetX": 0,
-  "offsetY": 0,
-  "gradientUnits": "percentage",
-  "gradientTransform": null
+  "version": "5.5.2",
+  "background": "#E0005A",
+  "backgroundVariableConfig": { "type": "solid", "variable": "primary", "alpha": 1 },
+  "objects": [
+    {
+      "type": "roundedRect",
+      "name": "Escurecimento atmosferico",
+      "left": 540, "top": 675,
+      "width": 1080, "height": 1350,
+      "originX": "center", "originY": "center",
+      "topLeft": 0, "topRight": 0, "bottomRight": 0, "bottomLeft": 0,
+      "fill": {
+        "type": "linear",
+        "coords": { "x1": 0, "y1": 0, "x2": 1, "y2": 1 },
+        "colorStops": [
+          { "offset": 0, "color": "rgba(0,0,0,0)" },
+          { "offset": 1, "color": "rgba(0,0,0,0.8)" }
+        ],
+        "offsetX": 0, "offsetY": 0,
+        "gradientUnits": "percentage",
+        "gradientTransform": null
+      }
+    }
+  ]
 }
 ```
 
-**Se `data-gradient` está ausente** num elemento que visualmente tem gradiente: emita warning no `conversion-report.md` e tente parsear o CSS como fallback. Mas a pipeline v2 garante que `data-gradient` estará presente (enforced pelo audit).
+O overlay **NÃO tem `fillVariableConfig`** — é neutro (preto). Trocar paleta muda o fundo sólido via `backgroundVariableConfig`; o escurecimento se adapta sozinho.
 
-**NUNCA faça:**
-- `getComputedStyle(el).backgroundColor` para cores de gradiente — retorna cor sólida
-- Gerar scripts que usam computed styles para extrair fills de elementos com gradiente
-- Emitir `fill: "rgba(...)"` (string sólida) quando `data-gradient` existe no elemento
+### Overlay de legibilidade sobre foto
 
----
-
-A pipeline v2 usa gradientes em três padrões. Cada um tem uma forma diferente de chegar ao converter.
-
-### Padrão 1 — Overlay de legibilidade (`<div>` com `linear-gradient` transparente→preto)
-
-O designer escreve um `<div>` com `background: linear-gradient(...)` marcado com `data-static="true"`. O `<div>` terá `data-gradient` com o JSON do gradiente — **use-o diretamente como `fill`** (adicionando `offsetX`, `offsetY`, `gradientUnits`, `gradientTransform`). Converta para `roundedRect` com fill gradient:
+`<div>` com `data-darken` sobre `<img>`. Mesmo procedimento: leia preset + opacity, emita roundedRect com gradient fill na posição/tamanho do div.
 
 ```json
 {
   "type": "roundedRect",
-  "name": "Overlay escurecimento",
+  "name": "Overlay legibilidade",
   "left": 540, "top": 675,
   "width": 1080, "height": 1350,
-  "scaleX": 1, "scaleY": 1,
   "originX": "center", "originY": "center",
   "topLeft": 0, "topRight": 0, "bottomRight": 0, "bottomLeft": 0,
   "fill": {
@@ -274,152 +306,33 @@ O designer escreve um `<div>` com `background: linear-gradient(...)` marcado com
 }
 ```
 
-**Conversão de direção CSS → coords Fabric:**
+### Fallback: `data-gradient` JSON (raro)
 
-| CSS | `x1,y1 → x2,y2` |
-|-----|-----------------|
-| `to bottom` | `0,0 → 0,1` |
-| `to top` | `0,1 → 0,0` |
-| `to right` | `0,0 → 1,0` |
-| `to left` | `1,0 → 0,0` |
-| `135deg` (↘) | `0,0 → 1,1` |
-| `45deg` (↗) | `0,1 → 1,0` |
+Se um elemento tem `data-gradient` ao invés de `data-darken` (overlay customizado), leia o JSON diretamente como `fill`:
 
-Cores com `rgba(0,0,0,N)` → `"rgba(0,0,0,N)"` literal na string. **Nunca** use `#000000CC` (hex com alpha) nas colorStops — o validador espera string rgba ou hex sem alpha.
+1. Parse JSON de `data-gradient`
+2. Use como `fill` adicionando: `offsetX: 0, offsetY: 0, gradientUnits: "percentage", gradientTransform: null`
 
-### Padrão 2 — Fundo de slide brand com `data-variable-stops`
+### Self-validation pós-emissão (OBRIGATÓRIO)
 
-O `<section>` tem `background: linear-gradient(...)` + `data-variable-stops="primary,secondary"` + `data-gradient` com o JSON do gradiente. **Use `data-gradient` diretamente** para o `fill` do roundedRect camada 0.
+Após emitir cada slide, verifique:
 
-**CRÍTICO: o `updateBackground()` do editor (`colors.ts:248-262`) só suporta `backgroundVariableConfig` sólido** — ele lê `.variable` e `.alpha`, chama `setBackgroundColor` com um TinyColor. Um `backgroundVariableConfig` gradient é silenciosamente ignorado. Por isso, gradiente de fundo brand é emitido como **roundedRect na camada 0**, não no `background` root.
+| Condição no HTML | O que DEVE existir no JSON | Se ausente → corrigir |
+|------------------|---------------------------|----------------------|
+| `<section data-variable="X" data-variable-target="background">` | root `backgroundVariableConfig: { type: "solid", variable: "X", alpha: 1 }` + `background` = hex de X | Background errado |
+| `<div data-darken="Y" data-darken-opacity="Z">` dentro de section | roundedRect com gradient fill (lookup Y, opacity Z) | Gradiente perdido |
+| `<div data-darken="Y">` overlay sobre img | roundedRect com gradient fill | Gradiente perdido |
 
-Emita:
-
-1. **`background`** no root: hex sólido da primary (fallback visual)
-2. **`backgroundVariableConfig`** no root: `{ type: "solid", variable: "primary", alpha: 1 }` (para troca de marca — o editor pinta o fundo sólido; o roundedRect gradient cobre por cima)
-3. **`roundedRect` como PRIMEIRO objeto** em `objects[]`: cobre o slide inteiro com gradient fill + `fillVariableConfig` gradient
-
-```json
-{
-  "version": "5.5.2",
-  "background": "#2563EB",
-  "backgroundVariableConfig": {
-    "type": "solid",
-    "variable": "primary",
-    "alpha": 1
-  },
-  "objects": [
-    {
-      "type": "roundedRect",
-      "name": "Gradiente de fundo",
-      "left": 540,
-      "top": 675,
-      "width": 1080,
-      "height": 1350,
-      "originX": "center",
-      "originY": "center",
-      "topLeft": 0,
-      "topRight": 0,
-      "bottomRight": 0,
-      "bottomLeft": 0,
-      "fill": {
-        "type": "linear",
-        "coords": { "x1": 0, "y1": 0, "x2": 1, "y2": 1 },
-        "colorStops": [
-          { "offset": 0, "color": "#2563EB" },
-          { "offset": 1, "color": "#0EA5E9" }
-        ],
-        "offsetX": 0,
-        "offsetY": 0,
-        "gradientUnits": "percentage",
-        "gradientTransform": null
-      },
-      "fillVariableConfig": {
-        "type": "gradient",
-        "colorStops": [
-          { "variable": "primary", "alpha": 1 },
-          { "variable": "secondary", "alpha": 1 }
-        ]
-      }
-    }
-  ]
-}
-```
-
-O ângulo CSS → coords Fabric (ver tabela na seção de Padrão 1). `background` no root mantém o hex da primary como fallback sólido. O `roundedRect` gradient fica na camada acima e troca via `fillVariableConfig` quando o usuário muda a paleta.
-
-Se `data-variable-stops` tiver só `"primary"` (fundo sólido brand), **não crie roundedRect** — emita apenas `backgroundVariableConfig: { type: "solid", variable: "primary", alpha: 1 }` no root.
-
-### Padrão 2b — Escurecimento atmosférico de fundo brand
-
-O `<section>` tem `background` sólido brand + `data-variable="primary" data-variable-target="background"` + um `<div>` overlay com gradiente `transparent→rgba(0,0,0,N)` (sem `data-variable-stops`). O overlay `<div>` terá `data-gradient` — **use-o diretamente como `fill`** do roundedRect overlay. O overlay é neutro (preto/transparente) — não brand.
-
-Emita:
-
-1. **`background`** no root: hex sólido da primary
-2. **`backgroundVariableConfig`** no root: `{ type: "solid", variable: "primary", alpha: 1 }`
-3. **`roundedRect` overlay** como primeiro objeto com gradient fill **literal** (sem `fillVariableConfig` — o overlay é neutro)
-
-```json
-{
-  "version": "5.5.2",
-  "background": "#FF0066",
-  "backgroundVariableConfig": { "type": "solid", "variable": "primary", "alpha": 1 },
-  "objects": [
-    {
-      "type": "roundedRect",
-      "name": "Escurecimento atmosferico",
-      "left": 540, "top": 675,
-      "width": 1080, "height": 1350,
-      "originX": "center", "originY": "center",
-      "topLeft": 0, "topRight": 0, "bottomRight": 0, "bottomLeft": 0,
-      "fill": {
-        "type": "radial",
-        "coords": { "x1": 0.22, "y1": 0, "x2": 0.22, "y2": 0, "r1": 0, "r2": 1 },
-        "colorStops": [
-          { "offset": 0, "color": "rgba(0,0,0,0)" },
-          { "offset": 0.7, "color": "rgba(0,0,0,0.85)" }
-        ],
-        "offsetX": 0, "offsetY": 0,
-        "gradientUnits": "percentage",
-        "gradientTransform": null
-      }
-    }
-  ]
-}
-```
-
-A diferença do Padrão 2: aqui o overlay NÃO tem `fillVariableConfig` porque é neutro (preto). Trocar a paleta muda o fundo sólido via `backgroundVariableConfig`; o escurecimento se adapta sozinho.
-
-### Padrão 3 — Faixa decorativa com fade-out
-
-`<div>` decorativo com gradiente de cor sólida → transparente. Sem `data-variable` (é cor literal, não brand). O `<div>` terá `data-gradient` — **use-o diretamente como `fill`**. Emite como `roundedRect` com fill gradient, cores literais nos colorStops:
-
-```json
-{
-  "type": "roundedRect",
-  "fill": {
-    "type": "linear",
-    "coords": { "x1": 0, "y1": 0, "x2": 0, "y2": 1 },
-    "colorStops": [
-      { "offset": 0, "color": "#F4ECE2" },
-      { "offset": 1, "color": "rgba(244,236,226,0)" }
-    ],
-    "offsetX": 0, "offsetY": 0,
-    "gradientUnits": "percentage",
-    "gradientTransform": null
-  },
-  "isStatic": true
-}
-```
+Se qualquer check falhar, corrija antes de prosseguir. Máximo 2 fixes.
 
 ### Regras críticas de gradiente
 
 - **`type`** deve ser `"linear"` ou `"radial"` — nunca `"linearGradient"` ou string CSS.
-- **`gradientUnits: "percentage"`** sempre — o validador rejeita outros valores.
-- **`gradientTransform: null`** sempre presente — mesmo que não haja transformação.
+- **`gradientUnits: "percentage"`** sempre.
+- **`gradientTransform: null`** sempre presente.
 - **Cor com alpha**: use `"rgba(R,G,B,A)"` nos colorStops; hex com alpha (`#RRGGBBAA`) não é suportado.
-- **Overlay sem `data-variable`**: nunca adicione `fillVariableConfig` a um overlay preto/branco — preto e branco são neutros literais, não brand variables.
+- **Overlay sem `data-variable`**: nunca adicione `fillVariableConfig` a overlay — é neutro.
+- **`data-variable-stops`**: não existe mais na pipeline. Se encontrar, ignore.
 
 ## Workflow
 

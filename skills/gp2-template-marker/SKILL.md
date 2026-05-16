@@ -70,21 +70,23 @@ artifacts/gp2-template-marker/<slug>/
    - **Papel do elemento** dentro do slide (gancho, título, subtítulo, corpo, prova, CTA-label, foto contextual, foto profissional, logo, brand-handle, decoração). Use isso para escolher entre `data-template-element`, `data-text-type`, `data-static`, `data-image-type`.
 5. Aplique a classificação (ver tabela abaixo).
 6. Mapeie cores de marca: cada elemento cuja cor (fill/stroke/background) deve trocar com o preset da marca recebe `data-variable="primary|secondary"` + opcional `data-variable-target`.
-6b. **Valide atributos `data-gradient` (safety net obrigatória):**
+6b. **Valide atributos `data-darken` (safety net obrigatória):**
    - Caminhe todos os elementos. Para qualquer elemento cujo `style` contenha `linear-gradient(` ou `radial-gradient(`:
-     - Se **já tem** `data-gradient` → valide que o JSON é bem-formado (tem `type`, `coords`, `colorStops`). Se malformado, corrija.
-     - Se **NÃO tem** `data-gradient` → o marker **DEVE adicionar**, parseando o CSS gradient e produzindo o JSON FabricJS correto.
-   - Mapeamento de direção CSS → coords FabricJS:
-     - `to bottom` → `{"x1":0,"y1":0,"x2":0,"y2":1}`
-     - `to top` → `{"x1":0,"y1":1,"x2":0,"y2":0}`
-     - `to right` → `{"x1":0,"y1":0,"x2":1,"y2":0}`
-     - `to left` → `{"x1":1,"y1":0,"x2":0,"y2":0}`
-     - `135deg` → `{"x1":0,"y1":0,"x2":1,"y2":1}`
-     - `45deg` → `{"x1":0,"y1":1,"x2":1,"y2":0}`
-   - Para `radial-gradient(circle at X% Y%, ...)`: `{"x1":X/100,"y1":Y/100,"x2":X/100,"y2":Y/100,"r1":0,"r2":1}`
-   - Cores devem ser `rgba(R,G,B,A)` para transparências ou `#RRGGBB` para opacas. Nunca `#RRGGBBAA`.
-   - `transparent` → `"rgba(0,0,0,0)"`
-   - Este step é safety net — o designer deveria já ter incluído `data-gradient`. Se faltou, log em `marker-audit.md` que o marker adicionou.
+     - Se tem `data-darken` com valor válido (bottom, top, right, left, diagonal-se, diagonal-ne, vignette, vignette-top-left) + `data-darken-opacity` numérico 0.1-1.0 → OK.
+     - Se tem `data-gradient` JSON válido (fallback para overlays custom) → OK.
+     - Se **NÃO tem nenhum dos dois** → o marker **DEVE adicionar** `data-darken` + `data-darken-opacity`, inferindo a direção do CSS.
+   - **Se `<section>` tem gradiente CSS com cores brand hex (não transparent/rgba)** → **FAIL**. Devolver ao designer. Background brand deve ser cor sólida primary + div overlay com `data-darken`. Não prosseguir.
+   - **Se `data-variable-stops` está presente** → remover e substituir por `data-variable="primary" data-variable-target="background"` na section + `data-darken` no overlay.
+   - Mapeamento de direção CSS → preset `data-darken`:
+     - `to bottom` / `180deg` → `bottom`
+     - `to top` / `0deg` → `top`
+     - `to right` / `90deg` → `right`
+     - `to left` / `270deg` → `left`
+     - `135deg` → `diagonal-se`
+     - `45deg` → `diagonal-ne`
+     - `radial-gradient(circle at center` → `vignette`
+     - `radial-gradient(circle at` com offset → `vignette-top-left`
+   - Este step é safety net — o designer deveria já ter incluído `data-darken`. Se o marker adicionou, log em `marker-audit.md`.
 7. Rode o audit:
 
 ```bash
