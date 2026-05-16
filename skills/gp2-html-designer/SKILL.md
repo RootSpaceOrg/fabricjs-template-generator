@@ -400,12 +400,91 @@ O converter traduz `box-shadow` para `shadow: { color: "rgba(255,0,102,0.25)", b
 
 **Nunca use:** `<div>` circular com `opacity: 0.16` como substituto de glow — no editor isso renderiza como disco sólido translúcido sem bloom.
 
+### `data-gradient` — atributo obrigatório para todo gradiente (CRÍTICO)
+
+Todo elemento com `linear-gradient(...)` ou `radial-gradient(...)` no `style` **DEVE** também ter um atributo `data-gradient` contendo o objeto gradiente FabricJS-ready como JSON. O converter lê `data-gradient` diretamente — se estiver ausente, o gradiente é **perdido** (vira cor sólida).
+
+**Formato do `data-gradient`:**
+
+```json
+{
+  "type": "linear",
+  "coords": { "x1": 0, "y1": 0, "x2": 0, "y2": 1 },
+  "colorStops": [
+    { "offset": 0, "color": "rgba(0,0,0,0)" },
+    { "offset": 1, "color": "rgba(0,0,0,0.75)" }
+  ]
+}
+```
+
+**Vocabulário restrito — use APENAS estes padrões de gradiente:**
+
+| ID | CSS Pattern | coords |
+|----|-------------|--------|
+| darken-bottom | `to bottom, transparent X%→rgba(0,0,0,N) 100%` | `x1:0, y1:0, x2:0, y2:1` |
+| darken-top | `to top, transparent X%→rgba(0,0,0,N) 100%` | `x1:0, y1:1, x2:0, y2:0` |
+| darken-right | `to right, rgba(0,0,0,N) 0%→transparent X%` | `x1:0, y1:0, x2:1, y2:0` |
+| darken-left | `to left, rgba(0,0,0,N) 0%→transparent X%` | `x1:1, y1:0, x2:0, y2:0` |
+| darken-diagonal-se | `135deg, transparent→rgba(0,0,0,N)` | `x1:0, y1:0, x2:1, y2:1` |
+| brand-diagonal-se | `135deg, primary 0%→secondary 100%` | `x1:0, y1:0, x2:1, y2:1` |
+| brand-diagonal-ne | `45deg, primary 0%→secondary 100%` | `x1:0, y1:1, x2:1, y2:0` |
+| brand-horizontal | `90deg, primary 0%→secondary 100%` | `x1:0, y1:0, x2:1, y2:0` |
+| brand-vertical | `180deg, primary 0%→secondary 100%` | `x1:0, y1:0, x2:0, y2:1` |
+| vignette | `radial-gradient(circle at X% Y%, transparent 0%, rgba(0,0,0,N) R%)` | `x1:X/100, y1:Y/100, x2:X/100, y2:Y/100, r1:0, r2:1` |
+| fade-out-bottom | `to bottom, COLOR 0%→transparent 100%` | `x1:0, y1:0, x2:0, y2:1` |
+
+Gradientes fora deste vocabulário são **proibidos**. Se você precisa de um efeito mais complexo, decomponha em camadas empilhadas de gradientes simples desta tabela.
+
+**Exemplos completos por caso de uso:**
+
+**1. Overlay de legibilidade:**
+
+```html
+<div data-static="true"
+     data-gradient='{"type":"linear","coords":{"x1":0,"y1":0,"x2":0,"y2":1},"colorStops":[{"offset":0.3,"color":"rgba(0,0,0,0)"},{"offset":1,"color":"rgba(0,0,0,0.75)"}]}'
+     style="position:absolute; left:0; top:0; width:1080px; height:1350px;
+            background:linear-gradient(to bottom, transparent 30%, rgba(0,0,0,0.75) 100%);">
+</div>
+```
+
+**2. Fundo brand com gradiente (na `<section>`):**
+
+```html
+<section class="slide" data-width="1080" data-height="1350"
+         data-variable-stops="primary,secondary"
+         data-gradient='{"type":"linear","coords":{"x1":0,"y1":0,"x2":1,"y2":1},"colorStops":[{"offset":0,"color":"#2563EB"},{"offset":1,"color":"#0EA5E9"}]}'
+         style="position:relative; width:1080px; height:1350px;
+                background:linear-gradient(135deg, #2563EB 0%, #0EA5E9 100%);">
+```
+
+**3. Escurecimento atmosférico (overlay neutro):**
+
+```html
+<div data-gradient='{"type":"radial","coords":{"x1":0.22,"y1":0,"x2":0.22,"y2":0,"r1":0,"r2":1},"colorStops":[{"offset":0,"color":"rgba(0,0,0,0)"},{"offset":0.7,"color":"rgba(0,0,0,0.85)"}]}'
+     style="position:absolute; left:0; top:0; width:1080px; height:1350px;
+            background:radial-gradient(circle at 22% 0%, transparent 0%, rgba(0,0,0,0.85) 70%);">
+</div>
+```
+
+**4. Faixa decorativa com fade-out:**
+
+```html
+<div data-static="true"
+     data-gradient='{"type":"linear","coords":{"x1":0,"y1":0,"x2":0,"y2":1},"colorStops":[{"offset":0,"color":"#F4ECE2"},{"offset":1,"color":"rgba(244,236,226,0)"}]}'
+     style="position:absolute; left:0; top:860px; width:1080px; height:120px;
+            background:linear-gradient(to bottom, #F4ECE2 0%, transparent 100%);">
+</div>
+```
+
+**⚠️ HARD GATE:** O `audit-template-markup.py` bloqueia a pipeline se qualquer elemento com gradiente CSS não tiver `data-gradient` válido. Não prossegue sem este atributo.
+
 ### Anti-patterns de gradiente (nunca faça)
 
 - **Gradiente brand sem `data-variable-stops`**: vira literal no JSON, não troca com paleta do usuário.
 - **Gradiente multi-cor decorativo sem motivo** (roxo→rosa→laranja): é kitsch, não editorial. Os presets vibrant existem no editor mas não devem ser movimento memorável de template clínico.
 - **Gradiente como fundo de texto sobre gradiente**: texto sobre gradiente sobre gradiente — contraste imprevisível, WCAG impossível de garantir.
 - **`linear-gradient` em `color:` de texto**: CSS inválido para text, não renderiza e quebra o converter.
+- **Gradiente sem `data-gradient`**: o converter não parseia CSS — sem o atributo, o gradiente é achatado para cor sólida.
 
 ## Famílias tipográficas seguras
 

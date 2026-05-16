@@ -78,6 +78,7 @@ O script gera `review-report.json` + `review-report.md`.
 - `ClippableImage` com campos obrigatórios (`originWidth`, `originHeight`, `cropX`, `cropY`);
 - `isTemplateElement` × `textType` conflitos (mutuamente exclusivos);
 - `fillVariableConfig`/`strokeVariableConfig`/`backgroundVariableConfig` preservados quando o HTML tinha `data-variable`;
+- **`data-gradient` fidelity**: para cada elemento no HTML com `data-gradient`, o objeto Fabric correspondente DEVE ter `fill` como objeto gradient (não string sólida). Se `data-gradient` existia e o fill resultante é uma string → **BLOCKER**;
 - nomes duplicados entre objetos;
 - comparativo opcional com `review-manifest.json` (geometria esperada).
 

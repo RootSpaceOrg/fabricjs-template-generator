@@ -109,6 +109,52 @@ def main() -> int:
     if duplicate_style:
         issues.append({"line": 0, "tag": "html", "message": f"Found {duplicate_style} elements with duplicate style attributes."})
 
+    # Gradient determinism: elements with CSS gradient in style must have data-gradient
+    GRADIENT_RE = re.compile(r'(linear|radial)-gradient\s*\(', re.I)
+    for n in nodes:
+        style_val = n.attrs.get("style", "")
+        if not GRADIENT_RE.search(style_val):
+            continue
+        dg = n.attrs.get("data-gradient")
+        if not dg:
+            issue(n, "Element has CSS gradient in style but missing data-gradient attribute. Every gradient MUST have data-gradient with FabricJS-compatible JSON.")
+        else:
+            try:
+                grad = json.loads(dg)
+                if not isinstance(grad, dict):
+                    issue(n, "data-gradient: value must be a JSON object.")
+                    continue
+                if grad.get("type") not in ("linear", "radial"):
+                    issue(n, "data-gradient: type must be 'linear' or 'radial'.")
+                if not isinstance(grad.get("coords"), dict):
+                    issue(n, "data-gradient: missing or invalid 'coords' object.")
+                else:
+                    coords = grad["coords"]
+                    required_keys = ["x1", "y1", "x2", "y2"]
+                    for k in required_keys:
+                        if not isinstance(coords.get(k), (int, float)):
+                            issue(n, f"data-gradient: coords.{k} must be a number.")
+                            break
+                    if grad["type"] == "radial":
+                        for k in ["r1", "r2"]:
+                            if not isinstance(coords.get(k), (int, float)):
+                                issue(n, f"data-gradient: radial gradient coords.{k} must be a number.")
+                                break
+                stops = grad.get("colorStops")
+                if not isinstance(stops, list) or len(stops) == 0:
+                    issue(n, "data-gradient: missing or empty 'colorStops' array.")
+                else:
+                    for i, stop in enumerate(stops):
+                        if not isinstance(stop, dict):
+                            issue(n, f"data-gradient: colorStops[{i}] must be an object.")
+                            break
+                        if not isinstance(stop.get("offset"), (int, float)):
+                            issue(n, f"data-gradient: colorStops[{i}] missing numeric 'offset'.")
+                        if not isinstance(stop.get("color"), str) or not stop.get("color"):
+                            issue(n, f"data-gradient: colorStops[{i}] missing string 'color'.")
+            except (json.JSONDecodeError, TypeError):
+                issue(n, "data-gradient: value is not valid JSON.")
+
     slides = [n for n in nodes if n.tag == "section" and "slide" in n.attrs.get("class", "")]
     if not slides:
         issues.append({"line": 0, "tag": "section", "message": "No section.slide found."})

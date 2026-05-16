@@ -112,6 +112,9 @@ def has_variable_config(value: Any, variable: str, target: str = 'fill') -> bool
     return False
 
 
+GRADIENT_CSS_RE = re.compile(r'(linear|radial)-gradient\s*\(', re.I)
+
+
 class HtmlReviewNode:
     def __init__(self, tag: str, attrs: dict[str, str], line: int, slide: int, parent_review_id: str | None):
         self.tag = tag
@@ -154,11 +157,12 @@ class ReviewHtmlParser(HTMLParser):
 
 def parse_source_html(path: Path | None) -> dict[str, Any]:
     if not path or not path.exists():
-        return {'byReviewId': {}, 'childTextRuns': {}}
+        return {'byReviewId': {}, 'childTextRuns': {}, 'gradientElements': []}
     parser = ReviewHtmlParser()
     parser.feed(path.read_text(encoding='utf-8'))
     by_id: dict[str, dict[str, Any]] = {}
     child_runs: dict[str, list[dict[str, Any]]] = {}
+    gradient_elements: list[dict[str, Any]] = []
     text_tags = {'h1', 'h2', 'h3', 'h4', 'p', 'span', 'strong', 'em', 'div'}
     for n in parser.nodes:
         text = normalize_text(n.text)
@@ -175,13 +179,22 @@ def parse_source_html(path: Path | None) -> dict[str, Any]:
         }
         if n.review_id:
             by_id[n.review_id] = meta
+        # Track elements with data-gradient for fidelity checks
+        if n.attrs.get('data-gradient') or GRADIENT_CSS_RE.search(n.attrs.get('style', '')):
+            gradient_elements.append({
+                'reviewId': n.review_id,
+                'slide': n.slide,
+                'line': n.line,
+                'tag': n.tag,
+                'hasDataGradient': bool(n.attrs.get('data-gradient')),
+            })
         # Inline text runs do not need their own data-review-id. Claude Design's
         # contract says spans inside a text element become Fabric textbox.styles
         # ranges, not separate objects. Track them even without review ids.
         if n.parent_review_id and n.tag in text_tags and text:
             run_id = n.review_id or f'{n.parent_review_id}::inline-{n.tag}-{n.line}'
             child_runs.setdefault(n.parent_review_id, []).append(meta | {'reviewId': run_id, 'hasOwnReviewId': bool(n.review_id)})
-    return {'byReviewId': by_id, 'childTextRuns': child_runs}
+    return {'byReviewId': by_id, 'childTextRuns': child_runs, 'gradientElements': gradient_elements}
 
 
 def find_output(path: Path) -> Path:
@@ -526,6 +539,28 @@ def review_object_semantics(path: Path, data: dict[str, Any], objects: list[dict
                     path.name,
                     oid,
                     'redundant full-canvas background object: fill matches canvas background. Remove this layer and keep the color only on the Fabric canvas background.',
+                ))
+
+    # Gradient fidelity: data-gradient elements must produce gradient fills, not solid colors.
+    if html_info:
+        gradient_els = html_info.get('gradientElements') or []
+        for gel in gradient_els:
+            if slide_no and gel.get('slide') != slide_no:
+                continue
+            rid = gel.get('reviewId')
+            if not rid:
+                continue
+            obj = by_review_id.get(rid)
+            if not obj:
+                continue
+            fill = obj.get('fill')
+            if gel.get('hasDataGradient') and isinstance(fill, str):
+                issues.append(issue(
+                    'critical',
+                    path.name,
+                    rid,
+                    f'Gradient flattened to solid color: element had data-gradient but Fabric fill is "{fill}". '
+                    f'The converter must use data-gradient JSON directly as the fill object.',
                 ))
 
     # Duplicate/subset textboxes: common symptom of HTML span → extra Fabric textbox.
