@@ -313,6 +313,70 @@ Se um elemento tem `data-gradient` ao invés de `data-darken` (overlay customiza
 1. Parse JSON de `data-gradient`
 2. Use como `fill` adicionando: `offsetX: 0, offsetY: 0, gradientUnits: "percentage", gradientTransform: null`
 
+### Glow atmosférico: `data-glow` → radial gradient com `fillVariableConfig`
+
+Elementos com `data-glow` são círculos de iluminação atmosférica com cor brand. O converter lê os atributos e emite um `roundedRect` circular com radial gradient `fill` + gradient `fillVariableConfig`.
+
+**Lookup table: `data-glow` → Fabric radial gradient coords**
+
+| `data-glow` | coords |
+|-------------|--------|
+| `center`    | `{ x1: 0.5, y1: 0.5, x2: 0.5, y2: 0.5, r1: 0, r2: 0.5 }` |
+
+**Algoritmo de conversão:**
+
+1. Leia `data-glow-variable` (ex: `"secondary"`) e `data-glow-alpha` (ex: `"0.44"`).
+2. Obtenha a cor hex da variável brand no manifest/paleta (ex: `#22D3EE` para secondary).
+3. Converta hex + alpha para `#RRGGBBAA`: hex da cor brand + alpha como 2 hex digits. Ex: `#22D3EE` com alpha `0.44` → `0.44 × 255 = 112 = 0x70` → `#22d3ee70`.
+4. Leia `opacity` do `style` (default `1.0`).
+5. Emita:
+
+```json
+{
+  "type": "roundedRect",
+  "name": "Glow <variable> <posição>",
+  "left": "<center_x>",
+  "top": "<center_y>",
+  "width": "<width>",
+  "height": "<height>",
+  "originX": "center",
+  "originY": "center",
+  "topLeft": 100,
+  "topRight": 100,
+  "bottomRight": 100,
+  "bottomLeft": 100,
+  "opacity": "<opacity_from_style>",
+  "fill": {
+    "type": "radial",
+    "coords": { "x1": 0.5, "y1": 0.5, "x2": 0.5, "y2": 0.5, "r1": 0, "r2": 0.5 },
+    "colorStops": [
+      { "offset": 0, "color": "#<hex_brand><alpha_hex>" },
+      { "offset": 1, "color": "#bebebe00" }
+    ],
+    "offsetX": 0,
+    "offsetY": 0,
+    "gradientUnits": "percentage",
+    "gradientTransform": null
+  },
+  "fillVariableConfig": {
+    "type": "gradient",
+    "colorStops": [
+      { "variable": "<data-glow-variable>", "alpha": "<data-glow-alpha as float>" },
+      null
+    ]
+  },
+  "isStatic": true
+}
+```
+
+**Notas críticas:**
+- `topLeft/topRight/bottomRight/bottomLeft: 100` → círculo perfeito (equivalente a `border-radius: 50%`).
+- `colorStops[1]` no fill é `"#bebebe00"` (cinza totalmente transparente) — cor neutra irrelevante, alpha 0.
+- `fillVariableConfig.colorStops[1]` é `null` porque o segundo stop é neutro (não muda com paleta).
+- O `opacity` do elemento vem do CSS `opacity` (ex: `0.11`), separado do alpha do gradiente (`data-glow-alpha`).
+- `data-glow-alpha` determina a opacidade da cor brand DENTRO do gradiente (quão forte é o centro do glow).
+- Em colorStops de glow, use hex com alpha (`#RRGGBBAA`). Este é o único caso onde hex com alpha é usado — em darken/overlay, continue usando `rgba(R,G,B,A)`.
+
 ### Self-validation pós-emissão (OBRIGATÓRIO)
 
 Após emitir cada slide, verifique:
@@ -322,6 +386,7 @@ Após emitir cada slide, verifique:
 | `<section data-variable="X" data-variable-target="background">` | root `backgroundVariableConfig: { type: "solid", variable: "X", alpha: 1 }` + `background` = hex de X | Background errado |
 | `<div data-darken="Y" data-darken-opacity="Z">` dentro de section | roundedRect com gradient fill (lookup Y, opacity Z) | Gradiente perdido |
 | `<div data-darken="Y">` overlay sobre img | roundedRect com gradient fill | Gradiente perdido |
+| `<div data-glow="Y" data-glow-variable="X" data-glow-alpha="A">` | roundedRect com radial gradient fill + `fillVariableConfig: { type: "gradient", colorStops: [{ variable: "X", alpha: A }, null] }` | Glow perdido ou sem variableConfig |
 
 Se qualquer check falhar, corrija antes de prosseguir. Máximo 2 fixes.
 
@@ -330,7 +395,7 @@ Se qualquer check falhar, corrija antes de prosseguir. Máximo 2 fixes.
 - **`type`** deve ser `"linear"` ou `"radial"` — nunca `"linearGradient"` ou string CSS.
 - **`gradientUnits: "percentage"`** sempre.
 - **`gradientTransform: null`** sempre presente.
-- **Cor com alpha**: use `"rgba(R,G,B,A)"` nos colorStops; hex com alpha (`#RRGGBBAA`) não é suportado.
+- **Cor com alpha**: em darken/overlay, use `"rgba(R,G,B,A)"` nos colorStops. Em glow atmosférico (`data-glow`), use hex com alpha (`#RRGGBBAA`) — é o único caso onde este formato é usado.
 - **Overlay sem `data-variable`**: nunca adicione `fillVariableConfig` a overlay — é neutro.
 - **`data-variable-stops`**: não existe mais na pipeline. Se encontrar, ignore.
 
@@ -358,6 +423,7 @@ Se qualquer check falhar, corrija antes de prosseguir. Máximo 2 fixes.
    | `<div data-variable="X">` (shape) | `fillVariableConfig: { type: "solid", variable: "X", alpha: 1 }` no objeto | Cor fica literal |
    | `<div data-variable="X" data-variable-target="background">` (não-section) | `fillVariableConfig` no roundedRect correspondente | Cor fica literal |
    | `<p data-variable="X">` / `<h1 data-variable="X">` | `fillVariableConfig` no textbox | Cor do texto fica literal |
+   | `<div data-glow="Y" data-glow-variable="X" data-glow-alpha="A">` | `fillVariableConfig: { type: "gradient", colorStops: [{ variable: "X", alpha: A }, null] }` no roundedRect | Glow não adapta com paleta |
 
    **Se qualquer condição falhar, corrija antes de prosseguir.** Esta checklist pega o bug mais comum da pipeline: `data-variable` presente no HTML mas `variableConfig` ausente no JSON.
 

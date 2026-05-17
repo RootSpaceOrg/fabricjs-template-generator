@@ -74,6 +74,9 @@ O script gera `html-review.json` + `html-review.md`. Leia os findings antes de p
 - Pseudo-elementos `::before`/`::after`, `@keyframes`, `mix-blend-mode`, `backdrop-filter` complexo.
 - Posicionamento via flex/grid dentro de `.slide` (deveria ser absoluto).
 - `box-shadow` com cor brand (`rgba(R,G,B,A)` onde RGB ≠ 0,0,0 e a cor corresponde a primary/secondary da paleta) — sombras devem ser neutras (`rgba(0,0,0,N)`) para adaptabilidade de paleta.
+- Círculo/div com `opacity` parcial + `background` sólido brand (sem `radial-gradient`) pretendendo ser glow atmosférico — DEVE usar `data-glow="center"` com `radial-gradient(circle, ...)` no CSS. Círculo sólido translúcido vira fill sólido no Fabric, perdendo o efeito radial.
+- Elemento com `data-glow` faltando `data-glow-variable` ou `data-glow-alpha` — ambos são obrigatórios para emissão correta do `fillVariableConfig` gradient.
+- `data-glow-variable` com valor diferente de `primary` ou `secondary`.
 - `<section class="slide">` sem `data-width` / `data-height`.
 - `<img data-image-type="professionalPhoto">` (ou `class="professional-photo"`) com `object-fit: cover` ou `border-radius` arredondado quando o brief não pediu avatar circular — perde o efeito do cutout PNG e quebra o anchor `bottom-center` do runtime. Esperado: `object-fit: contain; object-position: bottom center; border-radius: 0;` (ver [`gp2-html-designer/references/professional-photo-placements.md`](../gp2-html-designer/references/professional-photo-placements.md)).
 - `<img data-image-type="professionalPhoto">` posicionada de forma que a face da figura (zona superior do slot, ~30% da altura) é coberta por texto ou outro elemento visível — leitor não consegue avaliar confiança.

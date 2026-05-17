@@ -133,8 +133,9 @@ def main() -> int:
             continue
         has_darken = n.attrs.get("data-darken")
         has_gradient = n.attrs.get("data-gradient")
-        if not has_darken and not has_gradient:
-            issue(n, "Element has CSS gradient in style but missing data-darken or data-gradient. Use data-darken='<preset>' for darkening overlays, or data-gradient JSON for custom overlays.")
+        has_glow = n.attrs.get("data-glow")
+        if not has_darken and not has_gradient and not has_glow:
+            issue(n, "Element has CSS gradient in style but missing data-darken, data-gradient, or data-glow. Use data-darken='<preset>' for darkening overlays, data-gradient JSON for custom overlays, or data-glow='<preset>' for atmospheric glow.")
             continue
         # Validate data-darken
         if has_darken:
@@ -150,6 +151,24 @@ def main() -> int:
                     issue(n, f"data-darken-opacity='{opacity_str}' is not a valid number.")
             else:
                 issue(n, "Element with data-darken is missing data-darken-opacity (required, 0.1-1.0).")
+        # Validate data-glow (atmospheric glow with brand color)
+        VALID_GLOW_PRESETS = {"center"}
+        if has_glow:
+            if has_glow not in VALID_GLOW_PRESETS:
+                issue(n, f"data-glow='{has_glow}' is not a valid preset. Valid: {', '.join(sorted(VALID_GLOW_PRESETS))}")
+            glow_var = n.attrs.get("data-glow-variable", "")
+            if glow_var not in ("primary", "secondary"):
+                issue(n, f"data-glow-variable must be 'primary' or 'secondary', got '{glow_var}'")
+            alpha_str = n.attrs.get("data-glow-alpha", "")
+            if alpha_str:
+                try:
+                    alpha_val = float(alpha_str)
+                    if not (0.0 <= alpha_val <= 1.0):
+                        issue(n, f"data-glow-alpha={alpha_str} must be between 0.0 and 1.0.")
+                except ValueError:
+                    issue(n, f"data-glow-alpha='{alpha_str}' is not a valid number.")
+            else:
+                issue(n, "Element with data-glow is missing data-glow-alpha (required, 0.0-1.0).")
         # Validate data-gradient JSON (for custom overlays only)
         if has_gradient and not has_darken:
             try:

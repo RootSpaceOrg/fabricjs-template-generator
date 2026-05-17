@@ -198,7 +198,7 @@ Vêm direto de [`../../CONTRACT.md`](../../CONTRACT.md) que aponta para `CLAUDE_
 10. `<html data-template-name="..." data-segment="...">` com o slug do vertical inferido do brief (kebab-case, ex: `clinicas-medicas`, `ecommerce-moda`, `academias`).
 11. Rotação só via `transform: rotate(Ndeg)` (origin default 50% 50%).
 12. **Todo CSS deve ser inline (`style="..."`) — PROIBIDO usar `<style>` blocks ou classes CSS.** O conversor lê estilos diretamente dos atributos `style` de cada elemento. Bloco `<style>` no `<head>` impede o conversor de detectar gradientes, posições, cores e tamanhos. Única exceção: um reset mínimo `* { margin:0; box-sizing:border-box; }` é tolerado mas não recomendado.
-13. Todo elemento com `linear-gradient` ou `radial-gradient` no `style` DEVE ter `data-darken="<preset>"` + `data-darken-opacity="<0.1-1.0>"` (ver seção "Gradientes" abaixo). NUNCA use cores brand em gradientes — fundo brand = sólido + darken overlay.
+13. Todo elemento com `linear-gradient` ou `radial-gradient` no `style` DEVE ter: `data-darken="<preset>"` + `data-darken-opacity` (escurecimento neutro), OU `data-glow="<preset>"` + `data-glow-variable` + `data-glow-alpha` (glow atmosférico com cor brand). Ver seções "Gradientes" e "Glow atmosférico" abaixo. NUNCA use cores brand em gradientes lineares — fundo brand = sólido + darken overlay. Glow radial é a única exceção (usa cor brand via `data-glow-variable`).
 
 ## Imagens contextuais (userAsset) — fluxo obrigatório
 
@@ -361,18 +361,60 @@ Direções típicas:
 
 **Opacidade orientativa:** `0.65–0.80` para texto peso 400; `0.45–0.60` para texto pesado (700+). Não passe de `0.85`.
 
-### Glow / neon — como fazer no Fabric (CRÍTICO)
+### Glow atmosférico (círculos de luz brand) — sistema `data-glow` (CRÍTICO)
 
-Efeito de glow **não funciona** como círculo translúcido no Fabric. Use `box-shadow` no CSS:
+Glows são círculos translúcidos grandes que criam iluminação atmosférica com cor de marca. O resultado visual é um halo radial suave: cor brand no centro, transparente nas bordas.
+
+**REGRA:** Glow atmosférico DEVE usar `data-glow` + `data-glow-variable` + `data-glow-alpha`. O converter lê estes atributos e gera radial gradient Fabric com `fillVariableConfig` type gradient — garantindo que o glow se adapta quando o usuário troca paleta.
+
+**⚠️ Círculo sólido com `background: #22D3EE; opacity: 0.11` NÃO é glow no Fabric.** Sem `data-glow`, o converter vê cor sólida e perde o efeito radial. O resultado correto é um radial gradient `cor-brand-com-alpha → transparente`.
+
+**HTML pattern:**
 
 ```html
-<div style="position:absolute; left:123px; top:260px; width:834px; height:770px;
-            border-radius:34px; background:#10151D; border:2px solid #1B2028;
-            box-shadow: 0 0 60px 20px rgba(0,0,0,0.35);">
+<div data-glow="center"
+     data-glow-variable="secondary"
+     data-glow-alpha="0.44"
+     data-static="true"
+     style="position:absolute; left:900px; top:-620px; width:560px; height:560px;
+            border-radius:50%;
+            background:radial-gradient(circle, rgba(34,211,238,0.44) 0%, transparent 100%);
+            opacity:0.11;">
 </div>
 ```
 
-O converter traduz `box-shadow` para `shadow: { color, blur, offsetX, offsetY }` no objeto Fabric.
+**Atributos obrigatórios:**
+
+| Atributo | Valor | Descrição |
+|----------|-------|-----------|
+| `data-glow` | `center` | Preset de posição do brilho (centro do círculo). Único preset suportado. |
+| `data-glow-variable` | `primary` ou `secondary` | Qual cor brand usa no centro do glow. |
+| `data-glow-alpha` | `0.0`–`1.0` | Alpha da cor brand no centro do gradiente radial (ex: `0.44` = 44% opaco). |
+| `data-static="true"` | `true` | Glow é sempre estático (decorativo). |
+
+**Presets `data-glow` válidos:**
+
+| `data-glow` | Onde o brilho fica mais forte |
+|-------------|-------------------------------|
+| `center`    | Centro do círculo (radial simétrico) |
+
+**Regras CSS (puramente visuais — o converter ignora):**
+
+- `border-radius: 50%` para círculo perfeito.
+- `background: radial-gradient(circle, rgba(R,G,B,<alpha>) 0%, transparent 100%)` com os valores visuais reais.
+- `opacity` opcional para intensidade geral do efeito (ex: `0.11` para sutil, `0.065` para quase imperceptível).
+- O CSS é para preview no browser — o converter lê SOMENTE `data-glow*`.
+
+**Quando usar glow:**
+- Famílias estéticas "neon", "cyberpunk", "tech dark" — atmosfera luminosa.
+- Slides DARK onde a cor brand precisa de presença sutil sem dominar.
+- O visual-plan especifica "glow" ou "halo luminoso" como elemento decorativo.
+
+**Anti-patterns de glow (nunca faça):**
+- Círculo sólido com `background: #22D3EE; opacity: 0.11` SEM `data-glow` — converter vê cor sólida e perde o gradiente radial.
+- `box-shadow` colorido com hex brand — não tem `variableConfig`, não adapta paleta.
+- Glow sem `data-glow-variable` — converter não sabe qual brand color usar no `fillVariableConfig`.
+- `data-darken` para glow — darken é escurecimento neutro (preto), glow é iluminação com cor brand.
 
 ### Sombras — regra de cor (OBRIGATÓRIO)
 
@@ -389,7 +431,7 @@ Toda `box-shadow` DEVE usar **preto como base** (`rgba(0,0,0,N)`). Sombras "colo
 
 ### Anti-patterns de gradiente (nunca faça)
 
-- **Cores brand hex em qualquer gradiente** — PROIBIDO. Use transparent→rgba(0,0,0,N) sobre fundo sólido brand.
+- **Cores brand hex em gradientes lineares** — PROIBIDO. Use transparent→rgba(0,0,0,N) sobre fundo sólido brand. Exceção: glow atmosférico (`data-glow`) usa cor brand em gradiente radial.
 - **`data-variable-stops`** — eliminado da pipeline. Não use.
 - **Gradiente sem `data-darken`** — o converter não parseia CSS. Sem o atributo, o gradiente vira cor sólida.
 - **Gradiente multi-cor decorativo** (roxo→rosa→laranja) — kitsch, não editorial.

@@ -92,7 +92,8 @@ function validateVariableConfig(vc, file, path) {
     if (!Array.isArray(vc.colorStops) || vc.colorStops.length === 0)
       err(file, path, 'gradient variableConfig must have colorStops[]');
     (vc.colorStops || []).forEach((stop, i) => {
-      if (!VALID_VARIABLES.has(stop.variable))
+      if (stop === null) return;
+      if (!stop || !VALID_VARIABLES.has(stop.variable))
         err(file, path + `.colorStops[${i}]`, `variable must be "primary"|"secondary"`);
     });
   } else {
