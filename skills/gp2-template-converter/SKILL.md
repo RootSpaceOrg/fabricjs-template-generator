@@ -1,6 +1,6 @@
 ---
 name: gp2-template-converter
-description: "Converte HTML marcado (do gp2-template-marker) em Fabric.js CanvasJSON pronto para o editor HealthMarket. Adota CLAUDE_DESIGN_RULES.md como contrato e roda validate-slides.js (mesma cópia da Estratégia A) como gate. HTML produzido pela v2 é 100% intercambiável com HTML do Claude Design. Use após gp2-template-marker (audit PASS), antes de gp2-template-result-reviewer."
+description: "Converte HTML marcado (do gp2-template-marker) em Fabric.js CanvasJSON pronto para o editor HealthMarket. Adota CLAUDE_DESIGN_RULES.md como contrato e roda validate-slides.js (mesma cópia da Estratégia A) como gate. HTML produzido pela v2 é 100% intercambiável com HTML do Claude Design. Use após gp2-template-marker (audit PASS), antes de gp2-template-uploader."
 ---
 
 # gp2-template-converter
@@ -60,14 +60,14 @@ Toda regra abaixo está detalhada em `CLAUDE_DESIGN_RULES.md` e `claude_design_t
 | Cores brand | `data-variable="primary\|secondary"` → `fillVariableConfig`/`strokeVariableConfig`/`backgroundVariableConfig` `{type:"solid", variable, alpha}` |
 | `textAlign` | `text-align: center\|right\|left\|justify` → `textAlign: "center"\|"right"\|"left"\|"justify"` no textbox. Default: `"left"`. **Nunca omita** — se o HTML tem `text-align:center`, o JSON **deve** ter `textAlign: "center"` |
 | Background brand sólido | `<section data-variable="primary" data-variable-target="background">` → root `backgroundVariableConfig: { type: "solid", variable, alpha }` |
-| Background brand gradiente | `<section data-variable-stops="primary,secondary">` com `linear-gradient(...)` → **NÃO use `backgroundVariableConfig` gradient** (editor só suporta sólido). Em vez disso: root `background` = hex sólido primary + `backgroundVariableConfig` sólido + `roundedRect` como **primeiro objeto** com gradient fill + `fillVariableConfig` gradient (ver Padrão 2 abaixo) |
+| Background brand com escurecimento | `<section data-variable="primary" data-variable-target="background">` + `<div data-darken="..." data-darken-opacity="...">` → root `background` = hex sólido primary + `backgroundVariableConfig` sólido + roundedRect primeiro objeto com gradient fill neutro (sem `fillVariableConfig` — overlay é neutro) |
 | Spans | inline `<span>` em texto editável → **uma** textbox com `styles[lineIndex][charIndex]`; **nunca** uma textbox por span |
 | Profile vars | `data-text-type` → `textType: "..."` no objeto, sem `isTemplateElement` |
 | Templates | `data-template-element="true"` → `isTemplateElement: true` + bloco `templateElement` |
 | Imagens cropadas (cover) | `data-image-crop="true"` ou `border-radius != 0` ou `object-fit:cover` → `ClippableImage` com crop centrado |
 | Imagens cutout (contain) | `object-fit:contain` em `data-image-type="professionalPhoto"` → `ClippableImage` **sem crop** + `originY:"bottom"` quando `object-position` inclui `bottom` (ver seção dedicada abaixo) |
 | Gradientes | `type: "linear"\|"radial"` (NUNCA `linearGradient`); inclui `coords`, `colorStops`, `offsetX`, `offsetY`, `gradientUnits: "percentage"`, `gradientTransform: null` |
-| Background gradiente | **Nunca** string CSS `"linear-gradient(...)"`. Se overlay/decorativo → `roundedRect` com gradient fill. Se fundo brand com `data-variable-stops` → roundedRect camada 0 com gradient fill + `fillVariableConfig` (ver Padrão 2). **Nunca** emita `backgroundVariableConfig` gradient — o editor só suporta sólido |
+| Background gradiente | **Nunca** string CSS `"linear-gradient(...)"`. Overlays com `data-darken` → `roundedRect` com gradient fill neutro. **Nunca** emita `backgroundVariableConfig` gradient — o editor só suporta sólido. `data-variable-stops` foi eliminado — se encontrado, ignore |
 
 ## ClippableImage crop (CRÍTICO)
 
@@ -343,7 +343,7 @@ Se qualquer check falhar, corrija antes de prosseguir. Máximo 2 fixes.
    - Calcule coordenadas absolute → Fabric center.
    - Aplique tabela de mapeamento HTML → Fabric (`claude_design_to_fabric/skill.md` §Element Type Mapping).
    - **Para cada elemento com `data-gradient`:** leia o JSON, use como `fill` diretamente (adicionar `offsetX:0, offsetY:0, gradientUnits:"percentage", gradientTransform:null`). NUNCA use computed styles para estes elementos.
-   - Se `<section>` tem `data-gradient` + `data-variable-stops`: emita roundedRect camada 0 com o gradient de `data-gradient` como fill + `fillVariableConfig` gradient derivado de `data-variable-stops`.
+   - Se `<section>` tem `data-gradient` (fallback raro): emita roundedRect com o gradient de `data-gradient` como fill. Sem `fillVariableConfig` — overlays são neutros.
    - Detecte cores brand (explícitas via `data-variable` ou auto-detect).
    - Para textboxes com `<span>`, calcule `styles[lineIndex][charIndex]` contando caracteres exatos (sem aproximar).
    - Adicione `name` PT-BR descritivo a cada objeto.
@@ -354,10 +354,9 @@ Se qualquer check falhar, corrija antes de prosseguir. Máximo 2 fixes.
    | Condição no HTML | O que DEVE existir no JSON | Bug se ausente |
    |------------------|---------------------------|----------------|
    | `<section data-variable="X" data-variable-target="background">` | root `backgroundVariableConfig: { type: "solid", variable: "X", alpha: 1 }` | Trocar paleta não muda o fundo |
-   | `<section data-variable-stops="primary,secondary">` com `linear-gradient` | root `backgroundVariableConfig` sólido + roundedRect camada 0 com `fillVariableConfig` gradient (Padrão 2) | Gradiente fica literal, não troca com paleta |
+   | `<div data-darken="Y" data-darken-opacity="Z">` (overlay escurecimento) | roundedRect com gradient fill neutro (lookup table `data-darken`) — SEM `fillVariableConfig` | Escurecimento perdido, fundo parece flat |
    | `<div data-variable="X">` (shape) | `fillVariableConfig: { type: "solid", variable: "X", alpha: 1 }` no objeto | Cor fica literal |
    | `<div data-variable="X" data-variable-target="background">` (não-section) | `fillVariableConfig` no roundedRect correspondente | Cor fica literal |
-   | `<div data-variable-stops="primary,secondary">` (shape com gradiente) | `fillVariableConfig: { type: "gradient", colorStops: [...] }` no roundedRect | Gradiente fica literal |
    | `<p data-variable="X">` / `<h1 data-variable="X">` | `fillVariableConfig` no textbox | Cor do texto fica literal |
 
    **Se qualquer condição falhar, corrija antes de prosseguir.** Esta checklist pega o bug mais comum da pipeline: `data-variable` presente no HTML mas `variableConfig` ausente no JSON.
@@ -424,5 +423,5 @@ Slides: <N>
 Output: `<path>/output/`
 Validador: PASS (exit 0) | FAIL (<N> erros)
 Manifest: `<path>/manifest.json`
-Próximo passo: gp2-template-result-reviewer
+Próximo passo: gp2-template-uploader
 ```

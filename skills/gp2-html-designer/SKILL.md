@@ -129,7 +129,7 @@ Em cima do `template-v1.html`, gere `template-v2.html` aplicando:
 - **Paleta de marca — use os hexs do visual-plan, sem substituição:**
   - Slides LIGHT: fundo = neutro claro do plano
   - Slides DARK: fundo = neutro escuro do plano
-  - Slides Brand: fundo = primary do plano (sólido ou gradiente primary→secondary se plano indicar)
+  - Slides Brand: fundo = primary do plano (sempre sólido; para profundidade, usar overlay `data-darken`)
   - Neutros (branco, preto, cinza) **nunca** são brand variables.
 
 - **Tipografia:**
@@ -143,7 +143,7 @@ Em cima do `template-v1.html`, gere `template-v2.html` aplicando:
   - **Não invente um movimento diferente** — o plano já decidiu.
 
 - **data-variable — aplique conforme o mapeamento do visual-plan:**
-  - Para cada elemento listado na tabela de mapeamento, adicione os atributos `data-variable`, `data-variable-target`, ou `data-variable-stops` já no HTML do Passo 2.
+  - Para cada elemento listado na tabela de mapeamento, adicione os atributos `data-variable` e `data-variable-target` já no HTML do Passo 2.
   - Exemplo: se o plano diz "Fundo slides Brand/CTA → `data-variable="primary" data-variable-target="background"`", a `<section>` dos slides Brand já deve ter esse atributo desde o template-v2.html.
   - O marker vai **confirmar** esse mapeamento — não descobrir do zero. Não deixe para o marker deduzir o que o plano já explicitou.
 
@@ -383,21 +383,13 @@ O converter traduz `box-shadow` para `shadow: { color, blur, offsetX, offsetY }`
 - **`linear-gradient` em `color:` de texto** — CSS inválido.
 - **`<style>` block com gradientes** — converter não lê. Tudo inline.
 
-### Anti-patterns de gradiente (nunca faça)
-
-- **Gradiente brand sem `data-variable-stops`**: vira literal no JSON, não troca com paleta do usuário.
-- **Gradiente multi-cor decorativo sem motivo** (roxo→rosa→laranja): é kitsch, não editorial. Os presets vibrant existem no editor mas não devem ser movimento memorável de template clínico.
-- **Gradiente como fundo de texto sobre gradiente**: texto sobre gradiente sobre gradiente — contraste imprevisível, WCAG impossível de garantir.
-- **`linear-gradient` em `color:` de texto**: CSS inválido para text, não renderiza e quebra o converter.
-- **Gradiente sem `data-gradient`**: o converter não parseia CSS — sem o atributo, o gradiente é achatado para cor sólida.
-
 ## Famílias tipográficas seguras
 
 Use Google Fonts via `<link>` no `<head>`. Quando preferir stack do sistema, sugestões em [`references/aesthetic-families.md`](./references/aesthetic-families.md). **Nunca** use Inter/Arial/Roboto/system-ui como **única** família para o design todo — emparelhe.
 
 ## O que esta skill NÃO faz
 
-- Não adiciona `data-template-element`, `data-variable`, `data-image-type`, `data-text-type`, `data-static`. Isso é trabalho do `gp2-template-marker`.
+- Não adiciona `data-template-element`, `data-image-type`, `data-text-type`, `data-static`. Isso é trabalho do `gp2-template-marker`. (Exceção: `data-variable` é aplicado pelo designer conforme mapeamento do visual-plan.)
 - Não gera Fabric JSON.
 - Não faz upload.
 - Não inventa scripts/frameworks/dependências externas.
@@ -429,13 +421,5 @@ Próximo passo: gp2-html-reviewer
 - Passo 3 não tem refazer interno; se você notar problema visual grave, recomece do Passo 2.
 
 Em todos os casos, registre o motivo em `notes.md` para o reviewer saber o que foi tentado.
-
-## O que esta skill NÃO decide mais (delegado ao art-director)
-
-- Família estética — está no visual-plan.
-- Hexs de primary/secondary — estão no visual-plan.
-- Tipo compositivo de cada slide — está no visual-plan.
-- Instrução do movimento memorável — está no visual-plan.
-- Quais elementos recebem data-variable — tabela no visual-plan.
 
 Se o visual-plan estiver incompleto ou ausente, retorne ao art-director antes de prosseguir.

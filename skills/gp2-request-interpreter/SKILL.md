@@ -7,14 +7,9 @@ description: "First step of GetPosts Pipeline v2. Two modes: (a) Free mode — p
 
 Produz o **brief enxuto** que o `gp2-art-director` e `gp2-html-designer` consomem. Opera em dois modos.
 
-## Os dois modos (CRÍTICO)
+## Princípio
 
-A v2 separa **interpretação de conteúdo** (este skill) de **direção visual** (`gp2-art-director`):
-
-- **Free mode** (sem imagem): captura só o irreduzível — 7 fatos de conteúdo. Direção estética fica inteiramente com o art-director.
-- **Reference-driven mode** (com imagem/menção a referência): captura os mesmos 7 fatos de conteúdo. Pode VER a imagem para informar decisões de conteúdo (nº de slides, sequência narrativa, uso de foto profissional, carousel chrome). **NÃO extrai paleta, tipografia, família estética ou movimento memorável** — a análise visual da referência é responsabilidade do `gp2-art-director`, que recebe a(s) imagem(ns) e produz o plano visual completo.
-
-A regra "não prescreva direção estética" vale em **ambos os modos**. O interpreter captura intenção e conteúdo; o art-director decide a estética.
+A v2 separa **interpretação de conteúdo** (este skill) de **direção visual** (`gp2-art-director`). O interpreter captura intenção e conteúdo; o art-director decide a estética. Essa regra vale em ambos os modos (free e reference-driven).
 
 ## What you decide (sempre)
 
@@ -30,18 +25,15 @@ A regra "não prescreva direção estética" vale em **ambos os modos**. O inter
 | Professional photo: yes / no / conditional | Trust-vs-noise decision |
 | Copy/tone direction | Voice the user expects |
 
-## What you DO NOT decide (em qualquer modo)
-
-- Anti-AI rules ("avoid card spam", "avoid generic typography") — pertencem ao reviewer e ao `DESIGN_PRINCIPLES.md`.
-- Tamanhos exatos de fonte por slide — designer ajusta no Passo 3.
-- Posições absolutas de cada elemento — designer escolhe no Passo 1.
-
-## What you DO NOT decide em **nenhum modo**
+## What you DO NOT decide (em nenhum modo)
 
 - Família estética — art-director decide (em free inventa; em reference-driven extrai da referência).
 - Paleta hex específica — art-director resolve.
 - Tipografia específica — art-director decide.
 - Movimento memorável — art-director escolhe/identifica.
+- Anti-AI rules ("avoid card spam", "avoid generic typography") — pertencem ao reviewer e ao `DESIGN_PRINCIPLES.md`.
+- Tamanhos exatos de fonte por slide — designer ajusta no Passo 3.
+- Posições absolutas de cada elemento — designer escolhe no Passo 1.
 
 ## When to use
 

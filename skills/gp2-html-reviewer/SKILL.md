@@ -79,13 +79,13 @@ O script gera `html-review.json` + `html-review.md`. Leia os findings antes de p
 - `<img data-image-type="professionalPhoto">` (cutout) com slot cuja proporção (`width / height`) diverge muito da proporção natural do PNG placeholder (~3:4 ≈ `0.78`). **Tolerância**: `0.55–1.10`. Fora dessa faixa, o `object-fit: contain` deixa metade do slot vazio e o converter facilmente erra a emissão Fabric (sintoma: figura cobrindo só metade do slot no editor). Exemplos: slot `540×1200` (ratio `0.45`) é alto demais; slot `540×400` (ratio `1.35`) é largo demais. **Fix**: ajustar `width`/`height` da `<img>` para uma proporção entre `9:16` e `1:1` (ratio `0.56`–`1.00`) que respeite a figura inteira sem ficar com áreas vazias dominantes. Ver [`gp2-html-designer/references/professional-photo-placements.md`](../gp2-html-designer/references/professional-photo-placements.md) para slots aprovados por canvas.
 - `<img data-image-type="professionalPhoto">` "voando" — figura posicionada sem ancoragem inferior nem sobreposição na parte de baixo. Como fotos de usuário são busto/tronco (não corpo inteiro), deixar espaço vazio abaixo da figura parece que a pessoa não tem pernas. **Hard-gate**: toda `professionalPhoto` deve satisfazer **uma das duas condições**: (1) `top + height ≥ canvas_height − 80px` (ancorada na borda inferior do slide com margem máxima de 80px), OU (2) outro elemento visível (faixa de cor, foto contextual, bloco CTA, rodapé) sobrepõe o terço inferior do slot (`top + height * 0.67`). Se nenhuma condição for satisfeita, devolva `REVISE` com instrução de reposicionar ou remover a foto. Ver [`gp2-html-designer/references/professional-photo-placements.md`](../gp2-html-designer/references/professional-photo-placements.md) §"Princípios".
 
-## Aderência ao spec (somente reference-driven, HARD-GATE quando não documentado em notes.md)
+## Aderência ao visual-plan (somente reference-driven, HARD-GATE quando não documentado em notes.md)
 
-- Hexs aplicados não batem com paleta declarada (ΔE > 10 sem documentação).
+- Hexs aplicados não batem com paleta declarada no visual-plan (ΔE > 10 sem documentação).
 - Família tipográfica em categoria diferente da declarada (serifa ↔ sans, condensada ↔ regular) sem documentação.
 - Movimento memorável declarado ausente do design.
-- Elementos editoriais listados no spec ausentes (eyebrow numerado faltando, fios horizontais ausentes, etc.).
-- Tratamento de foto profissional difere do spec (spec pediu retangular editorial, designer usou avatar circular).
+- Elementos editoriais listados no visual-plan ausentes (eyebrow numerado faltando, fios horizontais ausentes, etc.).
+- Tratamento de foto profissional difere do visual-plan (plano pediu retangular editorial, designer usou avatar circular).
 
 ## Critérios de julgamento visual baseados no visual-plan
 
@@ -100,7 +100,7 @@ Para cada slide, abra o screenshot e compare com o plano:
 | **Tipo compositivo** | O slide usa o código A1–A8 definido no plano (zona de headline, zona de imagem, densidade) | O layout é diferente do planejado sem justificativa em notes.md |
 | **Paleta** | Os hexs de primary/secondary do plano estão aplicados corretamente; slides LIGHT/DARK/Brand usam os neutros/fundos definidos | Paleta diferente do plano; cinzas frios genéricos em vez dos neutros do plano |
 | **Movimento memorável** | A instrução composicional do plano foi executada (posição, tamanho, cor, spacing conforme especificado) | Elemento ausente ou executado de forma diferente do que a instrução descreve |
-| **data-variable** | Elementos da tabela de mapeamento têm os atributos `data-variable` / `data-variable-stops` no HTML | Elementos brand-color sem atributo; gradiente brand sem `data-variable-stops` |
+| **data-variable** | Elementos da tabela de mapeamento têm os atributos `data-variable` / `data-variable-target` no HTML | Elementos brand-color sem atributo de variável |
 | **Diversidade compositiva** | Slides consecutivos têm layouts visivelmente distintos; não é "mesmo layout com texto diferente" | 3+ slides consecutivos com composição idêntica ou quase idêntica |
 
 ### Checklist de qualidade de execução

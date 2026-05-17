@@ -80,7 +80,7 @@ O orquestrador passa as imagens de referência no contexto. Use a image tool par
 #### Gradientes
 - Há overlay de escurecimento sobre foto (transparent→preto para legibilidade do texto)? Se sim: direção (to bottom / to right / to top), opacidade máxima (~0.65–0.80).
 - Há **escurecimento atmosférico do fundo** (fundo parece escurecer nas bordas/cantos criando profundidade)? Se sim: anote como `escurecimento-atmosférico radial|linear, opacidade máxima N`. **NUNCA descreva com nomes de cor brand** (vinho, magenta, rosa) — o escurecimento é sempre `transparent→rgba(0,0,0,N)`. Se a referência mostra um fundo colorido que escurece, isso é fundo brand sólido + overlay transparente→preto.
-- Há fundo de slide com gradiente brand (primary→secondary **ambas visíveis**)? Se sim: ângulo (135deg, 180deg, etc.), em quais slides.
+- Há fundo de slide com escurecimento atmosférico (fundo sólido que escurece nas bordas criando profundidade)? Se sim: anotar como `escurecimento-atmosférico` com direção e opacidade.
 - Há faixa decorativa com fade-out (cor sólida → transparent)? Se sim: posição, direção, cor.
 - Se não há gradientes visíveis, anote "sem gradientes" — para que o designer não invente.
 
@@ -173,7 +173,7 @@ Para **cada slide** do brief, defina:
 2. **Zona do headline** — onde fica o título principal (top / center / bottom / esquerda / direita)
 3. **Zona da imagem** — onde fica a foto/placeholder (left / right / full-bleed / ausente / background)
 4. **Densidade** — densa (pouco espaço, muita informação) / equilibrada / aberta (muito espaço, pouca informação)
-5. **Background** — LIGHT / DARK / Brand-sólido / Brand-gradiente
+5. **Background** — LIGHT / DARK / Brand+darken
 6. **Gradientes** (se aplicável) — especifique quais gradientes este slide usa (ver catálogo abaixo)
 
 ### Catálogo de gradientes — use com parcimônia
@@ -183,19 +183,19 @@ O designer conhece **3 padrões legítimos** de gradiente. Se o plano não espec
 | Padrão | Quando usar | O que especificar no plano |
 |--------|------------|---------------------------|
 | **Overlay de legibilidade** | Slides com foto full-bleed (A5) onde o texto precisa de contraste | Direção (to bottom / to right / to top / to left), opacidade máxima (0.65–0.80 para texto 400; 0.45–0.60 para texto 700+) |
-| **Fundo brand gradiente** | Slides Brand onde o gradiente primary→secondary adiciona profundidade | Ângulo (135deg ↘, 180deg ↓, 90deg →), hexs (primary→secondary). Não use em todos os slides Brand — sólido é o default |
+| **Fundo brand gradiente** | **ELIMINADO** — use Escurecimento atmosférico em vez disso. Fundo sólido primary + overlay `data-darken` cria profundidade sem quebrar adaptabilidade de paleta | N/A — ver "Escurecimento atmosférico" |
 | **Escurecimento atmosférico de fundo** | Fundo brand sólido que precisa de profundidade/vinheta sem perder adaptabilidade a outras paletas | Cor sólida brand no background (`data-variable="primary" data-variable-target="background"`) + overlay transparente→escuro por cima (`transparent → rgba(0,0,0,0.6–0.85)`). **Não use cores brand no gradiente** — use preto/transparente. Assim, trocar a primary muda o fundo sólido e o escurecimento se adapta naturalmente |
 | **Faixa decorativa fade-out** | Transição suave entre blocos visuais (raro — só se a referência usa ou se resolve um problema de layout) | Posição (top/bottom), direção, cor, altura |
 
 **Regras:**
-- **Brand-gradiente NÃO é o default** — slides Brand usam primary sólido a menos que o plano diga "Brand-gradiente". Se o brief decidiu `primária somente`, gradiente brand é impossível (requer primary + secondary).
+- **Gradiente brand (primary→secondary visível) foi ELIMINADO da pipeline** — slides Brand usam primary sólido. Para profundidade, adicione overlay `data-darken` (escurecimento atmosférico neutro).
 - **Overlay de legibilidade é obrigatório** em A5 (full-bleed foto) — sem overlay o texto fica ilegível. Mas o art-director deve escolher a direção com base na zona do texto (texto no rodapé → `to bottom`; texto no topo → `to top`).
-- **Escurecimento atmosférico vs Brand gradiente — regra de escolha (CRÍTICO para adaptabilidade):**
-  - Se o objetivo é **criar profundidade/vinheta** (fundo escurece nas bordas, centro mais claro), use **escurecimento atmosférico**: fundo sólido brand + overlay `transparent→rgba(0,0,0,N)`. Isso adapta a qualquer paleta porque o overlay é neutro.
-  - Se o objetivo é **mostrar as duas cores brand** (primary→secondary visíveis), use **fundo brand gradiente**: roundedRect com gradient primary→secondary + `fillVariableConfig`.
+- **Escurecimento atmosférico — regra (CRÍTICO para adaptabilidade):**
+  - Para criar profundidade/vinheta (fundo escurece nas bordas, centro mais claro), use **escurecimento atmosférico**: fundo sólido brand + overlay `transparent→rgba(0,0,0,N)`. Isso adapta a qualquer paleta porque o overlay é neutro.
+  - Gradiente brand (primary→secondary visível) foi **eliminado** da pipeline. Toda profundidade = cor sólida + overlay neutro.
   - **Anti-pattern observado:** usar cores brand literais (`#FF0066→#7A0730→#120711`) em gradientes que servem para escurecer. Quando o usuário troca a paleta para azul, o gradiente continua rosa→vinho→escuro. Use `transparent→rgba(0,0,0,N)` para escurecimento.
 - **Faixa decorativa é rara** — só use se a referência mostra ou se resolve um problema concreto de layout. Nunca como enfeite gratuito.
-- **Em reference-driven mode:** se a referência usa gradientes, capture-os no passo 1b e replique. Se não usa, anote "sem gradientes". **Classifique cada gradiente observado**: é brand (duas cores visíveis) ou atmosférico (escurecimento/vinheta)?
+- **Em reference-driven mode:** se a referência usa gradientes, capture-os no passo 1b. Se não usa, anote "sem gradientes". **Classifique cada gradiente observado** como atmosférico (escurecimento/vinheta — transparent→dark). Se a referência mostra gradiente brand (duas cores visíveis), converta para escurecimento atmosférico no plano (pipeline não suporta gradiente brand).
 
 **Catálogo de tipos compositivos — use variedade, nunca repita o mesmo tipo em slides consecutivos sem motivo:**
 
@@ -256,12 +256,12 @@ Este mapeamento é o **contrato com o marker**. Liste explicitamente quais eleme
 Elementos data-variable:
 - <descrição do elemento> → data-variable="primary" data-variable-target="background"
 - <descrição do elemento> → data-variable="secondary" (target padrão = color/fill)
-- <descrição do elemento> → data-variable-stops="primary,secondary" (gradiente)
+- <descrição do elemento com escurecimento> → data-darken="<preset>" data-darken-opacity="<0.1-1.0>" (overlay neutro)
 ```
 
 **O que SEMPRE deve ser mapeado quando presente:**
 - Fundo sólido de slides Brand/CTA → `data-variable="primary" data-variable-target="background"`
-- Fundo gradiente brand → `data-variable-stops="primary,secondary"` (o converter emite como `roundedRect` camada 0 com gradient `fillVariableConfig`, NÃO como `backgroundVariableConfig` gradient — o editor só suporta `backgroundVariableConfig` sólido)
+- Fundo brand com escurecimento atmosférico → `data-variable="primary" data-variable-target="background"` na section + `<div data-darken="..." data-darken-opacity="...">` como overlay (converter emite roundedRect com gradient fill neutro)
 - Eyebrow colorido (quando não é neutro) → `data-variable="secondary"` ou `"primary"`
 - CTA button / bloco de destaque → `data-variable="primary" data-variable-target="background"`
 - Número de slide ou dado colorido → `data-variable="primary"`
@@ -307,20 +307,20 @@ free
 
 ## Plano de slides
 
-### Slide 1 — <papel narrativo> (background: LIGHT/DARK/Brand-sólido/Brand-gradiente)
+### Slide 1 — <papel narrativo> (background: LIGHT/DARK/Brand)
 - **Composição:** <código + nome: ex: A1 — Full-bleed headline>
 - **Zona headline:** <top | center | bottom | esquerda>
 - **Zona imagem:** <left | right | full-bleed | ausente>
 - **Densidade:** <densa | equilibrada | aberta>
-- **Gradientes:** <nenhum | overlay to bottom 0.70 | escurecimento-atmosférico radial opacidade 0.85 | brand-gradiente 135deg primary→secondary | faixa decorativa...>
+- **Gradientes:** <nenhum | overlay to bottom 0.70 | escurecimento-atmosférico radial opacidade 0.85 | escurecimento-atmosférico diagonal-se opacidade 0.80 | faixa decorativa...>
 - **Elementos-chave:** <o que o designer deve priorizar neste slide>
 - **Copy orientativo:** <copy real do brief para este slide>
 
-### Slide 2 — <papel narrativo> (background: LIGHT/DARK/Brand-sólido/Brand-gradiente)
+### Slide 2 — <papel narrativo> (background: LIGHT/DARK/Brand)
 - **Composição:** <código + nome>
 ...
 
-### Slide N (CTA) — <papel narrativo> (background: Brand-sólido)
+### Slide N (CTA) — <papel narrativo> (background: Brand)
 ...
 
 ## Mapeamento de data-variable
@@ -328,7 +328,7 @@ free
 | Elemento | Atributo |
 |----------|----------|
 | Fundo slides Brand/CTA | `data-variable="primary" data-variable-target="background"` |
-| Fundo gradiente brand | `data-variable-stops="primary,secondary"` (converter → roundedRect camada 0 com gradient fill) |
+| Overlay de escurecimento (profundidade em fundo brand) | `data-darken="<preset>" data-darken-opacity="<N>"` no `<div>` overlay (converter → roundedRect com gradient fill neutro) |
 | Eyebrow colorido | `data-variable="secondary"` |
 | ... | ... |
 
@@ -373,7 +373,7 @@ reference-driven
 ### Gradientes observados
 - <ex: overlay to bottom rgba(0,0,0,0.70) nos slides com foto full-bleed>
 - <ex: escurecimento-atmosférico radial transparent→rgba(0,0,0,0.85) no fundo externo de todos os slides>
-- <ex: fundo brand gradiente 135deg primary→secondary nos slides de CTA>
+- <ex: escurecimento-atmosférico diagonal-se transparent→rgba(0,0,0,0.80) nos slides Brand>
 - <ex: sem gradientes>
 
 **REGRA CRÍTICA:** Se a referência mostra um fundo que "escurece" criando profundidade/vinheta, classifique SEMPRE como `escurecimento-atmosférico` — nunca descreva com cores brand (ex: "gradiente vinho/magenta"). O fundo escurecido = cor sólida brand + overlay neutro `transparent→rgba(0,0,0,N)`. Descrever como "gradiente vinho→escuro" faz o designer usar hex literais e o template não se adapta a outras paletas.
@@ -389,20 +389,20 @@ reference-driven
 
 ## Plano de slides
 
-### Slide 1 — <papel narrativo> (background: LIGHT/DARK/Brand-sólido/Brand-gradiente)
+### Slide 1 — <papel narrativo> (background: LIGHT/DARK/Brand)
 - **Composição:** <código + nome: ex: A1 — Full-bleed headline>
 - **Zona headline:** <top | center | bottom | esquerda>
 - **Zona imagem:** <left | right | full-bleed | ausente>
 - **Densidade:** <densa | equilibrada | aberta>
-- **Gradientes:** <nenhum | overlay to bottom 0.70 | escurecimento-atmosférico radial opacidade 0.85 | brand-gradiente 135deg primary→secondary | conforme referência>
+- **Gradientes:** <nenhum | overlay to bottom 0.70 | escurecimento-atmosférico radial opacidade 0.85 | escurecimento-atmosférico diagonal-se opacidade 0.80 | conforme referência>
 - **Elementos-chave:** <o que o designer deve priorizar + quais elementos editoriais aplicar aqui>
 - **Copy orientativo:** <copy real do brief para este slide>
 
-### Slide 2 — <papel narrativo> (background: LIGHT/DARK/Brand-sólido/Brand-gradiente)
+### Slide 2 — <papel narrativo> (background: LIGHT/DARK/Brand)
 - **Composição:** <código + nome>
 ...
 
-### Slide N (CTA) — <papel narrativo> (background: Brand-sólido)
+### Slide N (CTA) — <papel narrativo> (background: Brand)
 ...
 
 ## Mapeamento de data-variable
@@ -410,7 +410,7 @@ reference-driven
 | Elemento | Atributo |
 |----------|----------|
 | Fundo slides Brand/CTA | `data-variable="primary" data-variable-target="background"` |
-| Fundo gradiente brand | `data-variable-stops="primary,secondary"` (converter → roundedRect camada 0 com gradient fill) |
+| Overlay de escurecimento (profundidade em fundo brand) | `data-darken="<preset>" data-darken-opacity="<N>"` no `<div>` overlay (converter → roundedRect com gradient fill neutro) |
 | Eyebrow colorido | `data-variable="secondary"` |
 | ... | ... |
 

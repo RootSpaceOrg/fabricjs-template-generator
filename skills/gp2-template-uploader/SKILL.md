@@ -1,6 +1,6 @@
 ---
 name: gp2-template-uploader
-description: "Upload final da Pipeline GetPosts v2: lê slide-N.json + manifest.json do converter, gera descrição narrativa a partir do template-summary.md do marker, faz upload para S3, insere em public.templates no Supabase, e abre o editor para gerar thumbnails via 'Salvar Alterações'. Use após gp2-template-result-reviewer (PASS ou PASS_WITH_WARNINGS). Substitui a dependência externa da v1."
+description: "Upload final da Pipeline GetPosts v2: lê slide-N.json + manifest.json do converter, gera descrição narrativa a partir do template-summary.md do marker, faz upload para S3, insere em public.templates no Supabase, e abre o editor para gerar thumbnails via 'Salvar Alterações'. Use após gp2-template-converter (validator exit 0). Substitui a dependência externa da v1."
 ---
 
 # gp2-template-uploader
@@ -17,7 +17,7 @@ Esta skill escreve em S3 e Supabase de produção. Antes de executar:
 - não sobrescreva um template existente a não ser que explicitamente solicitado;
 - não execute se `validate-slides.js` não passou (exit 0).
 
-**Standing rule do Gustavo:** quando HTML reviewer, Fabric validator e result reviewer passam, suba automaticamente com `template_type: ai`, `status: draft`, `user_id: public`. Abra o editor e clique "Salvar Alterações" para gerar thumbnails. Não pergunte confirmação — é a regra padrão.
+**Standing rule do Gustavo:** quando HTML reviewer e Fabric validator passam, suba automaticamente com `template_type: ai`, `status: draft`, `user_id: public`. Abra o editor e clique "Salvar Alterações" para gerar thumbnails. Não pergunte confirmação — é a regra padrão.
 
 ## Inputs esperados
 

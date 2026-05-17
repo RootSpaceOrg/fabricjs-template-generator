@@ -52,7 +52,7 @@ Cada placeholder adiciona ~210 KB ao `template.html`. Se o template usa `profess
 
 1. O designer avaliar visualmente se o slot está bem dimensionado para uma figura humana real.
 2. O reviewer detectar problemas de composição (face coberta por texto, slot apertado demais, etc.).
-3. O `template-result-reviewer` comparar render HTML × Fabric e validar drift.
+3. O `gp2-template-converter` (self-validation) comparar render HTML × Fabric e validar drift.
 
 Em produção, o placeholder nunca aparece — o usuário sobe sua própria foto durante onboarding (`completion-step.component.ts:119-130`) e ela substitui o placeholder em todos os slots `professionalPhoto`.
 

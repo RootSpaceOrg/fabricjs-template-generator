@@ -113,7 +113,7 @@ python3 ../../scripts/audit-template-markup.py artifacts/gp2-template-marker/<sl
 | Carousel chrome — swipe arrow (background sutil + chevron SVG) | `data-static="true"` (em todos os slides exceto o último) |
 | Formas decorativas (linhas, faixas, fundos, divisores) | nada (auto-detect como decoração) ou `data-static="true"` se ambíguo |
 | Overlay de legibilidade sobre foto (`<div>` com `linear-gradient` transparente→preto) | `data-static="true"` (nunca template-element; o converter emite como `roundedRect` com fill gradient) |
-| Fundo de slide com gradiente brand (`<section data-variable-stops="primary,secondary">`) | no `<section>`: `data-variable-stops="primary,secondary"` já aplicado pelo designer — **não remova**; o converter emite `roundedRect` camada 0 com gradient fill + `fillVariableConfig` (NÃO `backgroundVariableConfig` gradient — editor só suporta sólido) |
+| Fundo de slide Brand com escurecimento (section com `data-variable` + div overlay com `data-darken`) | section: `data-variable="primary" data-variable-target="background"` + overlay div: `data-darken="<preset>" data-darken-opacity="<N>"` + `data-static="true"` |
 | Acento de cor que troca com preset (botão, headline colorido, faixa) | `data-variable="primary\|secondary"` + opcional `data-variable-target="fill\|stroke\|background"` |
 | Slide background sólido brand | no `<section>`: `data-variable="primary"` + `data-variable-target="background"` |
 | Span dentro de título com cor diferente | `<span data-variable="..." style="color:...">` (não é elemento separado!) |
