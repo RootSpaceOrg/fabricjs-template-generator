@@ -368,11 +368,24 @@ Efeito de glow **não funciona** como círculo translúcido no Fabric. Use `box-
 ```html
 <div style="position:absolute; left:123px; top:260px; width:834px; height:770px;
             border-radius:34px; background:#10151D; border:2px solid #1B2028;
-            box-shadow: 0 0 60px 20px rgba(255,0,102,0.25);">
+            box-shadow: 0 0 60px 20px rgba(0,0,0,0.35);">
 </div>
 ```
 
 O converter traduz `box-shadow` para `shadow: { color, blur, offsetX, offsetY }` no objeto Fabric.
+
+### Sombras — regra de cor (OBRIGATÓRIO)
+
+Toda `box-shadow` DEVE usar **preto como base** (`rgba(0,0,0,N)`). Sombras "coloridas" com hex brand (ex: `box-shadow: 0 8px 30px rgba(224,0,90,0.3)`) não se adaptam quando o usuário troca a paleta — a sombra fica na cor antiga, quebrando a coerência visual.
+
+**Regra:** `box-shadow` sempre com cor `rgba(0,0,0, <opacity>)`. Opacidade típica: `0.08–0.20` para sombras sutis de card/container; `0.25–0.40` para glow decorativo.
+
+**Exceção única:** glow/neon intencional onde a cor faz parte do efeito visual (ex: neon num tema cyberpunk). Mesmo nesse caso, **nunca use hex brand** (`primary`/`secondary`) — a sombra não tem `variableConfig` e fica literal quando o usuário troca paleta. Use branco (`rgba(255,255,255,N)`) ou preto com opacidade maior — cores neutras que funcionam em qualquer paleta.
+
+**Anti-patterns de sombra:**
+- `box-shadow` com hex brand (`rgba(224,0,90,0.3)`) — não adapta com paleta
+- `box-shadow` com cor secundária — mesmo problema
+- Sombras pesadas demais (`blur > 60px`, `opacity > 0.4` em sombras de elevação) — achatam o design
 
 ### Anti-patterns de gradiente (nunca faça)
 
