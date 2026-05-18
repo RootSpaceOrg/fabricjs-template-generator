@@ -1,6 +1,6 @@
 ---
 name: gp2-pipeline
-description: "Orchestrator da Pipeline GetPosts v2. Roda em sequência: gp2-request-interpreter → gp2-art-director → gp2-html-designer → gp2-html-reviewer → gp2-template-marker → gp2-template-converter → gp2-template-uploader → editor save/thumbnails. Aplica iteration policy, decide quando seguir/refazer/escalar, e consolida evidências. Pipeline agnóstica a vertical — funciona para qualquer segmento de marca. Use sempre que o usuário pedir para criar um template de social media de ponta a ponta."
+description: "Orchestrator da Pipeline GetPosts v2. Roda em sequência: gp2-request-interpreter → gp2-art-director → gp2-html-designer → gp2-html-reviewer → gp2-template-marker → gp2-template-converter → gp2-template-uploader. Aplica iteration policy, decide quando seguir/refazer/escalar, e consolida evidências. Pipeline agnóstica a vertical — funciona para qualquer segmento de marca. Suporta ambientes dev e prod (default: prod). Use sempre que o usuário pedir para criar um template de social media de ponta a ponta."
 ---
 
 # gp2-pipeline
@@ -26,9 +26,8 @@ Sempre que o usuário pedir para criar um template de social media completo (pos
 5. gp2-template-marker              → template.html marcado + template-summary.md
 6. gp2-template-converter           → slide-N.json + manifest.json (inclui self-validation pós-emissão)
 7. gp2-template-uploader            → upload S3 + Supabase
-8. editor save/thumbnails           → via flag --execute --generate-thumbnails do uploader
-9. Cleanup de artifacts             → apaga pasta artifacts/<slug>/ após upload confirmado
-10. Relatório consolidado
+8. Cleanup de artifacts             → apaga pasta artifacts/<slug>/ após upload confirmado
+9. Relatório consolidado
 ```
 
 ## Iteration policy
@@ -40,7 +39,6 @@ Sempre que o usuário pedir para criar um template de social media completo (pos
 | HTML reviewer | — | máx 2 revisões antes de FAIL; se reviewer apontar problema de plano → volta ao art-director |
 | Marker audit | — | máx 2 fixes antes de escalar |
 | Converter (self-validation) | — | máx 2 fixes antes de escalar |
-| Editor save/thumbnails | — | 1 retry após reload/login |
 
 Ao exceder qualquer teto, pare e reporte:
 
@@ -82,7 +80,6 @@ rm -rf artifacts/<slug>
 **Condições para apagar:**
 - Upload retornou template ID (não dry-run).
 - Supabase insert confirmado (não falhou).
-- Se o editor save/thumbnails falhou mas upload completou, apague mesmo assim — o thumbnail pode ser regerado abrindo o editor manualmente.
 
 **Não apague se:**
 - Upload falhou (AccessDenied, Supabase error, etc.) — artifacts são a única evidência para debug.
@@ -96,14 +93,15 @@ Quando os gates passam, suba **automaticamente** com:
 
 - `template_type: ai`
 - `status: draft`
-- `user_id: public`
+- `owner_user_id: templateGenerator`
+- `scope: platform`
+- ambiente: **prod** (default, a não ser que o usuário peça dev)
 
-Em seguida, abra o editor (via `--execute --generate-thumbnails` do uploader) e clique "Salvar Alterações" para gerar thumbnails. Não pergunte confirmação — é a regra padrão.
+Não pergunte confirmação — é a regra padrão.
 
 ## Comando de upload
 
 ```bash
-GETPOSTS_EDITOR_PASSWORD='<password>' \
 python skills/gp2-template-uploader/scripts/import-template.py \
   artifacts/gp2-template-converter/<slug>/ \
   --name "<Nome do Template>" \
@@ -111,10 +109,10 @@ python skills/gp2-template-uploader/scripts/import-template.py \
   --tags "<tag1,tag2>" \
   --description-hint "$(cat artifacts/gp2-template-marker/<slug>/template-summary.md)" \
   --status draft \
-  --user-id public \
-  --execute \
-  --generate-thumbnails
+  --execute
 ```
+
+Para dev, adicione `--env dev`. Sem flag = prod.
 
 Use sempre `--description-hint` apontando para o `template-summary.md` produzido pelo marker. Consulte `skills/gp2-template-uploader/SKILL.md` para detalhes de dry-run, blockers e checklist.
 
@@ -141,7 +139,6 @@ Por template processado:
 - marker audit status;
 - converter validator status (exit code);
 - upload status;
-- thumbnail/editor save status;
 - pasta de artifacts;
 - paths de evidência (screenshots, visual-plan.md, html-review.md, `template-summary.md`).
 

@@ -1,6 +1,6 @@
 ---
 name: gp2-template-uploader
-description: "Upload final da Pipeline GetPosts v2: lê slide-N.json + manifest.json do converter, gera descrição narrativa a partir do template-summary.md do marker, faz upload para S3, insere em public.templates no Supabase, e abre o editor para gerar thumbnails via 'Salvar Alterações'. Use após gp2-template-converter (validator exit 0). Substitui a dependência externa da v1."
+description: "Upload final da Pipeline GetPosts v2: lê slide-N.json + manifest.json do converter, gera descrição narrativa a partir do template-summary.md do marker, faz upload para S3 e insere em public.templates no Supabase. Suporta ambientes dev e prod (default: prod). Use após gp2-template-converter (validator exit 0)."
 ---
 
 # gp2-template-uploader
@@ -17,7 +17,7 @@ Esta skill escreve em S3 e Supabase de produção. Antes de executar:
 - não sobrescreva um template existente a não ser que explicitamente solicitado;
 - não execute se `validate-slides.js` não passou (exit 0).
 
-**Standing rule do Gustavo:** quando HTML reviewer e Fabric validator passam, suba automaticamente com `template_type: ai`, `status: draft`, `user_id: public`. Abra o editor e clique "Salvar Alterações" para gerar thumbnails. Não pergunte confirmação — é a regra padrão.
+**Standing rule do Gustavo:** quando HTML reviewer e Fabric validator passam, suba automaticamente com `template_type: ai`, `status: draft`, `owner_user_id: templateGenerator`, `scope: platform`. Ambiente padrão: **prod**. Não pergunte confirmação — é a regra padrão.
 
 ## Inputs esperados
 
@@ -38,16 +38,22 @@ E `template-summary.md` do marker (substitui `context-analysis.json` da v1):
 artifacts/gp2-template-marker/<slug>/template-summary.md
 ```
 
-## Endpoints de produção
+## Ambientes (dev / prod)
 
-- AWS env file: `/root/.openclaw/workspace/secrets/aws-credentials.env`
-- Assume role: `arn:aws:iam::425008492512:role/TemplateSuggestionActionRole`
-- AWS region: `sa-east-1`
-- SSM parameter: `supabase-database-credentials`
-- S3 bucket: `healthmarket-templates-prod`
-- Supabase table: `public.templates`
+Default: **prod** (quando o usuário não especifica).
 
-Leia `references/discovery-notes.md` para detalhes do schema AWS/Supabase e caveats de S3.
+| Setting | dev | prod (default) |
+|---------|-----|----------------|
+| AWS env file | `aws-credentials-template-generator-mkt-platform-dev.env` | `aws-credentials-template-generator-mkt-platform-prod.env` |
+| Role ARN | `arn:aws:iam::656032436386:role/TemplateGenerator` | `arn:aws:iam::692046683598:role/TemplateGenerator` |
+| SSM parameter | `/default/supabase-database-credentials` | `/default/supabase-database-credentials` |
+| S3 bucket | `mkt-platform-templates-dev` | `mkt-platform-templates-prod` |
+
+- AWS region: `sa-east-1` (ambos)
+- Supabase table: `public.templates` (ambos)
+- Credentials path: `/root/.openclaw/workspace/secrets/<env file acima>`
+
+Selecione com `--environment dev` ou `--env dev`. Sem flag = prod.
 
 ## Preflight obrigatório
 
@@ -104,11 +110,7 @@ Insert em `public.templates`:
   "name": "<nome do template>",
   "width": 1080,
   "height": 1350,
-  "metadata": {
-    "tags": [],
-    "contentType": "instagram-feed",
-    "businessType": ""
-  },
+  "metadata": {},
   "images": [
     { "order": "0", "imageId": "0" },
     { "order": "1", "imageId": "1" }
@@ -116,9 +118,18 @@ Insert em `public.templates`:
   "description": "Descrição Geral:\n...",
   "status": "draft",
   "template_type": "ai",
-  "user_id": "public"
+  "owner_user_id": "templateGenerator",
+  "created_by": "templateGenerator",
+  "content_type": "instagram-feed",
+  "business_type": "",
+  "tags": ["tag1", "tag2"],
+  "scope": "platform"
 }
 ```
+
+Campos opcionais (omitidos = null no DB):
+- `tenant_id` — preencher quando o usuário especificar tenant
+- `vertical_id` — preencher quando o usuário especificar vertical
 
 Para multi-slide, uma entrada `images` por `slide-N.json` com `order` e `imageId` iniciando em `"0"`. Não envie `embedding` manualmente.
 
@@ -145,7 +156,7 @@ python skills/gp2-template-uploader/scripts/import-template.py \
   --description-hint "$(cat artifacts/gp2-template-marker/<slug>/template-summary.md)"
 ```
 
-Default é dry-run. Inspecione o payload antes de executar. Para gravar em produção:
+Default é dry-run em **prod**. Inspecione o payload antes de executar. Para gravar em produção:
 
 ```bash
 python skills/gp2-template-uploader/scripts/import-template.py \
@@ -155,47 +166,28 @@ python skills/gp2-template-uploader/scripts/import-template.py \
   --tags "tag1,tag2" \
   --description-hint "$(cat artifacts/gp2-template-marker/<slug>/template-summary.md)" \
   --status draft \
-  --user-id public \
   --execute
 ```
 
-### Gerar thumbnails após upload
-
-Após S3 upload + Supabase insert, o produto gera thumbnails abrindo o editor e clicando "Salvar Alterações":
+Para gravar em **dev**:
 
 ```bash
-GETPOSTS_EDITOR_PASSWORD='<password>' \
 python skills/gp2-template-uploader/scripts/import-template.py \
   artifacts/gp2-template-converter/<slug>/ \
   --name "Nome do Template" \
-  --business-type multi-nicho \
-  --tags "tag1,tag2" \
-  --description-hint "$(cat artifacts/gp2-template-marker/<slug>/template-summary.md)" \
-  --execute \
-  --generate-thumbnails
+  --env dev \
+  --execute
 ```
-
-Padrões:
-- editor base URL: `https://d3iy4qbtnfohd6.cloudfront.net`
-- editor email: `neo.full.1778158934933@example.com` (ou `GETPOSTS_EDITOR_EMAIL`)
-- senha: `GETPOSTS_EDITOR_PASSWORD` (nunca hardcode)
-
-O helper de browser escreve screenshots/logs em:
-
-```text
-artifacts/gp2-template-converter/<slug>/post-upload-editor-save/
-```
-
-Se o editor redirecionar para `/modelos` ou o helper reportar `Editor UI did not appear`, trate como bloqueio de produto, não falha de upload. O upload já completou; investigue o editor separadamente.
 
 ## Checklist antes de `--execute`
 
 Reporte antes de executar:
 
+- ambiente (dev ou prod);
 - nome do template;
 - número de slides;
 - S3 bucket e padrão de chave;
-- campos do Supabase (exceto secrets), confirmando `user_id: public` e `status: draft`;
+- campos do Supabase (exceto secrets), confirmando `owner_user_id: templateGenerator`, `scope: platform` e `status: draft`;
 - resumo da descrição gerada;
 - resultado do validador.
 
@@ -204,7 +196,6 @@ Após execução, reporte:
 - template ID inserido;
 - chaves S3 carregadas;
 - status do insert no Supabase;
-- se o thumbnail refresh rodou via editor save;
 - warnings.
 
 ## Blockers
@@ -223,11 +214,11 @@ Se Supabase falhar:
 
 ```markdown
 Upload: OK | FAIL
+Environment: dev | prod
 Template ID: <id>
 Slides: <N>
 S3 keys: <lista>
 Supabase: inserido | falhou — <motivo>
-Thumbnails: OK | falhou — <motivo> | skipped
 Cleanup: aguardando orquestrador | (uploader não apaga — responsabilidade do gp2-pipeline)
 ```
 

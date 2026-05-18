@@ -11,7 +11,6 @@ import json
 import os
 import random
 import string
-import subprocess
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -19,14 +18,23 @@ from typing import Any
 import boto3
 import requests
 
-AWS_ENV_PATH = Path('/root/.openclaw/workspace/secrets/aws-credentials.env')
-ROLE_ARN = 'arn:aws:iam::425008492512:role/TemplateSuggestionActionRole'
-AWS_REGION = 'sa-east-1'
-SSM_PARAMETER = 'supabase-database-credentials'
-S3_BUCKET = 'healthmarket-templates-prod'
+ENV_CONFIG = {
+    'dev': {
+        'aws_env_path': Path('/root/.openclaw/workspace/secrets/aws-credentials-template-generator-mkt-platform-dev.env'),
+        'role_arn': 'arn:aws:iam::656032436386:role/TemplateGenerator',
+        'aws_region': 'sa-east-1',
+        'ssm_parameter': '/default/supabase-database-credentials',
+        's3_bucket': 'mkt-platform-templates-dev',
+    },
+    'prod': {
+        'aws_env_path': Path('/root/.openclaw/workspace/secrets/aws-credentials-template-generator-mkt-platform-prod.env'),
+        'role_arn': 'arn:aws:iam::692046683598:role/TemplateGenerator',
+        'aws_region': 'sa-east-1',
+        'ssm_parameter': '/default/supabase-database-credentials',
+        's3_bucket': 'mkt-platform-templates-prod',
+    },
+}
 DEFAULT_S3_KEY_TEMPLATE = 'editor_templates/{template_id}/{image_id}/template.json'
-DEFAULT_EDITOR_BASE_URL = 'https://d3iy4qbtnfohd6.cloudfront.net'
-DEFAULT_EDITOR_EMAIL = 'neo.full.1778158934933@example.com'
 
 
 def load_env_file(path: Path) -> None:
@@ -40,10 +48,10 @@ def load_env_file(path: Path) -> None:
         os.environ[key] = value.strip().strip('"').strip("'")
 
 
-def assume_role():
-    load_env_file(AWS_ENV_PATH)
+def assume_role(env_config: dict[str, Any]):
+    load_env_file(env_config['aws_env_path'])
     sts = boto3.client('sts', region_name='us-east-1')
-    creds = sts.assume_role(RoleArn=ROLE_ARN, RoleSessionName='openclaw-template-import')['Credentials']
+    creds = sts.assume_role(RoleArn=env_config['role_arn'], RoleSessionName='openclaw-template-import')['Credentials']
     kwargs = {
         'aws_access_key_id': creds['AccessKeyId'],
         'aws_secret_access_key': creds['SecretAccessKey'],
@@ -52,14 +60,14 @@ def assume_role():
     return kwargs
 
 
-def load_supabase_credentials(aws_kwargs: dict[str, str]) -> tuple[str, str]:
-    ssm = boto3.client('ssm', region_name=AWS_REGION, **aws_kwargs)
-    raw = ssm.get_parameter(Name=SSM_PARAMETER, WithDecryption=True)['Parameter']['Value']
+def load_supabase_credentials(aws_kwargs: dict[str, str], env_config: dict[str, Any]) -> tuple[str, str]:
+    ssm = boto3.client('ssm', region_name=env_config['aws_region'], **aws_kwargs)
+    raw = ssm.get_parameter(Name=env_config['ssm_parameter'], WithDecryption=True)['Parameter']['Value']
     data = json.loads(raw)
     url = data.get('url') or data.get('supabaseUrl') or data.get('SUPABASE_URL')
     key = data.get('key') or data.get('anonKey') or data.get('publishableKey') or data.get('apiKey')
     if not url or not key:
-        raise RuntimeError(f'Incomplete Supabase credentials in {SSM_PARAMETER}')
+        raise RuntimeError(f'Incomplete Supabase credentials in {env_config["ssm_parameter"]}')
     return url.rstrip('/'), key
 
 
@@ -280,25 +288,31 @@ def build_payload(args, slides, manifest, template_id: str, description: str) ->
     width, height = infer_dimensions(slides, manifest)
     images = [{'order': str(i), 'imageId': str(i)} for i in range(len(slides))]
     tags = [t.strip() for t in (args.tags or '').split(',') if t.strip()]
-    return {
+    payload = {
         'id': template_id,
         'name': args.name or manifest.get('templateName') or template_id,
         'width': width,
         'height': height,
-        'metadata': {
-            'tags': tags,
-            'contentType': args.content_type,
-            'businessType': args.business_type or '',
-        },
+        'metadata': {},
         'images': images,
         'description': description,
         'status': args.status,
         'template_type': 'ai',
-        'user_id': args.user_id,
+        'owner_user_id': args.owner_user_id,
+        'created_by': 'templateGenerator',
+        'content_type': args.content_type,
+        'business_type': args.business_type or '',
+        'tags': tags,
+        'scope': args.scope,
     }
+    if args.tenant_id:
+        payload['tenant_id'] = args.tenant_id
+    if args.vertical_id:
+        payload['vertical_id'] = args.vertical_id
+    return payload
 
 
-def upload_slides(s3, slides, template_id: str, key_template: str, dry_run: bool) -> list[str]:
+def upload_slides(s3, slides, template_id: str, key_template: str, bucket: str, dry_run: bool) -> list[str]:
     uploaded = []
     for idx, (file, _) in enumerate(slides):
         image_id = str(idx)
@@ -307,7 +321,7 @@ def upload_slides(s3, slides, template_id: str, key_template: str, dry_run: bool
         if dry_run:
             continue
         s3.put_object(
-            Bucket=S3_BUCKET,
+            Bucket=bucket,
             Key=key,
             Body=file.read_bytes(),
             ContentType='application/json; charset=utf-8',
@@ -338,55 +352,6 @@ def insert_template(supabase_url: str, supabase_key: str, payload: dict[str, Any
         return {'status': res.status_code, 'text': res.text}
 
 
-def refresh_editor_thumbnails(template_id: str, args, dry_run: bool) -> dict[str, Any]:
-    """Open /editor/{template_id} and click Save to trigger product thumbnails."""
-    if dry_run:
-        return {'dryRun': True, 'skipped': 'not executed in dry-run mode'}
-
-    script = Path(__file__).with_name('save-template-in-editor.js')
-    if not script.exists():
-        raise RuntimeError(f'Editor save script not found: {script}')
-
-    password = args.editor_password or os.environ.get(args.editor_password_env)
-    if not password:
-        raise RuntimeError(
-            f'Editor password missing. Provide --editor-password or set env {args.editor_password_env}. '
-            'Template upload already completed; rerun thumbnail refresh only after providing credentials.'
-        )
-
-    out_dir = args.editor_save_out_dir or str(Path(args.path).resolve() / 'post-upload-editor-save')
-    cmd = [
-        'node',
-        str(script),
-        '--template-id',
-        template_id,
-        '--email',
-        args.editor_email,
-        '--password',
-        password,
-        '--base-url',
-        args.editor_base_url,
-        '--out-dir',
-        out_dir,
-    ]
-    if args.editor_headed:
-        cmd.append('--headed')
-
-    env = os.environ.copy()
-    proc = subprocess.run(cmd, text=True, capture_output=True, timeout=args.editor_save_timeout, env=env)
-    if proc.returncode != 0:
-        sanitized_stderr = proc.stderr.replace(password, '***') if proc.stderr else ''
-        sanitized_stdout = proc.stdout.replace(password, '***') if proc.stdout else ''
-        raise RuntimeError(
-            f'Editor save failed with exit code {proc.returncode}. '
-            f'stdout={sanitized_stdout[:1000]} stderr={sanitized_stderr[:1000]}'
-        )
-    try:
-        return json.loads(proc.stdout)
-    except Exception:
-        return {'rawOutput': proc.stdout[:2000], 'outDir': out_dir}
-
-
 def main():
     parser = argparse.ArgumentParser(description='Import GetPosts v2 generated template JSONs into S3 + Supabase.')
     parser.add_argument('path', help='Folder containing output/slide-N.json or slide-N.json files')
@@ -396,18 +361,14 @@ def main():
     parser.add_argument('--content-type', default='instagram-feed')
     parser.add_argument('--tags', default='')
     parser.add_argument('--status', default='draft')
-    parser.add_argument('--user-id', default='public')
+    parser.add_argument('--owner-user-id', default='templateGenerator', help='owner_user_id column (default: templateGenerator)')
+    parser.add_argument('--tenant-id', default=None, help='tenant_id (default: null)')
+    parser.add_argument('--vertical-id', default=None, help='vertical_id (default: null)')
+    parser.add_argument('--scope', default='platform', help='scope column: platform, tenant, vertical, private (default: platform)')
+    parser.add_argument('--environment', '--env', choices=['dev', 'prod'], default='prod', help='Target environment (default: prod)')
     parser.add_argument('--description-hint', default=None, help='High-level purpose or template-summary.md content to include in description')
     parser.add_argument('--s3-key-template', default=DEFAULT_S3_KEY_TEMPLATE)
     parser.add_argument('--execute', action='store_true', help='Actually upload to S3 and insert into Supabase')
-    parser.add_argument('--generate-thumbnails', action='store_true', help='After successful upload/insert, open /editor/{template_id} and click Salvar Alterações to generate thumbnails')
-    parser.add_argument('--editor-base-url', default=DEFAULT_EDITOR_BASE_URL)
-    parser.add_argument('--editor-email', default=os.environ.get('GETPOSTS_EDITOR_EMAIL', DEFAULT_EDITOR_EMAIL))
-    parser.add_argument('--editor-password', default=None, help='Editor account password. Prefer env via --editor-password-env to avoid shell history.')
-    parser.add_argument('--editor-password-env', default='GETPOSTS_EDITOR_PASSWORD')
-    parser.add_argument('--editor-save-timeout', type=int, default=120, help='Seconds to wait for browser save flow')
-    parser.add_argument('--editor-save-out-dir', default=None, help='Where screenshots/logs from post-upload editor save are written')
-    parser.add_argument('--editor-headed', action='store_true', help='Run Chromium headed for debugging when display is available')
     args = parser.parse_args()
 
     source = Path(args.path).resolve()
@@ -419,25 +380,23 @@ def main():
     payload = build_payload(args, slides, manifest, template_id, description)
 
     dry_run = not args.execute
-    aws_kwargs = assume_role()
-    s3 = boto3.client('s3', region_name=AWS_REGION, **aws_kwargs)
-    supabase_url, supabase_key = load_supabase_credentials(aws_kwargs)
+    env = ENV_CONFIG[args.environment]
+    aws_kwargs = assume_role(env)
+    s3 = boto3.client('s3', region_name=env['aws_region'], **aws_kwargs)
+    supabase_url, supabase_key = load_supabase_credentials(aws_kwargs, env)
 
-    keys = upload_slides(s3, slides, template_id, args.s3_key_template, dry_run)
+    keys = upload_slides(s3, slides, template_id, args.s3_key_template, env['s3_bucket'], dry_run)
     result = insert_template(supabase_url, supabase_key, payload, dry_run)
-    thumbnail_refresh = None
-    if args.generate_thumbnails:
-        thumbnail_refresh = refresh_editor_thumbnails(template_id, args, dry_run)
 
     safe_output = {
         'mode': 'dry-run' if dry_run else 'executed',
+        'environment': args.environment,
         'templateId': template_id,
         'name': payload['name'],
         'slides': len(slides),
-        's3Bucket': S3_BUCKET,
+        's3Bucket': env['s3_bucket'],
         's3Keys': keys,
         'supabasePayload': payload if dry_run else {'inserted': True, 'result': result},
-        'thumbnailRefresh': thumbnail_refresh,
         'contextSource': context.get('_sourcePath') if context else None,
         'checkedAt': datetime.now(timezone.utc).isoformat(),
     }
