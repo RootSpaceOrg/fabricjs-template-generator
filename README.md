@@ -30,8 +30,10 @@ O uploader não é recriado — a pipeline v2 invoca a skill v1 (`getposts-templ
 Quando todos os gates passam, o upload acontece automaticamente com:
 
 - `template_type: ai`
-- `status: draft`
-- `user_id: public`
+- `status: review` (humano aprova depois via tela de revisão de templates)
+- `owner_user_id: templateGenerator`
+- `scope: platform`
+- `business_type: ""` (sempre vazio)
 
 Em seguida o editor é aberto para salvar e gerar thumbnails.
 

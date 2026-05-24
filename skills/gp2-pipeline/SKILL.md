@@ -92,9 +92,10 @@ Em **batch**, apague slug por slug individualmente à medida que cada um confirm
 Quando os gates passam, suba **automaticamente** com:
 
 - `template_type: ai`
-- `status: draft`
+- `status: review` (default do uploader — humano aprova depois na tela de revisão; **nunca** passe `--status draft`)
 - `owner_user_id: templateGenerator`
 - `scope: platform`
+- `business_type: ""` (sempre vazio — direcionamento por nicho acontece em outra camada)
 - ambiente: **prod** (default, a não ser que o usuário peça dev)
 
 Não pergunte confirmação — é a regra padrão.

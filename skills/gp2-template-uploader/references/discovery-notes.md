@@ -141,13 +141,14 @@ Default insert payload:
     { "order": "0", "imageId": "0" }
   ],
   "description": "Descrição Geral:\n...",
-  "status": "draft",
+  "status": "review",
   "template_type": "ai",
-  "user_id": "public"
+  "owner_user_id": "templateGenerator",
+  "scope": "platform"
 }
 ```
 
-Always insert new generated templates with `user_id: "public"` and `status: "draft"` unless Gustavo explicitly changes this.
+Always insert new generated templates with `owner_user_id: "templateGenerator"`, `scope: "platform"` and `status: "review"`. The previous `user_id: "public"` / `status: "draft"` convention is **legacy** and must not be used.
 
 Do not send `embedding` manually unless the backend requires it. Existing rows contain it, but it may be generated elsewhere or nullable.
 
