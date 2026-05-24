@@ -49,6 +49,12 @@ ALLOWED_OBJECTIVES = {
     "retencao",
 }
 
+ALLOWED_IMAGE_MODES = {
+    "text-only",
+    "text-with-accents",
+    "image-heavy",
+}
+
 DEFAULT_KEEP = 20
 
 HISTORY_DIR = Path(__file__).resolve().parent.parent / "history"
@@ -100,6 +106,11 @@ def cmd_list(args: argparse.Namespace) -> None:
 
 def cmd_append(args: argparse.Namespace) -> None:
     validate_objective(args.objective)
+    if args.image_mode not in ALLOWED_IMAGE_MODES:
+        allowed = ", ".join(sorted(ALLOWED_IMAGE_MODES))
+        raise SystemExit(
+            f"error: invalid image-mode '{args.image_mode}'. allowed: {allowed}"
+        )
     entries = load_history(args.objective)
 
     entry = {
@@ -109,6 +120,7 @@ def cmd_append(args: argparse.Namespace) -> None:
         "framework": args.framework,
         "theme": args.theme,
         "hook_formula": args.hook,
+        "image_mode": args.image_mode,
         "template_id": args.template_id,
         "status": args.status,
     }
@@ -134,6 +146,7 @@ def cmd_stats(_: argparse.Namespace) -> None:
             "count": len(entries),
             "last_ts": entries[-1]["ts"] if entries else None,
             "last_framework": entries[-1]["framework"] if entries else None,
+            "last_image_mode": entries[-1].get("image_mode") if entries else None,
         }
     print(json.dumps(stats, ensure_ascii=False, indent=2))
 
@@ -169,6 +182,12 @@ def main() -> None:
     p_append.add_argument("--framework", required=True, help="framework slug (e.g., listicle)")
     p_append.add_argument("--theme", required=True, help="theme phrase")
     p_append.add_argument("--hook", required=True, help="hook formula slug")
+    p_append.add_argument(
+        "--image-mode",
+        required=True,
+        choices=sorted(ALLOWED_IMAGE_MODES),
+        help="image_mode of this suggestion (text-only|text-with-accents|image-heavy)",
+    )
     p_append.add_argument("--template-id", default=None, help="Supabase template ID once dispatched")
     p_append.add_argument(
         "--status",

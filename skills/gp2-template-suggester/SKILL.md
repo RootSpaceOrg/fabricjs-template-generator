@@ -83,6 +83,62 @@ Lista fechada de **estruturas** que mapeiam para os objetivos. Cada framework de
 
 Ver instruções detalhadas de cada framework (incluindo slide-by-slide content guidance e hooks recomendados) em [`references/objectives-and-frameworks.md`](references/objectives-and-frameworks.md).
 
+## Image mode — texto puro × texto+acentos × imagem-pesado
+
+Pesquisa 2026 mostra que carrosséis **mixed-media** (texto + imagens estratégicas) têm 29% mais engajamento que carrosséis de texto puro ou só imagem ([Carouselli 2026 benchmark](https://carouselli.com/blog/instagram-carousel-engagement)). Templates puramente textuais entregam pior — e era exatamente o que estava acontecendo no batch de 10 que veio sem nenhuma imagem ilustrativa.
+
+A skill agora decide explicitamente um `image_mode` por sugestão, repassa pro prompt do gp2-pipeline com instruções concretas de slots de imagem, e garante distribuição no batch (não pode ser 100% `text-only`).
+
+### Os 3 modos
+
+| Modo | Descrição | Slots de imagem por slide | Quando usar |
+|------|-----------|---------------------------|-------------|
+| `text-only` | Composição puramente tipográfica. Apenas formas geométricas, padrões e cor compõem o visual. | 0 imagens `userAsset` no template marcado. | Frameworks que vivem de tipografia bold (declarações, contrarian, stats). Use no MÁXIMO 30% do batch. |
+| `text-with-accents` | Texto dominante + 1 imagem `userAsset` opcional em 2-3 slides como apoio (não como protagonista). | 1 slot `userAsset` em ~40% dos slides (capa + 1-2 internos). | Default da maioria dos frameworks. Versátil, multi-nicho fácil. |
+| `image-heavy` | Imagem é protagonista; texto orbita ela. Cada slide tem 1 imagem grande, texto curto sobreposto ou ao lado. | 1 slot `userAsset` em quase todos os slides (≥70%). | Frameworks visuais (case-study, before-after, behind-the-scenes). |
+
+**Importante:** todos os slots de imagem são `data-image-type="userAsset"` — o cliente final substitui pela imagem dele no editor. Nunca `professionalPhoto`. O template provê só os retângulos/posições + uma imagem placeholder neutra (cor sólida, padrão abstrato, ou foto stock genérica).
+
+### Mapeamento framework → image_mode
+
+Cada framework tem **modo preferido** e **modos compatíveis**:
+
+| Framework | Preferido | Aceitáveis | Não usar |
+|-----------|-----------|-----------|----------|
+| `listicle` | text-with-accents | text-only, image-heavy | — |
+| `myth-vs-truth` | text-with-accents | text-only | image-heavy |
+| `step-by-step` | text-with-accents | image-heavy | text-only |
+| `problem-agitate-solve` | text-with-accents | text-only | image-heavy |
+| `contrarian-take` | text-only | text-with-accents | image-heavy |
+| `framework-reveal` | text-with-accents | text-only | image-heavy |
+| `mistakes-to-avoid` | text-with-accents | text-only, image-heavy | — |
+| `case-study-narrative` | image-heavy | text-with-accents | text-only |
+| `before-after-transformation` | image-heavy | text-with-accents | text-only |
+| `cheat-sheet` | text-only | text-with-accents | image-heavy |
+| `data-driven-insight` | text-only | text-with-accents | image-heavy |
+| `vulnerable-story` | text-with-accents | image-heavy, text-only | — |
+| `behind-the-scenes` | image-heavy | text-with-accents | text-only |
+| `mini-faq` | text-with-accents | text-only | image-heavy |
+
+### Política de distribuição no batch
+
+Ao montar um batch de N sugestões:
+
+- **Máximo 30% de `text-only`** no batch (com arredondamento pra baixo).
+- **Mínimo 30% deve incluir imagem** (`text-with-accents` ou `image-heavy`).
+- Se N ≥ 5, **pelo menos 1 deve ser `image-heavy`**.
+
+Exemplos:
+- N=3: máx 1 text-only, ao menos 1 com imagem (idealmente 1 text-only + 2 text-with-accents)
+- N=5: máx 1 text-only, ao menos 1 image-heavy (ex: 1+3+1)
+- N=10: máx 3 text-only, ao menos 2 image-heavy (ex: 2+5+3)
+
+Se a rotação por objetivo + framework te empurrar pra um mix que viole essa regra, **troque o framework**, não o modo (porque o modo errado num framework errado entrega resultado ruim).
+
+### Histórico
+
+A skill registra `image_mode` no histórico junto com framework e theme — pra também rotacionar modos (evita 3 sugestões seguidas de `image-heavy` no mesmo objetivo).
+
 ## Hook do Slide 1 — onde mora a vida do template
 
 O Slide 1 é o gate algorítmico do Instagram: se ele não para o scroll, o resto não importa. A skill **sempre** especifica uma das fórmulas de hook validadas para o framework escolhido. Ver [`references/hook-formulas.md`](references/hook-formulas.md) para o catálogo completo.
@@ -96,8 +152,9 @@ O Slide 1 é o gate algorítmico do Instagram: se ele não para o scroll, o rest
 2. **Decidir o batch** (default 3 sugestões):
    - Distribua entre objetivos diferentes. Ex: batch de 3 → 1 aquisicao + 1 posicionamento + 1 educacao.
    - Para cada sugestão, escolha framework compatível com o objetivo (ver tabela acima).
+   - **Para cada sugestão, escolha `image_mode`** respeitando a tabela de mapeamento e a política de distribuição do batch (ver "Image mode" acima — máx 30% text-only, mínimo 30% com imagem, e se N≥5 ao menos 1 image-heavy).
    - Proponha um tema **atemporal**, **neutro a vertical**, **acionável** (ver "Critérios de tema" abaixo).
-   - Confirme contra o histórico: nenhuma combinação framework+tema deve sobrepor semanticamente com as últimas 20 do mesmo objetivo. Se sobrepor, gere outro tema.
+   - Confirme contra o histórico: nenhuma combinação framework+tema deve sobrepor semanticamente com as últimas 20 do mesmo objetivo. Também evite repetir o mesmo `image_mode` 3× seguidas no mesmo objetivo. Se sobrepor, gere outro tema ou troque o framework.
 
 3. **Materializar cada sugestão como prompt do gp2-pipeline**:
    - Use o template de prompt em "Prompt template para gp2-pipeline" abaixo.
@@ -137,13 +194,15 @@ Crie um CARROSSEL GENÉRICO MULTI-NICHO.
 
 Objetivo de marketing: <OBJETIVO>
 Framework narrativo: <FRAMEWORK>
+Image mode: <IMAGE_MODE>            # text-only | text-with-accents | image-heavy
 Tema: <TEMA EM 1 FRASE CLARA>
 
 Diretrizes multi-nicho (obrigatórias):
 - A copy de TODOS os slides deve ser neutra a vertical. Qualquer profissional/marca de qualquer nicho deve adaptar este template trocando apenas os campos editáveis (data-template-element).
 - Não use jargão de nicho nenhum. Evite "paciente", "cliente", "aluno", "tutor", "consultório", "loja", "academia". Prefira "pessoas", "você", "seu público".
-- NÃO inclua professionalPhoto. Templates multi-nicho não amarram a avatar específico.
-- Sem ícones, símbolos ou metáforas visuais de setor (sem cruz médica, sem patinha, sem haltere, sem batom, etc.).
+- NÃO inclua professionalPhoto (data-image-type="professionalPhoto"). Templates multi-nicho não amarram a avatar específico de pessoa.
+- IMAGENS userAsset SÃO PERMITIDAS E ENCORAJADAS conforme o image_mode definido acima. "Sem professionalPhoto" ≠ "sem imagens nenhuma". userAsset é genérico — cliente final substitui pela imagem dele.
+- Sem ícones, símbolos ou metáforas visuais de setor (sem cruz médica, sem patinha, sem haltere, sem batom, etc.). Ícones abstratos (números, setas, check/X, gráficos, padrões) são livres.
 - CTA do último slide deve ser genérico: "Salve este post", "Compartilhe", "Comente <palavra>", "Siga para mais", "Marque alguém que precisa ler". Nunca CTA de serviço.
 
 Estrutura sugerida:
@@ -154,6 +213,37 @@ Estrutura sugerida:
 - Brand colors: primary + secondary (multi-nicho aproveita as duas cores swappable do usuário).
 - Carousel chrome: auto.
 - Tom: <TOM coerente com o objetivo — neutro, inspirador, educativo, contrarian, etc.>.
+
+Imagens no template (CRÍTICO — siga literalmente o image_mode acima):
+
+<INSERIR UM DOS 3 BLOCOS ABAIXO conforme o image_mode escolhido:>
+
+[Se image_mode = text-only]
+- ZERO imagens userAsset no template. Composição é 100% tipográfica + formas geométricas + cor.
+- Pode usar elementos vetoriais decorativos (barras, círculos, padrões, divisores) como apoio visual.
+- Não inclua nenhum elemento <img> com data-image-type="userAsset".
+- Justificativa: este framework vive de tipografia bold e contraste cromático; imagem aqui dilui a força.
+
+[Se image_mode = text-with-accents]
+- Inclua imagens userAsset em ~40% dos slides — tipicamente: capa (Slide 1) + 1 ou 2 slides internos como acento.
+- Imagens devem ser RETÂNGULOS NEUTROS no template (cor sólida, padrão abstrato, ou foto stock genérica de cenário/objeto neutro — NUNCA pessoa específica).
+- Cada <img> deve ter:
+  - data-image-type="userAsset"
+  - data-template-element="true"
+  - data-te-description descrevendo o tipo de imagem ideal ("imagem de apoio ao tema; pode ser cenário, objeto ou textura — não amarrar a pessoa")
+- Texto continua dominante (≤50 palavras por slide); imagens são apoio, não protagonistas.
+- Justificativa: mixed-media entrega 29% mais engajamento que text-only puro (Carouselli 2026).
+
+[Se image_mode = image-heavy]
+- Inclua imagens userAsset em ≥70% dos slides — idealmente todos exceto capa de fechamento/CTA.
+- Imagem ocupa pelo menos 50% da área de cada slide onde aparece (não acento — protagonista).
+- Texto orbita a imagem: sobreposto com overlay, em barra lateral, ou abaixo em bloco compacto.
+- Cada <img> deve ter:
+  - data-image-type="userAsset"
+  - data-template-element="true"
+  - data-te-description orientando o tipo de cena ideal sem amarrar a vertical ("cenário antes/depois neutro", "imagem de processo/objeto representando a etapa", etc.)
+- Placeholders no template devem ser imagens neutras (cor sólida com label "imagem aqui", padrão abstrato, ou stock genérico) — o cliente final substitui.
+- Justificativa: frameworks visuais (case-study, before-after, behind-the-scenes) precisam da imagem como evidência narrativa.
 
 Use o art-director livre para decidir família estética, paleta hex e movimento memorável.
 
@@ -191,6 +281,7 @@ Cada arquivo é uma lista rotativa das últimas 20 sugestões daquele objetivo:
     "framework": "listicle",
     "theme": "5 erros ao começar um projeto novo",
     "hook_formula": "numerical-mistake-list",
+    "image_mode": "text-with-accents",
     "template_id": "abc123",
     "status": "dispatched"
   }
@@ -205,7 +296,7 @@ python skills/gp2-template-suggester/scripts/suggestion-history.py list <objetiv
 
 # Acrescentar (mantém só as últimas 20)
 python skills/gp2-template-suggester/scripts/suggestion-history.py append <objetivo> \
-  --framework <fw> --theme "<tema>" --hook <formula> [--template-id <id>]
+  --framework <fw> --theme "<tema>" --hook <formula> --image-mode <modo> [--template-id <id>]
 ```
 
 Quando consultar para evitar repetição, considere semanticamente próximo (não exato):
@@ -227,7 +318,7 @@ Sempre reporte em formato consolidado:
 ```markdown
 ## Batch Pipeline 1 — <N> sugestões · ambiente: <prod|dev>
 
-### Sugestão 1: <framework> · <objetivo>
+### Sugestão 1: <framework> · <objetivo> · <image_mode>
 - Tema: <tema>
 - Hook fórmula: <formula>
 - Template ID: <id ou "FALHOU - <motivo>">
@@ -239,6 +330,7 @@ Sempre reporte em formato consolidado:
 ### Consolidado
 - Ambiente: <prod|dev>
 - Sugestões dispatched: <N>
+- Distribuição image_mode: <X text-only · Y text-with-accents · Z image-heavy>  ← deve respeitar política (máx 30% text-only; se N≥5 ao menos 1 image-heavy)
 - Templates criados com sucesso: <X>
 - Falhas: <Y> (detalhes acima)
 - Próximos templates entram em /revisar-templates como status=review
