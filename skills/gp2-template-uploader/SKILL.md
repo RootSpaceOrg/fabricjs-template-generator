@@ -172,7 +172,6 @@ editor_templates/_RFWfXL-V7hi-EQ5X-gZv/0/template.json
 python skills/gp2-template-uploader/scripts/import-template.py \
   artifacts/gp2-template-converter/<slug>/ \
   --name "Nome do Template" \
-  --business-type multi-nicho \
   --tags "tag1,tag2" \
   --description-hint "$(cat artifacts/gp2-template-marker/<slug>/template-summary.md)"
 ```
@@ -183,11 +182,12 @@ Default é dry-run em **prod** com `--status review`. Inspecione o payload antes
 python skills/gp2-template-uploader/scripts/import-template.py \
   artifacts/gp2-template-converter/<slug>/ \
   --name "Nome do Template" \
-  --business-type multi-nicho \
   --tags "tag1,tag2" \
   --description-hint "$(cat artifacts/gp2-template-marker/<slug>/template-summary.md)" \
   --execute
 ```
+
+> **`business_type` é sempre vazio.** Templates gerados pela pipeline são neutros em relação a nicho — não aceitam `--business-type` e o payload envia `business_type: ""`. Direcionamento por nicho acontece em outra camada (Pipeline 2/3 quando gera o post final).
 
 Para forçar outro status (ex: `published` durante migrações controladas):
 

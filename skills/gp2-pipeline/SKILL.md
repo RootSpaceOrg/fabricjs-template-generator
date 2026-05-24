@@ -105,12 +105,12 @@ Não pergunte confirmação — é a regra padrão.
 python skills/gp2-template-uploader/scripts/import-template.py \
   artifacts/gp2-template-converter/<slug>/ \
   --name "<Nome do Template>" \
-  --business-type multi-nicho \
   --tags "<tag1,tag2>" \
   --description-hint "$(cat artifacts/gp2-template-marker/<slug>/template-summary.md)" \
-  --status draft \
   --execute
 ```
+
+> `business_type` é sempre vazio (template neutro em relação a nicho) e o status default é `review`. Não passe `--business-type` nem `--status draft`.
 
 Para dev, adicione `--env dev`. Sem flag = prod.
 

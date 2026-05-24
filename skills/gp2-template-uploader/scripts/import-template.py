@@ -340,7 +340,7 @@ def build_payload(
         "owner_user_id": args.owner_user_id,
         "created_by": "templateGenerator",
         "content_type": args.content_type,
-        "business_type": args.business_type or "",
+        "business_type": "",
         "tags": tags,
         "scope": args.scope,
     }
@@ -472,11 +472,6 @@ def main():
         "--template-id",
         default=None,
         help="Optional template id; default generates nanoid-like id",
-    )
-    parser.add_argument(
-        "--business-type",
-        default="",
-        help="metadata.businessType, e.g. physiotherapy, laserterapy",
     )
     parser.add_argument("--content-type", default="instagram-feed")
     parser.add_argument("--tags", default="")
