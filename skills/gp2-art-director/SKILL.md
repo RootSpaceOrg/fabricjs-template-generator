@@ -100,6 +100,8 @@ Antes de qualquer decisão criativa, inspecione as imagens e extraia:
 
 ### 3. Planeje a direção visual de cada slide
 
+**Sobre imagens no template:** o brief descreve a intenção composicional por slide (ex: "capa full-bleed com foto", "split texto|imagem", "coluna central só texto"). Siga essa intenção como orientação — o art-director decide como executar, mas respeite se um slide foi indicado com ou sem imagem. Para slides de miolo sem indicação explícita, prefira incluir ao menos 1-2 slots `userAsset` como apoio visual: templates puramente tipográficos tendem a sair sem estrutura visual quando o designer tem liberdade criativa.
+
 Para **cada slide** do brief, forneça orientação sobre:
 - **Papel narrativo** do slide (capa, educativo, prova, CTA, etc.)
 - **Direção de composição** — onde ficam headline e imagem (não precisa ser código; pode ser descrição)
