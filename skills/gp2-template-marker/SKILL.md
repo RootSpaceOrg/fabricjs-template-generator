@@ -38,6 +38,8 @@ Não faz:
 ## Inputs
 
 ```
+artifacts/gp2-request-interpreter/<slug>/brief.md        ← arco narrativo por slide
+artifacts/gp2-art-director/<slug>/visual-plan.md         ← copy orientativo e elemento-chave por slide
 artifacts/gp2-html-designer/<slug>/
 ├── template.html          ← aprovado pelo gp2-html-reviewer (PASS)
 ├── screenshots/
@@ -65,9 +67,21 @@ artifacts/gp2-template-marker/<slug>/
    - `<meta charset="utf-8">`.
    - `<meta name="hm-fonts" content="Fonte1,Fonte2">` listando todas as famílias usadas no CSS.
    - Opcional: `<meta name="hm-detected-primary" content="#...">` e `secondary` se você quiser fixar e pular auto-detecção.
+3b. **Leia o contexto antes de marcar qualquer elemento** — este passo é obrigatório:
+   - Leia `brief.md` inteiro: extraia o arco narrativo por slide (papel de cada lâmina: capa, educativo, prova, CTA…) e o segmento/tom do template.
+   - Leia `visual-plan.md` inteiro: extraia o copy orientativo e o elemento-chave por slide.
+   - Os textos reais no HTML são o melhor sinal do formato esperado — leia-os antes de escrever qualquer `data-te-description`.
+   - Monte internamente um mapa: `slide N → papel narrativo (brief) → elemento-chave (visual-plan) → textos reais (HTML)`. Use esse mapa no passo 4 para derivar descriptions que reflitam o contexto do template.
+
 4. **Caminhe slide por slide** (cada `<section class="slide">`) e para cada elemento decida na hora:
-   - **Papel narrativo do slide** (capa/abertura, miolo educativo, prova/dado, CTA, fechamento). Use isso para escrever o `data-te-description`.
+   - **Papel narrativo do slide** (capa/abertura, miolo educativo, prova/dado, CTA, fechamento). Use o mapa do passo 3b para confirmar o papel.
    - **Papel do elemento** dentro do slide (gancho, título, subtítulo, corpo, prova, CTA-label, foto contextual, foto profissional, logo, brand-handle, decoração). Use isso para escolher entre `data-template-element`, `data-text-type`, `data-static`, `data-image-type`.
+   - **Para cada elemento `data-template-element="true"`**, siga obrigatoriamente:
+     1. Consulte `references/element-descriptions.md` → escolha o role canônico mais próximo.
+     2. Derive `ex1` do texto real do elemento no HTML (generalizado — sem referência ao vertical específico). Ex: "Seu conhecimento clínico está virando pacientes?" → `'Seu conhecimento está virando resultados?'`
+     3. Adicione hint de sequência quando o elemento funciona em par narrativo com vizinhos: `após eyebrow categórico; seguido de corpo educativo`.
+     4. Adicione 2 exemplos genéricos adicionais cobrindo variação de formato.
+     5. A description resultante **deve seguir a fórmula** — nunca escreva prosa descritiva.
 5. Aplique a classificação (ver tabela abaixo).
 6. Mapeie cores de marca: cada elemento cuja cor (fill/stroke/background) deve trocar com o preset da marca recebe `data-variable="primary|secondary"` + opcional `data-variable-target`.
 6b. **Valide atributos `data-darken` (safety net obrigatória):**
@@ -125,6 +139,20 @@ python3 ../../scripts/audit-template-markup.py artifacts/gp2-template-marker/<sl
 > **Antes de marcar, verifique ancoragem**: a `<img data-image-type="professionalPhoto">` deve satisfazer **uma das duas condições** (fotos de usuário são busto/tronco — sem ancoragem a figura parece flutuar): (1) `top + height ≥ canvas_height − 80px` (borda inferior do slide), OU (2) outro elemento visível sobrepõe o terço inferior do slot. Se nenhuma condição for satisfeita, devolva ao designer com `REVISE` antes de marcar.
 
 ## Regras críticas
+
+- **`data-te-description` NUNCA é prosa descritiva.** Sempre a fórmula de 4 componentes. Se você está escrevendo uma frase como "texto neutro e adaptável para qualquer nicho, com linguagem concreta e sem jargão" ou "título intermediário adaptável para qualquer área de atuação" — pare. Isso é o anti-pattern que quebra o LLM downstream. Use o catálogo + fórmula + exemplos derivados do texto real.
+
+  ```
+  ❌ PROIBIDO:
+  "Slide 4 título: texto neutro e adaptável para qualquer nicho, com linguagem concreta e sem jargão."
+  "Título intermediário adaptável para qualquer área de atuação."
+  "Corpo de texto explicativo sobre o tema do slide."
+
+  ✅ CORRETO:
+  "Título da lâmina intermediária; formato afirmação direta OU inversão de expectativa;
+  1 frase em 2 linhas; após eyebrow categórico; seguido de corpo educativo; 30-60 chars;
+  ex: 'Paciente não compra expertise', 'O corpo fala antes de doer', 'Resultado não é só número'"
+  ```
 
 - **Inline `<span>` dentro de texto editável é estilo, não elemento separado.** Marque o `<h1>`/`<p>` pai como `data-template-element`, e o `<span>` interno só tem `style` (e opcional `data-variable` se a cor é brand). O converter vai virar `textbox.styles[lineIndex][charIndex]`.
 - **Neutros não viram brand variables.** Branco, off-white, cinza, preto de body — ficam literais.
@@ -219,6 +247,8 @@ Formato exato:
 ```
 
 Mantenha curto. O uploader vai usar isso para gerar a descrição que aparece no Supabase. Não detalhe campos editáveis — isso é metadado, não conteúdo da descrição.
+
+Use os papéis narrativos reais do `brief.md` (passo 3b) para descrever cada slide — não invente papéis genéricos. O template tem um motivo para existir; a descrição deve refletir esse motivo.
 
 ## Audit
 

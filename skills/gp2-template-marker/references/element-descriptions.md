@@ -30,6 +30,22 @@ Toda description segue a fórmula:
 
 **Sweet spot**: 200-300 chars por description. Cada description vai pra cada elemento de cada template no prompt do LLM — pesar tokens importa.
 
+## Anti-patterns — descriptions que QUEBRAM o LLM downstream
+
+Antes de escrever qualquer `data-te-description`, verifique se você está caindo em um desses anti-patterns:
+
+| Anti-pattern | Por que quebra | Exemplo ruim | Exemplo correto |
+|-------------|----------------|--------------|-----------------|
+| **Prosa descritiva sem fórmula** | O LLM não sabe o formato esperado, nem o tamanho, nem os examples — gera output inconsistente entre slides | `"Slide 4 título: texto neutro e adaptável para qualquer nicho, com linguagem concreta e sem jargão."` | `"Título da lâmina intermediária; formato afirmação direta OU inversão; 1 frase em 2 linhas; 30-60 chars; ex: 'O corpo fala antes de doer', ..."` |
+| **Role sem exemplos** | Sem exemplos, o LLM adivinha o estilo — vira inconsistência | `"Eyebrow editorial da lâmina; rótulo curto de seção"` | `"Eyebrow editorial; formato 'NN / TEMA'; até 30 chars; ex: '01 / DOR CRÔNICA', '03 / O ESTUDO', '07 / PRÓXIMO PASSO'"` |
+| **Exemplos do vertical atual** | O template vai ser usado em dezenas de verticais — exemplos específicos de saúde travam o LLM em outros contextos | `"ex: '01 / FISIOTERAPIA', '03 / COLUNA CERVICAL'"` | `"ex: '01 / DOR CRÔNICA', '03 / O ESTUDO', '07 / PRÓXIMO PASSO'"` |
+| **ex1 genérico ignorando o texto real** | O primeiro exemplo deve derivar do texto real no HTML (generalizado) — inventar do zero descarta a melhor pista disponível | Texto real: `"Seu conhecimento clínico está virando pacientes?"` → ex1 inventado: `"Sua ideia ficou clara?"` | ex1 derivado: `"Seu conhecimento está virando resultados?"` |
+| **Título do template como description** | A description é o prompt para o LLM gerar copy, não uma label do elemento | `"Título do slide sobre mitos de produtividade"` | `"Título da lâmina intermediária; formato afirmação que desmonta crença; ..."` |
+
+**Regra de ouro:** se você remover a description e o LLM não souber o *formato*, o *tamanho* e o *estilo* do que deve gerar — a description está errada.
+
+---
+
 ## Regras invioláveis
 
 1. **Exemplos são genéricos, não do vertical atual.** Template é de qualquer nicho? Exemplos do eyebrow continuam `'01 / DOR', '03 / O ESTUDO', '07 / PRÓXIMO PASSO'` — nunca `'01 / FISIOTERAPIA'` ou qualquer referência ao vertical específico. O template vai ser usado em dezenas de verticais; descriptions são reutilizáveis.
