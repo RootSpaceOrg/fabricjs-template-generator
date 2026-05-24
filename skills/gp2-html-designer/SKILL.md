@@ -42,14 +42,47 @@ Leia `brief.md` + `visual-plan.md` inteiros. Entenda:
 
 ### 2. Produza o template.html
 
-Escreva `template.html` diretamente — sem sub-versões obrigatórias. Se quiser iterar em passos intermediários, salve como `template-v1.html` / `template-v2.html`, mas não é obrigatório.
+Escreva `template.html` diretamente. Se quiser iterar em passos intermediários, salve como `template-v1.html` / `template-v2.html`, mas não é obrigatório.
 
-**O que decidir:**
+**Estrutura mínima obrigatória — comece com este esqueleto:**
+
+```html
+<!doctype html>
+<html lang="pt-BR" data-template-name="<slug-do-template>" data-segment="<segmento-kebab-case>">
+<head>
+  <meta charset="utf-8">
+  <meta name="hm-fonts" content="FonteDisplay,FonteBody">
+  <link href="https://fonts.googleapis.com/css2?family=FonteDisplay:wght@700;800&family=FonteBody:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body style="margin:0; padding:0;">
+
+  <section class="slide" data-width="1080" data-height="1350"
+           style="position:relative; width:1080px; height:1350px; overflow:hidden; background:#F5F3EF;">
+    <!-- elementos com position:absolute; left:Xpx; top:Ypx; width:Wpx; height:Hpx -->
+  </section>
+
+  <section class="slide" data-width="1080" data-height="1350"
+           style="position:relative; width:1080px; height:1350px; overflow:hidden; background:#1C1A18;">
+  </section>
+
+  <!-- ... demais slides -->
+
+</body>
+</html>
+```
+
+**Regras que nunca mudam:**
+- `<section class="slide" data-width="W" data-height="H">` — obrigatório em cada slide
+- `position: absolute; left: Xpx; top: Ypx; width: Wpx; height: Hpx;` — todo elemento dentro do slide
+- Todo CSS inline no atributo `style=""` — sem `<style>` block, sem classes CSS
+- Sem flex/grid no canvas (só dentro de elementos que não são convertidos, o que não existe aqui)
+
+**O que decidir criativamente:**
 - Composição de cada slide (disposição de elementos, zonas de texto e imagem)
 - Tamanhos exatos de fonte e pesos tipográficos
 - Coordenadas absolutas em px
 - Detalhes de micro-alinhamento, letter-spacing, espaçamentos
-- Se e como usar o movimento decorativo do plano
+- Se e como usar o movimento decorativo sugerido no plano
 
 **O que o plano já definiu (use, a não ser que haja razão melhor):**
 - Hexs de primary, secondary, neutros
@@ -62,13 +95,27 @@ Escreva `template.html` diretamente — sem sub-versões obrigatórias. Se quise
 node ../../scripts/render-html-screenshots.js artifacts/gp2-html-designer/<slug>/
 ```
 
+**Antes de olhar os screenshots, verifique no HTML:**
+
+| Verificação estrutural | Esperado |
+|------------------------|----------|
+| `<html data-template-name="..." data-segment="...">` | Presente |
+| `<meta name="hm-fonts" content="...">` | Presente com todas as famílias usadas |
+| Cada slide tem `<section class="slide" data-width="N" data-height="M">` | Presente |
+| Cada slide tem `style="position:relative; width:Npx; height:Mpx;"` | Presente |
+| Cada elemento interno tem `style="position:absolute; left:Xpx; top:Ypx; ..."` | Presente |
+| Não há `<style>` block no `<head>` com regras CSS | Ausente |
+| Não há `class="..."` dependendo de `<style>` block | Ausente |
+
+Se qualquer item estrutural falhar — **corrija antes de renderizar**. Screenshots de HTML sem estrutura correta não têm valor de revisão.
+
 Olhe os screenshots e verifique:
 
 | Critério | OK se… |
 |----------|--------|
 | Hierarquia | título > subtítulo > corpo é instantâneo em cada slide |
 | Contraste | texto sobre fundo respeita leitura confortável |
-| Densidadde | nenhum slide tem texto cortado ou colado na borda |
+| Densidade | nenhum slide tem texto cortado ou colado na borda |
 | Diversidade | slides têm composições visivelmente distintas entre si |
 | Respiração | margem útil ≥ 60px em todas as bordas (canvas 1080) |
 | data-variable | elementos com cor brand têm atributos `data-variable` aplicados |
