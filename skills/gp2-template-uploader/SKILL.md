@@ -1,15 +1,28 @@
 ---
 name: gp2-template-uploader
-description: "Upload final da Pipeline GetPosts v2: lê slide-N.json + manifest.json do converter, gera descrição narrativa a partir do template-summary.md do marker, faz upload para S3 e insere em public.templates no Supabase. Suporta ambientes dev e prod (default: prod). Use após gp2-template-converter (validator exit 0)."
+description: "Upload final da Pipeline GetPosts v2: lê slide-N.json + manifest.json do converter, gera descrição narrativa a partir do template-summary.md do marker, faz upload dos slides para S3 e invoca a lambda app-lambda-template-handler para criar a linha em public.templates (com embedding gerado pelo handler). Templates entram com status='review' por padrão. Suporta ambientes dev e prod (default: prod). Use após gp2-template-converter (validator exit 0)."
 ---
 
 # gp2-template-uploader
 
-Importa os slides Fabric.js gerados pela pipeline v2 para o produto HealthMarket.
+Importa os slides Fabric.js gerados pela pipeline v2 para a plataforma KultivAi/HealthMarket.
+
+## Arquitetura do upload
+
+```
+slide-N.json  ──► S3 (mkt-platform-templates-{env})
+                  editor_templates/{template_id}/{image_id}/template.json
+
+payload (com URLs S3)  ──► invoke direto na Lambda app-lambda-template-handler
+                            (boto3 lambda:Invoke, sem passar por API Gateway)
+                            ──► handler insere no Supabase + gera embedding
+```
+
+A skill **não** escreve direto no Supabase nem carrega credenciais Supabase — quem faz isso é o `template-handler`, que também gera embedding sobre `description + name + tags`.
 
 ## Safety first
 
-Esta skill escreve em S3 e Supabase de produção. Antes de executar:
+Esta skill escreve em S3 e invoca a Lambda de produção. Antes de executar:
 
 - confirme que o usuário quer upload agora, **a não ser** que a standing rule do Gustavo se aplique (gates todos passaram);
 - rode dry-run primeiro;
@@ -17,7 +30,7 @@ Esta skill escreve em S3 e Supabase de produção. Antes de executar:
 - não sobrescreva um template existente a não ser que explicitamente solicitado;
 - não execute se `validate-slides.js` não passou (exit 0).
 
-**Standing rule do Gustavo:** quando HTML reviewer e Fabric validator passam, suba automaticamente com `template_type: ai`, `status: draft`, `owner_user_id: templateGenerator`, `scope: platform`. Ambiente padrão: **prod**. Não pergunte confirmação — é a regra padrão.
+**Standing rule do Gustavo:** quando HTML reviewer e Fabric validator passam, suba automaticamente com `template_type: ai`, `status: review`, `owner_user_id: templateGenerator`, `scope: platform`. Ambiente padrão: **prod**. Não pergunte confirmação — é a regra padrão. Templates entram como `review` para humano aprovar via tela de gerenciamento antes de virarem `published`.
 
 ## Inputs esperados
 
@@ -45,13 +58,17 @@ Default: **prod** (quando o usuário não especifica).
 | Setting | dev | prod (default) |
 |---------|-----|----------------|
 | AWS env file | `aws-credentials-template-generator-mkt-platform-dev.env` | `aws-credentials-template-generator-mkt-platform-prod.env` |
-| Role ARN | `arn:aws:iam::656032436386:role/TemplateGenerator` | `arn:aws:iam::692046683598:role/TemplateGenerator` |
-| SSM parameter | `/default/supabase-database-credentials` | `/default/supabase-database-credentials` |
+| Role ARN | `arn:aws:iam::656032436386:role/TemplateGeneratorRole` | `arn:aws:iam::692046683598:role/TemplateGeneratorRole` |
 | S3 bucket | `mkt-platform-templates-dev` | `mkt-platform-templates-prod` |
+| Template handler Lambda | `app-lambda-template-handler` | `app-lambda-template-handler` |
 
 - AWS region: `sa-east-1` (ambos)
-- Supabase table: `public.templates` (ambos)
+- Supabase: gerenciado pelo `template-handler` (não toque aqui)
 - Credentials path: `/root/.openclaw/workspace/secrets/<env file acima>`
+
+**Permissão IAM necessária no role** `TemplateGeneratorRole`:
+- `s3:PutObject` no bucket `mkt-platform-templates-{env}` (já existia)
+- `lambda:InvokeFunction` em `arn:aws:lambda:sa-east-1:<account>:function:app-lambda-template-handler` (**novo** — confirme antes de rodar pela primeira vez em cada ambiente)
 
 Selecione com `--environment dev` ou `--env dev`. Sem flag = prod.
 
@@ -100,9 +117,9 @@ Uso recomendado:
 
 Se a análise narrativa for fraca ou ausente, infira a partir dos títulos/corpo dos slides. Não liste campos editáveis a não ser para debug de upload falho.
 
-## Schema do banco
+## Payload enviado ao template-handler
 
-Insert em `public.templates`:
+A skill monta um event API-Gateway-like e invoca a Lambda `app-lambda-template-handler` via `boto3.client("lambda").invoke()`. O body do POST `/templates` carrega:
 
 ```json
 {
@@ -116,7 +133,7 @@ Insert em `public.templates`:
     { "order": "1", "imageId": "1" }
   ],
   "description": "Descrição Geral:\n...",
-  "status": "draft",
+  "status": "review",
   "template_type": "ai",
   "owner_user_id": "templateGenerator",
   "created_by": "templateGenerator",
@@ -131,7 +148,11 @@ Campos opcionais (omitidos = null no DB):
 - `tenant_id` — preencher quando o usuário especificar tenant
 - `vertical_id` — preencher quando o usuário especificar vertical
 
-Para multi-slide, uma entrada `images` por `slide-N.json` com `order` e `imageId` iniciando em `"0"`. Não envie `embedding` manualmente.
+Para multi-slide, uma entrada `images` por `slide-N.json` com `order` e `imageId` iniciando em `"0"`. **Não envie `embedding`** — o handler gera automaticamente a partir de `description + name + tags`.
+
+### Authorizer simulado
+
+O event de invoke carrega um `requestContext.authorizer` sintético com `userId=templateGenerator` e `role=admin` para o handler tratar a chamada como request administrativo. Isso bypassa o API Gateway mas mantém o resolver/permissions funcionando dentro da Lambda.
 
 ## Padrão de chave S3
 
@@ -156,7 +177,7 @@ python skills/gp2-template-uploader/scripts/import-template.py \
   --description-hint "$(cat artifacts/gp2-template-marker/<slug>/template-summary.md)"
 ```
 
-Default é dry-run em **prod**. Inspecione o payload antes de executar. Para gravar em produção:
+Default é dry-run em **prod** com `--status review`. Inspecione o payload antes de executar. Para gravar em produção:
 
 ```bash
 python skills/gp2-template-uploader/scripts/import-template.py \
@@ -165,7 +186,15 @@ python skills/gp2-template-uploader/scripts/import-template.py \
   --business-type multi-nicho \
   --tags "tag1,tag2" \
   --description-hint "$(cat artifacts/gp2-template-marker/<slug>/template-summary.md)" \
-  --status draft \
+  --execute
+```
+
+Para forçar outro status (ex: `published` durante migrações controladas):
+
+```bash
+python skills/gp2-template-uploader/scripts/import-template.py \
+  ... \
+  --status published \
   --execute
 ```
 
@@ -187,15 +216,16 @@ Reporte antes de executar:
 - nome do template;
 - número de slides;
 - S3 bucket e padrão de chave;
-- campos do Supabase (exceto secrets), confirmando `owner_user_id: templateGenerator`, `scope: platform` e `status: draft`;
+- nome da Lambda alvo (`app-lambda-template-handler`);
+- campos do payload, confirmando `owner_user_id: templateGenerator`, `scope: platform` e `status: review`;
 - resumo da descrição gerada;
 - resultado do validador.
 
 Após execução, reporte:
 
-- template ID inserido;
+- template ID retornado pelo handler;
 - chaves S3 carregadas;
-- status do insert no Supabase;
+- status code da invocação Lambda;
 - warnings.
 
 ## Blockers
@@ -205,10 +235,15 @@ Se S3 falhar com AccessDenied:
 - reporte a role/bucket/action que falhou;
 - peça ao backend para confirmar permissões IAM e prefixo exato do S3.
 
-Se Supabase falhar:
-- reporte HTTP status e erro sanitizado;
+Se `lambda:Invoke` falhar com AccessDenied:
+- o role `TemplateGeneratorRole` precisa de `lambda:InvokeFunction` em `app-lambda-template-handler` (sa-east-1) — primeira execução em cada ambiente costuma cair aqui;
+- reporte o ARN exato da função e a conta;
+- não tente fallback escrevendo direto no Supabase — a regra é o handler ser a única porta de criação.
+
+Se a Lambda retornar HTTP >= 400:
+- reporte status code + body sanitizado (sem tokens nem URLs com keys);
 - não repita cegamente;
-- verifique RLS/service key, colunas obrigatórias e se `embedding` é mandatório.
+- causas comuns: payload faltando campo obrigatório do `Template` pydantic, scope/owner_user_id inválido, ou a Lambda subiu numa versão antiga que não aceita `status='review'`.
 
 ## Resposta final ao orquestrador
 
@@ -218,7 +253,9 @@ Environment: dev | prod
 Template ID: <id>
 Slides: <N>
 S3 keys: <lista>
-Supabase: inserido | falhou — <motivo>
+Template handler Lambda: app-lambda-template-handler
+Handler response: HTTP <code> | falhou — <motivo>
+Status final: review (default) | <outro>
 Cleanup: aguardando orquestrador | (uploader não apaga — responsabilidade do gp2-pipeline)
 ```
 

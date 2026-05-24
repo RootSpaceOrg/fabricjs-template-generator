@@ -16,7 +16,6 @@ from pathlib import Path
 from typing import Any
 
 import boto3
-import requests
 
 ENV_CONFIG = {
     "dev": {
@@ -25,8 +24,8 @@ ENV_CONFIG = {
         ),
         "role_arn": "arn:aws:iam::656032436386:role/TemplateGeneratorRole",
         "aws_region": "sa-east-1",
-        "ssm_parameter": "/default/supabase-database-credentials",
         "s3_bucket": "mkt-platform-templates-dev",
+        "template_handler_lambda": "app-lambda-template-handler",
     },
     "prod": {
         "aws_env_path": Path(
@@ -34,8 +33,8 @@ ENV_CONFIG = {
         ),
         "role_arn": "arn:aws:iam::692046683598:role/TemplateGeneratorRole",
         "aws_region": "sa-east-1",
-        "ssm_parameter": "/default/supabase-database-credentials",
         "s3_bucket": "mkt-platform-templates-prod",
+        "template_handler_lambda": "app-lambda-template-handler",
     },
 }
 DEFAULT_S3_KEY_TEMPLATE = "editor_templates/{template_id}/{image_id}/template.json"
@@ -64,28 +63,6 @@ def assume_role(env_config: dict[str, Any]):
         "aws_session_token": creds["SessionToken"],
     }
     return kwargs
-
-
-def load_supabase_credentials(
-    aws_kwargs: dict[str, str], env_config: dict[str, Any]
-) -> tuple[str, str]:
-    ssm = boto3.client("ssm", region_name=env_config["aws_region"], **aws_kwargs)
-    raw = ssm.get_parameter(Name=env_config["ssm_parameter"], WithDecryption=True)[
-        "Parameter"
-    ]["Value"]
-    data = json.loads(raw)
-    url = data.get("url") or data.get("supabaseUrl") or data.get("SUPABASE_URL")
-    key = (
-        data.get("key")
-        or data.get("anonKey")
-        or data.get("publishableKey")
-        or data.get("apiKey")
-    )
-    if not url or not key:
-        raise RuntimeError(
-            f'Incomplete Supabase credentials in {env_config["ssm_parameter"]}'
-        )
-    return url.rstrip("/"), key
 
 
 def nanoid(size: int = 21) -> str:
@@ -399,30 +376,88 @@ def upload_slides(
     return uploaded
 
 
-def insert_template(
-    supabase_url: str, supabase_key: str, payload: dict[str, Any], dry_run: bool
-):
-    if dry_run:
-        return {"dryRun": True, "payload": payload}
-    res = requests.post(
-        f"{supabase_url}/rest/v1/templates",
-        headers={
-            "apikey": supabase_key,
-            "Authorization": f"Bearer {supabase_key}",
-            "Content-Type": "application/json",
-            "Prefer": "return=representation",
+def build_handler_event(payload: dict[str, Any], owner_user_id: str) -> dict[str, Any]:
+    """Build an API-Gateway-shaped event so APIGatewayRestResolver can route the request.
+
+    Bypasses the real API Gateway: invokes the template-handler Lambda directly
+    via boto3 with a synthetic authorizer that grants admin access to the uploader.
+    """
+    return {
+        "httpMethod": "POST",
+        "path": "/templates",
+        "resource": "/templates",
+        "body": json.dumps(payload, ensure_ascii=False),
+        "headers": {"Content-Type": "application/json"},
+        "queryStringParameters": None,
+        "multiValueQueryStringParameters": None,
+        "pathParameters": None,
+        "stageVariables": None,
+        "isBase64Encoded": False,
+        "requestContext": {
+            "httpMethod": "POST",
+            "path": "/templates",
+            "resourcePath": "/templates",
+            "stage": "api",
+            "authorizer": {
+                "userId": owner_user_id,
+                "role": "admin",
+                "email": "",
+                "name": owner_user_id,
+                "tenantId": "",
+                "verticalId": "",
+                "sessionId": "",
+                "expireOn": 0,
+                "tenantStatus": "",
+                "tenantDisplayName": "",
+                "businessTypes": "[]",
+            },
         },
-        json=payload,
-        timeout=30,
+    }
+
+
+def invoke_template_handler(
+    lambda_client,
+    function_name: str,
+    payload: dict[str, Any],
+    owner_user_id: str,
+    dry_run: bool,
+):
+    """Invoke template-handler Lambda directly with a synthetic API Gateway event."""
+    event = build_handler_event(payload, owner_user_id)
+    if dry_run:
+        return {"dryRun": True, "payload": payload, "invokeEvent": event}
+
+    response = lambda_client.invoke(
+        FunctionName=function_name,
+        InvocationType="RequestResponse",
+        Payload=json.dumps(event).encode("utf-8"),
     )
-    if not res.ok:
+
+    raw = response["Payload"].read().decode("utf-8")
+    if response.get("FunctionError"):
         raise RuntimeError(
-            f"Supabase insert failed: HTTP {res.status_code}: {res.text[:1000]}"
+            f"template-handler invoke FunctionError ({response['FunctionError']}): {raw[:1000]}"
         )
+
     try:
-        return res.json()
-    except Exception:
-        return {"status": res.status_code, "text": res.text}
+        parsed = json.loads(raw)
+    except json.JSONDecodeError:
+        raise RuntimeError(f"template-handler returned non-JSON payload: {raw[:1000]}")
+
+    status_code = parsed.get("statusCode", 0)
+    body = parsed.get("body")
+    if isinstance(body, str):
+        try:
+            body = json.loads(body)
+        except json.JSONDecodeError:
+            pass
+
+    if status_code >= 400:
+        raise RuntimeError(
+            f"template-handler returned HTTP {status_code}: {json.dumps(body)[:1000]}"
+        )
+
+    return {"statusCode": status_code, "body": body}
 
 
 def main():
@@ -445,7 +480,7 @@ def main():
     )
     parser.add_argument("--content-type", default="instagram-feed")
     parser.add_argument("--tags", default="")
-    parser.add_argument("--status", default="draft")
+    parser.add_argument("--status", default="review")
     parser.add_argument(
         "--owner-user-id",
         default="templateGenerator",
@@ -492,12 +527,20 @@ def main():
     env = ENV_CONFIG[args.environment]
     aws_kwargs = assume_role(env)
     s3 = boto3.client("s3", region_name=env["aws_region"], **aws_kwargs)
-    supabase_url, supabase_key = load_supabase_credentials(aws_kwargs, env)
+    lambda_client = boto3.client(
+        "lambda", region_name=env["aws_region"], **aws_kwargs
+    )
 
     keys = upload_slides(
         s3, slides, template_id, args.s3_key_template, env["s3_bucket"], dry_run
     )
-    result = insert_template(supabase_url, supabase_key, payload, dry_run)
+    result = invoke_template_handler(
+        lambda_client,
+        env["template_handler_lambda"],
+        payload,
+        args.owner_user_id,
+        dry_run,
+    )
 
     safe_output = {
         "mode": "dry-run" if dry_run else "executed",
@@ -507,7 +550,8 @@ def main():
         "slides": len(slides),
         "s3Bucket": env["s3_bucket"],
         "s3Keys": keys,
-        "supabasePayload": payload if dry_run else {"inserted": True, "result": result},
+        "templateHandlerLambda": env["template_handler_lambda"],
+        "handlerResult": payload if dry_run else result,
         "contextSource": context.get("_sourcePath") if context else None,
         "checkedAt": datetime.now(timezone.utc).isoformat(),
     }
