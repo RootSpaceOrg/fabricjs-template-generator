@@ -1,30 +1,30 @@
 ---
 name: gp2-html-reviewer
-description: "Critique do HTML produzido por gp2-html-designer antes do marker. Gate determinístico (técnico via script) + julgamento visual baseado no visual-plan.md do art-director. Sem Impeccable. Use após gp2-html-designer, antes de gp2-template-marker. Não gera HTML, não converte Fabric, não publica."
+description: "Critique do HTML produzido por gp2-html-designer antes do marker. Gate determinístico (técnico via script) + julgamento visual de qualidade e coerência. Usa o visual-plan.md como referência de paleta e data-variable, mas não exige fidelidade composicional estrita. Use após gp2-html-designer, antes de gp2-template-marker. Não gera HTML, não converte Fabric, não publica."
 ---
 
 # gp2-html-reviewer
 
-Critica o `template.html` final do designer (Passo 3 high-fi) antes de seguir para o marker.
+Critica o `template.html` final do designer antes de seguir para o marker.
 
 ## Princípio
 
 O reviewer tem **duas responsabilidades separadas**:
 
-1. **Gate técnico determinístico** — o script `review-html-design.py` detecta problemas mecânicos (overflow, texto cortado, sobreposição não-intencional, fontes faltando, etc.). Qualquer finding crítico bloqueia. Warnings do script também precisam de atenção, mas o reviewer pode aceitá-los com justificativa quando são consequência de uma escolha de design consciente documentada em `notes.md`.
+1. **Gate técnico determinístico** — o script `review-html-design.py` detecta problemas mecânicos (overflow, texto cortado, sobreposição não-intencional, fontes faltando, etc.). Qualquer finding crítico bloqueia.
 
-2. **Julgamento visual do agente baseado no visual-plan** — inspecionar os screenshots e decidir se o designer executou o plano do art-director corretamente e com qualidade suficiente. O critério não é genérico ("parece bom?") — é específico ("o plano dizia A3 split assimétrico para o slide 2; está assim?"). Isso evita tanto templates fracos quanto templates fortes que fogem do plano definido.
+2. **Julgamento visual de qualidade** — inspecionar os screenshots e decidir se o template tem qualidade visual suficiente para publicar. O critério não é "executou o plano linha a linha?" — é "está publicável? tem hierarquia clara? é coerente como peça? reflete o tom do segmento?".
 
-Sem Impeccable. Sem ferramentas externas de julgamento visual. Apenas o script técnico + o agente comparando screenshots × visual-plan.
+O designer tem liberdade criativa. O reviewer não devolve um template por ter feito escolhas diferentes das do visual-plan — devolve por qualidade insuficiente ou problemas técnicos.
 
 ## Inputs
 
 ```
-artifacts/gp2-art-director/<slug>/visual-plan.md   ← plano do art-director (LEIA PRIMEIRO)
+artifacts/gp2-art-director/<slug>/visual-plan.md   ← paleta e data-variable de referência
 artifacts/gp2-html-designer/<slug>/
 ├── template.html          ← high-fi final
 ├── screenshots/slide-N.png
-└── notes.md               ← divergências documentadas pelo designer
+└── notes.md               ← decisões e divergências documentadas pelo designer
 ```
 
 Se faltar screenshots, renderize antes:
@@ -35,94 +35,82 @@ node ../../scripts/render-html-screenshots.js artifacts/gp2-html-designer/<slug>
 
 ## Workflow
 
-1. **Leia `visual-plan.md` inteiro.** Este é o plano que o designer deveria ter executado. Internalize: família estética, hexs de primary/secondary, tipo compositivo de cada slide (A1–A8), instrução do movimento memorável, tabela de data-variable.
-2. Leia `notes.md` para entender divergências documentadas pelo designer (fonte substituída, ajuste de composição, etc.).
-3. **Detecte o modo:** verifique se `visual-plan.md` tem `## Modo` = `reference-driven`. Se sim, o plano contém vocabulário visual extraído da referência — check adicional de aderência.
-4. Rode o preflight determinístico:
+1. **Leia `visual-plan.md`** para extrair: hexs de primary/secondary, neutros, mapeamento de data-variable. Não use o plano para checar composição — use para checar paleta e variáveis.
+2. Leia `notes.md` para entender decisões de design e divergências documentadas pelo designer.
+3. Rode o gate técnico:
 
 ```bash
 python3 ../../scripts/review-html-design.py artifacts/gp2-html-designer/<slug>/
 ```
 
-O script gera `html-review.json` + `html-review.md`. Leia os findings antes de prosseguir.
+O script gera `html-review.json` + `html-review.md`. Leia os findings.
 
-5. Inspecione visualmente cada `screenshots/slide-N.png` comparando com o visual-plan (ver critérios abaixo).
-6. **Em reference-driven mode:** compare screenshots × seção "Vocabulário visual (extraído da referência)" do `visual-plan.md`. Acuse drift como finding técnico se:
-   - Hexs aplicados não batem com a paleta declarada no plano (tolerância: ΔE > 10 sem documentação em notes.md).
-   - Família tipográfica está em categoria diferente da declarada (serifa ↔ sans, condensada ↔ regular) sem documentação.
-   - Movimento memorável declarado não está visível.
-   - Elementos editoriais listados no plano estão ausentes.
-   - Se divergiu **e** documentou em `notes.md`, trate como warning, não bloqueio.
-7. Decida o status final:
+4. Inspecione visualmente cada `screenshots/slide-N.png` (ver critérios abaixo).
+5. Decida o status final.
 
 | Status | Quando |
 |--------|--------|
-| `PASS` | zero findings técnicos críticos. Warnings do script aceitos com justificativa. Design tem qualidade visual suficiente para avançar. |
-| `REVISE` | qualquer finding técnico crítico, ou design visualmente fraco/genérico que o agente julga insuficiente para publicar. |
-| `FAIL` | direção do design é fundamentalmente errada; reabrir no `gp2-html-designer` (ou interpreter se o brief estava errado). |
+| `PASS` | zero findings técnicos críticos. Design tem qualidade visual suficiente para avançar. |
+| `REVISE` | qualquer finding técnico crítico, OU design visualmente fraco/genérico que o agente julga insuficiente para publicar. |
+| `FAIL` | direção do design é fundamentalmente errada; reabrir no `gp2-html-designer` (ou art-director se a orientação era ruim). |
 
 ## Findings técnicos (HARD-GATE — sempre bloqueiam)
 
 - Texto fora do canvas (left/top + width/height ultrapassa data-width/height).
 - Sobreposição não-intencional entre conteúdo e conteúdo (texto sobre texto, foto sobre título).
-- Contraste WCAG AA < 4.5:1 para body, < 3.0:1 para títulos grandes (>= 24pt).
+- Contraste WCAG AA < 4.5:1 para body, < 3.0:1 para títulos grandes (≥ 24pt).
 - Texto cortado (overflow vertical dentro do `<p>`/`<h*>`).
 - `<img>` sem `src` ou com `src` quebrado.
 - Slide sem conteúdo principal identificável.
 - Fonte usada no CSS ausente do `<meta name="hm-fonts">`.
 - Placeholder de imagem complexo (texto, anatomia, ícones) — viola CLAUDE_DESIGN_RULES seção 6.
 - Pseudo-elementos `::before`/`::after`, `@keyframes`, `mix-blend-mode`, `backdrop-filter` complexo.
-- Posicionamento via flex/grid dentro de `.slide` (deveria ser absoluto).
-- `box-shadow` com cor brand (`rgba(R,G,B,A)` onde RGB ≠ 0,0,0 e a cor corresponde a primary/secondary da paleta) — sombras devem ser neutras (`rgba(0,0,0,N)`) para adaptabilidade de paleta.
-- Círculo/div com `opacity` parcial + `background` sólido brand (sem `radial-gradient`) pretendendo ser glow atmosférico — DEVE usar `data-glow="center"` com `radial-gradient(circle, ...)` no CSS. Círculo sólido translúcido vira fill sólido no Fabric, perdendo o efeito radial.
-- Elemento com `data-glow` faltando `data-glow-variable` ou `data-glow-alpha` — ambos são obrigatórios para emissão correta do `fillVariableConfig` gradient.
+- Posicionamento via flex/grid dentro de `.slide` (deve ser absoluto).
+- `box-shadow` com cor brand (`rgba(R,G,B,A)` onde RGB ≠ 0,0,0 e a cor corresponde a primary/secondary da paleta) — sombras devem ser neutras para adaptabilidade.
+- Círculo/div com `opacity` parcial + `background` sólido brand (sem `radial-gradient`) pretendendo ser glow atmosférico — DEVE usar `data-glow="center"` com `radial-gradient(circle, ...)`.
+- Elemento com `data-glow` faltando `data-glow-variable` ou `data-glow-alpha`.
 - `data-glow-variable` com valor diferente de `primary` ou `secondary`.
 - `<section class="slide">` sem `data-width` / `data-height`.
-- `<img data-image-type="professionalPhoto">` (ou `class="professional-photo"`) com `object-fit: cover` ou `border-radius` arredondado quando o brief não pediu avatar circular — perde o efeito do cutout PNG e quebra o anchor `bottom-center` do runtime. Esperado: `object-fit: contain; object-position: bottom center; border-radius: 0;` (ver [`gp2-html-designer/references/professional-photo-placements.md`](../gp2-html-designer/references/professional-photo-placements.md)).
-- `<img data-image-type="professionalPhoto">` posicionada de forma que a face da figura (zona superior do slot, ~30% da altura) é coberta por texto ou outro elemento visível — leitor não consegue avaliar confiança.
-- `<img data-image-type="professionalPhoto">` (cutout) com slot cuja proporção (`width / height`) diverge muito da proporção natural do PNG placeholder (~3:4 ≈ `0.78`). **Tolerância**: `0.55–1.10`. Fora dessa faixa, o `object-fit: contain` deixa metade do slot vazio e o converter facilmente erra a emissão Fabric (sintoma: figura cobrindo só metade do slot no editor). Exemplos: slot `540×1200` (ratio `0.45`) é alto demais; slot `540×400` (ratio `1.35`) é largo demais. **Fix**: ajustar `width`/`height` da `<img>` para uma proporção entre `9:16` e `1:1` (ratio `0.56`–`1.00`) que respeite a figura inteira sem ficar com áreas vazias dominantes. Ver [`gp2-html-designer/references/professional-photo-placements.md`](../gp2-html-designer/references/professional-photo-placements.md) para slots aprovados por canvas.
-- `<img data-image-type="professionalPhoto">` "voando" — figura posicionada sem ancoragem inferior nem sobreposição na parte de baixo. Como fotos de usuário são busto/tronco (não corpo inteiro), deixar espaço vazio abaixo da figura parece que a pessoa não tem pernas. **Hard-gate**: toda `professionalPhoto` deve satisfazer **uma das duas condições**: (1) `top + height ≥ canvas_height − 80px` (ancorada na borda inferior do slide com margem máxima de 80px), OU (2) outro elemento visível (faixa de cor, foto contextual, bloco CTA, rodapé) sobrepõe o terço inferior do slot (`top + height * 0.67`). Se nenhuma condição for satisfeita, devolva `REVISE` com instrução de reposicionar ou remover a foto. Ver [`gp2-html-designer/references/professional-photo-placements.md`](../gp2-html-designer/references/professional-photo-placements.md) §"Princípios".
+- `<img data-image-type="professionalPhoto">` com `object-fit: cover` ou `border-radius` arredondado quando o brief não pediu avatar circular. Esperado: `object-fit: contain; object-position: bottom center; border-radius: 0;`.
+- `<img data-image-type="professionalPhoto">` com a face da figura coberta por texto ou elemento visível (~30% superior do slot).
+- `<img data-image-type="professionalPhoto">` (cutout) com slot cuja proporção (`width / height`) está fora de `0.55–1.10`. Fora dessa faixa, `object-fit: contain` deixa metade do slot vazio e o converter erra a emissão Fabric.
+- `<img data-image-type="professionalPhoto">` "voando" — figura sem ancoragem inferior nem sobreposição no terço inferior. Condições válidas: (1) `top + height ≥ canvas_height − 80px`, OU (2) outro elemento visível sobrepõe o terço inferior do slot.
+- Elemento com `linear-gradient` ou `radial-gradient` sem `data-darken` (e sem `data-glow`) — gradiente será perdido no conversor.
+- Cores brand hex em gradientes lineares — fundo brand = sólido + overlay neutro.
 
-## Aderência ao visual-plan (somente reference-driven, HARD-GATE quando não documentado em notes.md)
+## Checklist de data-variable (HARD-GATE quando ausente)
 
-- Hexs aplicados não batem com paleta declarada no visual-plan (ΔE > 10 sem documentação).
-- Família tipográfica em categoria diferente da declarada (serifa ↔ sans, condensada ↔ regular) sem documentação.
-- Movimento memorável declarado ausente do design.
-- Elementos editoriais listados no visual-plan ausentes (eyebrow numerado faltando, fios horizontais ausentes, etc.).
-- Tratamento de foto profissional difere do visual-plan (plano pediu retangular editorial, designer usou avatar circular).
+Compare o HTML com o mapeamento de data-variable do visual-plan:
+- Elementos listados no mapeamento têm `data-variable` + `data-variable-target` aplicados?
+- Overlays de escurecimento sobre fundo brand têm `data-darken` + `data-darken-opacity`?
+- Glows atmosféricos têm `data-glow` + `data-glow-variable` + `data-glow-alpha`?
 
-## Critérios de julgamento visual baseados no visual-plan
+Se um elemento mapeado não tem o atributo — é finding crítico.
 
-O agente compara os screenshots com o `visual-plan.md`. A pergunta não é "parece bom?" — é "o designer executou o plano corretamente e com qualidade?"
+## Critérios de julgamento visual
 
-### Checklist de fidelidade ao plano (verificar slide por slide)
+O reviewer avalia qualidade e publicabilidade — não fidelidade composicional ao visual-plan.
 
-Para cada slide, abra o screenshot e compare com o plano:
-
-| Critério | PASS se… | REVISE se… |
-|----------|----------|------------|
-| **Tipo compositivo** | O slide usa o código A1–A8 definido no plano (zona de headline, zona de imagem, densidade) | O layout é diferente do planejado sem justificativa em notes.md |
-| **Paleta** | Os hexs de primary/secondary do plano estão aplicados corretamente; slides LIGHT/DARK/Brand usam os neutros/fundos definidos | Paleta diferente do plano; cinzas frios genéricos em vez dos neutros do plano |
-| **Movimento memorável** | A instrução composicional do plano foi executada (posição, tamanho, cor, spacing conforme especificado) | Elemento ausente ou executado de forma diferente do que a instrução descreve |
-| **data-variable** | Elementos da tabela de mapeamento têm os atributos `data-variable` / `data-variable-target` no HTML | Elementos brand-color sem atributo de variável |
-| **Diversidade compositiva** | Slides consecutivos têm layouts visivelmente distintos; não é "mesmo layout com texto diferente" | 3+ slides consecutivos com composição idêntica ou quase idêntica |
-
-### Checklist de qualidade de execução
+### Checklist de qualidade (verificar slide por slide)
 
 | Critério | PASS se… | REVISE se… |
 |----------|----------|------------|
 | **Hierarquia** | Título → subtítulo → corpo é instantâneo em cada slide | Tudo parece do mesmo peso; o olho não sabe por onde começar |
-| **Tipografia** | Pelo menos dois pesos ou famílias distintos; tamanhos seguem escala com intenção | Uma só família, um só peso, tamanhos arbitrários |
-| **Identidade visual** | O carrossel tem uma assinatura reconhecível pela execução do plano | Parece template genérico — o plano não foi executado com fidelidade suficiente |
-| **Fidelidade ao brief** | O design reflete o tom e vertical pedido | O design poderia ser de qualquer vertical sem nenhuma adaptação ao contexto |
+| **Contraste legível** | Texto é confortavelmente legível sobre o fundo | Texto raspa no fundo, especialmente em slides escuros/brand |
+| **Paleta coerente** | Os hexs do visual-plan estão aplicados corretamente nos slides | Cores diferentes do plano sem documentação em notes.md |
+| **Tipografia** | Pelo menos dois pesos ou famílias distintos; escalas com intenção | Uma só família, um só peso; tamanhos sem hierarquia |
+| **Diversidade de layout** | Slides têm composições visivelmente distintas entre si | 3+ slides consecutivos com composição idêntica ("mesmo layout, texto diferente") |
+| **Coerência visual** | O carrossel parece uma peça única com identidade reconhecível | Slides parecem desconexos; mudanças de estilo sem intenção |
+| **Tom do segmento** | O design reflete o segmento e tom do brief | O design poderia ser de qualquer vertical sem nenhuma adaptação |
+| **Anti-patterns** | Livre de card spam, nested cards, tudo centralizado sem intenção | Card spam repetitivo, nested cards, composição genérica de IA |
 
-### Como ponderar divergências documentadas
+### Como ponderar divergências do visual-plan
 
-- Divergência documentada em `notes.md` com justificativa técnica válida (fonte indisponível, contraste obrigou ajuste) → trate como **warning**, não bloqueio.
-- Divergência não documentada → trate como **finding técnico** (mesmo que pareça visualmente ok — a rastreabilidade importa).
-- Divergência que melhora objetivamente o resultado → aceite, documente no `html-review.md`, e instrua o designer a atualizar o `notes.md`.
+- Divergência documentada em `notes.md` com justificativa válida → trate como **informação**, não bloqueio.
+- Divergência não documentada em paleta ou data-variable → trate como **finding** (rastreabilidade importa).
+- Divergência de composição não documentada → avalie pela qualidade do resultado, não pela fidelidade. Se o resultado é melhor, aceite e oriente o designer a documentar.
 
-A pergunta-chave é: **"O designer executou o plano do art-director e o resultado está publicável?"**
+A pergunta-chave é: **"O template tem qualidade visual suficiente para publicar e não tem problemas técnicos?"**
 
 ## Output
 
@@ -134,10 +122,10 @@ Sobrescreva `html-review.json`:
   "technicalFindings": [
     { "slide": 1, "issue": "...", "severity": "blocker", "fix": "..." }
   ],
-  "planFidelity": {
-    "verdict": "faithful|partial|diverged",
-    "divergences": [
-      { "slide": 2, "expected": "composição A3 split assimétrico", "found": "composição A2 split 50/50", "documented": false }
+  "dataVariableCheck": {
+    "verdict": "complete|partial|missing",
+    "issues": [
+      { "element": "...", "expected": "data-variable=\"primary\"", "found": "ausente" }
     ]
   },
   "visualJudgment": {
@@ -155,28 +143,28 @@ E `html-review.md` para humanos:
 **Status:** PASS|REVISE|FAIL
 
 ## Findings técnicos (bloqueantes)
-- Slide 2: título sai 30px do canvas direito → reduzir width do `<h1>` para 960px ou font-size para 88px.
+- Slide 2: título sai 30px do canvas direito → reduzir width do `<h1>` para 960px.
 
-## Fidelidade ao plano (visual-plan.md)
-- Composições: slide 1 A1 ✓ | slide 2 A3 → implementado como A2 (não documentado) | slide 3 A2 ✓
-- Paleta: hexs corretos em todos os slides ✓
-- Movimento memorável: instrução executada ✓
-- data-variable: 3 de 5 elementos marcados — faltou fundo do slide 3 Brand e eyebrow do slide 2
+## data-variable
+- Fundo slide 3 brand: sem data-variable → adicionar `data-variable="primary" data-variable-target="background"` na `<section>`.
+- Demais: OK.
 
-## Julgamento de execução
+## Julgamento visual
 - Hierarquia: forte — título > subtítulo > corpo instantâneo.
-- Diversidade compositiva: adequada — 3 tipos diferentes de composição.
-- Veredito: publicável com correções dos data-variable faltantes.
+- Diversidade: adequada — 4 composições distintas em 6 slides.
+- Coerência: boa — paleta consistente, movimento decorativo presente.
+- Tom: alinhado com o segmento do brief.
+- Veredito: publicável com correção do data-variable faltante.
 
 ## Próximo passo
 - PASS → gp2-template-marker
 - REVISE → gp2-html-designer com lista acima
-- FAIL → reabrir com gp2-art-director (plano ruim) ou gp2-request-interpreter (brief errado)
+- FAIL → reabrir com gp2-art-director (orientação inadequada) ou gp2-request-interpreter (brief errado)
 ```
 
 ## Loop de revisão
 
-Máximo **2 revisões**. Após o segundo `REVISE` ainda falhar, devolva `FAIL` e escale para o orquestrador anotar bloqueio.
+Máximo **2 revisões**. Após o segundo `REVISE` ainda falhar, devolva `FAIL` e escale para o orquestrador.
 
 ## Resposta final ao orquestrador
 
@@ -184,11 +172,10 @@ Máximo **2 revisões**. Após o segundo `REVISE` ainda falhar, devolva `FAIL` e
 Revisão HTML: PASS|REVISE|FAIL
 Artifact: <path>
 Findings técnicos: <N> críticos, <M> warnings
-Fidelidade ao plano: faithful|partial|diverged (<N> divergências — <M> documentadas)
-data-variable: <N> de <total> elementos marcados corretamente
-Julgamento de execução: strong|adequate|weak
+data-variable: <N> de <total> elementos mapeados com atributos corretos
+Julgamento visual: strong|adequate|weak
 Evidência: <path>/html-review.md
-Próximo passo: gp2-template-marker | gp2-html-designer (revisão) | gp2-art-director (plano inadequado) | gp2-request-interpreter (brief errado)
+Próximo passo: gp2-template-marker | gp2-html-designer (revisão) | gp2-art-director | gp2-request-interpreter
 ```
 
 ## O que esta skill NÃO faz
@@ -196,5 +183,4 @@ Próximo passo: gp2-template-marker | gp2-html-designer (revisão) | gp2-art-dir
 - Não gera HTML novo. Apenas critica.
 - Não aplica correções; produz lista para o designer.
 - Não roda o validador Fabric (`validate-slides.js`) — esse é o `gp2-template-converter`.
-- Não decide se o template tem mercado/funcionalidade — só visual + estrutural.
-- Não usa Impeccable nem nenhuma ferramenta externa de julgamento visual — apenas script técnico + agente lendo screenshots × visual-plan.
+- Não exige fidelidade composicional estrita ao visual-plan — avalia qualidade do resultado.
