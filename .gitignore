@@ -1,0 +1,27 @@
+# History local do suggester (gerada em runtime)
+*/gp2-template-suggester/history
+
+# Node
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+
+# Variáveis de ambiente locais
+.env
+.env.local
+
+# Artifacts gerados pela pipeline
+artifacts/
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

@@ -10,6 +10,18 @@ A v1 entrega o fluxo ponta-a-ponta (incluindo upload/thumbnails), mas o design f
 
 A forma da pipeline foi preservada (gates múltiplos, marker pós-design separado, uploader atual reaproveitado), porque a auditoria confirmou que o problema não era estrutural, era estar concentrado em uma única etapa.
 
+## Setup local
+
+Para rodar a pipeline localmente (Linux, VPS ou Windows): veja [`SETUP.md`](./SETUP.md) — passo-a-passo cross-OS com comandos de validação por etapa.
+
+Resumo rápido:
+
+```bash
+pip install -r requirements.txt
+npm install
+npx playwright install chromium
+```
+
 ## Skills, em ordem
 
 | Ordem | Skill | Função | Output principal |
@@ -51,7 +63,7 @@ Veja [`CONTRACT.md`](./CONTRACT.md) para o resumo. Veja [`DESIGN_PRINCIPLES.md`]
 ## Estrutura
 
 ```
-getposts-pipeline-v2/
+fabricjs-template-generator/
 ├── README.md                    ← este arquivo
 ├── DESIGN_PRINCIPLES.md         ← protocolo das 3 iterações renderizadas
 ├── CONTRACT.md                  ← contrato HTML que garante migração 100%

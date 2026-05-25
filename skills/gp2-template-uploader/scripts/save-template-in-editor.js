@@ -35,12 +35,13 @@ function loadPlaywright() {
     '/tmp/pw-run/node_modules/playwright',
     '/root/.openclaw/workspace/reel01/node_modules/playwright-core',
   ];
+  if (process.env.GP2_PLAYWRIGHT_DIR) candidates.unshift(process.env.GP2_PLAYWRIGHT_DIR);
   for (const candidate of candidates) {
     try {
       return require(candidate);
-    } catch (_) {}
+    } catch (_) { }
   }
-  throw new Error('Playwright not found. Install playwright or keep /tmp/pw-run/node_modules/playwright available.');
+  throw new Error('Playwright not found. Run `npm install` + `npx playwright install chromium` in fabricjs-template-generator/, or set GP2_PLAYWRIGHT_DIR to the absolute path of an installed playwright package.');
 }
 
 async function main() {
@@ -65,7 +66,7 @@ async function main() {
   async function snapshot(name) {
     const text = await page.locator('body').innerText().catch(() => '');
     fs.writeFileSync(path.join(outDir, `${name}.txt`), text);
-    await page.screenshot({ path: path.join(outDir, `${name}.png`), fullPage: false }).catch(() => {});
+    await page.screenshot({ path: path.join(outDir, `${name}.png`), fullPage: false }).catch(() => { });
     events.push({ type: 'state', name, url: page.url(), text: text.slice(0, 1000) });
   }
 
@@ -81,7 +82,7 @@ async function main() {
 
   const editorUrl = `${base}/editor/${args.templateId}`;
   await page.goto(editorUrl, { waitUntil: 'domcontentloaded' });
-  await page.waitForLoadState('networkidle', { timeout: 45000 }).catch(() => {});
+  await page.waitForLoadState('networkidle', { timeout: 45000 }).catch(() => { });
   await page.waitForTimeout(8000);
   await snapshot('01-editor-loaded');
 
@@ -104,7 +105,7 @@ async function main() {
   ).catch(() => null);
   await saveButton.click({ force: true });
   const response = await saveResponse;
-  await page.waitForLoadState('networkidle', { timeout: 45000 }).catch(() => {});
+  await page.waitForLoadState('networkidle', { timeout: 45000 }).catch(() => { });
   await page.waitForTimeout(5000);
   await snapshot('02-after-save');
 
@@ -132,7 +133,7 @@ main().catch(err => {
       error: String(err && err.message ? err.message : err),
       outDir,
     }, null, 2));
-  } catch (_) {}
+  } catch (_) { }
   console.error(JSON.stringify({ error: String(err && err.message ? err.message : err), outDir }, null, 2));
   process.exit(1);
 });

@@ -17,20 +17,23 @@ from typing import Any
 
 import boto3
 
+# Diretório onde estão os arquivos .env de credenciais AWS.
+# Default (legado openclaw): /root/.openclaw/workspace/secrets
+# Em Windows ou em VPS com layout diferente, defina GP2_SECRETS_DIR.
+SECRETS_DIR = Path(
+    os.environ.get("GP2_SECRETS_DIR", "/root/.openclaw/workspace/secrets")
+)
+
 ENV_CONFIG = {
     "dev": {
-        "aws_env_path": Path(
-            "/root/.openclaw/workspace/secrets/aws-credentials-template-generator-mkt-platform-dev.env"
-        ),
+        "aws_env_path": SECRETS_DIR / "aws-credentials-template-generator-mkt-platform-dev.env",
         "role_arn": "arn:aws:iam::656032436386:role/TemplateGeneratorRole",
         "aws_region": "sa-east-1",
         "s3_bucket": "mkt-platform-templates-dev",
         "template_handler_lambda": "app-lambda-template-handler",
     },
     "prod": {
-        "aws_env_path": Path(
-            "/root/.openclaw/workspace/secrets/aws-credentials-template-generator-mkt-platform-prod.env"
-        ),
+        "aws_env_path": SECRETS_DIR / "aws-credentials-template-generator-mkt-platform-prod.env",
         "role_arn": "arn:aws:iam::692046683598:role/TemplateGeneratorRole",
         "aws_region": "sa-east-1",
         "s3_bucket": "mkt-platform-templates-prod",
@@ -63,6 +66,48 @@ def assume_role(env_config: dict[str, Any]):
         "aws_session_token": creds["SessionToken"],
     }
     return kwargs
+
+
+def check_credentials(environment: str) -> None:
+    """Validate that the AWS env file exists and that STS assume-role works.
+
+    Does NOT touch S3 or Lambda. Used by the SETUP.md preflight to confirm
+    the uploader is wired correctly before any real upload.
+    """
+    env_config = ENV_CONFIG[environment]
+    aws_env_path = env_config["aws_env_path"]
+    result: dict[str, Any] = {
+        "status": "ok",
+        "environment": environment,
+        "secrets_dir": str(SECRETS_DIR),
+        "aws_env_path": str(aws_env_path),
+        "role_arn": env_config["role_arn"],
+    }
+    if not aws_env_path.exists():
+        result["status"] = "fail"
+        result["error"] = f"AWS env file not found: {aws_env_path}"
+        result["hint"] = (
+            "Defina GP2_SECRETS_DIR para apontar para o diretório com os arquivos "
+            "aws-credentials-template-generator-mkt-platform-{dev,prod}.env, "
+            "ou copie os arquivos para o caminho mostrado em aws_env_path."
+        )
+        print(json.dumps(result, ensure_ascii=False, indent=2))
+        raise SystemExit(1)
+    try:
+        load_env_file(aws_env_path)
+        sts = boto3.client("sts", region_name="us-east-1")
+        creds = sts.assume_role(
+            RoleArn=env_config["role_arn"],
+            RoleSessionName="openclaw-template-import-check",
+        )["Credentials"]
+        result["assumed_role_arn"] = creds.get("AccessKeyId") and env_config["role_arn"]
+        result["expiration"] = creds["Expiration"].isoformat() if creds.get("Expiration") else None
+    except Exception as exc:  # noqa: BLE001 — surface any STS / credential error.
+        result["status"] = "fail"
+        result["error"] = f"{type(exc).__name__}: {exc}"
+        print(json.dumps(result, ensure_ascii=False, indent=2))
+        raise SystemExit(1)
+    print(json.dumps(result, ensure_ascii=False, indent=2))
 
 
 def nanoid(size: int = 21) -> str:
@@ -465,7 +510,15 @@ def main():
         description="Import GetPosts v2 generated template JSONs into S3 + Supabase."
     )
     parser.add_argument(
-        "path", help="Folder containing output/slide-N.json or slide-N.json files"
+        "path",
+        nargs="?",
+        default=None,
+        help="Folder containing output/slide-N.json or slide-N.json files",
+    )
+    parser.add_argument(
+        "--check-credentials",
+        action="store_true",
+        help="Validate that the AWS env file is readable and that STS assume-role works for the target environment. Does NOT touch S3 or Lambda. Exits after printing the result.",
     )
     parser.add_argument("--name", help="Template name")
     parser.add_argument(
@@ -509,6 +562,13 @@ def main():
         help="Actually upload to S3 and insert into Supabase",
     )
     args = parser.parse_args()
+
+    if args.check_credentials:
+        check_credentials(args.environment)
+        return
+
+    if not args.path:
+        parser.error("the following arguments are required: path (or use --check-credentials)")
 
     source = Path(args.path).resolve()
     slides, manifest = load_slides(source)

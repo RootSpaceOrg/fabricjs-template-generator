@@ -3,10 +3,12 @@ const fs = require('fs');
 const path = require('path');
 
 function loadPlaywright() {
-  for (const candidate of ['playwright', '/tmp/pw-run/node_modules/playwright']) {
-    try { return require(candidate); } catch (_) {}
+  const candidates = ['playwright', '/tmp/pw-run/node_modules/playwright'];
+  if (process.env.GP2_PLAYWRIGHT_DIR) candidates.unshift(process.env.GP2_PLAYWRIGHT_DIR);
+  for (const candidate of candidates) {
+    try { return require(candidate); } catch (_) { }
   }
-  throw new Error('Playwright not found. Expected playwright or /tmp/pw-run/node_modules/playwright.');
+  throw new Error('Playwright not found. Run `npm install` + `npx playwright install chromium` in fabricjs-template-generator/, or set GP2_PLAYWRIGHT_DIR to the absolute path of an installed playwright package.');
 }
 
 function parseArgs(argv) {
@@ -45,7 +47,7 @@ async function main() {
   const browser = await chromium.launch({ headless: true });
   const page = await browser.newPage({ viewport: { width: 1080, height: 1350 }, deviceScaleFactor: 1 });
   await page.goto('file://' + path.resolve(html), { waitUntil: 'load' });
-  await page.waitForLoadState('networkidle', { timeout: 30000 }).catch(() => {});
+  await page.waitForLoadState('networkidle', { timeout: 30000 }).catch(() => { });
   await page.waitForTimeout(1000);
   const count = await page.locator('section.slide').count();
   if (!count) throw new Error('No section.slide elements found.');

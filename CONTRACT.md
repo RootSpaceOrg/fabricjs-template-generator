@@ -48,7 +48,7 @@ Isto é por design: o objetivo é nunca depender exclusivamente de uma fonte de 
 Mudanças no contrato (novos `data-*`, novos tipos de objeto Fabric, novos validadores) acontecem em **três lugares simultaneamente**:
 
 1. `claude_design_to_fabric/CLAUDE_DESIGN_RULES.md` (especificação).
-2. `claude_design_to_fabric/validate-slides.js` + `getposts-pipeline-v2/scripts/validate-slides.js` (validador — manter as cópias em sincronia).
+2. `claude_design_to_fabric/validate-slides.js` + `fabricjs-template-generator/scripts/validate-slides.js` (validador — manter as cópias em sincronia).
 3. `claude_design_to_fabric/skill.md` + skill do converter da v2 (mapeamento).
 
 Qualquer mudança que afete o editor HealthMarket também precisa refletir em `Frontend/healthmarket-frontend/app/src/app/shared/fabricjs-editor/core/types.ts` e `utilities/colors.ts`.
