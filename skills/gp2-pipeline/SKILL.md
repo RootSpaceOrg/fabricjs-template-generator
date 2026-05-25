@@ -26,8 +26,7 @@ Sempre que o usuário pedir para criar um template de social media completo (pos
 5. gp2-template-marker              → template.html marcado + template-summary.md
 6. gp2-template-converter           → slide-N.json + manifest.json (inclui self-validation pós-emissão)
 7. gp2-template-uploader            → upload S3 + Supabase
-8. Cleanup de artifacts             → apaga pasta artifacts/<slug>/ após upload confirmado
-9. Relatório consolidado
+8. Relatório consolidado
 ```
 
 ## Iteration policy
@@ -74,30 +73,6 @@ Se algum falha:
 - Em casos seguros (mecânicos, óbvios), revise automaticamente dentro do loop.
 - Em casos que precisam de decisão criativa do usuário, pergunte. Não invente direção.
 - Se o HTML reviewer apontar `planFidelity: "diverged"` com divergências não documentadas → devolva ao designer com instrução específica (não ao art-director, a menos que o plano seja o problema).
-
-## Cleanup de artifacts
-
-Após upload confirmado (template ID retornado + S3 keys carregadas + Supabase inserido), apague a pasta de artifacts do slug:
-
-```bash
-Remove-Item -Recurse -Force artifacts/<slug>
-```
-
-Ou em bash:
-
-```bash
-rm -rf artifacts/<slug>
-```
-
-**Condições para apagar:**
-- Upload retornou template ID (não dry-run).
-- Supabase insert confirmado (não falhou).
-
-**Não apague se:**
-- Upload falhou (AccessDenied, Supabase error, etc.) — artifacts são a única evidência para debug.
-- Dry-run (sem `--execute`) — nunca apague em dry-run.
-
-Em **batch**, apague slug por slug individualmente à medida que cada um confirma upload. Não agrupe.
 
 ## Standing rule do Gustavo
 
@@ -214,10 +189,7 @@ artifacts/
 - Converter validator: PASS (exit 0)
 - Upload: OK
 - Thumbnails: OK
-- Cleanup: OK (artifacts/<slug>/ removido)
 
-### Evidências
-_(artifacts removidos após upload — template acessível pelo ID acima no editor)_
 ```
 
 Em batch, consolide todos os blocos com totais ao final.
