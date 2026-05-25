@@ -267,7 +267,7 @@ def main() -> int:
             issue(n, f"Invalid data-variable-target: {target}.")
 
     # Heuristic: content-like text that is neither editable nor profile/static may be forgotten.
-    chrome_words = {"✓", "1", "2", "3", "4", "5", "cta", "primeiro", "importante"}
+    ui_label_words = {"✓", "1", "2", "3", "4", "5", "cta", "primeiro", "importante"}
     for n in nodes:
         txt = " ".join(n.text.split()).strip()
         if not txt or len(txt) < 8:
@@ -276,7 +276,7 @@ def main() -> int:
             continue
         if truthy(n.attrs.get("data-template-element")) or truthy(n.attrs.get("data-static")) or n.attrs.get("data-text-type") or n.attrs.get("data-variable") or is_inline_text_run(n):
             continue
-        if txt.lower() in chrome_words:
+        if txt.lower() in ui_label_words:
             continue
         # Parent containers often accumulate child text; only warn when direct text-like tags.
         if n.tag in {"h1", "h2", "h3", "p", "span", "strong"}:

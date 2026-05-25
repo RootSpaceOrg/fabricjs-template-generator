@@ -2,7 +2,8 @@
 """Rotating local history of template suggestions per objective.
 
 Keeps the last N (default 20) suggestions per objective so the suggester skill
-can avoid proposing the same framework + theme combination repeatedly.
+can avoid proposing the same framework + theme combination repeatedly, and the
+same archetypes/moves combinations in consecutive batches.
 
 Storage: one JSON file per objective at
     skills/gp2-template-suggester/history/<objetivo>.json
@@ -10,21 +11,30 @@ Storage: one JSON file per objective at
 Each entry:
     {
       "ts": "<ISO 8601 UTC>",
+      "objective": "<objective slug>",
       "framework": "<framework slug>",
       "theme": "<theme phrase>",
       "hook_formula": "<formula slug>",
+      "archetypes": ["A1", "A5", "A3", "A6"],   # optional, list of A* slugs per slide
+      "moves": ["M9", "M4"],                     # optional, list of M* slugs
       "template_id": "<supabase id or null>",
       "status": "dispatched|completed|failed",
       "notes": "<optional>"
     }
 
 Commands:
-    list <objetivo> [--limit N]
+    list <objetivo> [--limit N]   # also returns aggregated archetype/move counts
     append <objetivo> --framework X --theme "Y" --hook Z
+                       [--archetypes "A1,A5,..."] [--moves "M9,M4"]
                        [--template-id ID] [--status STATE] [--notes "..."]
                        [--keep K]
     stats               # counts per objective
     purge <objetivo>    # wipe history for one objective (requires --confirm)
+
+Backward compatibility: old entries without `archetypes`/`moves` are loaded
+silently; aggregated counts only consider entries that have the fields.
+The `--image-mode` flag from the previous schema is no longer required and
+silently ignored if passed.
 
 The history is advisory: the suggester treats semantic proximity as repetition,
 not exact match. Stored data feeds the LLM's context window when deciding the
@@ -35,7 +45,7 @@ from __future__ import annotations
 
 import argparse
 import json
-import sys
+from collections import Counter
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -47,12 +57,6 @@ ALLOWED_OBJECTIVES = {
     "educacao",
     "prova_social",
     "retencao",
-}
-
-ALLOWED_IMAGE_MODES = {
-    "text-only",
-    "text-with-accents",
-    "image-heavy",
 }
 
 DEFAULT_KEEP = 20
@@ -96,34 +100,64 @@ def validate_objective(objective: str) -> None:
         )
 
 
+def parse_csv_slugs(value: str | None) -> list[str]:
+    if not value:
+        return []
+    return [token.strip() for token in value.split(",") if token.strip()]
+
+
+def aggregate_counts(entries: list[dict[str, Any]]) -> dict[str, dict[str, int]]:
+    """Aggregated A*/M* counts across the provided entries."""
+    archetype_counter: Counter[str] = Counter()
+    move_counter: Counter[str] = Counter()
+    for entry in entries:
+        for slug in entry.get("archetypes") or []:
+            if isinstance(slug, str) and slug:
+                archetype_counter[slug] += 1
+        for slug in entry.get("moves") or []:
+            if isinstance(slug, str) and slug:
+                move_counter[slug] += 1
+    return {
+        "archetype_counts": dict(archetype_counter.most_common()),
+        "move_counts": dict(move_counter.most_common()),
+    }
+
+
 def cmd_list(args: argparse.Namespace) -> None:
     validate_objective(args.objective)
     entries = load_history(args.objective)
     limit = args.limit or len(entries)
     output = entries[-limit:] if limit > 0 else []
-    print(json.dumps(output, ensure_ascii=False, indent=2))
+    payload = {
+        "objective": args.objective,
+        "entries": output,
+        **aggregate_counts(output),
+    }
+    print(json.dumps(payload, ensure_ascii=False, indent=2))
 
 
 def cmd_append(args: argparse.Namespace) -> None:
     validate_objective(args.objective)
-    if args.image_mode not in ALLOWED_IMAGE_MODES:
-        allowed = ", ".join(sorted(ALLOWED_IMAGE_MODES))
-        raise SystemExit(
-            f"error: invalid image-mode '{args.image_mode}'. allowed: {allowed}"
-        )
     entries = load_history(args.objective)
 
-    entry = {
+    archetypes = parse_csv_slugs(args.archetypes)
+    moves = parse_csv_slugs(args.moves)
+
+    entry: dict[str, Any] = {
         "ts": datetime.now(timezone.utc).isoformat(timespec="seconds").replace(
             "+00:00", "Z"
         ),
+        "objective": args.objective,
         "framework": args.framework,
         "theme": args.theme,
         "hook_formula": args.hook,
-        "image_mode": args.image_mode,
         "template_id": args.template_id,
         "status": args.status,
     }
+    if archetypes:
+        entry["archetypes"] = archetypes
+    if moves:
+        entry["moves"] = moves
     if args.notes:
         entry["notes"] = args.notes
 
@@ -139,14 +173,17 @@ def cmd_append(args: argparse.Namespace) -> None:
 
 def cmd_stats(_: argparse.Namespace) -> None:
     ensure_history_dir()
-    stats = {}
+    stats: dict[str, Any] = {}
     for objective in sorted(ALLOWED_OBJECTIVES):
         entries = load_history(objective)
+        last = entries[-1] if entries else None
         stats[objective] = {
             "count": len(entries),
-            "last_ts": entries[-1]["ts"] if entries else None,
-            "last_framework": entries[-1]["framework"] if entries else None,
-            "last_image_mode": entries[-1].get("image_mode") if entries else None,
+            "last_ts": last["ts"] if last else None,
+            "last_framework": last["framework"] if last else None,
+            "last_archetypes": last.get("archetypes") if last else None,
+            "last_moves": last.get("moves") if last else None,
+            **aggregate_counts(entries),
         }
     print(json.dumps(stats, ensure_ascii=False, indent=2))
 
@@ -172,7 +209,7 @@ def main() -> None:
     )
     subparsers = parser.add_subparsers(dest="command", required=True)
 
-    p_list = subparsers.add_parser("list", help="List recent suggestions for an objective")
+    p_list = subparsers.add_parser("list", help="List recent suggestions + aggregated counts")
     p_list.add_argument("objective", help=f"one of: {', '.join(sorted(ALLOWED_OBJECTIVES))}")
     p_list.add_argument("--limit", type=int, default=None, help="last N entries (default: all)")
     p_list.set_defaults(func=cmd_list)
@@ -183,11 +220,17 @@ def main() -> None:
     p_append.add_argument("--theme", required=True, help="theme phrase")
     p_append.add_argument("--hook", required=True, help="hook formula slug")
     p_append.add_argument(
-        "--image-mode",
-        required=True,
-        choices=sorted(ALLOWED_IMAGE_MODES),
-        help="image_mode of this suggestion (text-only|text-with-accents|image-heavy)",
+        "--archetypes",
+        default=None,
+        help='comma-separated A* slugs per slide (e.g., "A1,A5,A5,A3,A6")',
     )
+    p_append.add_argument(
+        "--moves",
+        default=None,
+        help='comma-separated M* slugs (e.g., "M9,M4")',
+    )
+    # Legacy flag — accepted silently for backward compatibility with old callers.
+    p_append.add_argument("--image-mode", default=None, help=argparse.SUPPRESS)
     p_append.add_argument("--template-id", default=None, help="Supabase template ID once dispatched")
     p_append.add_argument(
         "--status",

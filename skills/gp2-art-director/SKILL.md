@@ -1,6 +1,6 @@
 ---
 name: gp2-art-director
-description: "Segunda etapa da Pipeline v2 (após gp2-request-interpreter, antes de gp2-html-designer). Define a direção visual do template: em free mode inventa paleta, composição e movimento decorativo; em reference-driven mode analisa a(s) imagem(ns) de referência e extrai paleta, tipografia e elementos editoriais. Produz visual-plan.md como orientação para o designer — não como contrato rígido. Mapeia data-variable. Não escreve HTML."
+description: "Segunda etapa da Pipeline v2 (após gp2-request-interpreter, antes de gp2-html-designer). Define a direção visual do template: paleta com hexs concretos, escala tipográfica resolvida, um arquétipo composicional A* por slide (catálogo _shared/COMPOSITIONS.md), 1-2 carousel moves M* (catálogo _shared/CAROUSEL_MOVES.md) e mapeamento data-variable. Em free mode inventa; em reference-driven mode extrai da(s) imagem(ns). Produz visual-plan.md como orientação para o designer — não como contrato rígido. Também opera em modo de resposta quando o designer reporta status: blocked-on-art-director. Não escreve HTML."
 ---
 
 # gp2-art-director
@@ -98,29 +98,60 @@ Antes de qualquer decisão criativa, inspecione as imagens e extraia:
 
 ---
 
+### 2b. Resolva a escala tipográfica
+
+Antes de planejar slides, resolva uma **escala tipográfica concreta** que o designer aplicará em todo o carrossel. Designer ajusta detalhe na execução, mas **não** escolhe famílias nem inverte a hierarquia.
+
+**Em free mode:** derive a escala do tom + segmento (editorial → serif display + sans body; minimal → sans geométrica única; brand-forward → display com peso máximo).
+
+**Em reference-driven mode:** use famílias/pesos/tamanhos extraídos da referência.
+
+**Use Google Fonts** (designer vai carregar via `<link>`). Pareie display + body — nunca família única para tudo.
+
+A escala vai no `visual-plan.md` na seção `## Tipografia resolvida` (template abaixo).
+
+---
+
 ### 3. Planeje a direção visual de cada slide
 
 **Sobre imagens no template:** o brief descreve a intenção composicional por slide (ex: "capa full-bleed com foto", "split texto|imagem", "coluna central só texto"). Siga essa intenção como orientação — o art-director decide como executar, mas respeite se um slide foi indicado com ou sem imagem. Para slides de miolo sem indicação explícita, prefira incluir ao menos 1-2 slots `userAsset` como apoio visual: templates puramente tipográficos tendem a sair sem estrutura visual quando o designer tem liberdade criativa.
 
-Para **cada slide** do brief, forneça orientação sobre:
+Para **cada slide** do brief, declare:
+- **Arquétipo:** um `A<N>` do catálogo [`../_shared/COMPOSITIONS.md`](../_shared/COMPOSITIONS.md) (ex: `A1-hero-split`, `A3-editorial-eyebrow-stack`). Isso é o esqueleto inicial — designer adapta coords mas mantém anchors.
 - **Papel narrativo** do slide (capa, educativo, prova, CTA, etc.)
-- **Direção de composição** — onde ficam headline e imagem (não precisa ser código; pode ser descrição)
 - **Background** — slide claro, escuro ou brand
-- **Gradientes** (se aplicável) — especifique direção e opacidade
+- **Gradientes** (se aplicável) — direção e opacidade (`data-darken` preset)
 - **Copy orientativo** — copy real do brief para este slide
-- **Elementos decorativos** a aplicar neste slide
+- **Notas de execução** — desvios do arquétipo, elementos específicos a destacar
 
-**Variação entre slides:** direcione que slides consecutivos tenham composições distintas. O designer tem liberdade de como executar isso.
+**Regras de diversidade composicional (HARD):**
+- Carrossel com ≥3 slides usa **≥2 arquétipos distintos**.
+- Carrossel com ≥5 slides usa **≥3 arquétipos distintos**.
+- Slide CTA final tipicamente em `A6-cta-button-anchored`.
+- Slide capa tipicamente em `A1`, `A2`, `A10` ou `A12`.
 
 ---
 
-### 4. Defina o movimento decorativo
+### 4. Escolha os carousel moves
 
-Descreva o elemento visual que vai dar identidade e coerência ao carrossel. Pode ser qualquer coisa — um eyebrow numerado, um número de slide gigante, um fio horizontal, um badge, etc.
+Escolha **1–2 moves** do catálogo [`../_shared/CAROUSEL_MOVES.md`](../_shared/CAROUSEL_MOVES.md) (M1–M10) que vão dar identidade ao carrossel. Para cada move escolhido, declare:
+- **Slug do move** (ex: `M2-numero-ostentatorio`, `M8-fio-tipografico`).
+- **Em quais slides aparece** (lista ou "todos exceto último").
+- **Notas de execução** se houver detalhe específico (ex: "número em cor secondary, 380px, canto superior direito").
 
-Escreva uma instrução executável: posição geral, tamanho aproximado, cor, em quais slides aparece. O designer adapta os detalhes na execução.
+**Por que 1–2 só:** mais que isso polui o carrossel. M4 (cta-arrow-ritualistico) é o move mais seguro e quase sempre cabe; combine-o com 1 move com mais personalidade (M2, M5, M7, M8 ou M10).
 
-**CUIDADO com vocabulário de cor:** Se o movimento envolve escurecimento, descreva como "fundo sólido primary com overlay de escurecimento neutro" — NUNCA como "gradiente vinho/magenta". Usar nomes de cor brand faz o designer implementar hex literais em vez de overlay adaptável.
+**Orientação de navegação (substitui o antigo "carousel chrome"):**
+
+Quando o brief sinaliza necessidade de orientação de navegação — pedido explícito do user com termos como "progress bar", "indicador", "navegação", OU carrossel com **≥6 slides + tom didático sequencial** e nenhum arquétipo do plano já incluir auto-numeração visual — considere:
+
+- **M9-edge-numbering** (`01/07` discreto no rodapé) — opção elegante; combina com qualquer estilo (editorial, minimal, brand-forward).
+- **M6-reveal-progressivo** (barra/forma que enche slide a slide) — quando o conteúdo tem progressão real (tutorial, contagem regressiva, revelação).
+- **M4-cta-arrow-ritualistico** (seta "Arraste →" fixa em todos exceto o último) — pareia bem com M9 ou M6.
+
+Em dúvida, prefira **M9** sobre barra utilitária — é mais elegante e funciona em qualquer paleta. Carrosséis curtos (≤4 slides) raramente precisam: o leitor mantém orientação naturalmente. Se o user pediu "minimalista" ou "premium clean", evite os 3 — nenhum move de navegação é melhor que chrome utilitário num design quieto.
+
+**CUIDADO com vocabulário de cor:** Se um move envolve escurecimento, descreva como "fundo sólido primary com overlay de escurecimento neutro" — NUNCA como "gradiente vinho/magenta". Usar nomes de cor brand faz o designer implementar hex literais em vez de overlay adaptável.
 
 ---
 
@@ -161,24 +192,33 @@ free
 - **Neutro claro:** `#RRGGBB` — usado em slides claros
 - **Neutro escuro:** `#RRGGBB` — usado em slides escuros
 
-## Movimento decorativo
-**Elemento:** <descrição do que é>
-**Instrução:** <como aplicar — posição geral, tamanho, cor, spacing>
-**Presença:** <em quais slides>
+## Tipografia resolvida
+- **Display:** <família> — <Npx> — peso <W> — kerning <±N%>
+- **Subtítulo:** <família> — <Npx> — peso <W>
+- **Eyebrow:** <família> — <Npx> — peso <W> — tracking <+N%> — <UPPERCASE | Title Case>
+- **Body:** <família> — <Npx> — peso <W>
+- **Caption:** <família> — <Npx>
+- **Pairing:** <DisplayFamily + BodyFamily>
+
+## Carousel moves
+- **<M?-slug>:** <em quais slides — ex: "todos exceto último"> — <nota de execução opcional>
+- **<M?-slug>:** <em quais slides> — <nota>
 
 ## Plano de slides
 
 ### Slide 1 — <papel narrativo> (background: claro/escuro/brand)
-- **Direção de composição:** <onde ficam headline e imagem>
+- **Arquétipo:** A<N> — <slug>
 - **Gradientes:** <nenhum | overlay bottom 0.70 | escurecimento-atmosférico diagonal-se 0.80 | ...>
-- **Elementos decorativos:** <o que aplicar neste slide>
 - **Copy orientativo:** <copy real do brief>
+- **Notas de execução:** <desvios do arquétipo, elementos específicos a destacar>
 
 ### Slide 2 — <papel narrativo> (background: ...)
-...
+- **Arquétipo:** A<N> — <slug>
+- ...
 
 ### Slide N (CTA) — <papel narrativo> (background: brand)
-...
+- **Arquétipo:** A6-cta-button-anchored (default para CTA)
+- ...
 
 ## Mapeamento de data-variable
 
@@ -209,11 +249,6 @@ reference-driven
 - **Neutro claro:** `#RRGGBB`
 - **Neutro escuro:** `#RRGGBB`
 
-### Tipografia (da referência)
-- **Display:** <família ou categoria> — peso <N> — <casing>
-- **Body:** <família ou categoria> — peso <N>
-- **Letter-spacing notável:** <ex: eyebrow tracking +200; ou "padrão">
-
 ### Elementos editoriais a replicar
 - <ex: eyebrow numerado em todos os slides>
 - <ex: fio horizontal fino abaixo de cada título>
@@ -226,21 +261,29 @@ reference-driven
 - **Foto profissional:** <cutout PNG | retangular editorial | circular avatar | ausente>
 - **Foto contextual:** <ausente | crop editorial | etc.>
 
-## Movimento decorativo
-**Elemento:** <identificado na referência>
-**Instrução:** <como executar — posição, tamanho, cor, spacing>
-**Presença:** <em quais slides>
+## Tipografia resolvida (da referência)
+- **Display:** <família ou categoria> — <Npx> — peso <W> — kerning <±N%>
+- **Subtítulo:** <família> — <Npx> — peso <W>
+- **Eyebrow:** <família> — <Npx> — peso <W> — tracking <+N%> — <UPPERCASE | Title Case>
+- **Body:** <família ou categoria> — <Npx> — peso <W>
+- **Caption:** <família> — <Npx>
+- **Pairing:** <DisplayFamily + BodyFamily>
+
+## Carousel moves
+- **<M?-slug>:** <em quais slides> — <nota — identificado na referência ou inferido>
+- **<M?-slug>:** <em quais slides> — <nota>
 
 ## Plano de slides
 
 ### Slide 1 — <papel narrativo> (background: claro/escuro/brand)
-- **Direção de composição:** <onde ficam headline e imagem>
+- **Arquétipo:** A<N> — <slug>
 - **Gradientes:** <nenhum | overlay bottom 0.70 | escurecimento-atmosférico diagonal-se 0.80 | etc.>
-- **Elementos decorativos:** <o que aplicar neste slide>
 - **Copy orientativo:** <copy do brief>
+- **Notas de execução:** <o que herdar da referência, o que adaptar>
 
 ### Slide 2 — ...
-...
+- **Arquétipo:** A<N> — <slug>
+- ...
 
 ## Mapeamento de data-variable
 
@@ -263,8 +306,10 @@ reference-driven
 Plano visual gerado: `artifacts/gp2-art-director/<slug>/visual-plan.md`
 Modo: free
 Paleta: primary <hex> / secondary <hex> / neutro claro <hex> / neutro escuro <hex>
+Tipografia: <display> + <body>
 Slides planejados: <N>
-Movimento decorativo: <descrição curta>
+Arquétipos: slide1=A?, slide2=A?, ... (diversidade: <N> tipos distintos)
+Carousel moves: <M?, M?>
 Elementos data-variable mapeados: <N>
 Próximo passo: gp2-html-designer
 ```
@@ -274,11 +319,37 @@ Próximo passo: gp2-html-designer
 Plano visual gerado: `artifacts/gp2-art-director/<slug>/visual-plan.md`
 Modo: reference-driven
 Paleta: primary <hex> / secondary <hex> / neutro claro <hex> / neutro escuro <hex>
-Tipografia: display <família/categoria> / body <família/categoria>
+Tipografia: <display> + <body>
 Slides planejados: <N>
-Movimento decorativo: <identificado na referência>
+Arquétipos: slide1=A?, slide2=A?, ... (diversidade: <N> tipos distintos)
+Carousel moves: <M?, M?> (identificados na referência)
 Elementos data-variable mapeados: <N>
 Próximo passo: gp2-html-designer
+```
+
+---
+
+## Modo de resposta a pedidos do designer
+
+Quando o orquestrador re-invoca esta skill com `status: blocked-on-art-director`, você recebe:
+- `visual-plan.md` original
+- `notes.md` do designer com a seção `## Pedidos ao art-director`
+- Screenshots parciais do Passo 1 (se houver)
+
+Para cada pedido:
+1. Avalie se é **válido** (contradição factual, restrição técnica como copy que não cabe, contraste impossível) ou **inválido** (preferência estética do designer, dúvida que o plano já responde).
+2. Se válido: edite `visual-plan.md` com a correção pontual + adicione/atualize seção `## Histórico de revisões` registrando o que mudou e por quê.
+3. Se inválido: edite o `notes.md` do designer adicionando seção `## Resposta art-director` explicando por que manter o plano original.
+
+**Patch cirúrgico, não reescrita.** Não toque em decisões não-relacionadas ao pedido.
+
+Responda ao orquestrador:
+```markdown
+Modo: resposta a designer
+Pedidos atendidos: <N de M>
+Pedidos rejeitados: <N> — ver notes.md
+Plano revisado: <yes | no>
+Próximo passo: gp2-html-designer (retomar Passo <N>)
 ```
 
 ---

@@ -112,9 +112,6 @@ python3 ../../scripts/audit-template-markup.py artifacts/gp2-template-marker/<sl
 | Foto/imagem que varia por post (gerada por IA, escolhida pelo usuário) | `<img data-image-type="userAsset" data-template-element="true" data-te-description="..." data-te-remove-bg="false">` |
 | CTA-label fixo ("Arraste →", "Saiba mais", "@") | `data-static="true"` |
 | Numeração / progresso / etiquetas decorativas estáticas | `data-static="true"` |
-| Carousel chrome — track, fill, counter "N/T" da progress bar | `data-static="true"` (designer já deve ter marcado; confirme) |
-| Carousel chrome — fill da progress bar em slide LIGHT | `data-static="true"` + `data-variable="primary" data-variable-target="background"` (track e counter não recebem variable) |
-| Carousel chrome — swipe arrow (background sutil + chevron SVG) | `data-static="true"` (em todos os slides exceto o último) |
 | Formas decorativas (linhas, faixas, fundos, divisores) | nada (auto-detect como decoração) ou `data-static="true"` se ambíguo |
 | Overlay de legibilidade sobre foto (`<div>` com `linear-gradient` transparente→preto) | `data-static="true"` (nunca template-element; o converter emite como `roundedRect` com fill gradient) |
 | Fundo de slide Brand com escurecimento (section com `data-variable` + div overlay com `data-darken`) | section: `data-variable="primary" data-variable-target="background"` + overlay div: `data-darken="<preset>" data-darken-opacity="<N>"` + `data-static="true"` |

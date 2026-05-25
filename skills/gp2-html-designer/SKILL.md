@@ -1,6 +1,6 @@
 ---
 name: gp2-html-designer
-description: "Coração da Pipeline v2: gera HTML/CSS para posts e carrosséis HealthMarket. Recebe o brief.md e o visual-plan.md como orientação e produz template.html com liberdade criativa, desde que respeite todas as regras técnicas (inline CSS, px absoluto, data-variable, data-darken, data-glow, sombras, professionalPhoto). Renderiza screenshots para o reviewer. Não converte para Fabric, não publica. Use após gp2-art-director, antes de gp2-html-reviewer."
+description: "Coração da Pipeline v2: gera HTML/CSS para posts e carrosséis em 3 passos materializados — Passo 1 low-fi (estrutura + copy + tipografia, neutros), Passo 2 mid-fi (paleta + data-variable + imagens reais), Passo 3 high-fi (carousel moves + delight details). Cada passo produz template-vN.html + screenshots e auto-critique antes de avançar. Consome arquétipos A* (_shared/COMPOSITIONS.md) e moves M* (_shared/CAROUSEL_MOVES.md) declarados pelo art-director. Quando ambiguidade do plano trava execução, pode reportar status: blocked-on-art-director. Não converte para Fabric, não publica. Use após gp2-art-director, antes de gp2-html-reviewer."
 ---
 
 # gp2-html-designer
@@ -13,8 +13,8 @@ O designer lê o brief e o visual-plan como orientação — não como contrato 
 
 ## Inputs
 
-- **`brief.md`** produzido por `gp2-request-interpreter` — copy por slide, tom, segmento, arco narrativo, foto profissional, carousel chrome.
-- **`visual-plan.md`** produzido por `gp2-art-director` — orientação visual: paleta sugerida, composição por slide, movimento decorativo, mapeamento de data-variable. Use como ponto de partida, não como jaula.
+- **`brief.md`** produzido por `gp2-request-interpreter` — copy por slide, tom, segmento, arco narrativo, foto profissional.
+- **`visual-plan.md`** produzido por `gp2-art-director` — orientação visual: paleta com hexs concretos, **escala tipográfica resolvida**, **arquétipo A* por slide** ([`../_shared/COMPOSITIONS.md`](../_shared/COMPOSITIONS.md)), **carousel moves M*** ([`../_shared/CAROUSEL_MOVES.md`](../_shared/CAROUSEL_MOVES.md)), mapeamento de data-variable. Use como ponto de partida — designer adapta na execução, mas mantém arquétipos e tipografia.
 - Opcionalmente em reference-driven mode: imagens de referência no contexto para detalhe visual.
 
 **Leia os dois antes de escrever qualquer HTML.**
@@ -23,112 +23,159 @@ O designer lê o brief e o visual-plan como orientação — não como contrato 
 
 ```
 artifacts/gp2-html-designer/<slug>/
-├── template.html                ← versão final
-├── screenshots/
-│   └── slide-N.png
-└── notes.md                     ← decisões de design, desvios do plano, fontes usadas
+├── template-v1-lowfi.html          ← Passo 1: estrutura + copy + tipografia
+├── screenshots-v1-lowfi/slide-N.png
+├── template-v2-midfi.html          ← Passo 2: paleta + data-variable
+├── screenshots-v2-midfi/slide-N.png
+├── template.html                   ← Passo 3: high-fi final
+├── screenshots/slide-N.png
+└── notes.md                        ← 3 critiques + decisões + desvios
 ```
 
-## Workflow
+## Workflow — 3 passos materializados
 
-### 1. Leia e internalize
+A pipeline executa 3 passos com entregáveis distintos, cada um renderizado e auto-criticado antes de avançar. **Não pule passos.** O ganho do loop de 3 etapas é exatamente a revisão entre elas — replica o ciclo "ver → corrigir → ver" do Claude Design.
 
-Leia `brief.md` + `visual-plan.md` inteiros. Entenda:
+### 0. Leia e internalize
+
+Antes de qualquer passo, leia `brief.md` + `visual-plan.md` inteiros e abra [`../_shared/COMPOSITIONS.md`](../_shared/COMPOSITIONS.md) nos arquétipos declarados + [`../_shared/CAROUSEL_MOVES.md`](../_shared/CAROUSEL_MOVES.md) nos moves declarados. Entenda:
 - O arco narrativo (slide a slide)
-- A paleta sugerida (hexs concretos)
-- O movimento decorativo proposto
+- A paleta concreta (hexs)
+- A escala tipográfica resolvida (famílias, pesos, tamanhos)
+- O arquétipo A* declarado para cada slide
+- Os 1–2 carousel moves M* e em quais slides aparecem
 - O mapeamento de data-variable
-- Tom, segmento, foto profissional, carousel chrome
+- Tom, segmento, foto profissional
 
-### 2. Produza o template.html
+---
 
-Escreva `template.html` diretamente. Se quiser iterar em passos intermediários, salve como `template-v1.html` / `template-v2.html`, mas não é obrigatório.
+### Passo 1 — Low-fi: estrutura + copy + tipografia
 
-**Estrutura mínima obrigatória — comece com este esqueleto:**
+Produza `template-v1-lowfi.html`. Aplique:
+- **Estrutura HTML completa** (section por slide, position:absolute, todo o esqueleto que vai virar o final).
+- **Esqueleto do arquétipo A* declarado** para cada slide. Consulte os anchors em `COMPOSITIONS.md` e posicione headline-zone, image-zone, decorator-zone, cta-zone conforme. Adapte coords exatas, mantenha as proporções.
+- **Copy real do brief** já posicionado nos slots.
+- **Tipografia resolvida do visual-plan** aplicada (famílias via `<link>` Google Fonts, pesos, tamanhos, tracking).
+- **Sem cor de marca**, **sem movimento decorativo M***. Fundos: off-white claro (`#F5F3EF`) e near-black (`#1C1A18`). Acentos: cinza médio com tint do brief.
+- Blocos de imagem como retângulos neutros placeholder (`#D8D4CC`), sem fotos reais ainda.
 
+Esqueleto inicial:
 ```html
 <!doctype html>
-<html lang="pt-BR" data-template-name="<slug-do-template>" data-segment="<segmento-kebab-case>">
+<html lang="pt-BR" data-template-name="<slug>" data-segment="<segmento-kebab-case>">
 <head>
   <meta charset="utf-8">
   <meta name="hm-fonts" content="FonteDisplay,FonteBody">
   <link href="https://fonts.googleapis.com/css2?family=FonteDisplay:wght@700;800&family=FonteBody:wght@400;500&display=swap" rel="stylesheet">
 </head>
 <body style="margin:0; padding:0;">
-
   <section class="slide" data-width="1080" data-height="1350"
            style="position:relative; width:1080px; height:1350px; overflow:hidden; background:#F5F3EF;">
-    <!-- elementos com position:absolute; left:Xpx; top:Ypx; width:Wpx; height:Hpx -->
+    <!-- aplique anchors do arquétipo A1/A2/A3... declarado para slide 1 -->
   </section>
-
-  <section class="slide" data-width="1080" data-height="1350"
-           style="position:relative; width:1080px; height:1350px; overflow:hidden; background:#1C1A18;">
-  </section>
-
-  <!-- ... demais slides -->
-
+  <!-- demais slides, cada um com seu arquétipo -->
 </body>
 </html>
 ```
 
-**Regras que nunca mudam:**
-- `<section class="slide" data-width="W" data-height="H">` — obrigatório em cada slide
-- `position: absolute; left: Xpx; top: Ypx; width: Wpx; height: Hpx;` — todo elemento dentro do slide
-- Todo CSS inline no atributo `style=""` — sem `<style>` block, sem classes CSS
-- Sem flex/grid no canvas (só dentro de elementos que não são convertidos, o que não existe aqui)
+Renderize:
+```bash
+node ../../scripts/render-html-screenshots.js artifacts/gp2-html-designer/<slug>/ --variant v1-lowfi
+```
 
-**O que decidir criativamente:**
-- Composição de cada slide (disposição de elementos, zonas de texto e imagem)
-- Tamanhos exatos de fonte e pesos tipográficos
-- Coordenadas absolutas em px
-- Detalhes de micro-alinhamento, letter-spacing, espaçamentos
-- Se e como usar o movimento decorativo sugerido no plano
+**Auto-critique do Passo 1** — escreva em `notes.md` seção `## Passo 1 — critique`:
+- Hierarquia tipográfica é instantânea em cada slide?
+- Copy cabe nos slots sem overflow?
+- Cada slide reflete claramente o arquétipo A* declarado (anchors visíveis)?
+- Slides têm composições distintas (variedade de arquétipos visível)?
+- Respiração ≥60px nas bordas?
 
-**O que o plano já definiu (use, a não ser que haja razão melhor):**
-- Hexs de primary, secondary, neutros
-- Mapeamento de data-variable (quais elementos recebem brand color)
-- Copy por slide
+Se algum NÃO → corrija no v1-lowfi antes de avançar. **Máx 1 retry.** Se a falha for em decisão do plano (não algo que você possa corrigir sozinho), siga para "Pedidos ao art-director" abaixo.
 
-### 3. Renderize e auto-revise
+---
 
+### Passo 2 — Mid-fi: paleta + data-variable
+
+Copie `template-v1-lowfi.html` → `template-v2-midfi.html`. Aplique:
+- **Paleta do visual-plan** nos fundos brand/CTA, eyebrow, acentos, fios.
+- **`data-variable`** + `data-variable-target` em todos os elementos do mapeamento (`primary` / `secondary`).
+- **`data-darken`** em overlays de escurecimento (fundo brand + atmosférico, legibilidade sobre foto). **`data-glow`** se o plano pediu glow atmosférico.
+- **Imagens reais**:
+  - `userAsset` → URL determinística `picsum.photos/id/{N}/{w}/{h}` ou base64 de `references/placeholders/image-placeholder.b64.txt`.
+  - `professionalPhoto` → base64 de `references/placeholders/professional-photo-1.b64.txt` ou `professional-photo-2.b64.txt`.
+- Ainda **sem** os moves M* nem ornamentação decorativa (próximo passo).
+
+Renderize:
+```bash
+node ../../scripts/render-html-screenshots.js artifacts/gp2-html-designer/<slug>/ --variant v2-midfi
+```
+
+**Auto-critique do Passo 2** — escreva em `notes.md` seção `## Passo 2 — critique`:
+- Contraste WCAG OK em todos os slides (texto sobre fundo)?
+- `data-variable` cobre todos os elementos mapeados?
+- Slides parecem do mesmo carrossel (coerência visual com a paleta aplicada)?
+- Foto profissional ancorada corretamente (object-fit:contain, object-position:bottom center, sem texto sobre face)?
+- Overlays escurecimento têm `data-darken` + opacidade adequada?
+
+Se algum NÃO → corrija no v2-midfi antes de avançar. **Máx 1 retry.**
+
+---
+
+### Passo 3 — High-fi: carousel moves + delight
+
+Copie `template-v2-midfi.html` → `template.html` (entrega final). Aplique:
+- **Carousel moves M*** declarados no visual-plan, nos slides indicados:
+  - `M2-numero-ostentatorio` → número 300–500px no canto.
+  - `M4-cta-arrow-ritualistico` → seta "→" em todos exceto último, mesma posição.
+  - `M8-fio-tipografico` → fio 1–3px abaixo de cada eyebrow/título.
+  - etc. (consultar `CAROUSEL_MOVES.md` para snippets).
+- **Delight details** — pelo menos 1 identificável: tracking notável no eyebrow (+12% / +20%), contraste forte de peso (400 vs 800 juntos), número editorial sobreposto, color block intencional, ligadura/ornamento, sobreposição calculada.
+- Ajustes finais de spacing, alinhamento, micro-tipografia.
+
+Renderize sem `--variant` (output final):
 ```bash
 node ../../scripts/render-html-screenshots.js artifacts/gp2-html-designer/<slug>/
 ```
 
-**Antes de olhar os screenshots, verifique no HTML:**
+**Auto-critique do Passo 3** — escreva em `notes.md` seção `## Passo 3 — critique`:
+- Cada move M* declarado tem evidência visual nos slides indicados?
+- Há pelo menos 1 delight detail identificável? Liste qual(is).
+- O carrossel tem identidade — não parece template default de IA?
+- Ainda respeita estrutura e contraste do passo 2 (nenhuma regressão)?
 
-| Verificação estrutural | Esperado |
-|------------------------|----------|
+Se algum NÃO → corrija no final antes de devolver ao reviewer. **Máx 1 retry.**
+
+---
+
+### Pedidos ao art-director (uso parco)
+
+Se durante qualquer passo você encontrar ambiguidade real no visual-plan que trava a execução, escreva em `notes.md` seção `## Pedidos ao art-director`:
+
+```markdown
+## Pedidos ao art-director
+- [Slide 3] Arquétipo A1-hero-split foi declarado mas o copy do brief tem 4 linhas longas — não cabe no slot. Sugestão: trocar para A10-headline-massive-solo neste slide, ou encurtar copy.
+- [Geral] Paleta primary=#FF6B35 + secondary=#FF8C42 dá contraste fraco entre acentos. Confirma se foi intencional ou se um deles deve mudar.
+```
+
+Não invente respostas. Pare o passo, reporte ao orquestrador `status: blocked-on-art-director` e aguarde.
+
+**Use com parcimônia.** Pedidos válidos: contradição factual no plano, copy que não cabe, contraste impossível, arquétipo incompatível com conteúdo. Pedidos inválidos: preferência estética sua, dúvida que você pode resolver lendo o plano com atenção.
+
+---
+
+### Verificação estrutural (rodar antes de cada render)
+
+| Verificação | Esperado |
+|-------------|----------|
 | `<html data-template-name="..." data-segment="...">` | Presente |
 | `<meta name="hm-fonts" content="...">` | Presente com todas as famílias usadas |
 | Cada slide tem `<section class="slide" data-width="N" data-height="M">` | Presente |
 | Cada slide tem `style="position:relative; width:Npx; height:Mpx;"` | Presente |
 | Cada elemento interno tem `style="position:absolute; left:Xpx; top:Ypx; ..."` | Presente |
-| Não há `<style>` block no `<head>` com regras CSS | Ausente |
-| Não há `class="..."` dependendo de `<style>` block | Ausente |
+| Sem `<style>` block no `<head>` com regras CSS | Ausente |
+| Sem `class="..."` dependendo de `<style>` block | Ausente |
 
-Se qualquer item estrutural falhar — **corrija antes de renderizar**. Screenshots de HTML sem estrutura correta não têm valor de revisão.
-
-Olhe os screenshots e verifique:
-
-| Critério | OK se… |
-|----------|--------|
-| Hierarquia | título > subtítulo > corpo é instantâneo em cada slide |
-| Contraste | texto sobre fundo respeita leitura confortável |
-| Densidade | nenhum slide tem texto cortado ou colado na borda |
-| Diversidade | slides têm composições visivelmente distintas entre si |
-| Respiração | margem útil ≥ 60px em todas as bordas (canvas 1080) |
-| data-variable | elementos com cor brand têm atributos `data-variable` aplicados |
-| Coerência visual | o carrossel parece uma peça única, não slides avulsos |
-
-Se algo estiver errado, corrija e renderize de novo.
-
-### 4. Escreva notes.md
-
-Documente:
-- Família(s) tipográfica(s) escolhida(s) e por quê
-- Desvios em relação ao visual-plan e por quê
-- Qualquer decisão de design não-óbvia
+Se qualquer item falhar → corrija antes de renderizar. Screenshots de HTML inválido não têm valor de revisão.
 
 ## Regras de HTML invioláveis
 
@@ -224,22 +271,22 @@ Exemplo — fundo brand com escurecimento atmosférico:
 </section>
 ```
 
-## Carousel chrome (opt-in, não default)
-
-Leia o valor em `## Carousel chrome` no `brief.md`. Se `yes`, consulte [`references/carousel-chrome.md`](./references/carousel-chrome.md). Se `no`, **não adicione chrome**.
-
 ## Famílias tipográficas
 
-Use Google Fonts via `<link>` no `<head>`. Referência de stacks e combinações: [`references/aesthetic-families.md`](./references/aesthetic-families.md). Nunca use Inter/Arial/Roboto como única família — emparelhe display + body.
+Use as famílias declaradas em `visual-plan.md → ## Tipografia resolvida`. Carregue ambas (display + body) via `<link>` Google Fonts no `<head>` e liste em `<meta name="hm-fonts">`. Pesos e tamanhos seguem a escala resolvida — designer ajusta detalhe (±10% no tamanho, kerning fino) mas não troca família nem inverte hierarquia. Para inspiração de combinações editoriais por estilo, consulte [`references/aesthetic-families.md`](./references/aesthetic-families.md).
 
 ## Anti-patterns de composição
 
-- **Card spam**: caixas com `border` + `border-radius` + `box-shadow` repetidas sem razão.
-- **Nested cards**: cartão dentro de cartão.
-- **Tudo centralizado** sem intenção compositiva.
-- **Cinzas frios** (#CCCCCC) em vez de neutros com personalidade.
-- **Gradientes default** roxo→rosa sem propósito.
-- **Slides idênticos** — 3+ slides com mesma composição e só texto diferente.
+O reviewer flagra cada item abaixo como finding determinístico. Evite no design:
+
+- **Card spam**: ≥3 elementos no mesmo slide com `border` + `border-radius` + `box-shadow` simultaneamente.
+- **Nested cards**: cartão com `border` contendo outro card com `border`.
+- **Lazy centering**: 100% dos textos do slide com `text-align: center` E posicionados na coluna central.
+- **Cinzas frios**: literais `#CCCCCC`, `#999999`, `#666666` em fundo ou texto principal (sem saturação, percebido como frio).
+- **Gradiente genérico**: roxo→rosa, azul→roxo, sem propósito declarado.
+- **Slides idênticos**: 3+ slides consecutivos com mesmo arquétipo A*.
+- **Move ausente**: M* declarado no plano mas sem evidência visual no HTML.
+- **Arquétipo silencioso**: HTML que não corresponde ao A* declarado, sem nota em `notes.md`.
 
 ## O que esta skill NÃO faz
 
@@ -249,16 +296,31 @@ Use Google Fonts via `<link>` no `<head>`. Referência de stacks e combinações
 
 ## Resposta final ao orquestrador
 
+Caminho normal (após Passo 3 concluído):
 ```markdown
-HTML gerado em: `<path>/template.html`
+HTML final: `<path>/template.html`
+HTML intermediários: `<path>/template-v1-lowfi.html`, `<path>/template-v2-midfi.html`
 Slides: <N>
 Formato: <W>x<H>
-Família(s) tipográfica(s): <nomes>
+Família(s) tipográfica(s): <display> + <body>
 Paleta aplicada: primary <hex> / secondary <hex> / neutros <hexs>
-Elementos data-variable aplicados: <N elementos marcados>
+Arquétipos executados: slide1=A?, slide2=A?, ... (diversidade: <N> tipos distintos)
+Moves aplicados: <M?, M?>
+Desvios de arquétipo: <nenhum | slide N: A? declarado → A? executado por razão Y (ver notes.md)>
+Delight details: <lista — ex: tracking-eyebrow-tight, numero-decorativo-slide-3>
+Elementos data-variable aplicados: <N>
 Foto profissional: <usada | não usada>
-Carousel chrome: <sim | não>
-Desvios do plano: <nenhum | ver notes.md>
-Screenshots: <path>/screenshots/slide-N.png
+Screenshots finais: `<path>/screenshots/slide-N.png`
+Screenshots intermediários: `<path>/screenshots-v1-lowfi/`, `<path>/screenshots-v2-midfi/`
 Próximo passo: gp2-html-reviewer
+```
+
+Caminho bloqueado (pedido ao art-director):
+```markdown
+status: blocked-on-art-director
+Passo onde parou: <1 | 2 | 3>
+Pedidos: ver notes.md §"Pedidos ao art-director"
+HTML produzido até aqui: `<path>/template-vN-*.html`
+Screenshots: `<path>/screenshots-vN-*/`
+Próximo passo: gp2-art-director (modo resposta)
 ```

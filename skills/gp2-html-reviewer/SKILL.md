@@ -1,6 +1,6 @@
 ---
 name: gp2-html-reviewer
-description: "Critique do HTML produzido por gp2-html-designer antes do marker. Gate determinístico (técnico via script) + julgamento visual de qualidade e coerência. Usa o visual-plan.md como referência de paleta e data-variable, mas não exige fidelidade composicional estrita. Use após gp2-html-designer, antes de gp2-template-marker. Não gera HTML, não converte Fabric, não publica."
+description: "Critique do HTML produzido por gp2-html-designer antes do marker. Gate determinístico (técnico via review-html-design.py + anti-patterns como card-spam/nested-cards/lazy-centering/cold-gray/generic-gradient) + checks contra o visual-plan: archetype fidelity (A* declarado vs executado), move execution (M* declarado vs presente), typography conformance (escala resolvida) e reference fidelity (modo reference-driven). PASS exige ≥1 delight detail. Recebe os 3 conjuntos do designer (v1-lowfi, v2-midfi, final) para detectar regressões. Use após gp2-html-designer, antes de gp2-template-marker. Não gera HTML, não converte Fabric, não publica."
 ---
 
 # gp2-html-reviewer
@@ -20,23 +20,29 @@ O designer tem liberdade criativa. O reviewer não devolve um template por ter f
 ## Inputs
 
 ```
-artifacts/gp2-art-director/<slug>/visual-plan.md   ← paleta e data-variable de referência
+artifacts/gp2-art-director/<slug>/visual-plan.md   ← paleta, tipografia resolvida, arquétipos A*, moves M*, data-variable
 artifacts/gp2-html-designer/<slug>/
-├── template.html          ← high-fi final
+├── template-v1-lowfi.html       ← Passo 1 do designer
+├── screenshots-v1-lowfi/slide-N.png
+├── template-v2-midfi.html       ← Passo 2
+├── screenshots-v2-midfi/slide-N.png
+├── template.html                ← Passo 3 (high-fi final)
 ├── screenshots/slide-N.png
-└── notes.md               ← decisões e divergências documentadas pelo designer
+└── notes.md                     ← 3 critiques + decisões + desvios
 ```
 
-Se faltar screenshots, renderize antes:
+Recebe os **3 conjuntos** (lowfi → midfi → final). Use a progressão para detectar regressões — se um slide tinha hierarquia forte no v1 mas perdeu identidade no high-fi, é finding `regression-in-final`.
+
+Se faltar screenshots de algum passo, renderize antes:
 
 ```bash
-node ../../scripts/render-html-screenshots.js artifacts/gp2-html-designer/<slug>/
+node ../../scripts/render-html-screenshots.js artifacts/gp2-html-designer/<slug>/ --variant <v1-lowfi | v2-midfi | final>
 ```
 
 ## Workflow
 
-1. **Leia `visual-plan.md`** para extrair: hexs de primary/secondary, neutros, mapeamento de data-variable. Não use o plano para checar composição — use para checar paleta e variáveis.
-2. Leia `notes.md` para entender decisões de design e divergências documentadas pelo designer.
+1. **Leia `visual-plan.md`** para extrair: hexs de primary/secondary, neutros, **escala tipográfica resolvida**, **arquétipo A* por slide**, **moves M* declarados**, mapeamento de data-variable.
+2. **Leia `notes.md`** completo — incluindo as 3 critiques do designer e quaisquer pedidos ao art-director que foram respondidos.
 3. Rode o gate técnico:
 
 ```bash
@@ -45,13 +51,22 @@ python3 ../../scripts/review-html-design.py artifacts/gp2-html-designer/<slug>/
 
 O script gera `html-review.json` + `html-review.md`. Leia os findings.
 
-4. Inspecione visualmente cada `screenshots/slide-N.png` (ver critérios abaixo).
-5. Decida o status final.
+4. **Inspecione os 3 conjuntos de screenshots:**
+   - `screenshots-v1-lowfi/` — composição estrutural por slide
+   - `screenshots-v2-midfi/` — paleta + data-variable aplicados
+   - `screenshots/` — final com moves e delight
+   Use a progressão para detectar regressões (qualidade caiu entre N e N+1).
+5. **Confira arquétipos**: para cada slide, o A* declarado tem contraparte visual no HTML final? Anchors do arquétipo estão preservados (tolerância ±5% do canvas).
+6. **Confira moves**: cada M* declarado tem evidência visual nos slides indicados?
+7. **Confira tipografia**: famílias declaradas no plano estão executadas? Pesos e tamanhos seguem a escala?
+8. **Confira fidelidade à referência** (reference-driven mode apenas — ver seção dedicada).
+9. **Confira delight detail**: existe ≥1 detalhe identificável?
+10. Decida o status final.
 
 | Status | Quando |
 |--------|--------|
-| `PASS` | zero findings técnicos críticos. Design tem qualidade visual suficiente para avançar. |
-| `REVISE` | qualquer finding técnico crítico, OU design visualmente fraco/genérico que o agente julga insuficiente para publicar. |
+| `PASS` | zero findings técnicos críticos. Arquétipos e moves executados (ou desvios documentados). Tipografia conforme escala. ≥1 delight detail. Em reference-driven mode: paletteMatch + typographyMatch ≥ loose. |
+| `REVISE` | qualquer finding crítico, OU design sem delight detail, OU arquétipo/move silenciosamente divergente, OU regressão entre passos. |
 | `FAIL` | direção do design é fundamentalmente errada; reabrir no `gp2-html-designer` (ou art-director se a orientação era ruim). |
 
 ## Findings técnicos (HARD-GATE — sempre bloqueiam)
@@ -80,6 +95,22 @@ Cada item abaixo é um check acionável aplicado contra o `template.html`. Para 
 - Elemento com `linear-gradient` ou `radial-gradient` sem `data-darken` (e sem `data-glow`) — gradiente será perdido no conversor.
 - Cores brand hex em gradientes lineares — fundo brand = sólido + overlay neutro.
 
+### Findings novos — composição e anti-patterns
+
+Cada finding novo carrega `code`, `slide`, `issue`, `severity`, `fix`. Detectados parcialmente pelo `review-html-design.py` (regras determinísticas), parcialmente por inspeção do agente.
+
+- **`archetype-mismatch`** (blocker): slide cuja composição executada não corresponde ao arquétipo A* declarado no `visual-plan.md` **sem** justificativa em `notes.md`. Fix: documentar desvio com razão, ou voltar ao arquétipo.
+- **`low-diversity`** (blocker): 3+ slides consecutivos com mesmo arquétipo A*. Carrossel viola regra de diversidade do art-director. Fix: trocar arquétipo de 1+ slide.
+- **`move-missing`** (blocker): move M* declarado no plano mas ausente do HTML em todos os slides indicados. Fix: aplicar o move conforme `_shared/CAROUSEL_MOVES.md`.
+- **`typography-divergence`** (blocker quando família, warning quando peso/tamanho): tipografia executada não bate com a escala resolvida em `visual-plan.md` sem justificativa em `notes.md`. Fix: ajustar para escala ou documentar.
+- **`card-spam`** (warning ≥3 elementos; blocker ≥4): elementos com `border` + `border-radius` + `box-shadow` simultaneamente no mesmo slide. Fix: remover ornamentação redundante.
+- **`nested-cards`** (blocker): card com `border` contendo outro card com `border`. Fix: remover hierarquia desnecessária.
+- **`lazy-centering`** (warning): 100% dos textos do slide com `text-align: center` E todos posicionados na coluna central. Fix: introduzir alinhamento intencional.
+- **`cold-gray`** (warning): uso de `#CCCCCC`, `#999999`, `#666666` literais em fundo ou texto principal. Fix: usar neutro com tint do brief.
+- **`generic-gradient`** (warning): gradiente roxo→rosa, azul→roxo ou similar sem propósito declarado. Fix: usar `data-darken` neutro ou remover.
+- **`regression-in-final`** (warning): qualidade caiu entre v2-midfi e final (ex: hierarquia clara em v2 que ficou poluída no high-fi). Fix: simplificar moves/ornamentação.
+- **`no-delight-detail`** (warning): nenhum detalhe identificável (ver seção §"Delight detail"). Em modo qualidade-alta, escala para blocker.
+
 ## Checklist de data-variable (HARD-GATE quando ausente)
 
 Compare o HTML com o mapeamento de data-variable do visual-plan:
@@ -88,6 +119,34 @@ Compare o HTML com o mapeamento de data-variable do visual-plan:
 - Glows atmosféricos têm `data-glow` + `data-glow-variable` + `data-glow-alpha`?
 
 Se um elemento mapeado não tem o atributo — é finding crítico.
+
+## Reference fidelity (reference-driven mode only)
+
+Quando `visual-plan.md → ## Modo: reference-driven`, o reviewer compara o HTML executado contra o vocabulário visual extraído da referência (paleta, tipografia, elementos editoriais listados em "Elementos editoriais a replicar").
+
+| Check | Tight | Loose | Diverged |
+|-------|-------|-------|----------|
+| Paleta | hexs do HTML batem com os declarados (Δ < 5% em RGB) | hexs próximos mas distintos (Δ 5–15%) | hexs muito diferentes (Δ > 15%) |
+| Tipografia | famílias declaradas executadas | famílias da mesma categoria (ex: ambas serifas display) | categoria diferente (serif → sans) |
+| Elementos editoriais | todos os listados em "Elementos editoriais a replicar" presentes | maioria presente, 1 ausente | maioria ausente |
+
+`diverged` em paleta ou tipografia **sem** justificativa em `notes.md` → finding crítico (`reference-divergence`).
+
+## Delight detail
+
+Para o template alcançar `PASS`, deve haver **pelo menos 1 delight detail** identificável. Lista de detalhes que contam:
+
+- **Tracking notável** no eyebrow ou caption (`letter-spacing` ≥ +12% ou ≤ -3%).
+- **Contraste de peso** — pesos 400 e 800 lado a lado intencionalmente.
+- **Número editorial decorativo** — número grande (≥300px) usado como ornamento (move M2 ou similar).
+- **Color block intencional** — bloco sólido brand em posição calculada, não preenchimento default.
+- **Fio tipográfico fino** — divisor 1–3px sob título/eyebrow (move M8).
+- **Sobreposição calculada** — overlap entre elementos com intenção compositiva (não acidente).
+- **Ligadura ou ornamento tipográfico** — uso de fonte com features especiais (italic, swash, small-caps).
+- **Headline-overflow** — título extrapolando borda do slide com propósito (move M10).
+- **Bleed entre slides** — elemento contínuo entre slides consecutivos (move M3).
+
+Registre quais delight details estão presentes em `html-review.json → delightDetails`. Lista vazia → finding `no-delight-detail` (default warning; blocker em modo qualidade-alta).
 
 ## Critérios de julgamento visual
 
@@ -105,6 +164,7 @@ O reviewer avalia qualidade e publicabilidade — não fidelidade composicional 
 | **Coerência visual** | O carrossel parece uma peça única com identidade reconhecível | Slides parecem desconexos; mudanças de estilo sem intenção |
 | **Tom do segmento** | O design reflete o segmento e tom do brief | O design poderia ser de qualquer vertical sem nenhuma adaptação |
 | **Anti-patterns** | Livre de card spam, nested cards, tudo centralizado sem intenção | Card spam repetitivo, nested cards, composição genérica de IA |
+| **Delight detail** | ≥1 detalhe identificável: tracking notável, contraste forte de peso, número editorial decorativo, sobreposição calculada, color block intencional, fio tipográfico fino, ligadura/ornamento | Nenhum detalhe — template visualmente "default" de IA |
 
 ### Como ponderar divergências do visual-plan
 
@@ -122,7 +182,7 @@ Sobrescreva `html-review.json`:
 {
   "status": "PASS|REVISE|FAIL",
   "technicalFindings": [
-    { "slide": 1, "issue": "...", "severity": "blocker", "fix": "..." }
+    { "code": "card-spam", "slide": 1, "issue": "...", "severity": "blocker|warning", "fix": "..." }
   ],
   "dataVariableCheck": {
     "verdict": "complete|partial|missing",
@@ -130,12 +190,40 @@ Sobrescreva `html-review.json`:
       { "element": "...", "expected": "data-variable=\"primary\"", "found": "ausente" }
     ]
   },
+  "archetypeFidelity": {
+    "verdict": "tight|loose|diverged",
+    "perSlide": [
+      { "slide": 1, "declared": "A1-hero-split", "executed": "A1-hero-split", "match": "tight" },
+      { "slide": 2, "declared": "A3-editorial-eyebrow-stack", "executed": "A3-editorial-eyebrow-stack", "match": "tight" }
+    ],
+    "diversityCount": 4
+  },
+  "moveExecution": {
+    "verdict": "complete|partial|missing",
+    "declared": ["M2-numero-ostentatorio", "M4-cta-arrow-ritualistico"],
+    "observed": ["M2-numero-ostentatorio", "M4-cta-arrow-ritualistico"],
+    "missing": []
+  },
+  "typographyCheck": {
+    "verdict": "tight|loose|diverged",
+    "notes": "..."
+  },
+  "referenceFidelity": {
+    "applicable": true,
+    "paletteMatch": "tight|loose|diverged",
+    "typographyMatch": "tight|loose|diverged",
+    "editorialElementsPresent": ["eyebrow-numerado", "fio-horizontal"],
+    "editorialElementsMissing": []
+  },
+  "delightDetails": ["tracking-eyebrow-tight", "numero-decorativo-slide-3"],
   "visualJudgment": {
     "verdict": "strong|adequate|weak",
     "notes": "..."
   }
 }
 ```
+
+`referenceFidelity.applicable: false` quando `visual-plan.md` está em free mode.
 
 E `html-review.md` para humanos:
 
@@ -145,17 +233,44 @@ E `html-review.md` para humanos:
 **Status:** PASS|REVISE|FAIL
 
 ## Findings técnicos (bloqueantes)
-- Slide 2: título sai 30px do canvas direito → reduzir width do `<h1>` para 960px.
+- [card-spam] Slide 2: 4 elementos com border+border-radius+box-shadow → remover sombra dos 2 acessórios menores.
+
+## Findings de composição
+- [archetype-mismatch] Slide 4: declarado A8-overlap-image-text, executado A3-editorial-eyebrow-stack sem nota → documentar ou voltar ao plano.
 
 ## data-variable
 - Fundo slide 3 brand: sem data-variable → adicionar `data-variable="primary" data-variable-target="background"` na `<section>`.
-- Demais: OK.
+
+## Arquétipos
+- Diversidade: 4 tipos distintos em 6 slides ✓
+- Slide 1: A1-hero-split ✓
+- Slide 4: ✗ (ver finding acima)
+
+## Moves
+- M2-numero-ostentatorio: presente em slides 2, 3, 5 ✓
+- M4-cta-arrow-ritualistico: presente em slides 1–5 ✓
+
+## Tipografia
+- Display: Playfair Display 700 ✓ conforme plano
+- Body: Inter 400 ✓
+
+## Reference fidelity (se reference-driven)
+- Paleta: tight (todos os hexs Δ < 3% RGB)
+- Tipografia: tight
+- Elementos editoriais presentes: eyebrow-numerado, fio-horizontal
+- Faltantes: nenhum
+
+## Delight detail
+- tracking-eyebrow-tight (eyebrow letter-spacing +14%)
+- numero-decorativo-slide-3 (número 420px canto sup. direito)
+- color-block-intencional (slide 5, bloco primary deslocado intencionalmente)
 
 ## Julgamento visual
 - Hierarquia: forte — título > subtítulo > corpo instantâneo.
 - Diversidade: adequada — 4 composições distintas em 6 slides.
-- Coerência: boa — paleta consistente, movimento decorativo presente.
+- Coerência: boa — paleta consistente, moves M2+M4 presentes.
 - Tom: alinhado com o segmento do brief.
+- Regressão entre passos: nenhuma — high-fi acrescentou sem perder identidade do v2.
 - Veredito: publicável com correção do data-variable faltante.
 
 ## Próximo passo
@@ -173,8 +288,13 @@ Máximo **2 revisões**. Após o segundo `REVISE` ainda falhar, devolva `FAIL` e
 ```markdown
 Revisão HTML: PASS|REVISE|FAIL
 Artifact: <path>
-Findings técnicos: <N> críticos, <M> warnings
+Findings técnicos: <N> blockers, <M> warnings
 data-variable: <N> de <total> elementos mapeados com atributos corretos
+Arquétipos: <N> declarados / <N> executados (diversidade: <K> tipos distintos)
+Moves: <complete | partial | missing> — observados: <lista>; faltantes: <lista>
+Tipografia: <tight | loose | diverged>
+Reference fidelity: <tight | loose | diverged | n/a (free mode)>
+Delight details: <N> identificados
 Julgamento visual: strong|adequate|weak
 Evidência: <path>/html-review.md
 Próximo passo: gp2-template-marker | gp2-html-designer (revisão) | gp2-art-director | gp2-request-interpreter

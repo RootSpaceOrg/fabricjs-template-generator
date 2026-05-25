@@ -186,7 +186,7 @@ valor formatado; até 35 chars; ex: 'WhatsApp (11) 9 0000-0000',
 '@drabeatrizlima', 'agende.com.br/draana'
 ```
 
-### Label estática (chrome do template)
+### Label estática (rótulo fixo do template)
 
 Rótulo fixo que **não muda por post**. Geralmente NÃO recebe `data-template-element` — mas se receber por exceção (ex: campanha que troca o label), use:
 

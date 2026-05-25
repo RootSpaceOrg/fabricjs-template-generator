@@ -9,13 +9,38 @@ function loadPlaywright() {
   throw new Error('Playwright not found. Expected playwright or /tmp/pw-run/node_modules/playwright.');
 }
 
+function parseArgs(argv) {
+  const args = { artifact: null, variant: null };
+  const positional = [];
+  for (let i = 0; i < argv.length; i++) {
+    const a = argv[i];
+    if (a === '--variant' || a === '-v') {
+      args.variant = argv[++i];
+    } else if (a.startsWith('--variant=')) {
+      args.variant = a.slice('--variant='.length);
+    } else {
+      positional.push(a);
+    }
+  }
+  args.artifact = positional[0];
+  return args;
+}
+
 async function main() {
-  const artifact = process.argv[2];
-  if (!artifact) throw new Error('Usage: render-html-screenshots.js <artifact-folder>');
-  const html = path.join(artifact, 'template.html');
-  if (!fs.existsSync(html)) throw new Error(`template.html not found: ${html}`);
-  const out = path.join(artifact, 'screenshots');
+  const { artifact, variant } = parseArgs(process.argv.slice(2));
+  if (!artifact) {
+    throw new Error('Usage: render-html-screenshots.js <artifact-folder> [--variant v1-lowfi|v2-midfi|final]');
+  }
+
+  // Variant maps to specific file + screenshots dir; no variant = default (template.html + screenshots/).
+  const htmlName = variant && variant !== 'final' ? `template-${variant}.html` : 'template.html';
+  const outName = variant && variant !== 'final' ? `screenshots-${variant}` : 'screenshots';
+
+  const html = path.join(artifact, htmlName);
+  if (!fs.existsSync(html)) throw new Error(`${htmlName} not found: ${html}`);
+  const out = path.join(artifact, outName);
   fs.mkdirSync(out, { recursive: true });
+
   const { chromium } = loadPlaywright();
   const browser = await chromium.launch({ headless: true });
   const page = await browser.newPage({ viewport: { width: 1080, height: 1350 }, deviceScaleFactor: 1 });
@@ -31,7 +56,14 @@ async function main() {
     files.push(file);
   }
   await browser.close();
-  const result = { artifact: path.resolve(artifact), slideCount: count, outDir: out, files };
+  const result = {
+    artifact: path.resolve(artifact),
+    variant: variant || 'final',
+    htmlSource: html,
+    slideCount: count,
+    outDir: out,
+    files
+  };
   fs.writeFileSync(path.join(out, 'render-result.json'), JSON.stringify(result, null, 2));
   console.log(JSON.stringify(result, null, 2));
 }

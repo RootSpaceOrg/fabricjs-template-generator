@@ -83,42 +83,52 @@ Lista fechada de **estruturas** que mapeiam para os objetivos. Cada framework de
 
 Ver instruções detalhadas de cada framework (incluindo slide-by-slide content guidance e hooks recomendados) em [`references/objectives-and-frameworks.md`](references/objectives-and-frameworks.md).
 
-## Composição visual — intenção por slide
+## Arquétipos sugeridos por framework
 
-Em vez de definir um `image_mode` genérico, o suggester descreve a **intenção composicional por slide**: qual é o papel narrativo de cada slide e se ele tem imagem ou não. Isso dá ao art-director contexto suficiente para decidir como executar — paleta, movimento, layout exato — sem travar a criatividade.
+O suggester recomenda arquétipos A* (catálogo [`_shared/COMPOSITIONS.md`](../_shared/COMPOSITIONS.md)) por framework. **Recomendação, não jaula** — art-director escolhe livremente, mas usa isso como ponto de partida. As regras de diversidade composicional do art-director (≥2 arquétipos em ≥3 slides; ≥3 em ≥5) sempre prevalecem.
 
-**Regra geral de distribuição de imagens no batch:**
+| Framework | Arquétipos recomendados |
+|-----------|-------------------------|
+| `listicle` | capa A1/A10/A12 → miolo alternando A5 + A3 → CTA A6 |
+| `myth-vs-truth` | capa A10 → A9 (comparação) → A6 |
+| `step-by-step` | capa A1/A12 → miolo A3/A8 sequencial → A7 (resultado) → A6 |
+| `problem-agitate-solve` | capa A2 (dramática) → A3 (problema) → A7 (dado) → A6 |
+| `contrarian-take` | capa A10 → A3 + A4 (citação ancora) → A6 |
+| `framework-reveal` | capa A1 → A11 (bento revelando) → A3 → A6 |
+| `mistakes-to-avoid` | capa A10 → A5 (lista de erros) → A3 → A6 |
+| `case-study-narrative` | capa A2 → A8 + A12 (foto narrativa) → A7 (resultado) → A6 |
+| `before-after-transformation` | A1 → A9 (antes/depois) → A6 |
+| `cheat-sheet` | A1 → A11 (bento) → A6 |
+| `data-driven-insight` | A2 → A7 (data spotlight) → A3 → A6 |
+| `vulnerable-story` | A12 → A3 → A4 (citação clímax) → A6 |
+| `behind-the-scenes` | A2 → A8 → A8 → A6 |
+| `mini-faq` | A1 → A3 (Q+A por slide) → A6 |
+
+## Moves sugeridos por objetivo
+
+Moves M* do catálogo [`_shared/CAROUSEL_MOVES.md`](../_shared/CAROUSEL_MOVES.md). Suggester sugere 1–2 moves por objetivo; art-director decide a forma final.
+
+| Objetivo | Moves recomendados |
+|----------|--------------------|
+| `aquisicao` | M1 (hook visual) + M4 (cta arrow) — gancho forte + orientação |
+| `posicionamento` | M5 (quote pull) + M8 (fio tipográfico) — editorial premium |
+| `engajamento` | M2 (número ostentatório) + M4 — ritmo + orientação |
+| `retencao` | M3 (bleed) ou M7 (color block shift) — dinâmica visual |
+| `educacao` | M9 (edge numbering) + M4 — orientação discreta em conteúdo denso |
+| `prova_social` | M5 (quote pull) + M8 — citação ancora a prova |
+
+**Regra de variedade entre templates:** em batches grandes, evite repetir o mesmo par de moves em ≥2 templates consecutivos do mesmo objetivo. Consulte o histórico antes de finalizar a sugestão.
+
+## Imagens no template
+
+Multi-nicho usa **apenas** `userAsset` — nunca `professionalPhoto`. O cliente final substitui pelas imagens dele no editor.
+
+**Distribuição esperada no batch:**
 - Evite mais de 1 template sem nenhuma imagem em batch de 3.
-- Ao menos 1 template por batch deve ter imagem em maioria dos slides (full-bleed, split, image-heavy).
-- Imagens são sempre `userAsset` — nunca `professionalPhoto` em multi-nicho.
+- Ao menos 1 template por batch deve ter imagem em maioria dos slides.
+- Slides sem imagem: composição tipográfica + elementos geométricos decorativos (barras, divisores, padrões).
 
-**Como descrever a intenção por slide:**
-- Use linguagem direta de layout: "full-bleed com foto", "split texto|imagem", "coluna central só texto", "comparação lado a lado", "CTA fundo brand".
-- Não precisa ser exato — o art-director adapta. A intenção é evitar que todos os slides saiam puramente tipográficos.
-- Slides de capa e CTA podem ser sem imagem; slides de miolo devem ter ao menos 1-2 com imagem quando o framework permitir.
-
-**Por framework — intenção típica:**
-
-| Framework | Slides com imagem | Intenção típica |
-|-----------|-------------------|-----------------|
-| `listicle` | 2-3 do miolo | Split texto\|imagem nos itens principais |
-| `myth-vs-truth` | 1-2 | Imagem na capa ou em slide de comparação |
-| `step-by-step` | 2-3 | Imagem de processo/ambiente em cada passo |
-| `problem-agitate-solve` | 1-2 | Imagem na capa (tensão) ou na solução |
-| `contrarian-take` | 1-2 | Imagem na capa; miolo tipográfico com 1 acento |
-| `framework-reveal` | 1-2 | Imagem na capa ou no slide de revelação |
-| `mistakes-to-avoid` | 2-3 | Imagem em cada erro ou na capa |
-| `case-study-narrative` | 3-4 | Imagem protagonista na maioria dos slides |
-| `before-after-transformation` | 3-4 | Imagem em cada "antes" e "depois" |
-| `cheat-sheet` | 1 | Capa com imagem; miolo tabular/tipográfico |
-| `data-driven-insight` | 1-2 | Imagem na capa ou em slide de dado visual |
-| `vulnerable-story` | 2-3 | Imagem emocional na capa e no clímax |
-| `behind-the-scenes` | 3-4 | Imagem em quase todos (processo, ambiente) |
-| `mini-faq` | 1 | Capa com imagem; perguntas tipográficas |
-
-### Histórico
-
-A skill registra a intenção composicional no histórico junto com framework e tema — para rotacionar padrões de layout entre templates do mesmo objetivo.
+Detalhes finos de posição/tratamento ficam com o art-director via arquétipos.
 
 ## Hook do Slide 1 — onde mora a vida do template
 
@@ -147,6 +157,7 @@ O Slide 1 é o gate algorítmico do Instagram: se ele não para o scroll, o rest
 
 5. **Registrar no histórico** (`scripts/suggestion-history.py append <objetivo>`):
    - Salve cada sugestão **antes** ou **junto** com o dispatch, não depois — assim mesmo se a pipeline falhar, o histórico evita repetir o mesmo tema na próxima rodada.
+   - Inclua os arquétipos e moves sugeridos via `--archetypes "A1,A5,..."` e `--moves "M9,M4"` — esses campos alimentam a regra de variedade composicional.
 
 6. **Aguardar resultados e consolidar relatório**:
    - Cada sub-agent retorna o template ID + status dos gates do `gp2-pipeline`.
@@ -175,14 +186,13 @@ Crie um CARROSSEL GENÉRICO MULTI-NICHO.
 
 Objetivo de marketing: <OBJETIVO>
 Framework narrativo: <FRAMEWORK>
-Image mode: <IMAGE_MODE>            # text-only | text-with-accents | image-heavy
 Tema: <TEMA EM 1 FRASE CLARA>
 
 Diretrizes multi-nicho (obrigatórias):
 - A copy de TODOS os slides deve ser neutra a vertical. Qualquer profissional/marca de qualquer nicho deve adaptar este template trocando apenas os campos editáveis (data-template-element).
 - Não use jargão de nicho nenhum. Evite "paciente", "cliente", "aluno", "tutor", "consultório", "loja", "academia". Prefira "pessoas", "você", "seu público".
 - NÃO inclua professionalPhoto (data-image-type="professionalPhoto"). Templates multi-nicho não amarram a avatar específico de pessoa.
-- IMAGENS userAsset SÃO PERMITIDAS E ENCORAJADAS conforme a intenção composicional definida acima. "Sem professionalPhoto" ≠ "sem imagens nenhuma". userAsset é genérico — cliente final substitui pela imagem dele.
+- IMAGENS userAsset SÃO PERMITIDAS E ENCORAJADAS. "Sem professionalPhoto" ≠ "sem imagens nenhuma". userAsset é genérico — cliente final substitui pela imagem dele.
 - Sem ícones, símbolos ou metáforas visuais de setor (sem cruz médica, sem patinha, sem haltere, sem batom, etc.). Ícones abstratos (números, setas, check/X, gráficos, padrões) são livres.
 - CTA do último slide deve ser genérico: "Salve este post", "Compartilhe", "Comente <palavra>", "Siga para mais", "Marque alguém que precisa ler". Nunca CTA de serviço.
 
@@ -192,25 +202,27 @@ Estrutura sugerida:
 - Sequência narrativa: <SEQUÊNCIA derivada do framework — ex: Listicle, Tutorial, Comparação, Problema-Solução, Standard>.
 - Hook do Slide 1: <FÓRMULA + 1 LINHA DE COPY EXEMPLO>. Esta é só uma sugestão de copy do hook — o designer pode refinar mantendo a fórmula.
 - Brand colors: primary + secondary (multi-nicho aproveita as duas cores swappable do usuário).
-- Carousel chrome: auto.
 - Tom: <TOM coerente com o objetivo — neutro, inspirador, educativo, contrarian, etc.>.
 
-Intenção composicional por slide:
-<Para cada slide, descreva em 1 linha: papel narrativo + tipo de layout + presença de imagem.
-O art-director decide como executar — aqui você define a intenção, não o layout exato.
-Use linguagem direta: "capa", "full-bleed com foto", "split texto|imagem", "coluna central só texto", "comparação lado a lado", "CTA fundo brand", etc.>
+Arquétipos sugeridos (recomendação ao art-director — não jaula. Catálogo `_shared/COMPOSITIONS.md`):
+- Slide 1: <A?>
+- Slide 2: <A?>
+- ...
+- Slide N (CTA): A6-cta-button-anchored
 
-- Slide 1: <ex: capa impactante — imagem full-bleed com overlay escuro, título grande no rodapé>
-- Slide 2: <ex: problema — split texto esquerda | imagem retangular direita>
-- Slide 3: <ex: aprofundamento — coluna central, só tipografia, dado ou afirmação em destaque>
-- Slide N: <ex: CTA — fundo brand sólido, texto centralizado, sem imagem>
+Carousel moves sugeridos (recomendação ao art-director — catálogo `_shared/CAROUSEL_MOVES.md`):
+- <M?-slug>: <em quais slides>
+- <M?-slug>: <em quais slides>
+
+Notas adicionais por slide (preencha só quando precisar refinar além do arquétipo declarado):
+- Slide N: <ex: foto contextual de ambiente, sem pessoa específica>
 
 Diretrizes de imagem (para o art-director e html-designer):
 - Imagens são userAsset — o cliente final substitui pela imagem dele no editor. Nunca professionalPhoto em multi-nicho.
 - Nos slides que têm imagem: use foto stock neutra de cenário/objeto/textura como placeholder (nunca pessoa específica, nunca ícone de setor).
 - Nos slides sem imagem: composição tipográfica + elementos geométricos decorativos (barras, divisores, padrões).
 
-Use o art-director para decidir família estética, paleta hex, movimento decorativo e data-variable.
+Use o art-director para decidir família estética, paleta hex, escala tipográfica, e detalhe de execução dos arquétipos e moves sugeridos acima.
 
 Ambiente: <AMBIENTE>          # "prod" ou "dev" — passe ao uploader como --env <AMBIENTE>
 
@@ -243,10 +255,12 @@ Cada arquivo é uma lista rotativa das últimas 20 sugestões daquele objetivo:
 [
   {
     "ts": "2026-05-24T14:32:11Z",
+    "objective": "educacao",
     "framework": "listicle",
     "theme": "5 erros ao começar um projeto novo",
     "hook_formula": "numerical-mistake-list",
-    "composicao": "capa full-bleed, miolo split texto|imagem, CTA tipográfico",
+    "archetypes": ["A1", "A5", "A5", "A3", "A6"],
+    "moves": ["M9", "M4"],
     "template_id": "abc123",
     "status": "dispatched"
   }
@@ -256,17 +270,24 @@ Cada arquivo é uma lista rotativa das últimas 20 sugestões daquele objetivo:
 Comandos:
 
 ```bash
-# Listar últimas N do objetivo
+# Listar últimas N do objetivo (também retorna contagens agregadas de archetypes/moves)
 python skills/gp2-template-suggester/scripts/suggestion-history.py list <objetivo>
 
 # Acrescentar (mantém só as últimas 20)
 python skills/gp2-template-suggester/scripts/suggestion-history.py append <objetivo> \
-  --framework <fw> --theme "<tema>" --hook <formula> --image-mode <modo> [--template-id <id>]
+  --framework <fw> --theme "<tema>" --hook <formula> \
+  --archetypes "A1,A5,A5,A3,A6" --moves "M9,M4" \
+  [--template-id <id>]
 ```
 
 Quando consultar para evitar repetição, considere semanticamente próximo (não exato):
 - "5 erros ao começar algo novo" ≈ "7 erros que iniciantes cometem" → repetição.
 - "5 erros ao começar algo novo" ≠ "5 sinais de que você precisa mudar de rumo" → ok, frameworks parecidos mas ângulos distintos.
+
+**Regra de variedade composicional (consulte contagens agregadas do `list`):**
+- Evite repetir o mesmo arquétipo dominante (>50% dos slides) em ≥2 templates consecutivos do mesmo objetivo.
+- Evite o mesmo par de moves em ≥2 templates seguidos do objetivo.
+- Em conflito com o histórico, troque arquétipo de capa OU move secundário (mantém o framework e o tema).
 
 ## Política de iteração
 

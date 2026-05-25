@@ -22,6 +22,15 @@ TEXT_TAGS = {'p', 'span', 'h1', 'h2', 'h3', 'h4', 'button', 'a'}
 CANVAS_TAGS = {'div', 'p', 'span', 'h1', 'h2', 'h3', 'h4', 'img', 'button', 'a', 'svg'}
 IMPORTANT_ROLES = {'title', 'body', 'cta_or_label'}
 
+# Cold neutral grays — no saturation, perceived as cold/default-AI when used as background or main text.
+COLD_GRAYS = {'#ccc', '#cccccc', '#999', '#999999', '#666', '#666666', '#aaa', '#aaaaaa', '#888', '#888888'}
+
+# Generic gradient color pairs — purple/pink, blue/purple, etc. — used by default-AI without purpose.
+GENERIC_GRADIENT_HEX_PAIRS = [
+    ({'#8a2be2', '#9370db', '#a020f0', '#9932cc'}, {'#ff69b4', '#ff1493', '#ff6ec7', '#ffb6c1'}),  # purple→pink
+    ({'#1e90ff', '#4169e1', '#4682b4', '#5f9ea0'}, {'#8a2be2', '#9370db', '#a020f0'}),              # blue→purple
+]
+
 
 def parse_style(style: str) -> dict[str, str]:
     return {m.group(1).strip().lower(): m.group(2).strip() for m in STYLE_RE.finditer(style or '')}
@@ -190,6 +199,38 @@ def is_full_bleed_background_image(el: dict[str, Any], slide_w: float, slide_h: 
     return covers_most and (starts_near_origin or 'cover' in cls or 'background' in cls)
 
 
+def normalize_hex(value: str) -> str | None:
+    """Extract a normalized #rrggbb from a CSS value if present."""
+    if not value:
+        return None
+    m = re.search(r'#([0-9a-fA-F]{3,8})\b', value)
+    if not m:
+        return None
+    h = m.group(1).lower()
+    if len(h) == 3:
+        h = ''.join(c * 2 for c in h)
+    if len(h) >= 6:
+        return f'#{h[:6]}'
+    return None
+
+
+def has_box_decoration(el: dict[str, Any]) -> tuple[bool, bool, bool]:
+    """Return (has_border, has_radius, has_shadow) for an element."""
+    st = el['style']
+    border = st.get('border') or st.get('border-width') or ''
+    has_border = bool(border) and 'none' not in border.lower() and '0' != border.strip()
+    radius = st.get('border-radius') or ''
+    has_radius = bool(radius) and radius.strip() not in {'0', '0px', '0%'}
+    shadow = st.get('box-shadow') or ''
+    has_shadow = bool(shadow) and 'none' not in shadow.lower()
+    return has_border, has_radius, has_shadow
+
+
+def is_card(el: dict[str, Any]) -> bool:
+    hb, hr, hs = has_box_decoration(el)
+    return hb and hr and hs
+
+
 def classify(el: dict[str, Any]) -> str:
     text = norm(el.get('text', ''))
     cls = (el.get('class') or '').lower()
@@ -201,7 +242,7 @@ def classify(el: dict[str, Any]) -> str:
         return 'image'
     if any(k in cls for k in ['cta', 'button']):
         return 'cta_or_label'
-    if any(k in cls for k in ['decor', 'shape', 'chrome', 'background', 'divider']):
+    if any(k in cls for k in ['decor', 'shape', 'background', 'divider']):
         return 'decor'
     if not text:
         return 'decor' if tag in {'div', 'svg'} else 'nontext'
@@ -285,6 +326,80 @@ def audit(artifact: Path) -> dict[str, Any]:
                     issues.append(Issue('warning', el['slide'], eid, 'Professional photo uses circular/avatar crop; prefer rectangular/editorial unless explicitly requested.'))
         if 'fake-person' in (el.get('class') or '').lower() or 'fake-clinic' in (el.get('class') or '').lower():
             issues.append(Issue('critical', el['slide'], eid, 'Fake image/person built with HTML/CSS detected; use one <img> instead.'))
+
+    # ─── New deterministic findings: composition anti-patterns ────────────────────
+    # These translate the design SKILL's anti-patterns list into actionable findings.
+
+    for slide, els in by_slide.items():
+        # card-spam: ≥3 elements in the slide with border + border-radius + box-shadow simultaneously.
+        cards = [e for e in els if is_card(e)]
+        if len(cards) >= 4:
+            issues.append(Issue('critical', slide, 'card-spam', f'{len(cards)} elements stack border + border-radius + box-shadow. Likely card-spam — remove redundant ornamentation.'))
+        elif len(cards) == 3:
+            issues.append(Issue('warning', slide, 'card-spam', f'3 elements stack border + border-radius + box-shadow. Review whether all are necessary.'))
+
+        # lazy-centering: 100% of texts in the slide use text-align: center AND sit on the central column.
+        slide_w, _ = parser.slide_dims.get(slide, (1080, 1350))
+        text_els = [e for e in els if e['_role'] in {'title', 'body', 'cta_or_label'} and norm(e.get('text', ''))]
+        if text_els:
+            all_centered = all((e['style'].get('text-align', '').strip().lower() == 'center') for e in text_els)
+            all_central_column = True
+            for e in text_els:
+                b = bbox(e)
+                if not b:
+                    all_central_column = False
+                    break
+                ec_x = (b[0] + b[2]) / 2
+                if abs(ec_x - slide_w / 2) > slide_w * 0.08:  # >8% off-center
+                    all_central_column = False
+                    break
+            if all_centered and all_central_column and len(text_els) >= 3:
+                issues.append(Issue('warning', slide, 'lazy-centering', f'All {len(text_els)} text elements centered AND on central column. Introduce intentional alignment to avoid generic-AI feel.'))
+
+        # cold-gray: literal #CCC / #999 / #666 used as background OR text color on important roles.
+        for e in els:
+            st = e['style']
+            for prop in ('background', 'background-color', 'color'):
+                hex_val = normalize_hex(st.get(prop, ''))
+                if hex_val and hex_val in COLD_GRAYS:
+                    eid = e.get('reviewId') or e.get('id') or f'{e["tag"]}#{e.get("_idx", 0)}'
+                    if prop.startswith('background'):
+                        issues.append(Issue('warning', slide, eid, f'cold-gray: {prop}={hex_val} is a desaturated default. Use a neutral with brief tint.'))
+                    elif e['_role'] in IMPORTANT_ROLES:
+                        issues.append(Issue('warning', slide, eid, f'cold-gray: {prop}={hex_val} on important text. Use a neutral with brief tint.'))
+
+        # generic-gradient: linear-gradient with classic purple/pink or blue/purple stops.
+        for e in els:
+            bg = e['style'].get('background', '') + ' ' + e['style'].get('background-image', '')
+            if 'linear-gradient' not in bg.lower():
+                continue
+            hexes = {h for h in re.findall(r'#[0-9a-fA-F]{3,6}', bg)}
+            hexes = {normalize_hex(h) for h in hexes if normalize_hex(h)}
+            for left_set, right_set in GENERIC_GRADIENT_HEX_PAIRS:
+                if hexes & left_set and hexes & right_set:
+                    eid = e.get('reviewId') or e.get('id') or f'{e["tag"]}#{e.get("_idx", 0)}'
+                    issues.append(Issue('warning', slide, eid, f'generic-gradient: linear-gradient uses default purple/pink or blue/purple stops without declared purpose. Use data-darken neutral or a brief-colored sequence.'))
+                    break
+
+    # nested-cards: card containing another card (DOM traversal — approximated by bbox containment + both is_card).
+    for slide, els in by_slide.items():
+        cards = [e for e in els if is_card(e)]
+        for outer in cards:
+            ob = bbox(outer)
+            if not ob:
+                continue
+            for inner in cards:
+                if inner is outer:
+                    continue
+                ib = bbox(inner)
+                if not ib:
+                    continue
+                # inner fully inside outer
+                if ib[0] >= ob[0] and ib[1] >= ob[1] and ib[2] <= ob[2] and ib[3] <= ob[3] and area(ib) < area(ob):
+                    oid = outer.get('reviewId') or outer.get('id') or f'{outer["tag"]}#{outer.get("_idx", 0)}'
+                    iid = inner.get('reviewId') or inner.get('id') or f'{inner["tag"]}#{inner.get("_idx", 0)}'
+                    issues.append(Issue('critical', slide, f'{oid} ⊃ {iid}', 'nested-cards: card with border contains another card with border. Remove inner ornamentation.'))
+                    break
 
     # likely unintended overlaps between important objects
     for slide, els in by_slide.items():

@@ -1,6 +1,6 @@
 ---
 name: gp2-request-interpreter
-description: "First step of GetPosts Pipeline v2. Two modes: (a) Free mode — pedido só em texto, captura 7 fatos e deixa direção estética livre para o art-director decidir; (b) Reference-driven mode — usuário anexou imagem ou citou referência, captura os mesmos 7 fatos de conteúdo (pode ver a imagem para informar decisões de conteúdo como nº slides, sequência, foto profissional, chrome) mas NÃO extrai direção visual (paleta, tipografia, família, movimento) — isso é responsabilidade do gp2-art-director. Nunca converte/marca/upload."
+description: "First step of GetPosts Pipeline v2. Two modes: (a) Free mode — pedido só em texto, captura os fatos de conteúdo e deixa direção estética livre para o art-director decidir; (b) Reference-driven mode — usuário anexou imagem ou citou referência, captura os mesmos fatos de conteúdo (pode ver a imagem para informar decisões como nº slides, sequência narrativa, foto profissional) mas NÃO extrai direção visual (paleta, tipografia, família, movimento, orientação de navegação) — isso é responsabilidade do gp2-art-director. Nunca converte/marca/upload."
 ---
 
 # gp2-request-interpreter
@@ -20,7 +20,6 @@ A v2 separa **interpretação de conteúdo** (este skill) de **direção visual*
 | **Sequência narrativa** (Standard / Listicle / Tutorial / Comparação / Single-post) | Determina arco do carrossel e alternância de background — ver "Sequências narrativas" abaixo |
 | Per-slide narrative role (1–2 lines) | Story arc — derivado da sequência mas pode customizar |
 | **Hook do Slide 1** (fórmula + 1 linha de copy) | Slide 1 mata ou salva o carrossel — ver "Hook do Slide 1" abaixo |
-| **Carousel chrome** (yes / no / auto) | Progress bar + seta de swipe são UI consistente em formatos longos; opt-in respeita variedade |
 | Brand color count: primary only OR primary + secondary | Two swappable accents or one |
 | Professional photo: yes / no / conditional | Trust-vs-noise decision |
 | Copy/tone direction | Voice the user expects |
@@ -31,6 +30,7 @@ A v2 separa **interpretação de conteúdo** (este skill) de **direção visual*
 - Paleta hex específica — art-director resolve.
 - Tipografia específica — art-director decide.
 - Movimento memorável — art-director escolhe/identifica.
+- **Orientação de navegação** (progress bar, numeração, seta de swipe) — art-director resolve via escolha de carousel moves M4/M6/M9 (`_shared/CAROUSEL_MOVES.md`). Se o user pedir explicitamente algo do tipo ("progress bar", "indicador", "minimalista sem chrome"), registre o sinal em `## Tom / copy` ou `## Incertezas` — o art-director lê e respeita.
 - Anti-AI rules ("avoid card spam", "avoid generic typography") — pertencem ao reviewer e ao `DESIGN_PRINCIPLES.md`.
 - Tamanhos exatos de fonte por slide — designer ajusta no Passo 3.
 - Posições absolutas de cada elemento — designer escolhe no Passo 1.
@@ -48,7 +48,7 @@ A skill detecta automaticamente em qual modo está com base na presença (ou nã
 | Modo | Quando | Comportamento |
 |------|--------|---------------|
 | **Free mode** | pedido só em texto, sem referência visual | captura **só** os 7 fatos; direção estética fica com o art-director |
-| **Reference-driven mode** | usuário anexou ≥ 1 imagem **ou** disse "nesse estilo", "igual à referência", "faz parecido com X" | captura os 7 fatos de conteúdo. Pode VER a imagem para decisões de conteúdo (nº slides, sequência, foto profissional, chrome). **NÃO extrai paleta, tipografia, família ou movimento** — a análise visual completa é feita pelo `gp2-art-director`. |
+| **Reference-driven mode** | usuário anexou ≥ 1 imagem **ou** disse "nesse estilo", "igual à referência", "faz parecido com X" | captura os fatos de conteúdo. Pode VER a imagem para decisões de conteúdo (nº slides, sequência, foto profissional). **NÃO extrai paleta, tipografia, família, movimento nem orientação de navegação** — toda a direção visual é responsabilidade do `gp2-art-director`. |
 
 ## Workflow
 
@@ -57,7 +57,7 @@ A skill detecta automaticamente em qual modo está com base na presença (ou nã
    1. Decida os 7 fatos.
    2. Emita `brief.md`.
 3. **Se Reference-driven mode**:
-   1. Olhe a(s) imagem(ns) **apenas para informar decisões de conteúdo**: quantos slides a referência sugere, qual sequência narrativa se encaixa, se usa foto profissional, se tem carousel chrome.
+   1. Olhe a(s) imagem(ns) **apenas para informar decisões de conteúdo**: quantos slides a referência sugere, qual sequência narrativa se encaixa, se usa foto profissional.
    2. Decida os 7 fatos.
    3. Emita `brief.md` (com modo = reference-driven). **Não emita `reference-spec.md`** — a análise visual da referência será feita pelo art-director.
 4. Marque incertezas só quando travariam o art-director ou designer.
@@ -127,50 +127,20 @@ O Slide 1 tem 1 segundo para parar o scroll. Entregue o hook **já escrito** no 
 - Em **Single-post**, o hook é o ponto central da arte (ex: o título principal do post de Dia das Mães).
 - Em **Tutorial** e **Listicle**, o hook do Slide 1 pode usar a estrutura "Número + benefício" ou "Pergunta que dói" alinhada ao número de itens.
 
-## Carousel chrome (opcional)
+## Sinais de navegação (não decida — apenas registre se o user pedir)
 
-Progress bar (3px no rodapé) + seta de swipe à direita ajudam em carrosséis longos onde o leitor pode se perder. **Não é default.** Aplicar em todo template torna a UI repetitiva e compete visualmente com o conteúdo. A escolha é feita por **avaliação qualitativa**, não tabela mecânica por sequência.
+A decisão sobre indicadores de navegação (progress bar, numeração discreta, seta de swipe) **é responsabilidade do art-director**, via escolha de carousel moves M4/M6/M9 do catálogo `_shared/CAROUSEL_MOVES.md`. O interpreter **não** decide nem coloca campo dedicado no brief.
 
-Valores possíveis para `## Carousel chrome` no brief:
+**Quando o user dá sinal explícito**, registre-o em `## Tom / copy` ou `## Incertezas` do brief para o art-director respeitar:
 
-| Valor | Significado |
-|-------|-------------|
-| `yes` | Designer adiciona progress bar + seta em todos os slides exceto o último |
-| `no` | Designer **não** adiciona chrome |
-| `auto` | Interpreter decide caso a caso (ver critério abaixo) |
+| Sinal no pedido | Como registrar no brief |
+|-----------------|------------------------|
+| "progress bar", "barra de progresso", "indicador de slides", "contador", "navegação", "seta de swipe" | Anote em `## Tom / copy`: "user pediu indicador de navegação explícito" |
+| "limpo", "minimalista", "sem distração", "premium", "clean", "sem elementos extras" | Anote em `## Tom / copy`: "user pediu visual minimalista, evitar ornamentação extra" |
+| Reference-driven mode + referência mostra progress bar/setas/contador | Anote em `## Referência visual`: "referência tem indicador de navegação" |
+| Reference-driven mode + referência sem chrome de navegação | Anote em `## Referência visual`: "referência sem indicador de navegação" |
 
-### Como decidir em modo `auto`
-
-**Sinais explícitos do user vencem sempre:**
-
-| Sinal no pedido | Decisão |
-|-----------------|---------|
-| User pediu "progress bar", "barra de progresso", "indicador de slides", "contador", "navegação", "seta de swipe" | `yes` |
-| User pediu "limpo", "minimalista", "sem distração", "premium", "clean", "sem elementos extras" | `no` |
-| Reference-driven mode + a referência mostra progress bar/setas/contador "1/N" | `yes` (force, anote no brief) |
-| Reference-driven mode + referência sem chrome de navegação visível | `no` (force, anote no brief) |
-
-**Sem sinal explícito**, decida pesando 3 critérios. Aplique chrome **somente se 2 dos 3 forem verdadeiros**:
-
-1. **Volume**: `≥ 6 slides`. Carrosséis curtos (≤ 5) o leitor mantém orientação naturalmente — Instagram já mostra os pontos no topo.
-2. **Tom didático sequencial**: o conteúdo é uma progressão real (passo 1 → passo 2 → ... → passo N de um tutorial; "5 sinais que..." enumerado; "antes do exame, durante, depois"). Não é didático sequencial: educação solta sem ordem rígida, post de citação, lista de benefícios sem numeração, mensagem de marca, data comemorativa.
-3. **Ausência de outros indicadores visuais de progresso**: se o template já tem número grande de slide (`01/07`, `Passo 3 de 5`, eyebrow numerado), chrome adicional é redundância. Aplique chrome só se o conteúdo não auto-numerar.
-
-**Exemplos práticos:**
-
-| Pedido | Slides | Análise | Decisão |
-|--------|--------|---------|---------|
-| "Carrossel sobre nutrição infantil" | 5 | Volume: ✗ (5). Didático: ✓. Sem auto-numeração: ✓ → 2/3, mas falha volume. | `no` |
-| "Tutorial de skincare em 7 passos" | 7 | Volume: ✓ (7). Didático: ✓ (passos). Sem auto-numeração: a depender do design. | `yes` |
-| "5 sinais de que você precisa de fisio" | 5 | Volume: ✗. Didático: ✓ (enumerado). Sem auto-numeração: ✗ (vai ter "01"..."05"). | `no` |
-| "Comparação plano A vs plano B" | 5 | Volume: ✗. Didático: ✗ (paralelo, não sequencial). | `no` |
-| "Carrossel educativo longo sobre menopausa, 8 slides" | 8 | Volume: ✓. Didático: ✓. Sem auto-numeração: ✓ provável. | `yes` |
-| "Post de feliz dia das mães" | 1 | Single-post. | `no` |
-| "Carrossel premium minimalista sobre estética facial" | 6 | Volume: ✓. Mas user pediu "premium minimalista" = sinal explícito. | `no` |
-
-**Regra de proporção esperada**: em pedidos genéricos (sem sinal forte), espere ~30% dos templates terminarem com `yes`. Se você está marcando `yes` em mais que isso, está caindo no viés antigo.
-
-**Em qualquer dúvida, prefira `no`.** Falta de chrome nunca quebra um carrossel; chrome em carrossel curto/inadequado polui sempre.
+Sem sinal do user, omita. O art-director vai decidir baseado em volume de slides + tom didático + arquétipos escolhidos (regras em `gp2-art-director/SKILL.md`).
 
 ## Output
 
@@ -199,10 +169,6 @@ Write `artifacts/gp2-request-interpreter/<slug>/brief.md`:
 ## Hook
 - Fórmula: <Afirmação polêmica | Número + benefício | Pergunta que dói | Resultado concreto | Inversão>
 - Copy: "<o hook escrito de fato em 1 linha>"
-
-## Carousel chrome
-<yes | no | auto>
-<se auto, em qual valor a sequência resolve>
 
 ## Arco narrativo
 - Slide 1 (capa): <papel narrativo + background sugerido (LIGHT/DARK/Brand)>
@@ -298,7 +264,6 @@ Referência visual: <"imagem(ns) anexada(s) — análise visual no próximo pass
 Sequência: <Standard | Listicle | Tutorial | Comparação | Single-post>
 Slides: <N>
 Hook: "<copy do hook em 1 linha>" (<fórmula>)
-Carousel chrome: <yes | no> (resolvido)
 Cores de marca: <primária | primária+secundária>
 Foto profissional: <usar | não usar | condicional>
 Próximo passo: gp2-art-director

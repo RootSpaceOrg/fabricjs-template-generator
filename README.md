@@ -66,7 +66,7 @@ getposts-pipeline-v2/
     ├── gp2-request-interpreter/
     ├── gp2-art-director/
     ├── gp2-html-designer/
-    │   └── references/             ← aesthetic-families, carousel-chrome, professional-photo-placements
+    │   └── references/             ← aesthetic-families, professional-photo-placements
     ├── gp2-html-reviewer/
     ├── gp2-template-marker/
     │   └── references/element-descriptions.md
