@@ -61,6 +61,7 @@ O script gera `html-review.json` + `html-review.md`. Leia os findings.
 7. **Confira tipografia**: famílias declaradas no plano estão executadas? Pesos e tamanhos seguem a escala?
 8. **Confira fidelidade à referência** (reference-driven mode apenas — ver seção dedicada).
 9. **Confira delight detail**: existe ≥1 detalhe identificável?
+9b. **Confira brand logo**: slide 1 (capa) E último slide (CTA) têm `<img data-image-type="brandLogo">`? Cada logo encosta numa borda lateral (`left ≤ 32` ou `left + width ≥ data-width − 32`)? Nenhum logo sobrepõe headline/body/foto? Ausências sem justificativa no `visual-plan.md` ou `notes.md` → finding `brand-logo-missing-on-cover-or-cta`.
 10. Decida o status final.
 
 | Status | Quando |
@@ -113,6 +114,9 @@ Cada finding novo carrega `code`, `slide`, `issue`, `severity`, `fix`. Detectado
 - **`generic-gradient`** (warning): gradiente roxo→rosa, azul→roxo ou similar sem propósito declarado. Fix: usar `data-darken` neutro ou remover.
 - **`regression-in-final`** (warning): qualidade caiu entre v2-midfi e final (ex: hierarquia clara em v2 que ficou poluída no high-fi). Fix: simplificar moves/ornamentação.
 - **`no-delight-detail`** (warning): nenhum detalhe identificável (ver seção §"Delight detail"). Em modo qualidade-alta, escala para blocker.
+- **`brand-logo-missing-on-cover-or-cta`** (warning): ausência de `<img data-image-type="brandLogo">` no slide 1 (capa) OU no último slide (CTA), sem justificativa no `visual-plan.md → ## Logo da marca` ou em `notes.md`. Default canônico exige logo nessas duas posições. Fix: aplicar `brandLogo` numa das extremidades conforme `references/placeholders/README.md §"Logo da marca"`, ou documentar por que omitir (ex: "brief pediu visual minimal sem logo").
+- **`brand-logo-not-anchored`** (warning): `<img data-image-type="brandLogo">` posicionado sem encostar em borda lateral real (`left > 32px` E `left + width < data-width − 32px`) — logo centralizado horizontalmente cria efeito "selo solto". Fix: encostar em borda esquerda ou direita conforme padrões do catálogo.
+- **`brand-logo-over-content`** (blocker): `brandLogo` sobreposto a `<h1>`/`<h2>`/`<p>` (headline/body) ou a `<img data-image-type="professionalPhoto|userAsset">`. Fix: reposicionar para área limpa ou remover do slide.
 
 ## Checklist de data-variable (HARD-GATE quando ausente)
 
@@ -219,6 +223,12 @@ Sobrescreva `html-review.json`:
     "editorialElementsMissing": []
   },
   "delightDetails": ["tracking-eyebrow-tight", "numero-decorativo-slide-3"],
+  "brandLogo": {
+    "coverPresent": true,
+    "ctaPresent": true,
+    "otherSlides": [3],
+    "anchorIssues": []
+  },
   "visualJudgment": {
     "verdict": "strong|adequate|weak",
     "notes": "..."
@@ -298,6 +308,7 @@ Moves: <complete | partial | missing> — observados: <lista>; faltantes: <lista
 Tipografia: <tight | loose | diverged>
 Reference fidelity: <tight | loose | diverged | n/a (free mode)>
 Delight details: <N> identificados
+Brand logo: capa=<yes|no>, cta=<yes|no>, outros=[<slides>]
 Julgamento visual: strong|adequate|weak
 Evidência: <path>/html-review.md
 Próximo passo: gp2-template-marker | gp2-html-designer (revisão) | gp2-art-director | gp2-request-interpreter

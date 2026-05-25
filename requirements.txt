@@ -1,7 +1,7 @@
 # GetPosts Pipeline v2 — Python dependencies
 #
 # A maioria dos scripts (review-html-design.py, audit-template-markup.py,
-# suggestion-history.py, generate-professional-photo-base64.py) usa apenas
+# suggestion-history.py, generate-placeholder-base64.py) usa apenas
 # a stdlib do Python 3.8+.
 #
 # Apenas o uploader (gp2-template-uploader/scripts/import-template.py) exige

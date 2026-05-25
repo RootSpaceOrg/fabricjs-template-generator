@@ -155,6 +155,26 @@ Em dúvida, prefira **M9** sobre barra utilitária — é mais elegante e funcio
 
 ---
 
+### 4b. Defina a presença do logo (`brandLogo`)
+
+Default canônico: **logo na capa (slide 1) e no CTA final**. Sem instrução explícita do brief, sempre declare essas duas presenças no `visual-plan.md`. Em outros slides, só inclua se houver espaço limpo natural (ex: rodapé sem competição com handle/numeração).
+
+Para cada slide com logo, declare no `visual-plan.md`:
+- **Slide:** N
+- **Posição:** uma das listadas no catálogo (`Cover-header-left`, `Cover-header-right`, `Cover-footer-left`, `CTA-footer-left`, `CTA-footer-right`, `CTA-header-large`) ou descrição livre se nenhuma cabe (ex: "header direito da capa, 160px, opondo o número de slide à esquerda")
+- **Tamanho aproximado:** dentro do range 80–240px
+
+**Regras:**
+- Sempre numa extremidade (esquerda OU direita); nunca centralizado.
+- Header da capa OU rodapé do CTA são as posições mais seguras.
+- Se a capa já tem foto profissional ocupando uma coluna inteira (A1, A12), coloque logo na coluna oposta no header.
+- Se o CTA é A6 com fundo brand sólido, logo no rodapé inferior esquerdo costuma funcionar (não compete com headline ao centro).
+- Se a paleta tem fundo escuro num desses slides, espere que o logo real do usuário pode não contrastar — declare uma nota em "Notas para o designer" sobre considerar caixa neutra opcional atrás do logo.
+
+Catálogo completo de posições e snippet HTML pronto em [`../gp2-html-designer/references/placeholders/README.md`](../gp2-html-designer/references/placeholders/README.md) §"Logo da marca".
+
+---
+
 ### 5. Mapeie os elementos que devem receber data-variable
 
 Este mapeamento é importante para que o designer aplique os atributos desde o HTML — o marker apenas confirma.
@@ -204,6 +224,11 @@ free
 - **<M?-slug>:** <em quais slides — ex: "todos exceto último"> — <nota de execução opcional>
 - **<M?-slug>:** <em quais slides> — <nota>
 
+## Logo da marca
+- **Slide 1 (capa):** <posição — ex: Cover-header-left, 140px>
+- **Slide N (CTA):** <posição — ex: CTA-footer-left, 140px>
+- **Outros slides (opcional):** <slide M: posição + tamanho>
+
 ## Plano de slides
 
 ### Slide 1 — <papel narrativo> (background: claro/escuro/brand)
@@ -230,7 +255,7 @@ free
 | ... | ... |
 
 ## Notas para o designer
-<Instruções específicas, anti-patterns a evitar para este template, cuidados com o segmento, foto profissional.>
+<Instruções específicas, anti-patterns a evitar para este template, cuidados com o segmento, foto profissional, logo (se há restrição especial de contraste).>
 ```
 
 ### Reference-driven mode
@@ -273,6 +298,11 @@ reference-driven
 - **<M?-slug>:** <em quais slides> — <nota — identificado na referência ou inferido>
 - **<M?-slug>:** <em quais slides> — <nota>
 
+## Logo da marca
+- **Slide 1 (capa):** <posição — ex: Cover-header-right, 140px — alinhado com o que a referência mostra, ou Cover-header-left default>
+- **Slide N (CTA):** <posição — ex: CTA-footer-left, 140px>
+- **Outros slides (opcional):** <slide M: posição + tamanho — só se a referência mostrar>
+
 ## Plano de slides
 
 ### Slide 1 — <papel narrativo> (background: claro/escuro/brand)
@@ -310,6 +340,7 @@ Tipografia: <display> + <body>
 Slides planejados: <N>
 Arquétipos: slide1=A?, slide2=A?, ... (diversidade: <N> tipos distintos)
 Carousel moves: <M?, M?>
+Logo: capa <posição> / CTA <posição>
 Elementos data-variable mapeados: <N>
 Próximo passo: gp2-html-designer
 ```
@@ -323,6 +354,7 @@ Tipografia: <display> + <body>
 Slides planejados: <N>
 Arquétipos: slide1=A?, slide2=A?, ... (diversidade: <N> tipos distintos)
 Carousel moves: <M?, M?> (identificados na referência)
+Logo: capa <posição> / CTA <posição>
 Elementos data-variable mapeados: <N>
 Próximo passo: gp2-html-designer
 ```

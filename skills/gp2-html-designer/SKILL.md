@@ -271,6 +271,28 @@ Exemplo — fundo brand com escurecimento atmosférico:
 </section>
 ```
 
+## Logo da marca (`brandLogo`)
+
+**Default canônico**: aplique logo em **slide 1 (capa)** e **último slide (CTA)**. Em outros slides, só se houver espaço limpo sobrando. Quando o `visual-plan.md` declarar posições específicas ou o brief pedir explicitamente outras presenças, siga o plano — caso contrário, este default é o piso.
+
+Use [`references/placeholders/logo-quadrada.b64.txt`](./references/placeholders/logo-quadrada.b64.txt) como `src`. Em produção o runtime substitui pelo logo real do brand config do usuário.
+
+```html
+<img class="brand-logo" alt="Logo da marca"
+     data-image-type="brandLogo"
+     style="position:absolute; left:60px; top:1150px; width:140px; height:140px;
+            object-fit:contain; object-position:center; border-radius:0;"
+     src="data:image/png;base64,<conteúdo de logo-quadrada.b64.txt>">
+```
+
+**Regras essenciais** (catálogo completo de padrões e coords em [`references/placeholders/README.md`](./references/placeholders/README.md) §"Logo da marca"):
+
+- **Tamanho:** quadrado entre 80–240px. Default 120–140px nas extremidades.
+- **Sempre ancorado em uma borda real**: encosta na esquerda OU direita do slide (margem ≤ 32px da borda). Logo centralizado horizontalmente fica como "selo solto".
+- **Vertical:** rodapé para CTA (`top + height ≥ data-height − 32px`); header para capa (`top ≤ 32px`). Nunca no meio do slide (compete com headline).
+- **Nunca** sobre headline, body ou foto profissional. Se o único espaço limpo conflita com texto, prefira não colocar logo nesse slide.
+- **Object-fit:** `contain` + `object-position: center`. **Border-radius:** `0` (slot neutro).
+
 ## Famílias tipográficas
 
 Use as famílias declaradas em `visual-plan.md → ## Tipografia resolvida`. Carregue ambas (display + body) via `<link>` Google Fonts no `<head>` e liste em `<meta name="hm-fonts">`. Pesos e tamanhos seguem a escala resolvida — designer ajusta detalhe (±10% no tamanho, kerning fino) mas não troca família nem inverte hierarquia. Para inspiração de combinações editoriais por estilo, consulte [`references/aesthetic-families.md`](./references/aesthetic-families.md).

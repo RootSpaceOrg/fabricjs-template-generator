@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 """Convert a PNG file to a base64 data URL string for inline use in HTML.
 
-Used to (re)generate placeholder strings for professionalPhoto cutout images
-that the gp2-html-designer skill embeds directly into template.html.
+Used to (re)generate placeholder strings that the gp2-html-designer skill
+embeds directly into template.html — applies to any placeholder asset:
+professional photos, brand logos, generic image fillers, etc.
 
 Usage:
-    python generate-professional-photo-base64.py \
-        --in /path/to/professional-photo-1.png \
-        --out skills/gp2-html-designer/references/placeholders/professional-photo-1.b64.txt
+    python generate-placeholder-base64.py \\
+        --in /path/to/asset.png \\
+        --out skills/gp2-html-designer/references/placeholders/asset.b64.txt
 
 The output file contains a single line: data:image/png;base64,<base64 payload>
 """
