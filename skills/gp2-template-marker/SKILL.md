@@ -123,7 +123,7 @@ python3 ../../scripts/audit-template-markup.py artifacts/gp2-template-marker/<sl
 >
 > **Antes de marcar, confirme**: o slot da `<img>` cutout no HTML tem aspect ratio `width/height` entre `0.55` e `1.10` (PNG cutout é ~3:4 = 0.78). Se estiver fora, devolva ao designer com `REVISE` indicando o ratio observado. Slots muito altos (ex: `540×1200` = 0.45) ou muito largos (ex: `540×400` = 1.35) deixam metade do slot vazia e induzem o converter a erro — sintoma observado em produção: figura cobrindo só metade do slot no editor com a face cortada.
 >
-> **Antes de marcar, verifique ancoragem**: a `<img data-image-type="professionalPhoto">` deve satisfazer **uma das duas condições** (fotos de usuário são busto/tronco — sem ancoragem a figura parece flutuar): (1) `top + height ≥ canvas_height − 80px` (borda inferior do slide), OU (2) outro elemento visível sobrepõe o terço inferior do slot. Se nenhuma condição for satisfeita, devolva ao designer com `REVISE` antes de marcar.
+> **Antes de marcar, verifique ancoragem**: a `<img data-image-type="professionalPhoto">` deve satisfazer **uma das duas condições** (fotos de usuário são busto/tronco — sem ancoragem a figura parece flutuar): (1) `top + height ≥ canvas_height − 8px` (slot encosta na borda inferior real, zero margem), OU (2) outro elemento visível tem bottom dentro de ±8px do bottom do slot E sobrepõe ≥40% da largura do slot horizontalmente. **Adicionalmente**: o slot precisa encostar numa borda lateral (`left ≤ 8px` ou `left + width ≥ canvas_width − 8px`) — cutout centralizado horizontalmente também é REVISE. Se qualquer condição falhar, devolva ao designer com `REVISE` antes de marcar.
 
 ## Regras críticas
 

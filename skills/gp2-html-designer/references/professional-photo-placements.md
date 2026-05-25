@@ -10,9 +10,10 @@ Catálogo de 3 padrões prontos para `<img data-image-type="professionalPhoto">`
 - **Evite cobrir a face**: a face fica na zona superior (~30% do slot). Não posicione textos ou outros elementos sobre ela.
 - **Aspect ratio do slot ≈ aspect ratio do PNG (~3:4 = `0.78`)**: o `gp2-html-reviewer` flagra slots com ratio fora de `0.55–1.10` como finding técnico. Por quê: com `object-fit: contain`, slots muito altos (ratio < 0.55) ou muito largos (ratio > 1.10) deixam metade do slot vazia e tornam fácil para o converter calcular `originWidth/Height` errado (sintoma típico: figura cobrindo só metade do slot no editor). Faixa saudável: `9:16` (0.56) até `1:1` (1.00). Para "ocupar mais espaço visual", aumente proporcionalmente width E height — não estique só uma das dimensões.
 - **A foto profissional nunca pode "voar"** — fotos de usuário são busto ou tronco, não corpo inteiro. Uma figura sem nada na parte inferior parece que a pessoa não tem pernas. Toda foto profissional deve satisfazer **uma das duas condições**:
-  1. **Ancorada na borda inferior**: `top + height` chega perto do rodapé do slide (margem máxima: 80px). A figura fica "plantada" no chão do slide.
-  2. **Parte inferior sobreposta**: outro elemento (faixa de cor, foto contextual, bloco CTA, rodapé) cobre o terço inferior do slot, tornando o corte visual natural — como se a pessoa estivesse atrás de uma bancada ou saindo pela moldura.
-  Se nenhuma das duas condições for possível no layout, prefira não usar a foto profissional nesse slide.
+  1. **Ancorada na borda inferior real**: `top + height === data-height` do slide (a borda inferior do slot coincide com a borda inferior do canvas). **Tolerância máxima: 8px** — qualquer gap > 8px entre `top + height` e `data-height` cria efeito de flutuação visível e é blocker no reviewer. Antes esta regra aceitava até 80px de margem; foi endurecida porque mesmo 70px de gap fica visualmente como "pessoa flutuando" depois de renderizado.
+  2. **Parte inferior sobreposta**: outro elemento real (faixa de cor, foto contextual, bloco CTA, rodapé com fundo opaco) cobre o terço inferior do slot, tornando o corte visual natural — como se a pessoa estivesse atrás de uma bancada ou saindo pela moldura. O `bottom` do slot deve coincidir (±8px) com o `bottom` do elemento que ancora.
+- **Sempre num canto horizontal**: o slot precisa encostar na borda esquerda OU direita do slide (`left ≈ 0` ou `left + width ≈ data-width`). Cutout centralizado horizontalmente sem âncora lateral cria efeito "pessoa no meio do nada". Em layouts split (texto/foto), a foto fica numa coluna lateral; em hero full, a foto ocupa metade do slide encostada a uma borda.
+- Se nenhuma das condições acima for possível no layout, **prefira não usar a foto profissional** nesse slide.
 
 ## Posição 1 — Hero cover full-figure (capa)
 
@@ -43,24 +44,25 @@ Foto ocupa metade do slide 1 (~50% da largura, ~88% da altura), texto na coluna 
   </p>
 
   <!-- Coluna direita: foto profissional cutout. Slot 540x720 (ratio 0.75 ≈ PNG cutout 3:4).
-       Anchoring: top(560) + height(720) = 1280 ≈ rodapé do slide (1350 - 70px margem).
-       A figura fica "plantada" no chão — satisfaz a regra de não-voar. -->
+       Anchoring: top(630) + height(720) = 1350 = data-height do slide (zero margem).
+       Borda esquerda do slot em left:540 (= 50% do slide); a foto encosta na borda direita
+       em left+width = 1080 = data-width. Slot ancorado na borda inferior E na borda direita. -->
   <img class="professional-photo" alt="Foto profissional"
        data-image-type="professionalPhoto"
-       style="position:absolute; left:540px; top:560px; width:540px; height:720px;
+       style="position:absolute; left:540px; top:630px; width:540px; height:720px;
               object-fit:contain; object-position:bottom center; border-radius:0;"
        src="data:image/png;base64,<conteúdo de professional-photo-1.b64.txt>">
 </section>
 ```
 
 **Dimensões para canvas 1080×1350:**
-- Slot da foto: `left:540px; top:560px; width:540px; height:720px` (50% × 53%, ratio 0.75 ✓).
+- Slot da foto: `left:540px; top:630px; width:540px; height:720px` (50% × 53%, ratio 0.75 ✓).
 - Texto: coluna esquerda em `left: 60px–520px`, deixando ~20px de gap entre as colunas.
-- `top + height = 1280px` → 70px do rodapé do slide (1350px). Satisfaz **condição 1** (ancorada na borda inferior). A figura fica plantada no slide; o corte da cintura/joelho fica naturalizado porque não há espaço aberto abaixo.
+- `top + height = 1350px = data-height` → ancorada na borda inferior real (zero margem). `left + width = 1080px = data-width` → ancorada na borda direita. **Dois anchors reais** (borda inferior + borda lateral); a figura não pode flutuar.
 - **Não use slot 540×1200**: ratio 0.45 está fora da faixa `0.55–1.10` aceita pelo reviewer e o cutout fica espremido na metade superior do slot.
 
-**Para canvas 1080×1080 (feed quadrado):** slot `540×720` em `top:300`.
-**Para canvas 1080×1920 (stories/reels):** slot `540×720` em `top:1120`. Mantenha o slot em `~720` independente do canvas — é o tamanho que respeita o cutout. Para "figura maior", aumente proporcional: `600×800` (ratio 0.75) ou `720×960`.
+**Para canvas 1080×1080 (feed quadrado):** slot `540×720` em `top:360` (bottom = 1080 = data-height).
+**Para canvas 1080×1920 (stories/reels):** slot `540×720` em `top:1200` (bottom = 1920 = data-height). Mantenha o slot em `~720` independente do canvas — é o tamanho que respeita o cutout. Para "figura maior", aumente proporcional: `600×800` (ratio 0.75) ou `720×960`, sempre recalculando `top` para que `top + height = data-height`.
 
 ## Posição 2 — CTA final lateral (slide de fechamento)
 
@@ -91,20 +93,21 @@ Foto ~37% da largura, altura ~67% do canvas, à direita do CTA. Aumenta confian�
   </p>
 
   <!-- Coluna direita: foto profissional. Slot 400x540 (ratio 0.74 ≈ PNG cutout 3:4).
-       Anchoring: top(740) + height(540) = 1280 ≈ rodapé (1350 - 70px margem).
-       A figura fica plantada — satisfaz a regra de não-voar. -->
+       Anchoring: top(810) + height(540) = 1350 = data-height (zero margem inferior).
+       left(680) + width(400) = 1080 = data-width (borda direita ancorada).
+       Dois anchors reais — bottom + right. -->
   <img class="professional-photo" alt="Foto profissional"
        data-image-type="professionalPhoto"
-       style="position:absolute; left:660px; top:740px; width:400px; height:540px;
+       style="position:absolute; left:680px; top:810px; width:400px; height:540px;
               object-fit:contain; object-position:bottom center; border-radius:0;"
        src="data:image/png;base64,<conteúdo de professional-photo-N.b64.txt>">
 </section>
 ```
 
 **Dimensões para canvas 1080×1350:**
-- Slot da foto: `left:660px; top:740px; width:400px; height:540px` (37% × 40%, ratio 0.74 ✓).
-- Texto à esquerda em `left: 60–620px`.
-- `top + height = 1280px` → 70px do rodapé. Satisfaz **condição 1** (ancorada na borda inferior). A figura fica plantada ao lado do texto "Agende sua consulta", criando alinhamento natural — presença do profissional no momento da decisão.
+- Slot da foto: `left:680px; top:810px; width:400px; height:540px` (37% × 40%, ratio 0.74 ✓).
+- Texto à esquerda em `left: 60–640px`.
+- `top + height = 1350px = data-height` e `left + width = 1080px = data-width`. **Bottom e right ancorados** na borda real do slide — a figura fica plantada no canto inferior direito, sem espaço para flutuar.
 - **Não use slot 400×900**: ratio 0.44 está fora da faixa aceita.
 
 ## Posição 3 — Overlap sobre foto contextual de apoio
@@ -131,20 +134,21 @@ Foto profissional pequena (~26% largura, ~53% altura) sobreposta no canto da ima
     de você do início ao fim do tratamento.
   </p>
 
-  <!-- Foto contextual de apoio (userAsset) na metade inferior -->
+  <!-- Foto contextual de apoio (userAsset) na metade inferior.
+       Ancorada na borda inferior real: top(750) + height(600) = 1350 = data-height. -->
   <img class="contextual-image" alt="Imagem de apoio"
        data-image-type="userAsset"
-       style="position:absolute; left:60px; top:680px; width:960px; height:600px;
+       style="position:absolute; left:60px; top:750px; width:960px; height:600px;
               object-fit:cover; border-radius:24px;"
        src="<URL ou placeholder diagonal SVG>">
 
   <!-- Foto profissional sobreposta. Slot 300x400 (ratio 0.75 ≈ PNG cutout 3:4).
-       Anchoring: a parte inferior da foto profissional (top:880 + height:400 = 1280) alinha com
-       o bottom da foto contextual (top:680 + height:600 = 1280). Ambas terminam na mesma linha —
-       a figura "sai" pelo topo da foto contextual (condição 2: parte inferior sobreposta pela foto contextual). -->
+       Anchoring: top(950) + height(400) = 1350 = bottom da contextual = data-height.
+       A parte inferior da foto profissional alinha com o bottom da contextual E com a
+       borda inferior do slide. Satisfaz condição 1 (borda inferior) E condição 2 (sobreposição). -->
   <img class="professional-photo" alt="Foto profissional"
        data-image-type="professionalPhoto"
-       style="position:absolute; left:740px; top:880px; width:300px; height:400px;
+       style="position:absolute; left:740px; top:950px; width:300px; height:400px;
               object-fit:contain; object-position:bottom center; border-radius:0;
               z-index:2;"
        src="data:image/png;base64,<conteúdo de professional-photo-N.b64.txt>">
@@ -152,14 +156,14 @@ Foto profissional pequena (~26% largura, ~53% altura) sobreposta no canto da ima
 ```
 
 **Dimensões para canvas 1080×1350:**
-- Foto contextual (userAsset): `left:60px; top:680px; width:960px; height:600px` (89% × 44%).
-- Foto profissional sobreposta: `left:740px; top:880px; width:300px; height:400px` (28% × 30%, ratio 0.75 ✓).
-  - O `top: 880px` da foto profissional é **dentro** da foto contextual, mas o bottom de ambas coincide em `1280px`. A parte inferior da foto profissional fica sob a foto contextual (z-index:2 garante que a parte superior da figura sobressai). Satisfaz **condição 2** (parte inferior sobreposta).
-  - **Variante alternativa** — foto profissional saindo ainda mais: `top:800px; height:480px` (bottom em 1280). A figura "sobe" mais sobre a foto contextual, mas ratio 300/480 = 0.625 ainda ✓.
+- Foto contextual (userAsset): `left:60px; top:750px; width:960px; height:600px` (89% × 44%). Bottom = 1350 = data-height ✓.
+- Foto profissional sobreposta: `left:740px; top:950px; width:300px; height:400px` (28% × 30%, ratio 0.75 ✓). Bottom = 1350 = data-height ✓.
+  - O `top: 950px` da foto profissional é **dentro** da foto contextual. A parte inferior da figura fica sob a foto contextual (z-index:2 garante que a parte superior da figura sobressai). Satisfaz **condição 1** (borda inferior real) e também **condição 2** (sobreposição). Dois anchors.
+  - **Variante alternativa** — foto profissional saindo ainda mais: `top:870px; height:480px` (bottom em 1350). A figura "sobe" mais sobre a foto contextual, ratio 300/480 = 0.625 ainda ✓.
 - `z-index: 2` na foto profissional (foto contextual fica em `z-index: auto = 0`).
 - **Não use slot 280×720**: ratio 0.39 fora da faixa aceita.
 
-**Variação: overlap no canto esquerdo** — mudar `left:760px` para `left:40px` (ou `left:0` para sangrar até a borda).
+**Variação: overlap no canto esquerdo** — mudar `left:740px` para `left:40px` (canto inferior esquerdo) ou `left:0` para sangrar até a borda esquerda. Mantenha `top:950; height:400`.
 
 ## Avatar circular (exceção)
 
@@ -187,7 +191,8 @@ Note: nesse caso `object-fit: cover` é correto (avatar circular não preserva f
 
 ## Anti-patterns
 
-- **Foto "voando" no slide**: figura posicionada no meio ou no topo do slide sem nada ancorado abaixo. Fotos de usuário são busto/tronco — sem ancoragem, parece que a pessoa não tem pernas. Corrija usando condição 1 (borda inferior) ou condição 2 (sobreposição na parte de baixo).
+- **Foto "voando" no slide**: figura posicionada com qualquer gap > 8px entre `top + height` e `data-height` (ou entre o bottom do slot e o bottom do elemento que ancora). Mesmo 70px parece "flutuar" no render — a régua é zero margem, não "perto do rodapé". Corrija usando condição 1 (borda inferior real) ou condição 2 (sobreposição alinhada com o elemento abaixo).
+- **Foto centralizada horizontalmente**: cutout em coluna central sem âncora lateral (`left ≈ data-width/2 − width/2`) cria efeito "pessoa no meio do nada". Sempre encoste numa borda horizontal (esquerda ou direita).
 - **Usar `object-fit: cover` em cutout**: corta pés/cabeça, perde o efeito.
 - **Usar `border-radius` arredondado em cutout**: o fundo arredondado aparece "em cima" da figura sem fundo, ficando estranho.
 - **Slot pequeno demais para mostrar a figura inteira**: se o slot tem `height < 400px` em canvas 1350, reconsidere se a foto profissional é realmente necessária aqui — pode ser um caso de avatar circular ou nenhuma foto.

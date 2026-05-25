@@ -91,7 +91,10 @@ Cada item abaixo é um check acionável aplicado contra o `template.html`. Para 
 - `<img data-image-type="professionalPhoto">` com `object-fit: cover` ou `border-radius` arredondado quando o brief não pediu avatar circular. Esperado: `object-fit: contain; object-position: bottom center; border-radius: 0;`.
 - `<img data-image-type="professionalPhoto">` com a face da figura coberta por texto ou elemento visível (~30% superior do slot).
 - `<img data-image-type="professionalPhoto">` (cutout) com slot cuja proporção (`width / height`) está fora de `0.55–1.10`. Fora dessa faixa, `object-fit: contain` deixa metade do slot vazio e o converter erra a emissão Fabric.
-- `<img data-image-type="professionalPhoto">` "voando" — figura sem ancoragem inferior nem sobreposição no terço inferior. Condições válidas: (1) `top + height ≥ canvas_height − 80px`, OU (2) outro elemento visível sobrepõe o terço inferior do slot.
+- `<img data-image-type="professionalPhoto">` "voando" — figura sem ancoragem inferior real nem sobreposição alinhada com elemento abaixo. Condições válidas (uma das duas):
+  1. `top + height ≥ canvas_height − 8px` (slot encosta na borda inferior real do slide, zero margem).
+  2. Outro elemento visível (foto contextual, faixa de cor, bloco CTA) tem `top + height` dentro de ±8px do `top + height` do slot da foto profissional **E** sobrepõe horizontalmente ≥40% da largura do slot — ou seja, o bottom do slot da foto coincide com o bottom de um elemento ancorador. Antes a tolerância era 80px; foi endurecida porque mesmo 70px de gap renderiza visualmente como "pessoa flutuando".
+- `<img data-image-type="professionalPhoto">` centralizado horizontalmente — o slot precisa encostar numa borda lateral (`left ≤ 8px` OU `left + width ≥ canvas_width − 8px`). Cutout no meio do canvas sem âncora lateral cria efeito "pessoa no meio do nada".
 - Elemento com `linear-gradient` ou `radial-gradient` sem `data-darken` (e sem `data-glow`) — gradiente será perdido no conversor.
 - Cores brand hex em gradientes lineares — fundo brand = sólido + overlay neutro.
 
