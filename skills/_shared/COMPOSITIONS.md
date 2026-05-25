@@ -8,7 +8,8 @@ Cada arquétipo é um **esqueleto inicial** — o designer adapta coords exatas 
 - Carrosséis com ≥3 slides usam ≥2 arquétipos distintos.
 - Carrosséis com ≥5 slides usam ≥3 arquétipos distintos.
 - Slide CTA final tipicamente em `A6-cta-button-anchored` ou variante.
-- Slide capa tipicamente em `A1`, `A2`, `A10` ou `A12`.
+- Slide capa tipicamente em `A1`, `A2`, `A10`, `A12` ou `A14` (este último quando a capa precisa combinar foto contextual + profissional + hook tipográfico).
+- Slide de miolo editorial com numeração ostentatória tipicamente em `A13` (combinado com M11).
 
 **Convenção dos diagramas:** grid abstraído 1080×1350 → ASCII ~14 colunas × 12 linhas. `[FOTO]` = slot de imagem; `■` = bloco de cor primary; `─` = fio decorativo; `→` = swipe arrow.
 
@@ -393,6 +394,88 @@ Cada arquétipo é um **esqueleto inicial** — o designer adapta coords exatas 
 **Tom:** editorial.
 **Pareamento bom:** alternativa a A1/A2 como abertura; antecede A3 ou A7.
 **Anti-uso:** quando o card flutuante esconderia o ponto focal da foto; CTA.
+
+---
+
+## A13 — editorial-numbered-context
+
+```
++----------------------------+
+| [02]  O PROBLEMA ─────     |
+|                            |
+|                            |
+| Headline serifa            |
+| em duas linhas.            |
+|                            |
+| Body curto em 2-3 linhas   |
+| que sustenta o título e    |
+| introduz a foto abaixo.    |
+|                            |
+| [   FOTO CONTEXTUAL   ]    |
+| [   full-width        ]    |
+| [                     ]    |
+| ──────────────────────     |
+| @handle           02 / 05  |
++----------------------------+
+```
+
+**Anchors:**
+- `slide-number-box`: x=6–14%, y=6–11% (quadrado preenchido com primary, número display branco)
+- `eyebrow-zone`: x=16–60%, y=7–10% (UPPERCASE tracking +12%, com fio horizontal curto à direita do label)
+- `headline-zone`: x=6–80%, y=17–35% (display serif 88–110px peso 400–600)
+- `body-zone`: x=6–80%, y=42–55% (sans 22–26px peso 400 line-height 1.5)
+- `contextual-image-zone`: x=6–94%, y=58–82% (full-width retangular, sem border-radius ou bem sutil)
+- `footer-fio`: x=6–94%, y=88% (fio horizontal 1px)
+- `footer-zone`: x=6–94%, y=90–94% (`@handle` à esquerda, `NN / NT` à direita, sans 14–16px)
+
+**Quando usar:** slide de miolo de carrossel editorial com numeração ostentatória (M11) + foto contextual obrigatória. Combina forte com sequências didáticas que precisam de respiração visual entre slides educativos densos.
+**Tom:** editorial, calmo, premium.
+**Pareamento bom:** vai bem em sequências de 4-6 slides usando o mesmo padrão; combina com A10 na capa e A6 no CTA. Quando usado em ≥2 slides do mesmo carrossel, o slide-number-box vira identidade visual da peça.
+**Anti-uso:** capa (slide 01 fica raso — use A1, A2 ou A10); CTA; carrosséis sem foto contextual disponível por slide.
+
+---
+
+## A14 — rich-hero-cutout
+
+```
++----------------------------+
+|                            |
+| ▓ EYEBROW PILL ▓           |
+|                            |
+| ┌────────────────────────┐ |
+| │                        │ |
+| │  FOTO CONTEXTUAL       │ |
+| │  border-radius 24px    │ |
+| │                        │ |
+| └────────────────────────┘ |
+|                            |
+| ─── (fio brand curto)      |
+| Headline bold              |
+| com [span colorido]        |
+| em 2-3 linhas.             |
+|                            |
+| Body curto em 2-3 linhas.  |
+|                            |
+| ┌─────┐         [FOTO PRO] |
+| │LOGO │         [        ] |
+| └─────┘         [        ] |
++----------------------------+
+```
+
+**Anchors:**
+- `eyebrow-pill-zone`: x=6–35%, y=4–10% (background sólido primary/secondary, texto branco UPPERCASE)
+- `contextual-image-zone`: x=4–96%, y=12–48% (border-radius 16–24px, dashed border opcional para indicar substituível)
+- `accent-fio-zone`: x=6–18%, y=51% (fio horizontal 3-4px, primary ou secondary)
+- `headline-zone`: x=4–62%, y=54–72% (sans bold 70–90px peso 800, span com cor brand interno)
+- `body-zone`: x=4–62%, y=74–84% (sans 22–24px peso 400)
+- `logo-zone`: x=4–18%, y=86–96% (box neutro com border, "SEU LOGO VAI AQUI")
+- `professional-photo-zone`: x=68–100%, y=58–100% (cutout PNG, **ancorado bottom-right** — `top + height = data-height` E `left + width = data-width`)
+
+**Quando usar:** capa rica de carrossel saúde/serviço com profissional + foto contextual + headline forte. Slide-1 ideal quando o brief pede confiança máxima (presença humana) + contexto visual (equipamento, ambiente, asset) + hook tipográfico.
+**Tom:** maximal (3 zonas visuais + 2 textuais).
+**Pareamento bom:** abre carrossel; antecede A3, A5 ou A7. Pareia com A6 no CTA final.
+**Anti-uso:** miolo (excesso de elementos cria fadiga); carrosséis minimalistas; quando a foto contextual e a foto profissional disputam o ponto focal — escolha um (A1) ou outro (A12).
+**Atenção:** a foto profissional aqui **deve** seguir as regras de ancoragem em [`../gp2-html-designer/references/professional-photo-placements.md`](../gp2-html-designer/references/professional-photo-placements.md): `top + height = data-height` (zero margem inferior) E `left + width = data-width` (encostado na direita). Caso contrário, vira finding "voando" no reviewer.
 
 ---
 

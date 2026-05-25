@@ -87,15 +87,17 @@ Ver instruções detalhadas de cada framework (incluindo slide-by-slide content 
 
 O suggester recomenda arquétipos A* (catálogo [`_shared/COMPOSITIONS.md`](../_shared/COMPOSITIONS.md)) por framework. **Recomendação, não jaula** — art-director escolhe livremente, mas usa isso como ponto de partida. As regras de diversidade composicional do art-director (≥2 arquétipos em ≥3 slides; ≥3 em ≥5) sempre prevalecem.
 
+> **Nota multi-nicho:** o suggester **não** usa `A14-rich-hero-cutout`, pois exige `professionalPhoto` (incompatível com templates de catálogo multi-nicho). A14 fica reservado para pedidos diretos do usuário via `gp2-request-interpreter` quando o brief inclui foto profissional.
+
 | Framework | Arquétipos recomendados |
 |-----------|-------------------------|
 | `listicle` | capa A1/A10/A12 → miolo alternando A5 + A3 → CTA A6 |
 | `myth-vs-truth` | capa A10 → A9 (comparação) → A6 |
-| `step-by-step` | capa A1/A12 → miolo A3/A8 sequencial → A7 (resultado) → A6 |
-| `problem-agitate-solve` | capa A2 (dramática) → A3 (problema) → A7 (dado) → A6 |
+| `step-by-step` | capa A1/A12 → miolo A13 (numerado editorial) ou A3/A8 sequencial → A7 (resultado) → A6 |
+| `problem-agitate-solve` | capa A2 (dramática) → A13 (problema numerado) → A7 (dado) → A6 |
 | `contrarian-take` | capa A10 → A3 + A4 (citação ancora) → A6 |
 | `framework-reveal` | capa A1 → A11 (bento revelando) → A3 → A6 |
-| `mistakes-to-avoid` | capa A10 → A5 (lista de erros) → A3 → A6 |
+| `mistakes-to-avoid` | capa A10 → A13 (erros numerados) ou A5 → A3 → A6 |
 | `case-study-narrative` | capa A2 → A8 + A12 (foto narrativa) → A7 (resultado) → A6 |
 | `before-after-transformation` | A1 → A9 (antes/depois) → A6 |
 | `cheat-sheet` | A1 → A11 (bento) → A6 |
@@ -114,7 +116,7 @@ Moves M* do catálogo [`_shared/CAROUSEL_MOVES.md`](../_shared/CAROUSEL_MOVES.md
 | `posicionamento` | M5 (quote pull) + M8 (fio tipográfico) — editorial premium |
 | `engajamento` | M2 (número ostentatório) + M4 — ritmo + orientação |
 | `retencao` | M3 (bleed) ou M7 (color block shift) — dinâmica visual |
-| `educacao` | M9 (edge numbering) + M4 — orientação discreta em conteúdo denso |
+| `educacao` | M11 (numero-slide-eyebrow) + M4 — numeração editorial premium + orientação. Alternativa minimal: M9 + M4. |
 | `prova_social` | M5 (quote pull) + M8 — citação ancora a prova |
 
 **Regra de variedade entre templates:** em batches grandes, evite repetir o mesmo par de moves em ≥2 templates consecutivos do mesmo objetivo. Consulte o histórico antes de finalizar a sugestão.

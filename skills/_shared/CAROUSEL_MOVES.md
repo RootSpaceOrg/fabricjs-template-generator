@@ -7,7 +7,7 @@ Vocabulário compartilhado entre `gp2-art-director` (escolhe 1–2 por carrossel
 **Regras de uso (art-director):**
 - Escolha **1–2 moves por carrossel** (mais que isso polui).
 - Move declarado deve ter evidência visual em **pelo menos 1 slide** (idealmente em ≥50% dos slides quando faz sentido).
-- Combine moves com tom do brief: minimal → M8/M9; editorial → M2/M5; ousado → M10/M7.
+- Combine moves com tom do brief: minimal → M8/M9; editorial → M2/M5/M11; ousado → M10/M7.
 
 **Regras de uso (reviewer):**
 - Move declarado mas ausente do HTML → finding `move-missing` (blocker).
@@ -246,6 +246,40 @@ Vocabulário compartilhado entre `gp2-art-director` (escolhe 1–2 por carrossel
 ```
 
 **Combina com arquétipos:** A10, A2.
+
+---
+
+## M11 — numero-slide-eyebrow
+
+**Descrição:** numeração do slide aparece como **box/pill preenchida** (geralmente quadrado 60–90px com cor primary) ao lado do eyebrow no header. Cria identidade visual editorial em sequências de miolo onde a numeração é parte do design — não decoração descartável. Diferente de **M9-edge-numbering** (numeração discreta no rodapé) e de **M2-numero-ostentatorio** (número gigante 300–500px como ornamento): aqui o número é estrutural ao header, pareado com eyebrow + fio.
+
+**Quando funciona:** carrosséis editoriais didáticos de 4-6 slides onde cada slide tem um "capítulo" claro (problema → solução → exemplo → fechamento). O número vira marcador de progresso premium sem virar utilitário.
+**Quando não funciona:** carrossel single-post; quando já tem M2 (compete) ou M9 (duplica).
+
+**`data-*` envolvidos:** `<div data-static="true" data-variable="primary" data-variable-target="background">` para o box + `<p data-static="true">` para o número dentro + eyebrow tradicional ao lado com `data-variable` opcional no fio.
+
+**Exemplo:**
+```html
+<!-- Slide 2 (miolo editorial) -->
+<div data-static="true" data-variable="primary" data-variable-target="background"
+     style="position:absolute; left:60px; top:80px; width:84px; height:84px;
+            background:#0F3D34;"></div>
+<p data-static="true"
+   style="position:absolute; left:60px; top:80px; width:84px; height:84px;
+          margin:0; font:700 32px/84px 'Playfair Display'; color:#FFFFFF;
+          text-align:center;">02</p>
+
+<p data-static="true"
+   style="position:absolute; left:172px; top:108px; margin:0;
+          font:600 18px 'Inter'; letter-spacing:4px; text-transform:uppercase;
+          color:#1A1A1A;">O PROBLEMA</p>
+
+<div data-static="true" data-variable="secondary"
+     style="position:absolute; left:340px; top:120px; width:80px; height:2px;
+            background:#7A8F76;"></div>
+```
+
+**Combina com arquétipos:** A13 (canonical), A3, A5, A7.
 
 ---
 
