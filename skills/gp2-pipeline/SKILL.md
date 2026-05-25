@@ -170,7 +170,7 @@ artifacts/
 
 - **Não suba template com design fraco**, mesmo que todos os gates técnicos passem. Se você (orquestrador) olhar para os screenshots high-fi do designer e perceber que está medíocre, devolva ao designer com instrução clara em vez de prosseguir.
 - **Não force secondary brand color** quando o brief decidiu por primária somente.
-- **Não invente skills** que não estão na lista oficial. A v2 tem 7 skills (incluindo gp2-art-director). Se você sente falta de uma 8ª, é provavelmente cerimônia.
+- **Não invente skills** que não estão na lista oficial. A v2 tem 7 skills de execução (`gp2-request-interpreter`, `gp2-art-director`, `gp2-html-designer`, `gp2-html-reviewer`, `gp2-template-marker`, `gp2-template-converter`, `gp2-template-uploader`) + 2 orquestradores (`gp2-pipeline` e `gp2-template-suggester`). Se você sente falta de uma 10ª, é provavelmente cerimônia.
 - **Não pule o art-director** mesmo que o pedido pareça simples. Sem visual-plan.md, o designer cai de volta no modo v1 (viés de repetição, cores sem papel explícito, data-variable descobertos pelo marker).
 
 ## Resposta final por template

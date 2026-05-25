@@ -15,15 +15,16 @@ A forma da pipeline foi preservada (gates múltiplos, marker pós-design separad
 | Ordem | Skill | Função | Output principal |
 |-------|-------|--------|------------------|
 | 1 | `gp2-request-interpreter` | Lê o pedido + referências e produz brief enxuto. | `brief.md` |
-| 2 | `gp2-html-designer` | Gera HTML em **3 iterações com render** (low-fi → mid-fi → high-fi). | `template.html` + `screenshots/` |
-| 3 | `gp2-html-reviewer` | Critica os screenshots. Hard-gate só em findings técnicos. | `html-review.json` + status |
-| 4 | `gp2-template-marker` | Marca `data-*` (absorve o antigo context-analyzer). | `template.html` marcado + `template-summary.md` |
-| 5 | `gp2-template-converter` | HTML marcado → `slide-N.json` Fabric. | `output/<slug>/slide-N.json` + `manifest.json` |
-| 6 | `gp2-template-result-reviewer` | Compara HTML × Fabric JSON. | `review-report.json` + status |
-| 7 | `getposts-template-uploader` (**delegado para v1**) | Upload S3 + Supabase + thumbnails. | template ID |
-| 8 | `gp2-pipeline` | Orchestrator que roda tudo na ordem. | Relatório consolidado |
+| 2 | `gp2-art-director` | Decide família estética, paleta, composição por slide, movimento, mapeamento `data-variable`. | `visual-plan.md` |
+| 3 | `gp2-html-designer` | Gera HTML em **3 iterações com render** (low-fi → mid-fi → high-fi) executando o visual-plan. | `template.html` + `screenshots/` |
+| 4 | `gp2-html-reviewer` | Critica os screenshots (técnico + fidelidade ao plano). Hard-gate em findings técnicos. | `html-review.json` + status |
+| 5 | `gp2-template-marker` | Marca `data-*` (absorve o antigo context-analyzer) + emite `template-summary.md`. | `template.html` marcado + `template-summary.md` |
+| 6 | `gp2-template-converter` | HTML marcado → `slide-N.json` Fabric (inclui self-validation pós-emissão). | `output/<slug>/slide-N.json` + `manifest.json` |
+| 7 | `gp2-template-uploader` | Upload S3 + invoca `app-lambda-template-handler` (Supabase + embedding). | template ID |
+| — | `gp2-pipeline` | Orchestrator que roda tudo na ordem com iteration policy. | Relatório consolidado |
+| — | `gp2-template-suggester` | Orquestrador alternativo: gera N prompts autônomos para catálogo e dispara `gp2-pipeline` por sub-agente. | N templates publicados |
 
-O uploader não é recriado — a pipeline v2 invoca a skill v1 (`getposts-template-uploader`) diretamente porque ela já funciona e está em produção.
+> O step v1 `gp2-template-result-reviewer` foi removido — os checks úteis foram absorvidos pelo `gp2-template-converter` como self-validation pós-emissão. O script `scripts/review-fabric-json.py` continua disponível para debug standalone.
 
 ## Standing rule do Gustavo
 
@@ -59,14 +60,19 @@ getposts-pipeline-v2/
 │   ├── audit-template-markup.py ← validador dos data-* no marker
 │   └── render-html-screenshots.js ← helper headless para designer e reviewer
 └── skills/
+    ├── _shared/                    ← specs cross-skill (gradient system, HTML technical spec)
     ├── gp2-pipeline/
+    ├── gp2-template-suggester/
     ├── gp2-request-interpreter/
+    ├── gp2-art-director/
     ├── gp2-html-designer/
-    │   └── references/aesthetic-families.md
+    │   └── references/             ← aesthetic-families, carousel-chrome, professional-photo-placements
     ├── gp2-html-reviewer/
     ├── gp2-template-marker/
+    │   └── references/element-descriptions.md
     ├── gp2-template-converter/
-    └── gp2-template-result-reviewer/
+    └── gp2-template-uploader/
+        └── scripts/                ← import-template.py, save-template-in-editor.js
 ```
 
 ## Como usar (openclaw)
@@ -90,12 +96,11 @@ Rode gp2-html-designer com este brief: <conteúdo de brief.md>
 
 | Etapa | Loop máx |
 |-------|----------|
-| Designer interno (3 passos low/mid/high-fi) | fixos, não conta como loop |
+| Art-director | reexecuta se plano incompleto (raro) |
+| Designer interno (3 passos low/mid/high-fi) | fixos; 1 retry por passo se auto-check falhar |
 | HTML reviewer | 2 revisões |
 | Marker audit | 2 fixes |
-| Converter validator | 2 fixes |
-| Result reviewer | 2 fixes |
-| Editor save/thumbnails | 1 retry |
+| Converter self-validation | 2 fixes |
 
 Após o teto, a pipeline para e reporta o gate que falhou com evidências.
 

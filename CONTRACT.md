@@ -29,7 +29,7 @@ Não duplique regras aqui — só referencie. Quando o contrato evoluir, ele evo
 ## Validadores que enforçam o contrato
 
 - **`scripts/audit-template-markup.py`** — confere os `data-*` no HTML marcado (estrutura semântica). Roda dentro do `gp2-template-marker`.
-- **`scripts/validate-slides.js`** — confere o Fabric JSON emitido (tipos, campos, gradientes, variable configs, ClippableImage etc.). Roda dentro do `gp2-template-converter` e do `gp2-template-result-reviewer`.
+- **`scripts/validate-slides.js`** — confere o Fabric JSON emitido (tipos, campos, gradientes, variable configs, ClippableImage etc.). Roda dentro do `gp2-template-converter` (self-validation pós-emissão).
 
 Os dois validadores são autoritativos. Status `PASS` em ambos = HTML válido e Fabric JSON pronto para o editor.
 

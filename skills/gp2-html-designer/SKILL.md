@@ -132,21 +132,14 @@ Documente:
 
 ## Regras de HTML invioláveis
 
-Estas regras existem por requisitos técnicos do conversor Fabric — não são opcionais.
+As 13 regras técnicas (estrutura, CSS inline, gradientes obrigatoriamente com `data-darken`/`data-glow`, fontes declaradas em `<meta hm-fonts>`, etc.) vivem em [`../_shared/HTML_TECHNICAL_SPEC.md`](../_shared/HTML_TECHNICAL_SPEC.md). **Leia antes de escrever HTML.** Resumo do que o designer aplica diretamente:
 
-1. Uma `<section class="slide" data-width="N" data-height="M">` por slide.
-2. `position: absolute` com `left/top/width/height` em px dentro de `.slide`. **Sem flex/grid no canvas.**
-3. Uma `<img>` por região de imagem real. **Sem CSS shapes simulando foto.**
-4. Sem pseudo-elementos (`::before`, `::after`).
-5. Sem `@keyframes`/animations.
-6. Sem `mix-blend-mode`, `backdrop-filter`, `mask-image` complexo.
-7. Pesos de fonte explícitos (400, 600, 700) — **nunca só `bold`**.
-8. Copy em português, verbatim do brief.
-9. `<meta name="hm-fonts" content="Fonte1,Fonte2">` no `<head>` listando **todas** as famílias usadas no CSS.
-10. `<html data-template-name="..." data-segment="...">` com o slug do vertical inferido do brief (kebab-case, ex: `clinicas-medicas`, `ecommerce-moda`, `academias`).
-11. Rotação só via `transform: rotate(Ndeg)`.
-12. **Todo CSS deve ser inline (`style="..."`) — PROIBIDO usar `<style>` blocks ou classes CSS.** O conversor lê estilos diretamente dos atributos `style`. Bloco `<style>` no `<head>` impede o conversor de detectar gradientes, posições, cores e tamanhos. Única exceção tolerada: reset mínimo `* { margin:0; box-sizing:border-box; }`.
-13. Todo elemento com `linear-gradient` ou `radial-gradient` no `style` DEVE ter: `data-darken="<preset>"` + `data-darken-opacity` (escurecimento neutro), OU `data-glow="<preset>"` + `data-glow-variable` + `data-glow-alpha` (glow atmosférico com cor brand). NUNCA use cores brand em gradientes lineares — fundo brand = sólido + darken overlay.
+- `<html data-template-name="<slug>" data-segment="<segmento-kebab-case>">` + `<meta name="hm-fonts">` listando todas as famílias.
+- Uma `<section class="slide" data-width data-height>` por slide; tudo dentro com `position: absolute` em px.
+- CSS sempre inline; sem `<style>` blocks, sem classes CSS, sem pseudo-elementos/animations/blend-modes.
+- `font-weight` numérico (400/600/700) — nunca `bold`.
+- Imagens reais (`<img>`), nunca CSS shapes simulando foto.
+- Gradiente em qualquer elemento → obrigatório `data-darken` (escurecimento neutro) ou `data-glow` (brand atmosférico). Cores brand hex em `linear-gradient` são proibidas.
 
 ## Imagens contextuais (userAsset) — fluxo obrigatório
 
@@ -211,22 +204,14 @@ Anti-patterns críticos:
 
 ## Gradientes — quando e como usar
 
-**REGRA ZERO:** NUNCA use cores brand hex em gradientes. Background brand = fundo SÓLIDO na cor primary + overlay de escurecimento neutro (`transparent→rgba(0,0,0,N)`). Gradientes primary→secondary são **PROIBIDOS**.
+Spec completa (8 presets de `data-darken`, glow brand via `data-glow`, sombras, anti-patterns) em [`../_shared/GRADIENT_SYSTEM.md`](../_shared/GRADIENT_SYSTEM.md). Em resumo:
 
-### Sistema `data-darken` (OBRIGATÓRIO para todo gradiente de escurecimento)
+- **Background brand** = fundo sólido `primary` na `<section>` + `<div>` overlay com `data-darken="<preset>" data-darken-opacity="N"`. Nunca brand hex dentro de `linear-gradient`.
+- **Overlay de legibilidade sobre foto** = `<div data-static="true" data-darken="bottom"...>`. Opacidade orientativa: `0.65–0.80` para texto 400; `0.45–0.60` para texto 700+.
+- **Glow atmosférico** (opt-in) = `<div data-glow="center" data-glow-variable="primary|secondary" data-glow-alpha="0.x" data-static="true">` com `radial-gradient(circle, rgba(...), transparent)` + `border-radius:50%`. Sem esses atributos, círculo translúcido vira fill sólido no Fabric.
+- **Sombras**: `box-shadow` sempre `rgba(0,0,0, opacity)`. Nunca hex brand.
 
-| `data-darken` | Direção | CSS equivalente |
-|---------------|---------|-----------------|
-| `bottom` | ↓ | `linear-gradient(to bottom, transparent, rgba(0,0,0,N))` |
-| `top` | ↑ | `linear-gradient(to top, transparent, rgba(0,0,0,N))` |
-| `right` | → | `linear-gradient(to right, transparent, rgba(0,0,0,N))` |
-| `left` | ← | `linear-gradient(to left, transparent, rgba(0,0,0,N))` |
-| `diagonal-se` | ↘ | `linear-gradient(135deg, transparent, rgba(0,0,0,N))` |
-| `diagonal-ne` | ↗ | `linear-gradient(45deg, transparent, rgba(0,0,0,N))` |
-| `vignette` | radial centro | `radial-gradient(circle at 50% 50%, transparent, rgba(0,0,0,N))` |
-| `vignette-top-left` | radial tl | `radial-gradient(circle at 20% 10%, transparent, rgba(0,0,0,N))` |
-
-**Fundo brand com profundidade:**
+Exemplo — fundo brand com escurecimento atmosférico:
 
 ```html
 <section class="slide" data-width="1080" data-height="1350"
@@ -238,53 +223,6 @@ Anti-patterns críticos:
   </div>
 </section>
 ```
-
-**Overlay de legibilidade sobre foto:**
-
-```html
-<div data-static="true" data-darken="bottom" data-darken-opacity="0.75"
-     style="position:absolute; left:0; top:0; width:1080px; height:1350px;
-            background:linear-gradient(to bottom, transparent 30%, rgba(0,0,0,0.75) 100%);">
-</div>
-```
-
-Opacidade orientativa: `0.65–0.80` para texto 400; `0.45–0.60` para texto 700+.
-
-### Glow atmosférico — sistema `data-glow` (CRÍTICO)
-
-Glow = círculo radial translúcido com cor brand. DEVE usar `data-glow` + `data-glow-variable` + `data-glow-alpha`.
-
-```html
-<div data-glow="center"
-     data-glow-variable="secondary"
-     data-glow-alpha="0.44"
-     data-static="true"
-     style="position:absolute; left:900px; top:-620px; width:560px; height:560px;
-            border-radius:50%;
-            background:radial-gradient(circle, rgba(34,211,238,0.44) 0%, transparent 100%);
-            opacity:0.11;">
-</div>
-```
-
-| Atributo | Valor |
-|----------|-------|
-| `data-glow` | `center` |
-| `data-glow-variable` | `primary` ou `secondary` |
-| `data-glow-alpha` | `0.0`–`1.0` |
-| `data-static="true"` | sempre |
-
-**Círculo sólido com `background: #22D3EE; opacity: 0.11` SEM `data-glow` NÃO é glow no Fabric** — vira fill sólido.
-
-### Sombras — regra de cor
-
-`box-shadow` sempre com `rgba(0,0,0, <opacity>)`. Nunca com hex brand. Opacidade típica: `0.08–0.20` para cards; `0.25–0.40` para decorativo.
-
-### Anti-patterns de gradiente
-
-- Cores brand hex em gradientes lineares — PROIBIDO.
-- `data-variable-stops` — eliminado.
-- Gradiente sem `data-darken` — converter não parseia CSS, gradiente vira cor sólida.
-- `<style>` block com gradientes — converter não lê.
 
 ## Carousel chrome (opt-in, não default)
 

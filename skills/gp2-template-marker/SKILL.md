@@ -85,22 +85,12 @@ artifacts/gp2-template-marker/<slug>/
 5. Aplique a classificação (ver tabela abaixo).
 6. Mapeie cores de marca: cada elemento cuja cor (fill/stroke/background) deve trocar com o preset da marca recebe `data-variable="primary|secondary"` + opcional `data-variable-target`.
 6b. **Valide atributos `data-darken` (safety net obrigatória):**
-   - Caminhe todos os elementos. Para qualquer elemento cujo `style` contenha `linear-gradient(` ou `radial-gradient(`:
-     - Se tem `data-darken` com valor válido (bottom, top, right, left, diagonal-se, diagonal-ne, vignette, vignette-top-left) + `data-darken-opacity` numérico 0.1-1.0 → OK.
-     - Se tem `data-gradient` JSON válido (fallback para overlays custom) → OK.
-     - Se **NÃO tem nenhum dos dois** → o marker **DEVE adicionar** `data-darken` + `data-darken-opacity`, inferindo a direção do CSS.
-   - **Se `<section>` tem gradiente CSS com cores brand hex (não transparent/rgba)** → **FAIL**. Devolver ao designer. Background brand deve ser cor sólida primary + div overlay com `data-darken`. Não prosseguir.
-   - **Se `data-variable-stops` está presente** → remover e substituir por `data-variable="primary" data-variable-target="background"` na section + `data-darken` no overlay.
-   - Mapeamento de direção CSS → preset `data-darken`:
-     - `to bottom` / `180deg` → `bottom`
-     - `to top` / `0deg` → `top`
-     - `to right` / `90deg` → `right`
-     - `to left` / `270deg` → `left`
-     - `135deg` → `diagonal-se`
-     - `45deg` → `diagonal-ne`
-     - `radial-gradient(circle at center` → `vignette`
-     - `radial-gradient(circle at` com offset → `vignette-top-left`
-   - Este step é safety net — o designer deveria já ter incluído `data-darken`. Se o marker adicionou, log em `marker-audit.md`.
+   - Caminhe todos os elementos com `linear-gradient(` ou `radial-gradient(` no `style`.
+     - Tem `data-darken` válido + `data-darken-opacity` (0.1–1.0) → OK.
+     - Tem `data-gradient` JSON (fallback de overlay custom) → OK.
+     - Caso contrário → o marker **adiciona** `data-darken` + `data-darken-opacity`, inferindo a direção do CSS. Lookup CSS → preset em [`../_shared/GRADIENT_SYSTEM.md`](../_shared/GRADIENT_SYSTEM.md) §"Mapeamento CSS → preset". Log em `marker-audit.md`.
+   - **`<section>` com gradiente CSS usando cores brand hex** (não transparent/rgba) → **FAIL**. Devolva ao designer. Background brand = cor sólida `primary` + div overlay com `data-darken`. Não prosseguir.
+   - **`data-variable-stops` presente** → remova e substitua por `data-variable="primary" data-variable-target="background"` na section + `data-darken` no overlay (legado).
 7. Rode o audit:
 
 ```bash

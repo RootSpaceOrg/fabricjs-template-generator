@@ -216,25 +216,9 @@ A regra "todo objeto: `originX: "center"`, `originY: "center"`" aplica-se a todo
 
 ### REGRA ZERO (CRÍTICO)
 
-**NUNCA use `getComputedStyle()` para extrair cores de gradiente.** A pipeline v2 usa `data-darken` para indicar presets de escurecimento. Você lê o atributo e emite o gradiente usando a lookup table abaixo — sem parsear CSS.
+**NUNCA use `getComputedStyle()` para extrair cores de gradiente.** A pipeline v2 usa `data-darken` para indicar presets de escurecimento. Leia o atributo e emita o gradiente usando o lookup definitivo em [`../_shared/GRADIENT_SYSTEM.md`](../_shared/GRADIENT_SYSTEM.md) §"Presets de `data-darken`" — sem parsear CSS.
 
-### Lookup table: `data-darken` → Fabric gradient fill
-
-| `data-darken` | type | coords |
-|---------------|------|--------|
-| `bottom` | linear | `{ x1: 0, y1: 0, x2: 0, y2: 1 }` |
-| `top` | linear | `{ x1: 0, y1: 1, x2: 0, y2: 0 }` |
-| `right` | linear | `{ x1: 0, y1: 0, x2: 1, y2: 0 }` |
-| `left` | linear | `{ x1: 1, y1: 0, x2: 0, y2: 0 }` |
-| `diagonal-se` | linear | `{ x1: 0, y1: 0, x2: 1, y2: 1 }` |
-| `diagonal-ne` | linear | `{ x1: 0, y1: 1, x2: 1, y2: 0 }` |
-| `vignette` | radial | `{ x1: 0.5, y1: 0.5, x2: 0.5, y2: 0.5, r1: 0, r2: 1 }` |
-| `vignette-top-left` | radial | `{ x1: 0.2, y1: 0.1, x2: 0.2, y2: 0.1, r1: 0, r2: 1 }` |
-
-**ColorStops padrão (linear):** `[{ offset: 0, color: "rgba(0,0,0,0)" }, { offset: 1, color: "rgba(0,0,0,<opacity>)" }]`
-**ColorStops padrão (vignette):** `[{ offset: 0, color: "rgba(0,0,0,0)" }, { offset: 0.7, color: "rgba(0,0,0,<opacity>)" }]`
-
-Onde `<opacity>` vem de `data-darken-opacity` (ex: "0.8" → `rgba(0,0,0,0.8)`).
+A spec compartilhada cobre: tabela completa de presets → coords Fabric, colorStops padrão (linear vs. vignette), regras de `gradientUnits`/`gradientTransform`, fallback `data-gradient`, glow brand via `data-glow` e self-check pós-emissão.
 
 ### Padrão único — Fundo brand com escurecimento atmosférico
 
@@ -369,35 +353,17 @@ Elementos com `data-glow` são círculos de iluminação atmosférica com cor br
 }
 ```
 
-**Notas críticas:**
+**Notas críticas (glow):**
 - `topLeft/topRight/bottomRight/bottomLeft: 100` → círculo perfeito (equivalente a `border-radius: 50%`).
-- `colorStops[1]` no fill é `"#bebebe00"` (cinza totalmente transparente) — cor neutra irrelevante, alpha 0.
-- `fillVariableConfig.colorStops[1]` é `null` porque o segundo stop é neutro (não muda com paleta).
-- O `opacity` do elemento vem do CSS `opacity` (ex: `0.11`), separado do alpha do gradiente (`data-glow-alpha`).
-- `data-glow-alpha` determina a opacidade da cor brand DENTRO do gradiente (quão forte é o centro do glow).
-- Em colorStops de glow, use hex com alpha (`#RRGGBBAA`). Este é o único caso onde hex com alpha é usado — em darken/overlay, continue usando `rgba(R,G,B,A)`.
+- `colorStops[1]` no fill é `"#bebebe00"` (cinza totalmente transparente) — cor neutra descartável.
+- `fillVariableConfig.colorStops[1]` é `null` porque o segundo stop é neutro.
+- `opacity` do elemento vem do CSS `opacity`, separado do `data-glow-alpha` (que controla a intensidade da cor brand dentro do gradiente).
 
 ### Self-validation pós-emissão (OBRIGATÓRIO)
 
-Após emitir cada slide, verifique:
+Após emitir cada slide, rode o self-check da spec compartilhada (ver [`../_shared/GRADIENT_SYSTEM.md`](../_shared/GRADIENT_SYSTEM.md) §"Self-check (converter, pós-emissão)") + o checklist de `data-variable` específico do converter (próxima seção do workflow). Máximo 2 fixes antes de escalar.
 
-| Condição no HTML | O que DEVE existir no JSON | Se ausente → corrigir |
-|------------------|---------------------------|----------------------|
-| `<section data-variable="X" data-variable-target="background">` | root `backgroundVariableConfig: { type: "solid", variable: "X", alpha: 1 }` + `background` = hex de X | Background errado |
-| `<div data-darken="Y" data-darken-opacity="Z">` dentro de section | roundedRect com gradient fill (lookup Y, opacity Z) | Gradiente perdido |
-| `<div data-darken="Y">` overlay sobre img | roundedRect com gradient fill | Gradiente perdido |
-| `<div data-glow="Y" data-glow-variable="X" data-glow-alpha="A">` | roundedRect com radial gradient fill + `fillVariableConfig: { type: "gradient", colorStops: [{ variable: "X", alpha: A }, null] }` | Glow perdido ou sem variableConfig |
-
-Se qualquer check falhar, corrija antes de prosseguir. Máximo 2 fixes.
-
-### Regras críticas de gradiente
-
-- **`type`** deve ser `"linear"` ou `"radial"` — nunca `"linearGradient"` ou string CSS.
-- **`gradientUnits: "percentage"`** sempre.
-- **`gradientTransform: null`** sempre presente.
-- **Cor com alpha**: em darken/overlay, use `"rgba(R,G,B,A)"` nos colorStops. Em glow atmosférico (`data-glow`), use hex com alpha (`#RRGGBBAA`) — é o único caso onde este formato é usado.
-- **Overlay sem `data-variable`**: nunca adicione `fillVariableConfig` a overlay — é neutro.
-- **`data-variable-stops`**: não existe mais na pipeline. Se encontrar, ignore.
+Regras críticas (em qualquer caso): `type` = `"linear"`/`"radial"` (nunca string CSS), `gradientUnits: "percentage"`, `gradientTransform: null`. Cor com alpha: `rgba(R,G,B,A)` em darken/overlay; `#RRGGBBAA` (hex+alpha) **apenas** em glow. Overlay neutro nunca recebe `fillVariableConfig`. `data-variable-stops` é legado — ignore se encontrar.
 
 ## Workflow
 

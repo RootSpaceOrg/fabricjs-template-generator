@@ -56,6 +56,8 @@ O script gera `html-review.json` + `html-review.md`. Leia os findings.
 
 ## Findings técnicos (HARD-GATE — sempre bloqueiam)
 
+Cada item abaixo é um check acionável aplicado contra o `template.html`. Para as regras de fundo (estrutura, CSS inline, gradientes obrigatórios), ver [`../_shared/HTML_TECHNICAL_SPEC.md`](../_shared/HTML_TECHNICAL_SPEC.md) e [`../_shared/GRADIENT_SYSTEM.md`](../_shared/GRADIENT_SYSTEM.md) — esta lista é a tradução em findings concretos.
+
 - Texto fora do canvas (left/top + width/height ultrapassa data-width/height).
 - Sobreposição não-intencional entre conteúdo e conteúdo (texto sobre texto, foto sobre título).
 - Contraste WCAG AA < 4.5:1 para body, < 3.0:1 para títulos grandes (≥ 24pt).
