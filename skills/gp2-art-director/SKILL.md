@@ -84,6 +84,31 @@ Antes de qualquer decisão criativa, inspecione as imagens e extraia:
 
 ---
 
+### 1c. Decisão de fidelidade composicional — REFERENCE-DRIVEN MODE ONLY
+
+Antes de planejar slides, decida explicitamente: a identidade composicional da referência **cabe no catálogo A1–A14** com ajuste, ou **exige A0-custom-from-reference**?
+
+**Use catálogo (A1–A14) quando:**
+- A composição da referência mapeia razoavelmente em algum A* (≤15% de desvio dos anchors da tabela).
+- A identidade da peça está mais na paleta/tipografia/elementos editoriais do que na composição em si.
+- Ajustar coords dentro de um A* preserva o que define a referência.
+
+**Use A0-custom-from-reference quando:**
+- A referência tem layout que nenhum A1–A14 reproduz fielmente (tipografia diagonal, grid 3 colunas, headline com bleed intencional, número editorial ocupando 60% do slide, etc.).
+- Mapear para A* mais próximo achataria o que dá personalidade à peça.
+- A referência repete o mesmo padrão composicional em todos os slides como escolha estética (mono-arquétipo é a identidade — não preguiça).
+
+Quando A0 é a escolha, **derive os anchors diretamente da referência** observada e declare-os no plano (ver template do `visual-plan.md` em A0 — catálogo `_shared/COMPOSITIONS.md`). Em A0:
+- A regra de diversidade ≥2/≥3 arquétipos é **suspensa** quando A0 aparece em ≥2 slides — fidelidade prevalece.
+- A regra de anti-uso de A* (ex: "A3 anti-uso: capa") não se aplica — se a referência usa A3-like na capa, declare A0 e replique.
+- Regras técnicas hard (contraste, overflow, ancoragem de foto profissional, data-variable, etc.) **continuam valendo** — A0 não dispensa nada disso.
+
+A decisão pode ser **por slide**: alguns slides podem usar A1–A14 e outros A0 no mesmo carrossel, se a referência for híbrida.
+
+Anote a decisão no `visual-plan.md` em `## Notas para o designer` (ex: "Slides 1–5 em A0 — referência é mono-arquétipo editorial; mapear para A3 perderia o número decorativo que ocupa 50% de cada slide").
+
+---
+
 ### 2. Resolva a paleta com hexs concretos
 
 **Em free mode:** derive a paleta do segmento + tom do brief. Nunca deixe aberto — o designer não deve escolher cor.
@@ -129,6 +154,7 @@ Para **cada slide** do brief, declare:
 - Carrossel com ≥5 slides usa **≥3 arquétipos distintos**.
 - Slide CTA final tipicamente em `A6-cta-button-anchored`.
 - Slide capa tipicamente em `A1`, `A2`, `A10` ou `A12`.
+- **Exceção (reference-driven mode):** quando A0-custom-from-reference é declarado em ≥2 slides porque a referência é mono-arquétipo intencional, a regra de ≥2/≥3 arquétipos distintos é **suspensa**. Documente a decisão em `## Notas para o designer`.
 
 ---
 
@@ -303,10 +329,18 @@ reference-driven
 - **Slide N (CTA):** <posição — ex: CTA-footer-left, 140px>
 - **Outros slides (opcional):** <slide M: posição + tamanho — só se a referência mostrar>
 
+## Decisão composicional
+<catalog-mapped | custom-anchors | hybrid>
+<1-2 linhas: por que essa decisão. Em custom-anchors ou hybrid, indique quais slides usam A0 e por quê.>
+
 ## Plano de slides
 
 ### Slide 1 — <papel narrativo> (background: claro/escuro/brand)
-- **Arquétipo:** A<N> — <slug>
+- **Arquétipo:** A<N> — <slug>   <!-- ou A0-custom-from-reference -->
+- **Anchors (apenas se A0):**
+  - `<nome-zone-1>`: x=N–N%, y=N–N% — <o que vai aqui>
+  - `<nome-zone-2>`: x=N–N%, y=N–N% — <o que vai aqui>
+- **Justificativa de A0 (apenas se A0):** <por que nenhum A1–A14 cabia>
 - **Gradientes:** <nenhum | overlay bottom 0.70 | escurecimento-atmosférico diagonal-se 0.80 | etc.>
 - **Copy orientativo:** <copy do brief>
 - **Notas de execução:** <o que herdar da referência, o que adaptar>
@@ -324,7 +358,7 @@ reference-driven
 | ... | ... |
 
 ## Notas para o designer
-<O que NÃO copiar da referência (logo, copy, fotos específicas). Erros visuais da referência a corrigir.>
+<O que NÃO copiar da referência (logo, copy, fotos específicas). Erros visuais da referência a corrigir. Se decisão = custom-anchors ou hybrid, explique aqui por que o catálogo achataria a referência.>
 ```
 
 ---

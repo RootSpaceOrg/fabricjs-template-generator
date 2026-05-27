@@ -10,6 +10,7 @@ Cada arquétipo é um **esqueleto inicial** — o designer adapta coords exatas 
 - Slide CTA final tipicamente em `A6-cta-button-anchored` ou variante.
 - Slide capa tipicamente em `A1`, `A2`, `A10`, `A12` ou `A14` (este último quando a capa precisa combinar foto contextual + profissional + hook tipográfico).
 - Slide de miolo editorial com numeração ostentatória tipicamente em `A13` (combinado com M11).
+- **Exceção reference-driven:** em `reference-driven mode`, se a referência tem identidade composicional que nenhum A1–A14 reproduz fielmente, declare `A0-custom-from-reference` (ver abaixo) com anchors derivados da própria referência. Quando ≥2 slides usam A0, a regra de diversidade ≥2/≥3 arquétipos é **suspensa** — fidelidade à referência prevalece sobre variedade composicional.
 
 **Convenção dos diagramas:** grid abstraído 1080×1350 → ASCII ~14 colunas × 12 linhas. `[FOTO]` = slot de imagem; `■` = bloco de cor primary; `─` = fio decorativo; `→` = swipe arrow.
 
@@ -479,10 +480,47 @@ Cada arquétipo é um **esqueleto inicial** — o designer adapta coords exatas 
 
 ---
 
+## A0 — custom-from-reference (reference-driven mode only)
+
+Arquétipo de escape. **Não tem layout pré-definido** — o art-director declara os anchors caso a caso, derivando-os diretamente da referência visual.
+
+**Quando usar:**
+- Modo `reference-driven` apenas.
+- A referência tem identidade composicional que nenhum A1–A14 reproduz sem achatar (ex: tipografia diagonal, grid 3 colunas, texto em arco, headline com bleed intencional, número editorial ocupando 60% do slide, layout que repete propositalmente em todos os slides).
+- O art-director avalia: "se eu mapear isso pra A3/A8/A10, perco o que define a peça?" Se sim → A0.
+
+**Como declarar no `visual-plan.md`:**
+
+```markdown
+### Slide N — <papel> (background: ...)
+- **Arquétipo:** A0-custom-from-reference
+- **Anchors (derivados da referência):**
+  - `<nome-zone-1>`: x=N–N%, y=N–N% — <o que vai aqui>
+  - `<nome-zone-2>`: x=N–N%, y=N–N% — <o que vai aqui>
+  - ...
+- **Justificativa de A0:** <1-2 linhas: por que A1–A14 achatariam>
+- **Gradientes:** ...
+- **Copy orientativo:** ...
+- **Notas de execução:** ...
+```
+
+**Regras:**
+- A0 só é válido em reference-driven mode. Em free mode, escolha A1–A14.
+- Anchors declarados em A0 substituem o catálogo para fins de validação do reviewer (compara HTML contra os anchors declarados, não contra A1–A14).
+- Quando A0 aparece em ≥2 slides, a regra de diversidade ≥2/≥3 arquétipos é suspensa (mono-arquétipo é fidelidade à referência, não preguiça).
+- A0 não dispensa as regras técnicas hard do reviewer (contraste, overflow, ancoragem de foto profissional, data-variable, etc.).
+
+**Anti-uso:**
+- Free mode (sem referência). Sem âncora externa, A0 vira "designer faz o que quer" — use o catálogo.
+- Quando a referência claramente cabe em A1–A14 com ajuste de coords (≤15% de desvio dos anchors da tabela). Use o A* mais próximo e documente o ajuste em `notes.md` — A0 não é atalho para evitar o catálogo.
+
+---
+
 ## Como o reviewer usa o catálogo
 
 - Confere que cada slide tem **um** A* declarado no `visual-plan.md`.
-- Confere diversidade (regra de ≥2/≥3 arquétipos por tamanho de carrossel).
+- Confere diversidade (regra de ≥2/≥3 arquétipos por tamanho de carrossel). **Exceção:** suspensa quando ≥2 slides usam A0 em reference-driven mode.
 - Para cada slide, confere que os anchors do A* declarado têm contraparte plausível no HTML (não exige px exato — exige que `headline-zone` esteja onde a tabela define, com tolerância ±5% do canvas).
+- Para A0: compara HTML contra os anchors declarados pelo art-director no `visual-plan.md` (não contra o catálogo). Tolerância ±5% também.
 - Desvio silencioso (HTML não bate com A* sem nota) → finding `archetype-mismatch` severity blocker.
 - Desvio documentado em `notes.md` com razão válida → aceito.

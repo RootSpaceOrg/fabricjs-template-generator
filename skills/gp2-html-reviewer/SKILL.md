@@ -56,7 +56,7 @@ O script gera `html-review.json` + `html-review.md`. Leia os findings.
    - `screenshots-v2-midfi/` — paleta + data-variable aplicados
    - `screenshots/` — final com moves e delight
    Use a progressão para detectar regressões (qualidade caiu entre N e N+1).
-5. **Confira arquétipos**: para cada slide, o A* declarado tem contraparte visual no HTML final? Anchors do arquétipo estão preservados (tolerância ±5% do canvas).
+5. **Confira arquétipos**: para cada slide, o A* declarado tem contraparte visual no HTML final? Anchors do arquétipo estão preservados (tolerância ±5% do canvas). **Para `A0-custom-from-reference`:** compare o HTML contra os **anchors declarados pelo art-director** no `visual-plan.md` (não contra o catálogo A1–A14). Tolerância ±5% também. Se o art-director declarou A0 sem listar anchors → finding `archetype-mismatch` blocker (A0 sem anchors é decisão sem contrato).
 6. **Confira moves**: cada M* declarado tem evidência visual nos slides indicados?
 7. **Confira tipografia**: famílias declaradas no plano estão executadas? Pesos e tamanhos seguem a escala?
 8. **Confira fidelidade à referência** (reference-driven mode apenas — ver seção dedicada).
@@ -103,8 +103,8 @@ Cada item abaixo é um check acionável aplicado contra o `template.html`. Para 
 
 Cada finding novo carrega `code`, `slide`, `issue`, `severity`, `fix`. Detectados parcialmente pelo `review-html-design.py` (regras determinísticas), parcialmente por inspeção do agente.
 
-- **`archetype-mismatch`** (blocker): slide cuja composição executada não corresponde ao arquétipo A* declarado no `visual-plan.md` **sem** justificativa em `notes.md`. Fix: documentar desvio com razão, ou voltar ao arquétipo.
-- **`low-diversity`** (blocker): 3+ slides consecutivos com mesmo arquétipo A*. Carrossel viola regra de diversidade do art-director. Fix: trocar arquétipo de 1+ slide.
+- **`archetype-mismatch`** (blocker): slide cuja composição executada não corresponde ao arquétipo A* declarado no `visual-plan.md` **sem** justificativa em `notes.md`. Para `A0-custom-from-reference`, compara contra os anchors declarados pelo art-director, não contra o catálogo. A0 declarado sem anchors também cai aqui. Fix: documentar desvio com razão, voltar ao arquétipo, ou (em A0) declarar os anchors no plano.
+- **`low-diversity`** (blocker): 3+ slides consecutivos com mesmo arquétipo A*. Carrossel viola regra de diversidade do art-director. Fix: trocar arquétipo de 1+ slide. **Exceção:** suspenso quando o `visual-plan.md` está em reference-driven mode E ≥2 slides usam `A0-custom-from-reference` E o plano declara `## Decisão composicional: custom-anchors` (ou `hybrid` com A0 nos slides repetidos) com justificativa — mono-arquétipo é fidelidade à referência, não preguiça.
 - **`move-missing`** (blocker): move M* declarado no plano mas ausente do HTML em todos os slides indicados. Fix: aplicar o move conforme `_shared/CAROUSEL_MOVES.md`.
 - **`typography-divergence`** (blocker quando família, warning quando peso/tamanho): tipografia executada não bate com a escala resolvida em `visual-plan.md` sem justificativa em `notes.md`. Fix: ajustar para escala ou documentar.
 - **`card-spam`** (warning ≥3 elementos; blocker ≥4): elementos com `border` + `border-radius` + `box-shadow` simultaneamente no mesmo slide. Fix: remover ornamentação redundante.
