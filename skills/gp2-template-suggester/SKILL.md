@@ -34,6 +34,7 @@ Se o usuário não disser N, default é **3**.
 | `ambiente` | `prod` | "em dev", "no dev", "--env dev", "ambiente dev" |
 | `objetivos` (filtro) | todos os 6, rotacionando | "só de aquisicao", "foca em posicionamento e educacao" |
 | `frameworks` (filtro) | livre dentro do objetivo | "usa só listicle e step-by-step" |
+| **`referencia`** (imagem) | nenhuma | usuário anexa 1+ imagens ao pedido. Suggester repassa a mesma referência para **todas** as N sugestões; cada sub-agent roda `gp2-pipeline` em **reference-driven mode**. |
 
 **Detecção de ambiente:** se o pedido mencionar `dev` em qualquer forma ("em dev", "ambiente dev", "no dev", "--env dev"), use `dev`. Caso contrário, **prod** (default — segue a standing rule).
 
@@ -121,6 +122,23 @@ Moves M* do catálogo [`_shared/CAROUSEL_MOVES.md`](../_shared/CAROUSEL_MOVES.md
 
 **Regra de variedade entre templates:** em batches grandes, evite repetir o mesmo par de moves em ≥2 templates consecutivos do mesmo objetivo. Consulte o histórico antes de finalizar a sugestão.
 
+## Modo com referência visual
+
+Quando o usuário anexa 1+ imagens ao pedido, o suggester opera em **modo com referência**. Comportamento:
+
+- **A mesma referência é repassada para TODAS as N sugestões do batch.** O usuário escolheu um vocabulário visual — todo o batch herda.
+- Cada sub-agent do `gp2-pipeline` recebe a referência e roda em **reference-driven mode** (interpreter detecta a imagem; art-director extrai paleta/tipografia/composição da referência).
+- **Multi-nicho continua valendo.** A referência informa **só direção visual** — não muda copy, segmento, CTA, nem libera professionalPhoto. Todas as diretrizes multi-nicho do prompt template (sem jargão, sem ícone de setor, sem CTA de serviço, sem professionalPhoto) continuam obrigatórias.
+- **Variedade de objetivo/framework é mantida.** O batch ainda distribui entre objetivos diferentes e usa frameworks distintos por sugestão. A referência não substitui essa rotação — ela só pinta com vocabulário visual comum.
+- **Risco aceito:** os N templates do batch podem ficar visualmente parecidos entre si (mesma paleta, tipografia, vocabulário composicional). Isso é o que o usuário quis ao anexar a referência. A variedade vem do framework/copy, não do visual.
+
+**Como o suggester repassa a referência:**
+1. A imagem chega no contexto do suggester (anexada à mensagem do usuário).
+2. Cada chamada `Agent` para o sub-agent deve incluir a referência no prompt (passe o path da imagem se ela foi salva localmente, ou inclua a imagem diretamente no contexto do Agent se o runtime suportar anexar imagem ao prompt do sub-agent).
+3. O prompt template ganha a seção `Referência visual` (ver template atualizado abaixo) instruindo o sub-agent a rodar em reference-driven mode.
+
+**Quando NÃO usar este modo:** se o usuário só citou uma marca por nome ("estilo Apple", "tipo Nubank") sem anexar imagem, **não invente referência**. Trate como pedido em free mode e registre o sinal estilístico em `Tom / copy` do prompt do sub-agent.
+
 ## Imagens no template
 
 Multi-nicho usa **apenas** `userAsset` — nunca `professionalPhoto`. O cliente final substitui pelas imagens dele no editor.
@@ -137,6 +155,11 @@ Detalhes finos de posição/tratamento ficam com o art-director via arquétipos.
 O Slide 1 é o gate algorítmico do Instagram: se ele não para o scroll, o resto não importa. A skill **sempre** especifica uma das fórmulas de hook validadas para o framework escolhido. Ver [`references/hook-formulas.md`](references/hook-formulas.md) para o catálogo completo.
 
 ## Workflow da skill
+
+0. **Detectar referência visual.** Verifique se o usuário anexou 1+ imagens à mensagem.
+   - Se sim: salve em `artifacts/gp2-template-suggester/_shared-reference/<batch-id>.<ext>` (use timestamp como batch-id), marque o batch como **modo com referência** e prepare-se para incluir a referência em todas as N sugestões.
+   - Se não: modo free (comportamento padrão atual).
+   - Citação textual de marca sem imagem ("estilo Apple") ≠ referência — não invente, trate como free mode.
 
 1. **Carregar histórico** (`scripts/suggestion-history.py list <objetivo>`)
    - Lê as últimas N sugestões por objetivo (default keep=20).
@@ -190,13 +213,17 @@ Objetivo de marketing: <OBJETIVO>
 Framework narrativo: <FRAMEWORK>
 Tema: <TEMA EM 1 FRASE CLARA>
 
-Diretrizes multi-nicho (obrigatórias):
+Referência visual: <"imagem anexada — rode em reference-driven mode, art-director extrai paleta/tipografia/composição da referência" | "nenhuma — rode em free mode">
+<Se houver referência: a imagem está anexada a esta mensagem. O gp2-request-interpreter vai detectá-la e passar para o art-director.>
+
+Diretrizes multi-nicho (obrigatórias — valem MESMO quando há referência visual):
 - A copy de TODOS os slides deve ser neutra a vertical. Qualquer profissional/marca de qualquer nicho deve adaptar este template trocando apenas os campos editáveis (data-template-element).
 - Não use jargão de nicho nenhum. Evite "paciente", "cliente", "aluno", "tutor", "consultório", "loja", "academia". Prefira "pessoas", "você", "seu público".
-- NÃO inclua professionalPhoto (data-image-type="professionalPhoto"). Templates multi-nicho não amarram a avatar específico de pessoa.
+- NÃO inclua professionalPhoto (data-image-type="professionalPhoto"). Templates multi-nicho não amarram a avatar específico de pessoa. **Mesmo que a referência mostre foto profissional, NÃO replique** — substitua por foto contextual (userAsset) ou composição tipográfica.
 - IMAGENS userAsset SÃO PERMITIDAS E ENCORAJADAS. "Sem professionalPhoto" ≠ "sem imagens nenhuma". userAsset é genérico — cliente final substitui pela imagem dele.
-- Sem ícones, símbolos ou metáforas visuais de setor (sem cruz médica, sem patinha, sem haltere, sem batom, etc.). Ícones abstratos (números, setas, check/X, gráficos, padrões) são livres.
-- CTA do último slide deve ser genérico: "Salve este post", "Compartilhe", "Comente <palavra>", "Siga para mais", "Marque alguém que precisa ler". Nunca CTA de serviço.
+- Sem ícones, símbolos ou metáforas visuais de setor (sem cruz médica, sem patinha, sem haltere, sem batom, etc.). Ícones abstratos (números, setas, check/X, gráficos, padrões) são livres. **Mesmo que a referência tenha ícone de nicho, NÃO replique.**
+- CTA do último slide deve ser genérico: "Salve este post", "Compartilhe", "Comente <palavra>", "Siga para mais", "Marque alguém que precisa ler". Nunca CTA de serviço. **Mesmo que a referência mostre CTA de serviço, substitua por CTA genérico.**
+- **Da referência, herde APENAS: paleta, tipografia, composição/arquétipos, elementos editoriais decorativos, tratamento de imagem genérico.** NÃO herde: copy, logo, fotos específicas, ícones de nicho, CTAs de serviço. O art-director deve registrar em "Notas para o designer" o que NÃO copiar.
 
 Estrutura sugerida:
 - Formato: Instagram feed 1080×1350.
@@ -239,12 +266,17 @@ Quando for disparar:
 - Cada Agent recebe `subagent_type: general-purpose` e prompt = o texto acima preenchido.
 - Cada Agent rodará `gp2-pipeline` no seu próprio workspace de artifacts (slug único por template).
 
+**Quando houver referência visual:**
+- Anexe a **mesma** imagem de referência em **todas** as N chamadas Agent — a referência é compartilhada por todo o batch.
+- A referência precisa chegar no contexto do sub-agent para que o `gp2-request-interpreter` detecte e o `gp2-art-director` extraia o vocabulário visual. Se o runtime do Agent não suporta anexar imagem direto, salve a referência em `artifacts/gp2-template-suggester/_shared-reference/<batch-id>.<ext>` e inclua o path absoluto no prompt do sub-agent com instrução clara: `"Referência visual em: <path>. Leia esta imagem antes de rodar o gp2-pipeline. O interpreter deve operar em reference-driven mode."`
+- O prompt template já tem a linha `Referência visual:` — preencha-a indicando que a imagem está anexada/no path X.
+
 Exemplo de disparo (N=3, em uma única resposta):
 
 ```
-Agent(description="Gerar template aquisição", prompt="<prompt sugestão 1>", subagent_type="general-purpose")
-Agent(description="Gerar template posicionamento", prompt="<prompt sugestão 2>", subagent_type="general-purpose")
-Agent(description="Gerar template educacao", prompt="<prompt sugestão 3>", subagent_type="general-purpose")
+Agent(description="Gerar template aquisição", prompt="<prompt sugestão 1 + referência>", subagent_type="general-purpose")
+Agent(description="Gerar template posicionamento", prompt="<prompt sugestão 2 + referência>", subagent_type="general-purpose")
+Agent(description="Gerar template educacao", prompt="<prompt sugestão 3 + referência>", subagent_type="general-purpose")
 ```
 
 ## Histórico local
@@ -304,7 +336,7 @@ Quando consultar para evitar repetição, considere semanticamente próximo (nã
 Sempre reporte em formato consolidado:
 
 ```markdown
-## Batch Pipeline 1 — <N> sugestões · ambiente: <prod|dev>
+## Batch Pipeline 1 — <N> sugestões · ambiente: <prod|dev> · modo: <free | reference-driven>
 
 ### Sugestão 1: <framework> · <objetivo> · <intenção composicional resumida>
 - Tema: <tema>
@@ -317,6 +349,7 @@ Sempre reporte em formato consolidado:
 
 ### Consolidado
 - Ambiente: <prod|dev>
+- Modo: <free | reference-driven — se reference-driven, indique path da referência compartilhada>
 - Sugestões dispatched: <N>
 - Padrão de imagens: <X sem imagem · Y com acento · Z image-heavy>  ← deve respeitar política (máx 1 sem imagem em batch de 3; ao menos 1 image-heavy em batch ≥5)
 - Templates criados com sucesso: <X>
