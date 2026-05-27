@@ -5,7 +5,9 @@ description: "Upload final da Pipeline GetPosts v2: lê slide-N.json + manifest.
 
 # gp2-template-uploader
 
-Importa os slides Fabric.js gerados pela pipeline v2 para a plataforma KultivAi/HealthMarket.
+Skill terminal da Pipeline GetPosts v2: pega os artefatos prontos (slides Fabric.js do converter + descrição do marker) e publica o template na plataforma KultivAi (S3 + Supabase via `app-lambda-template-handler`).
+
+O **objetivo** de cada template (arco narrativo, propósito, uso recomendado) é definido upstream pela [gp2-pipeline](../gp2-pipeline/SKILL.md) e suas skills parceiras — chega aqui já redigido em `template-summary.md`. Esta skill **não reescreve** essa descrição; apenas a propaga para o banco.
 
 ## Arquitetura do upload
 
@@ -85,37 +87,17 @@ node ../../scripts/validate-slides.js artifacts/gp2-template-converter/<slug>/ou
    - Imagens devem ter `imageType` e `templateElement.description`.
    - Variáveis de perfil devem usar `textType` e **não** ser `isTemplateElement`.
 
-3. Carregue `template-summary.md` do marker como `--description-hint`. A descrição final no Supabase deve priorizar o arco narrativo do post, não listar campos editáveis.
+3. Carregue `template-summary.md` do marker como `--description-hint`. O conteúdo é usado **verbatim** como `description` no Supabase.
 
 ## Regra de descrição
 
-A `description` do template deve explicar **que história o template conta** e **como cada slide move o leitor adiante**.
+A `description` enviada ao Supabase é o `template-summary.md` do marker, sem reescrita.
 
-Não detalhe campos editáveis. Use `template-summary.md` como fonte semântica principal. Estrutura esperada:
+- O marker é a única fonte de verdade narrativa.
+- O uploader **não** prefixa cabeçalhos, **não** anexa "Layout e estrutura" genérico, **não** envolve o conteúdo em "Modelo adaptável: ...".
+- Se `template-summary.md` não existir (caso anômalo na v2), o upload falha com erro claro — não há fallback genérico.
 
-```text
-Descrição Geral:
-Modelo adaptável: "<nome do arco narrativo>"
-
-Propósito do template:
-<jornada que o template suporta>.
-
-Layout e estrutura:
-<composição, hierarquia, número de slides, CTA e lógica visual>.
-
-Dinâmica do carrossel:
-- Lâmina 1 — <papel/título>
-  Função: <o que este slide faz na história>.
-  Estrutura: <padrão de conteúdo, não nomes de objetos>.
-- Lâmina N — CTA / fechamento
-  Função: ...
-  Estrutura: ...
-
-Uso recomendado:
-<quando usar, nicho/campanha/contexto e resultado que apoia>.
-```
-
-Se a análise narrativa for fraca ou ausente, infira a partir dos títulos/corpo dos slides. Não liste campos editáveis a não ser para debug de upload falho.
+Para ajustar o estilo da descrição, mexa em `gp2-template-marker`, não aqui.
 
 ## Payload enviado ao template-handler
 

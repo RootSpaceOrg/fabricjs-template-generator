@@ -55,7 +55,7 @@ artifacts/gp2-template-marker/<slug>/
 ├── template.html          ← cópia marcada (NUNCA edite a original do designer)
 ├── marker-audit.json      ← saída do audit-template-markup.py
 ├── marker-audit.md        ← versão humana do audit
-└── template-summary.md    ← arco narrativo (3-5 linhas) para o uploader
+└── template-summary.md    ← arco + papel de cada slide, sem cabeçalhos (vira description literal no Supabase)
 ```
 
 ## Workflow
@@ -78,10 +78,12 @@ artifacts/gp2-template-marker/<slug>/
    - **Papel do elemento** dentro do slide (gancho, título, subtítulo, corpo, prova, CTA-label, foto contextual, foto profissional, logo, brand-handle, decoração). Use isso para escolher entre `data-template-element`, `data-text-type`, `data-static`, `data-image-type`.
    - **Para cada elemento `data-template-element="true"`**, siga obrigatoriamente:
      1. Consulte `references/element-descriptions.md` → escolha o role canônico mais próximo.
-     2. Derive `ex1` do texto real do elemento no HTML (generalizado — sem referência ao vertical específico). Ex: "Seu conhecimento clínico está virando pacientes?" → `'Seu conhecimento está virando resultados?'`
-     3. Adicione hint de sequência quando o elemento funciona em par narrativo com vizinhos: `após eyebrow categórico; seguido de corpo educativo`.
-     4. Adicione 2 exemplos genéricos adicionais cobrindo variação de formato.
-     5. A description resultante **deve seguir a fórmula** — nunca escreva prosa descritiva.
+     2. **Texto**: derive `ex1` do texto real do elemento no HTML, generalizando vertical e tema. O texto é pista de **formato e comprimento**, não de tema. Ex: "Seu conhecimento clínico está virando pacientes?" → `'Seu conhecimento está virando resultados?'` (manteve formato pergunta + comprimento; trocou "clínico/pacientes" por termos cross-vertical).
+     3. **Imagem**: **ignore o tema do placeholder**. O placeholder (foto que o designer colocou no slot) é só preview visual para validar o layout — não dita o conteúdo real. O role da imagem vem do **papel do slide** (capa? prova? CTA?), não do que está dentro do `<img>`. Anti-pattern explícito: placeholder de café+mesa virando `"formato foto de mesa/objeto; sem pessoa em destaque"` é proibido. A description fixa **função no slide** + **bounds técnicas** (sem texto na imagem, sem watermark, editorial natural), deixando tema e enquadramento abertos.
+     4. Adicione hint de sequência quando o elemento funciona em par narrativo com vizinhos: `após eyebrow categórico; seguido de corpo educativo`.
+     5. Adicione 2 exemplos **cross-vertical** adicionais cobrindo variação saudável. Mistura intencional entre nichos — nunca 3 exemplos do mesmo vertical (saúde, pet, beleza).
+     6. **Bounds são técnicas/estruturais, não temáticas.** `"até 60 chars"`, `"2 linhas"`, `"editorial natural"` — sim. `"sem pessoa"`, `"foco em objeto"`, `"vista de cima"` — não (a menos que o aspect ratio do slot **realmente** force esse enquadramento).
+     7. A description resultante **deve seguir a fórmula** — nunca escreva prosa descritiva.
 5. Aplique a classificação (ver tabela abaixo).
 6. Mapeie cores de marca: cada elemento cuja cor (fill/stroke/background) deve trocar com o preset da marca recebe `data-variable="primary|secondary"` + opcional `data-variable-target`.
 6b. **Valide atributos `data-darken` (safety net obrigatória):**
@@ -217,25 +219,27 @@ ex: 'Sua ideia ficou clara?', 'O erro está no recorte',
 'Mostre o próximo passo'
 ```
 
-## `template-summary.md` (substitui context-analysis.json para o uploader)
+## `template-summary.md` (vira `description` do Supabase verbatim)
 
-Formato exato:
+O conteúdo deste arquivo é enviado **literal** como `description` da linha em `public.templates` pelo `gp2-template-uploader`. Não há reescrita downstream — o que você escreve aqui é o que aparece no editor e no embedding.
+
+Formato exato (sem cabeçalhos, sem H1, sem seções):
 
 ```markdown
-# Resumo do template — <título>
+<2-3 linhas explicando o arco do post: o que o template quer fazer o leitor entender/sentir/agir, ponta-a-ponta.>
 
-## Arco
-<2-3 linhas: o que o post quer fazer o leitor entender/sentir/agir, ponta-a-ponta>
-
-## Por slide
-- Slide 1: <papel narrativo curto>
-- Slide 2: <...>
-- Slide N: <CTA / fechamento>
+Slide 1: <papel narrativo curto>
+Slide 2: <...>
+Slide N: <CTA / fechamento>
 ```
 
-Mantenha curto. O uploader vai usar isso para gerar a descrição que aparece no Supabase. Não detalhe campos editáveis — isso é metadado, não conteúdo da descrição.
+Regras:
 
-Use os papéis narrativos reais do `brief.md` (passo 3b) para descrever cada slide — não invente papéis genéricos. O template tem um motivo para existir; a descrição deve refletir esse motivo.
+- **Não** escreva `# Resumo do template —`, `# Template summary —`, `## Arco`, `## Por slide`, `Descrição Geral:`, `Propósito do template:`, `Modelo adaptável:` ou qualquer outro cabeçalho. Eles viram lixo no Supabase.
+- **Não** mencione "HealthMarket", "KultivAi" nem nome de plataforma.
+- **Não** detalhe campos editáveis — isso é metadado, não conteúdo da descrição.
+- Use os papéis narrativos reais do `brief.md` (passo 3b) para cada slide; não invente papéis genéricos.
+- Mantenha curto: 2-3 linhas de arco + 1 linha por slide. Templates têm um motivo para existir; a descrição deve refletir esse motivo de forma direta.
 
 ## Audit
 

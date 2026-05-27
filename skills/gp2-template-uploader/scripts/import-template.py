@@ -176,175 +176,34 @@ def load_slides(path: Path) -> tuple[list[tuple[Path, dict[str, Any]]], dict[str
     return slides, manifest
 
 
-def iter_template_elements(slide: dict[str, Any]):
-    for obj in slide.get("objects") or []:
-        if obj.get("isTemplateElement") is True:
-            yield obj
-
-
-def describe_obj(obj: dict[str, Any]) -> str:
-    name = obj.get("name") or obj.get("type") or "Elemento"
-    te = obj.get("templateElement") or {}
-    desc = te.get("description") or ""
-    if obj.get("type") == "textbox":
-        sample = str(obj.get("text") or "").replace("\n", " / ")
-        max_chars = te.get("maxChars")
-        extra = (
-            f" Limite sugerido: até {max_chars} caracteres."
-            if isinstance(max_chars, int)
-            else ""
-        )
-        return f'{name}: campo de texto editável. {desc} Exemplo atual: "{sample}".{extra}'.strip()
-    if obj.get("type") in ("image", "ClippableImage"):
-        image_type = obj.get("imageType") or "userAsset"
-        return f"{name}: imagem editável do tipo {image_type}. {desc}".strip()
-    return f"{name}: elemento editável. {desc}".strip()
-
-
-def build_story_arc(context: dict[str, Any]) -> str:
-    slides = context.get("slides") if isinstance(context, dict) else None
-    if not isinstance(slides, list) or not slides:
-        return ""
-    lines = []
-    for slide in slides:
-        if not isinstance(slide, dict):
-            continue
-        number = slide.get("slideNumber") or len(lines) + 1
-        role = slide.get("slideRole") or "papel narrativo"
-        function = (
-            slide.get("storyFunction") or slide.get("readerQuestionAnswered") or ""
-        )
-        if function:
-            lines.append(f"- Slide {number} — {role}: {function}")
-    return "\n".join(lines)
-
-
-def infer_narrative_model(
-    context: dict[str, Any], slides: list[tuple[Path, dict[str, Any]]]
-) -> str:
-    upload_guidance = (
-        context.get("uploadGuidance")
-        if isinstance(context.get("uploadGuidance"), dict)
-        else {}
-    )
-    overall = context.get("overall") if isinstance(context.get("overall"), dict) else {}
-    for key in ("narrativeModel", "modelName", "storyModel"):
-        value = upload_guidance.get(key) or overall.get(key)
-        if isinstance(value, str) and value.strip():
-            return value.strip().strip('"""')
-    roles = []
-    for slide in context.get("slides") or []:
-        if isinstance(slide, dict) and slide.get("slideRole"):
-            roles.append(str(slide["slideRole"]).lower())
-    if roles and "cta" in roles and any(r in roles[0] for r in ("hook", "gancho")):
-        return "Do problema percebido à decisão de agir"
-    if len(slides) >= 4:
-        return "Da atenção inicial ao próximo passo"
-    return "Mensagem adaptável com progressão narrativa clara"
-
-
-def build_slide_structure(slide: dict[str, Any]) -> str:
-    elements = slide.get("elements") if isinstance(slide.get("elements"), list) else []
-    suggestions = []
-    for el in elements:
-        if not isinstance(el, dict):
-            continue
-        role = (
-            el.get("storytellingRole")
-            or el.get("markerDescriptionSuggestion")
-            or el.get("childRole")
-        )
-        if isinstance(role, str) and role.strip():
-            suggestions.append(role.strip().rstrip("."))
-    if suggestions:
-        return "; ".join(suggestions[:3]) + "."
-    question = slide.get("readerQuestionAnswered")
-    if isinstance(question, str) and question.strip():
-        return f"Conteúdo organizado para responder: {question.strip()}"
-    return "Estrutura adaptável conforme a função narrativa da lâmina."
-
-
-def build_narrative_arc(context: dict[str, Any], slide_count: int) -> str:
-    slides = context.get("slides") if isinstance(context, dict) else None
-    if not isinstance(slides, list) or not slides:
-        return "\n".join(
-            f"{idx}. Lâmina {idx} — Etapa narrativa {idx}\nFunção: avançar a mensagem principal do template.\nEstrutura: adaptar título, explicação e chamada conforme o objetivo do post."
-            for idx in range(1, slide_count + 1)
-        )
-
-    blocks = []
-    for idx, slide in enumerate(slides, start=1):
-        if not isinstance(slide, dict):
-            continue
-        number = slide.get("slideNumber") or idx
-        role = slide.get("slideRole") or "etapa narrativa"
-        function = (
-            slide.get("storyFunction")
-            or slide.get("readerQuestionAnswered")
-            or "avançar a história do template de forma clara."
-        )
-        structure = build_slide_structure(slide)
-        blocks.append(
-            f"{number}. Lâmina {number} — {role}\nFunção: {function}\nEstrutura: {structure}"
-        )
-    return "\n\n".join(blocks)
-
-
 def build_description(
     name: str,
     slides: list[tuple[Path, dict[str, Any]]],
     user_hint: str | None = None,
     context: dict[str, Any] | None = None,
 ) -> str:
+    """Description = template-summary.md verbatim.
+
+    The marker (gp2-template-marker) is the single source of truth for the
+    template's narrative description. The uploader does not rewrite, wrap, or
+    enrich it — that only produces duplication and dilution.
+
+    Precedence:
+      1. context._summary (template-summary.md loaded from artifacts)
+      2. user_hint (passed via --description-hint; usually the same file's content)
+      3. error — on v2 the summary is mandatory.
+    """
     context = context or {}
-
-    # v2: if context has a _summary (from template-summary.md), use it as the narrative backbone
-    summary_md = context.get("_summary", "")
-    if summary_md and user_hint:
-        hint = user_hint.strip()
-        return (
-            "Descrição Geral:\n"
-            f'Modelo adaptável: "Template HealthMarket — {name}"\n\n'
-            f"Propósito do template:\n{hint}\n\n"
-            f"Arco narrativo:\n{summary_md.strip()}\n\n"
-            f"Layout e estrutura:\nTemplate com {len(slides)} slide(s), preparado para publicação em redes sociais. "
-            "Composição guia a leitura em etapas com hierarquia visual clara, ritmo narrativo e fechamento com próximo passo.\n\n"
-            "Uso recomendado:\nUse quando precisar conduzir a audiência por uma sequência clara de reconhecimento, compreensão e convite para agir."
-        )
-
-    overall = context.get("overall") if isinstance(context.get("overall"), dict) else {}
-    upload_guidance = (
-        context.get("uploadGuidance")
-        if isinstance(context.get("uploadGuidance"), dict)
-        else {}
-    )
+    summary_md = (context.get("_summary") or "").strip()
+    if summary_md:
+        return summary_md
     hint = (user_hint or "").strip()
-    purpose = (
-        hint
-        or overall.get("postPurpose")
-        or upload_guidance.get("semanticSummary")
-        or f'criar um template editável chamado "{name}" para conteúdo de marketing digital.'
-    )
-    narrative_model = infer_narrative_model(context, slides)
-    story_arc = build_narrative_arc(context, len(slides))
-    recommended = (
-        upload_guidance.get("useRecommendedFor")
-        or overall.get("audienceIntent")
-        or (
-            "Use este template quando o usuário precisar conduzir a audiência por uma sequência clara: reconhecimento do problema, compreensão do contexto, percepção de importância e convite para agir."
-        )
-    )
-
-    return (
-        "Descrição Geral:\n"
-        f'Modelo adaptável: "{narrative_model}"\n\n'
-        f"Propósito do template:\n{purpose}\n\n"
-        "Layout e estrutura:\n"
-        f"Template com {len(slides)} slide(s), preparado para publicação em redes sociais. "
-        "A composição foi pensada para guiar a leitura em etapas, preservando hierarquia visual clara, ritmo narrativo e fechamento com próximo passo.\n\n"
-        + f"Dinâmica do carrossel:\n{story_arc}\n\n"
-        + "Uso recomendado:\n"
-        + f"{recommended}"
+    if hint:
+        return hint
+    raise RuntimeError(
+        "No description source available. Expected template-summary.md from "
+        "gp2-template-marker artifacts or --description-hint. Pipeline v2 "
+        "requires the marker step to run before upload."
     )
 
 
