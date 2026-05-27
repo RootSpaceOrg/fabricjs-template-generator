@@ -49,38 +49,123 @@ Leia `brief.md` inteiro. O campo `## Modo` indica `free` ou `reference-driven`.
 
 ### 1b. Analise a(s) imagem(ns) de referência — REFERENCE-DRIVEN MODE ONLY
 
-Antes de qualquer decisão criativa, inspecione as imagens e extraia:
+Antes de qualquer decisão criativa, inspecione as imagens e responda a **checklist completa abaixo**. Para cada item, responda sim/não/qual — não pule itens. Atributos não percebidos viram decisões erradas no plano.
 
-#### Paleta
-- Identifique os 2-4 hexs dominantes (ignore brancos puros e pretos puros).
-- Marque qual hex é **primário** (acento dominante, CTA, fundo de marca) e qual é **secundário**.
-- Anote neutros usados (off-white quente? cinza quente? preto profundo?).
+#### Checklist obrigatória (responda TODOS os itens)
 
-#### Tipografia
-- Família **display** (títulos): serifa? sans? condensada? geométrica?
-- Família **body**: sans neutra? humanista? mono?
-- Nomeie se reconhecer (ex: "Playfair Display", "DM Sans"). Se não, descreva a categoria.
-- Pesos e casing (UPPERCASE? Title Case?).
-- Letter-spacing notável (eyebrow super-tracked? título com kerning negativo?).
+Produza essa checklist literal no `visual-plan.md` como `## Análise da referência` antes do resto do plano. Cada `[ ]` vira `[x] sim — <detalhe>` ou `[ ] não`.
 
-#### Composição e ritmo
-- Grade: 1 coluna? 2 colunas? assimétrica?
-- Alinhamentos dominantes: esquerda? centrado? direita?
-- Hierarquia tipográfica: eyebrow + título gigante? número editorial?
+**Background do(s) slide(s):**
+- [ ] Background é cor sólida? Qual hex aproximado?
+- [ ] Background é foto/imagem full-bleed? Qual tipo (cenário, textura, pessoa)?
+- [ ] Background varia entre slides? (descreva o padrão: ex: capa dark + miolo light + CTA brand)
+- [ ] Background tem padrão geométrico ou textura sutil?
 
-#### Elementos editoriais e movimento decorativo
-- Liste todos os elementos visuais distintivos: eyebrow numerado, fios finos, número de slide gigante, badge, divisor vertical, etc.
-- Identifique o elemento que dá identidade ao design (o "movimento decorativo").
+**Gradientes (inclui transições sutis em fundos aparentemente sólidos):**
+- [ ] Há gradiente em algum slide? Em qual?
+- [ ] **Fundo colorido que varia entre topo e base do mesmo slide?** (mesmo que pareça "quase sólido" — roxo-claro→roxo-escuro, azul-claro→azul-escuro, etc.) → isso É um gradiente de escurecimento atmosférico. Direção e opacidade?
+- [ ] É overlay de escurecimento sobre foto? Direção (top/bottom/diagonal) e opacidade máxima estimada?
+- [ ] É escurecimento atmosférico do fundo brand? Direção e opacidade?
+- [ ] É glow/aura radial? Posição e cor?
+- [ ] **Lembrete crítico:** escurecimento NUNCA é descrito com cor brand — é `transparent→rgba(0,0,0,N)`. Fundo colorido que escurece = fundo brand sólido + overlay preto transparente. Nunca declare gradiente com 2 hex brand (`#5B4FE8 → #3A2FA8`) — isso quebra o sistema de variáveis brand.
 
-#### Gradientes
-- Overlay de escurecimento sobre foto? Se sim: direção, opacidade máxima.
-- Escurecimento atmosférico do fundo? Se sim: direção e opacidade.
-- **NUNCA descreva escurecimento com nomes de cor brand** — é sempre `transparent→rgba(0,0,0,N)`. Fundo colorido que escurece = fundo brand sólido + overlay preto transparente.
-- Se não há gradientes: anote "sem gradientes".
+**Paleta:**
+- [ ] 2-4 hexs dominantes (ignore brancos/pretos puros). Liste com aproximação.
+- [ ] Qual é primary (acento dominante / CTA / fundo de marca)?
+- [ ] Qual é secondary (apoio / palavra-chave / acento sutil)?
+- [ ] Neutro claro usado (off-white quente? frio?)
+- [ ] Neutro escuro usado (near-black com tint? preto puro?)
 
-#### Imagens / fotos
-- Foto profissional: cutout PNG? retangular editorial? circular avatar? full-bleed?
-- Foto contextual: crop editorial? ilustração? ausente?
+**Tipografia:**
+- [ ] Display (títulos): serifa? sans? condensada? geométrica? Família nomeável?
+- [ ] Body: sans neutra? humanista? mono? Família nomeável?
+- [ ] Pesos visíveis (400? 700? 800? contraste de pesos?)
+- [ ] Casing predominante (UPPERCASE? Title Case? sentence case?)
+- [ ] Letter-spacing notável (eyebrow tracked? kerning negativo no display?)
+
+**Composição e ritmo:**
+- [ ] Grade dominante (1 coluna? 2 colunas? assimétrica? 3+?)
+- [ ] Alinhamento dominante (esquerda? centrado? direita? misto intencional?)
+- [ ] Hierarquia tipográfica clara (eyebrow + headline + body? só headline gigante? número editorial?)
+- [ ] Slides repetem o mesmo padrão composicional? (sinal forte de mono-arquétipo A0)
+
+**Elementos editoriais decorativos:**
+- [ ] Eyebrow (kicker pequeno acima do título)? Numerado? Colorido?
+- [ ] Fios/divisores finos (1-3px)? Posição e função?
+- [ ] Número de slide grande/decorativo (≥300px)?
+- [ ] Badge/pill (background sólido com texto)?
+- [ ] Citação grande com aspas decorativas?
+- [ ] Bloco de cor sólido como acento posicional?
+- [ ] Outros elementos distintivos não listados?
+
+**Identidade na referência — classificar cada item em SLOT EDITÁVEL ou RUÍDO:**
+
+A plataforma tem **slots editáveis fixos** que o usuário preenche dinamicamente. Quando a referência mostra um elemento que corresponde a um slot oficial, o tratamento correto é **mapear para o tipo de slot** (não descartar como ruído). Quando o elemento não tem slot correspondente, é ruído de origem e deve ser descartado.
+
+**Vocabulário oficial da plataforma (slots editáveis):**
+
+| Tipo | Atributo HTML | O que é |
+|--|--|--|
+| `brandLogo` | `data-image-type="brandLogo"` | Logo retangular/quadrado da marca do usuário |
+| `professionalPhoto` | `data-image-type="professionalPhoto"` | Foto do profissional (cutout PNG, retrato editorial) — não usar em multi-nicho |
+| `instagramProfilePicture` | `data-image-type="instagramProfilePicture"` | Avatar circular de perfil de rede social (header de post estilo Instagram/Twitter) |
+| `phone` | `data-text-type="phone"` | Número de telefone/WhatsApp como slot |
+| `instagramName` | `data-text-type="instagramName"` | Nome de exibição do perfil de rede social |
+| `instagramHandle` | `data-text-type="instagramHandle"` | @handle do perfil de rede social |
+| `address` | `data-text-type="address"` | Endereço físico como slot |
+
+**Itens a classificar (responda SLOT `<tipo>` / RUÍDO / AUSENTE para cada):**
+
+- [ ] Logo da marca visível? Se sim → SLOT `brandLogo` (qual slide e posição?). Logo de marca de origem específica que NÃO é da do usuário → RUÍDO.
+- [ ] Avatar circular de perfil de rede social? Se sim → SLOT `instagramProfilePicture`.
+- [ ] Foto de pessoa em primeiro plano como hero? Se sim → SLOT `professionalPhoto` (NÃO em multi-nicho).
+- [ ] Nome de exibição de perfil ("Seu Nome", nome de usuário formatado)? Se sim → SLOT `instagramName`.
+- [ ] @handle de rede social? Se sim → SLOT `instagramHandle`.
+- [ ] Telefone/WhatsApp visível como peça do design? Se sim → SLOT `phone`.
+- [ ] Endereço físico como peça do design? Se sim → SLOT `address`.
+- [ ] E-mail, site, CNPJ, CRM/CRO/OAB → **RUÍDO** (sem slot dedicado; em copy do usuário se quiser).
+- [ ] Hashtags ostensivas → **RUÍDO** (copy específica de nicho, não slot).
+- [ ] Marca d'água, crédito de designer/agência → **RUÍDO**.
+- [ ] QR code → **RUÍDO**.
+- [ ] Ícones de redes sociais (logos do Instagram/Twitter/etc) como decoração → **RUÍDO** (identidade de plataforma de origem).
+- [ ] Selo verificado (azul Twitter/X, Instagram) → **RUÍDO**.
+- [ ] Selos promocionais ("novo", "promoção", "lançamento") → **RUÍDO**.
+- [ ] Métricas de plataforma ("5,874 views", "215 likes", botões de UI tipo "⌘ Salvar") → **RUÍDO** (UI da plataforma de origem, não conteúdo do template).
+
+**Regra de ouro:** se o elemento na referência mapeia 1-pra-1 num slot da tabela acima, **declare o slot** no plano com o `data-image-type` / `data-text-type` correto e posicione conforme a referência. Se não mapeia, é ruído de origem e vai pra lista "NÃO replicar".
+
+**Caso especial — composição "post estilo rede social":** quando a referência reproduz o layout de um post de Instagram/Twitter (avatar circular + nome + handle no header, conteúdo no centro, métricas no footer), o header é uma **composição de slots** (`instagramProfilePicture` + `instagramName` + `instagramHandle`) — não é ruído. Preserve a estrutura, mapeie os 3 slots, descarte só o que não tem slot (selo verificado, métricas de plataforma).
+
+**Imagens / fotos (cruze com a tabela de slots acima):**
+- [ ] **Avatar circular pequeno** em header de post (≤80px, formato perfil de rede social)? → SLOT `instagramProfilePicture`. **NÃO confundir com `professionalPhoto`.**
+- [ ] **Foto de pessoa em primeiro plano como hero** (cutout PNG editorial, retrato grande dominante)? → SLOT `professionalPhoto` (NÃO em multi-nicho).
+- [ ] **Logo retangular/quadrado da marca**? → SLOT `brandLogo`.
+- [ ] **Foto contextual** (ambiente, espaço, equipamento, objeto, asset)? Tipo de crop? → `userAsset` (genérico, substituível).
+- [ ] **Foto de produto** isolado? Em cenário? → `userAsset`.
+- [ ] **Ilustração ou vetor**? Estilo (flat? line? 3D? abstrato?) → `userAsset`.
+- [ ] **Ícone**? Pictografia funcional (setas, check, números) ou simbólica de nicho (cruz médica, patinha, haltere)? Ícones funcionais OK; ícones de nicho → RUÍDO em multi-nicho.
+- [ ] Tratamento aplicado (filtro, dessaturação, duotone, overlay colorido)?
+
+**CTAs e botões:**
+- [ ] Há botão CTA explícito? Em qual slide? Texto e estilo (pill? retangular? ghost?)
+- [ ] Texto do CTA é genérico ("Salve", "Compartilhe") ou de serviço ("Agende", "Compre")?
+
+**Sinais de navegação / chrome de carrossel:**
+- [ ] Progress bar visível?
+- [ ] Numeração `01/07` ou similar?
+- [ ] Seta de swipe "Arraste →"?
+
+#### Síntese após a checklist
+
+Após preencher a checklist, escreva 3 listas distintas:
+
+1. **Vocabulário visual a herdar** (o que a referência ensina que vale replicar): paleta, tipografia, composição, elementos editoriais, tratamento de imagem.
+
+2. **Slots da plataforma identificados (REPLICAR como atributos editáveis):** lista cada elemento da referência que mapeia num slot oficial, com o atributo HTML correto e a posição. Formato: `- <elemento da referência> → <data-image-type|data-text-type>="<tipo>" em <slide N>, posição <descrição>`. Exemplo: `- Avatar circular do header → data-image-type="instagramProfilePicture" em slide 1, posição header-left ~64px circular`.
+
+3. **Ruídos a descartar (NÃO replicar):** o que a referência tem mas NÃO entra no template porque não mapeia em slot nenhum e pertence à marca/plataforma de origem. Formato: `- NÃO replicar: <ruído> visto em <slide N da referência>. Motivo: <pertence à marca de origem | UI de plataforma de origem | viola multi-nicho | copy específica de nicho>`. Em batch multi-nicho do `gp2-template-suggester`, descarte também `professionalPhoto`.
+
+**Distinção crítica:** "post estilo Instagram/Twitter" tem header com avatar+nome+handle. Esses 3 elementos são **slots**, não ruídos. O selo verificado azul ao lado do nome **é** ruído (UI da plataforma de origem). Não jogue o header inteiro fora — preserve a estrutura e mapeie os slots.
 
 ---
 
@@ -291,6 +376,14 @@ free
 
 ## Modo
 reference-driven
+
+## Análise da referência
+
+<Cole aqui a checklist completa da etapa 1b preenchida (todos os itens marcados sim/não/qual). Esta seção é OBRIGATÓRIA em reference-driven mode e serve como rastreabilidade do que foi observado vs. herdado.>
+
+### Síntese
+- **Vocabulário visual a herdar:** <resumo em 2-4 linhas: paleta, tipografia, composição, elementos editoriais>
+- **Ruídos detectados na referência (NÃO replicar):** <lista crua: logo X, @handle, telefone, hashtags, etc. — repetido em "Notas para o designer" com motivo individual>
 
 ## Vocabulário visual (extraído da referência)
 

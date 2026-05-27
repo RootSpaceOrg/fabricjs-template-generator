@@ -131,6 +131,18 @@ Se um elemento mapeado não tem o atributo — é finding crítico.
 
 Quando `visual-plan.md → ## Modo: reference-driven`, o reviewer compara o HTML executado contra o vocabulário visual extraído da referência (paleta, tipografia, elementos editoriais listados em "Elementos editoriais a replicar").
 
+**Pré-check (HARD-GATE):** o `visual-plan.md` deve conter a seção `## Análise da referência` com a checklist preenchida (background, gradientes, paleta, tipografia, composição, elementos editoriais, identidade da marca presente, imagens, CTAs, navegação) E a subseção `### Síntese` com "Vocabulário visual a herdar" + "Ruídos detectados". Se ausente → finding `reference-checklist-missing` (blocker). Sem a checklist, o art-director pulou a análise sistemática e o resto da validação de fidelidade fica em areia movediça.
+
+**Validação de slots vs ruídos:**
+
+O `visual-plan.md` em reference-driven mode tem duas listas distintas na síntese: **slots da plataforma identificados** (replicar como `data-image-type` / `data-text-type`) e **ruídos a descartar** (não replicar).
+
+- **Slots da plataforma:** para cada item listado como slot (ex: `instagramProfilePicture`, `instagramName`, `instagramHandle`, `brandLogo`, `phone`, `address`), confira que o HTML final **tem o atributo correto aplicado** no elemento correspondente. Slot esperado mas ausente → finding `reference-slot-missing` (blocker). Slot presente com tipo errado (ex: avatar circular marcado como `professionalPhoto` em vez de `instagramProfilePicture`) → finding `reference-slot-mistyped` (blocker).
+
+- **Ruídos descartados:** para cada item da lista "NÃO replicar" (logo da marca de origem específica, selo verificado de plataforma, métricas de UI da plataforma como "5,874 views", hashtags de copy de nicho, marca d'água, QR code, ícones de redes sociais como decoração, selos promocionais, CTA de serviço quando o batch é multi-nicho), confira que **não aparece** no HTML final. Se aparecer → finding `reference-noise-leaked` (blocker). Esta validação é especialmente crítica para batches do `gp2-template-suggester` (multi-nicho).
+
+**Não confunda slot com ruído:** um `instagramProfilePicture` no HTML final é **correto** quando a referência tinha avatar circular de post; só vira finding se o art-director não listou na síntese como slot. A validação é contra a síntese do plano, não contra heurística genérica.
+
 | Check | Tight | Loose | Diverged |
 |-------|-------|-------|----------|
 | Paleta | hexs do HTML batem com os declarados (Δ < 5% em RGB) | hexs próximos mas distintos (Δ 5–15%) | hexs muito diferentes (Δ > 15%) |
