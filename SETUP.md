@@ -100,7 +100,7 @@ AWS_ACCESS_KEY_ID=<chave-iam-do-template-generator>
 AWS_SECRET_ACCESS_KEY=<segredo-iam>
 ```
 
-A identidade IAM precisa ter permissão `sts:AssumeRole` para `arn:aws:iam::<account>:role/TemplateGeneratorRole` (account 656032436386 em dev / 692046683598 em prod). Quem fornece as credenciais é o admin da conta KultivAi/HealthMarket.
+A identidade IAM precisa ter permissão `sts:AssumeRole` para `arn:aws:iam::<account>:role/TemplateGeneratorRole` (account 656032436386 em dev / 692046683598 em prod). Quem fornece as credenciais é o admin da conta AWS da plataforma.
 
 ### Validar
 

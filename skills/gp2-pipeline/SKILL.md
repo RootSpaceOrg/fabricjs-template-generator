@@ -74,7 +74,7 @@ Se algum falha:
 - Em casos que precisam de decisão criativa do usuário, pergunte. Não invente direção.
 - Se o HTML reviewer apontar `planFidelity: "diverged"` com divergências não documentadas → devolva ao designer com instrução específica (não ao art-director, a menos que o plano seja o problema).
 
-## Standing rule do Gustavo
+## Standing rule
 
 Quando os gates passam, suba **automaticamente** com:
 

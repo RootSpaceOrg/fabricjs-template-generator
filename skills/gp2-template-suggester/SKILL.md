@@ -1,6 +1,6 @@
 ---
 name: gp2-template-suggester
-description: "Sugere automaticamente N novos modelos de carrossel genéricos multi-nicho para alimentar o catálogo da plataforma KultivAi. Opera em modo autônomo: escolhe um objetivo de marketing (aquisição / posicionamento / engajamento / retenção / educação / prova social), seleciona um framework narrativo que sirva esse objetivo, propõe um tema atemporal e neutro a vertical, e dispara o gp2-pipeline em paralelo (sub-agents) para gerar cada template. Mantém histórico rotativo local por objetivo para evitar repetição. Templates resultantes entram como scope=platform, status=review, business_type vazio. Use quando o usuário pedir 'sugira templates', 'gera N carrosséis', 'roda batch de templates', ou quando o loop autônomo de Pipeline 1 disparar."
+description: "Sugere automaticamente N novos modelos de carrossel genéricos multi-nicho para alimentar o catálogo da plataforma. Opera em modo autônomo: escolhe um objetivo de marketing (aquisição / posicionamento / engajamento / retenção / educação / prova social), seleciona um framework narrativo que sirva esse objetivo, propõe um tema atemporal e neutro a vertical, e dispara o gp2-pipeline em paralelo (sub-agents) para gerar cada template. Mantém histórico rotativo local por objetivo para evitar repetição. Templates resultantes entram como scope=platform, status=review, business_type vazio. Use quando o usuário pedir 'sugira templates', 'gera N carrosséis', 'roda batch de templates', ou quando o loop autônomo de Pipeline 1 disparar."
 ---
 
 # gp2-template-suggester

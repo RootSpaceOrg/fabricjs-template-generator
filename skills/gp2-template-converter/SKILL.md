@@ -1,6 +1,6 @@
 ---
 name: gp2-template-converter
-description: "Converte HTML marcado (do gp2-template-marker) em Fabric.js CanvasJSON pronto para o editor HealthMarket. Adota a spec técnica de HTML + sistema de gradientes da pipeline v2 (`skills/_shared/`) como contrato e roda `scripts/validate-slides.js` como gate. Use após gp2-template-marker (audit PASS), antes de gp2-template-uploader."
+description: "Converte HTML marcado (do gp2-template-marker) em Fabric.js CanvasJSON pronto para o editor da plataforma. Adota a spec técnica de HTML + sistema de gradientes da pipeline v2 (`skills/_shared/`) como contrato e roda `scripts/validate-slides.js` como gate. Use após gp2-template-marker (audit PASS), antes de gp2-template-uploader."
 ---
 
 # gp2-template-converter
@@ -9,7 +9,7 @@ Migra `template.html` marcado para uma série de `slide-N.json` Fabric.js — um
 
 ## Contrato
 
-A pipeline v2 é autocontida. As fontes de verdade do contrato HTML → Fabric vivem **dentro de `getposts-pipeline-v2/`**:
+A pipeline v2 é autocontida. As fontes de verdade do contrato HTML → Fabric vivem **dentro deste repositório**:
 
 - [`../_shared/HTML_TECHNICAL_SPEC.md`](../_shared/HTML_TECHNICAL_SPEC.md) — regras estruturais do HTML, tabela de `data-*`, anti-patterns.
 - [`../_shared/GRADIENT_SYSTEM.md`](../_shared/GRADIENT_SYSTEM.md) — presets de `data-darken` / `data-glow` / `data-gradient` e emissão Fabric.
@@ -71,7 +71,7 @@ Toda regra abaixo se apoia em `_shared/HTML_TECHNICAL_SPEC.md` (HTML) e `_shared
 
 ## ClippableImage — emissão crua + pós-processo determinístico
 
-A partir da v2, o converter **não calcula crop**. Emita cada `<img>` como `ClippableImage` no estado "cru", e o script [`../../scripts/center-clippable-images.js`](../../scripts/center-clippable-images.js) reaplica deterministicamente o mesmo cover-crop centralizado que o editor da plataforma executa quando o usuário troca a imagem (`ClippableImage.replaceImage()` em `Frontend/mkt-platform-frontend/.../objects/clippable-image.ts`).
+A partir da v2, o converter **não calcula crop**. Emita cada `<img>` como `ClippableImage` no estado "cru", e o script [`../../scripts/center-clippable-images.js`](../../scripts/center-clippable-images.js) reaplica deterministicamente o mesmo cover-crop centralizado que o editor da plataforma executa quando o usuário troca a imagem.
 
 **Toda `ClippableImage` é cover crop centrado.** Não existe mais ramo "cutout" / `originY:"bottom"`. Se o HTML usa `object-fit:contain` (ex: PNG cutout de `professionalPhoto`), o pós-processo vai tratar como cover. Isso é intencional: o editor faz a mesma coisa quando o usuário sobe uma foto, então o resultado pós-conversão é exatamente o que o usuário verá depois.
 

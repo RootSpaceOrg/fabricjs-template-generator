@@ -132,19 +132,36 @@ A plataforma tem **slots editáveis fixos** que o usuário preenche dinamicament
 - [ ] Selos promocionais ("novo", "promoção", "lançamento") → **RUÍDO**.
 - [ ] Métricas de plataforma ("5,874 views", "215 likes", botões de UI tipo "⌘ Salvar") → **RUÍDO** (UI da plataforma de origem, não conteúdo do template).
 
-**Regra de ouro:** se o elemento na referência mapeia 1-pra-1 num slot da tabela acima, **declare o slot** no plano com o `data-image-type` / `data-text-type` correto e posicione conforme a referência. Se não mapeia, é ruído de origem e vai pra lista "NÃO replicar".
+**Regra de ouro:** para cada imagem da referência, classifique em UM dos 4 buckets abaixo. Para elementos não-imagem (handle, hashtag, métrica, badge), continue usando SLOT/RUÍDO da tabela anterior.
 
 **Caso especial — composição "post estilo rede social":** quando a referência reproduz o layout de um post de Instagram/Twitter (avatar circular + nome + handle no header, conteúdo no centro, métricas no footer), o header é uma **composição de slots** (`instagramProfilePicture` + `instagramName` + `instagramHandle`) — não é ruído. Preserve a estrutura, mapeie os 3 slots, descarte só o que não tem slot (selo verificado, métricas de plataforma).
 
-**Imagens / fotos (cruze com a tabela de slots acima):**
-- [ ] **Avatar circular pequeno** em header de post (≤80px, formato perfil de rede social)? → SLOT `instagramProfilePicture`. **NÃO confundir com `professionalPhoto`.**
-- [ ] **Foto de pessoa em primeiro plano como hero** (cutout PNG editorial, retrato grande dominante)? → SLOT `professionalPhoto` (NÃO em multi-nicho).
-- [ ] **Logo retangular/quadrado da marca**? → SLOT `brandLogo`.
-- [ ] **Foto contextual** (ambiente, espaço, equipamento, objeto, asset)? Tipo de crop? → `userAsset` (genérico, substituível).
-- [ ] **Foto de produto** isolado? Em cenário? → `userAsset`.
-- [ ] **Ilustração ou vetor**? Estilo (flat? line? 3D? abstrato?) → `userAsset`.
-- [ ] **Ícone**? Pictografia funcional (setas, check, números) ou simbólica de nicho (cruz médica, patinha, haltere)? Ícones funcionais OK; ícones de nicho → RUÍDO em multi-nicho.
-- [ ] Tratamento aplicado (filtro, dessaturação, duotone, overlay colorido)?
+#### Imagens / fotos / vetores — classificação em 4 buckets
+
+Esta etapa é **crítica** para evitar que o designer caia na armadilha de gerar SVG/base64 ad-hoc para elementos que não conseguimos reproduzir. O art-director é quem está olhando a referência e tem informação para decidir. O designer só executa.
+
+| Bucket | Quando aplicar | O que declarar no `visual-plan.md` |
+|--------|----------------|-------------------------------------|
+| **B1 — slot da plataforma** | Elemento mapeia 1-pra-1 em um slot da tabela oficial: `brandLogo`, `professionalPhoto`, `instagramProfilePicture`. Conteúdo será preenchido pelo usuário em runtime. | `data-image-type="<tipo>"` + posição |
+| **B2 — imagem genérica buscável** | Foto contextual reproduzível por imagem de banco público — cenário/objeto/ambiente genérico que o `picsum.photos` consegue entregar de forma estável (mesa de escritório, consultório, bolsa de água quente, prato de comida, dispositivo médico genérico, etc.). | `userAsset` + URL `picsum.photos/id/{N}/{w}/{h}` sugerida (`{N}` determinístico — sem `?random`) + alt curto |
+| **B3 — imagem específica não-reproduzível (placeholder obrigatório)** | Elemento visual específico da referência que **não** existe em banco público e **não** é slot — laço de campanha (Março Amarelo, Outubro Rosa), ícone de marca específica, ilustração customizada, mascote, vetor temático, símbolo de instituição, infográfico autoral. | `userAsset` + flag `image-source: placeholder-required` + motivo curto (1 linha — ex: "símbolo Março Amarelo não disponível em CDN público; placeholder genérico no template") |
+| **B4 — ruído (NÃO replicar)** | Elemento pertence à marca/plataforma de origem da referência: logo de outra marca, métricas de UI, selo verificado, handle "@" de outra conta, marca d'água, crédito de designer, QR code, ícones de nicho em template multi-nicho. | Lista "NÃO replicar" no visual-plan; designer **não** inclui no HTML |
+
+**Checklist por tipo de imagem (responda B1 / B2 / B3 / B4 para cada item presente na referência):**
+
+- [ ] **Avatar circular pequeno** em header de post (≤80px, formato perfil de rede social)? → **B1** (`instagramProfilePicture`). **NÃO confundir com `professionalPhoto`.**
+- [ ] **Foto de pessoa em primeiro plano como hero** (cutout PNG editorial, retrato grande dominante)? → **B1** (`professionalPhoto`) — NÃO em multi-nicho.
+- [ ] **Logo retangular/quadrado da marca** do usuário? → **B1** (`brandLogo`). Logo de marca de origem (não-usuário) → **B4**.
+- [ ] **Foto contextual genérica** (ambiente, espaço, equipamento, objeto, asset comum)? → **B2** se reproduzível por picsum; **B3** se exigir cenário muito específico (ex: "consultório com identidade visual XYZ").
+- [ ] **Foto de produto** isolado em cenário neutro? → **B2** se produto genérico (notebook, óculos, livro); **B3** se produto específico da marca de origem.
+- [ ] **Ilustração ou vetor** com estilo definido (flat, line, 3D, abstrato)? → **B3** quase sempre (ilustração específica de marca/campanha). Apenas **B2** se for forma geométrica neutra reproduzível por picsum.
+- [ ] **Símbolo de campanha** (laço Março Amarelo, Outubro Rosa, fita Setembro Amarelo, mascote institucional, infográfico autoral)? → **B3** sempre. Nunca tentar `picsum`; nunca gerar SVG inline ad-hoc.
+- [ ] **Ícone** pictográfico funcional (setas, check, números, lupa)? OK como decoração CSS/SVG simples (não é imagem); ícone simbólico de nicho (cruz médica, patinha, haltere) → **B4** em multi-nicho.
+- [ ] Tratamento aplicado (filtro, dessaturação, duotone, overlay colorido)? Note no bucket correspondente.
+
+**Heurística rápida B2 vs B3:** se você consegue descrever o conteúdo da imagem em 3-5 palavras genéricas que casariam com QUALQUER foto de banco ("mulher sorrindo em escritório", "mesa com café e notebook"), é B2. Se a descrição precisa nomear um símbolo, marca, campanha ou conceito visual específico ("laço amarelo de conscientização", "logo Instagram cinza", "infográfico de pirâmide alimentar"), é B3.
+
+**Regra hard (multi-nicho do `gp2-template-suggester`):** `professionalPhoto` cai automaticamente para B4 (descartar) e qualquer ícone de nicho cai para B4.
 
 **CTAs e botões:**
 - [ ] Há botão CTA explícito? Em qual slide? Texto e estilo (pill? retangular? ghost?)
@@ -157,15 +174,19 @@ A plataforma tem **slots editáveis fixos** que o usuário preenche dinamicament
 
 #### Síntese após a checklist
 
-Após preencher a checklist, escreva 3 listas distintas:
+Após preencher a checklist, escreva 5 listas distintas:
 
 1. **Vocabulário visual a herdar** (o que a referência ensina que vale replicar): paleta, tipografia, composição, elementos editoriais, tratamento de imagem.
 
-2. **Slots da plataforma identificados (REPLICAR como atributos editáveis):** lista cada elemento da referência que mapeia num slot oficial, com o atributo HTML correto e a posição. Formato: `- <elemento da referência> → <data-image-type|data-text-type>="<tipo>" em <slide N>, posição <descrição>`. Exemplo: `- Avatar circular do header → data-image-type="instagramProfilePicture" em slide 1, posição header-left ~64px circular`.
+2. **B1 — Slots da plataforma identificados (REPLICAR como atributos editáveis):** lista cada imagem da referência que mapeia num slot oficial, com o atributo HTML correto e a posição. Formato: `- <elemento da referência> → data-image-type="<tipo>" em <slide N>, posição <descrição>`. Exemplo: `- Avatar circular do header → data-image-type="instagramProfilePicture" em slide 1, posição header-left ~64px circular`.
 
-3. **Ruídos a descartar (NÃO replicar):** o que a referência tem mas NÃO entra no template porque não mapeia em slot nenhum e pertence à marca/plataforma de origem. Formato: `- NÃO replicar: <ruído> visto em <slide N da referência>. Motivo: <pertence à marca de origem | UI de plataforma de origem | viola multi-nicho | copy específica de nicho>`. Em batch multi-nicho do `gp2-template-suggester`, descarte também `professionalPhoto`.
+3. **B2 — Imagens genéricas buscáveis (`userAsset` + URL picsum):** lista cada imagem contextual reproduzível por banco público, com URL `picsum.photos/id/{N}/{w}/{h}` sugerida. Formato: `- <descrição genérica da imagem> → userAsset, src="https://picsum.photos/id/{N}/{w}/{h}" em <slide N>, posição <descrição>`. Escolha um `{N}` determinístico (sem `?random`) coerente com o conteúdo (ex: `id/1015` para natureza, `id/96` para pessoa).
 
-**Distinção crítica:** "post estilo Instagram/Twitter" tem header com avatar+nome+handle. Esses 3 elementos são **slots**, não ruídos. O selo verificado azul ao lado do nome **é** ruído (UI da plataforma de origem). Não jogue o header inteiro fora — preserve a estrutura e mapeie os slots.
+4. **B3 — Imagens específicas não-reproduzíveis (placeholder obrigatório):** lista cada imagem específica que não existe em banco e não é slot, com motivo curto. Formato: `- <descrição> → userAsset, image-source: placeholder-required em <slide N>. Motivo: <símbolo de campanha sem CDN | ilustração autoral | mascote institucional | infográfico específico>`. O designer **deve** usar `references/placeholders/image-placeholder.b64.txt` para esses slots — gerar SVG inline é violação.
+
+5. **B4 — Ruídos a descartar (NÃO replicar):** o que a referência tem mas NÃO entra no template porque não mapeia em bucket B1-B3 e pertence à marca/plataforma de origem. Formato: `- NÃO replicar: <ruído> visto em <slide N da referência>. Motivo: <pertence à marca de origem | UI de plataforma de origem | viola multi-nicho | copy específica de nicho>`. Em batch multi-nicho do `gp2-template-suggester`, descarte também `professionalPhoto` (vai para B4 automaticamente).
+
+**Distinção crítica:** "post estilo Instagram/Twitter" tem header com avatar+nome+handle. Esses 3 elementos são **B1 (slots)**, não B4 (ruídos). O selo verificado azul ao lado do nome **é** B4 (UI da plataforma de origem). Não jogue o header inteiro fora — preserve a estrutura e mapeie os slots.
 
 ---
 
@@ -173,12 +194,23 @@ Após preencher a checklist, escreva 3 listas distintas:
 
 Antes de planejar slides, decida explicitamente: a identidade composicional da referência **cabe no catálogo A1–A14** com ajuste, ou **exige A0-custom-from-reference**?
 
+**Gatilho determinístico — leia `brief.md → ## Fidelidade`:**
+
+| `Fidelidade` no brief | Default composicional |
+|----------------------|----------------------|
+| `recreate` | **A0-custom-from-reference é default em TODOS os slides.** Cair em A1–A14 só com justificativa explícita por slide em `## Notas para o designer` (ex: "Slide 3 cabe em A5 sem desvio porque a referência usa exatamente a estrutura listicle numerada de A5 — anchors batem ≤5%"). Sem justificativa documentada, mantenha A0. |
+| `inspired` | Catálogo A1–A14 default. A0 só quando ≥15% de desvio dos anchors ou quando a referência claramente repete um padrão único irrepetível no catálogo. |
+| `free` | Catálogo. A0 não disponível (free mode não tem referência). |
+
+Depois do gatilho acima, aplique também os critérios visuais abaixo (úteis principalmente em `inspired`, e como sanity check em `recreate`):
+
 **Use catálogo (A1–A14) quando:**
 - A composição da referência mapeia razoavelmente em algum A* (≤15% de desvio dos anchors da tabela).
 - A identidade da peça está mais na paleta/tipografia/elementos editoriais do que na composição em si.
 - Ajustar coords dentro de um A* preserva o que define a referência.
 
 **Use A0-custom-from-reference quando:**
+- `Fidelidade: recreate` no brief (default obrigatório acima).
 - A referência tem layout que nenhum A1–A14 reproduz fielmente (tipografia diagonal, grid 3 colunas, headline com bleed intencional, número editorial ocupando 60% do slide, etc.).
 - Mapear para A* mais próximo achataria o que dá personalidade à peça.
 - A referência repete o mesmo padrão composicional em todos os slides como escolha estética (mono-arquétipo é a identidade — não preguiça).
@@ -340,6 +372,19 @@ free
 - **Slide N (CTA):** <posição — ex: CTA-footer-left, 140px>
 - **Outros slides (opcional):** <slide M: posição + tamanho>
 
+## Imagens declaradas
+
+Em free mode, declare aqui cada imagem que cada slide vai conter, classificada em bucket B1–B3 (não há B4 em free — não existe referência para descartar). Designer consome esta tabela e não inventa imagens fora dela.
+
+| Slide | Conteúdo da imagem | Bucket | Atributo HTML / src sugerido | Motivo (B3) / Posição |
+|-------|-------------------|--------|------------------------------|------------------------|
+| 1 | <ex: foto profissional> | B1 | `data-image-type="professionalPhoto"` | <hero cover, ~46% width> |
+| 3 | <ex: foto contextual de consultório> | B2 | `userAsset`, `src="https://picsum.photos/id/96/580/360"` | <top-right, ~580×360> |
+
+- B1: usar quando o brief pediu foto profissional / logo / avatar social.
+- B2: usar para qualquer foto contextual genérica (designer aplica picsum determinístico).
+- B3: usar quando o art-director decide que o slide precisa de uma ilustração específica que o picsum não entrega — placeholder genérico (`image-placeholder.b64.txt`).
+
 ## Plano de slides
 
 ### Slide 1 — <papel narrativo> (background: claro/escuro/brand)
@@ -383,7 +428,10 @@ reference-driven
 
 ### Síntese
 - **Vocabulário visual a herdar:** <resumo em 2-4 linhas: paleta, tipografia, composição, elementos editoriais>
-- **Ruídos detectados na referência (NÃO replicar):** <lista crua: logo X, @handle, telefone, hashtags, etc. — repetido em "Notas para o designer" com motivo individual>
+- **B1 — slots da plataforma:** <lista resumida — ex: professionalPhoto slide 1+6, brandLogo slide 2+6>
+- **B2 — imagens buscáveis (picsum):** <lista resumida — ex: foto contextual slide 3 (mulher com bolsa quente), slide 4 (dispositivo médico)>
+- **B3 — imagens placeholder-required:** <lista resumida — ex: laço Março Amarelo nos slides 1-6, infográfico autoral slide 5>
+- **B4 — ruídos a descartar:** <lista crua — ex: handle "errata pra todo", selo verificado, métricas de UI>
 
 ## Vocabulário visual (extraído da referência)
 
@@ -404,6 +452,24 @@ reference-driven
 ### Tratamento de imagem observado
 - **Foto profissional:** <cutout PNG | retangular editorial | circular avatar | ausente>
 - **Foto contextual:** <ausente | crop editorial | etc.>
+
+### Imagens declaradas
+
+Tabela determinística que o designer **deve** consumir antes de qualquer decisão de imagem. Cada linha = 1 imagem da referência classificada em 1 bucket B1–B4. Designer não revisita; apenas executa.
+
+| Slide | Elemento da referência | Bucket | Atributo HTML / src sugerido | Motivo (B3) / Posição |
+|-------|-----------------------|--------|------------------------------|------------------------|
+| 1 | <ex: foto profissional cutout> | B1 | `data-image-type="professionalPhoto"` | <posição: bottom-left, ~46% width × 78% height> |
+| 3 | <ex: mulher com bolsa quente> | B2 | `userAsset`, `src="https://picsum.photos/id/96/580/360"` | <posição: top-right, ~580×360> |
+| 1-6 | <ex: laço Março Amarelo> | B3 | `userAsset`, `image-source: placeholder-required` | <motivo: símbolo de campanha sem CDN; placeholder genérico>, posição variável por slide |
+| 2 | <ex: handle "errata pra todo"> | B4 | — (não replicar) | <motivo: handle de marca de origem> |
+
+**Regras:**
+- Toda imagem visível na referência **deve** estar nesta tabela. Designer não pode adicionar imagem que não está aqui.
+- B1: declare `data-image-type` exato. Não escolha URL — o slot é preenchido pelo usuário em runtime.
+- B2: escolha um `id` determinístico do `picsum.photos` (sem `?random`, sem `source.unsplash`). Mesma URL = mesma imagem.
+- B3: **nunca** sugira URL nem SVG. Apenas declare `image-source: placeholder-required` + motivo curto. Designer usa `references/placeholders/image-placeholder.b64.txt` automaticamente.
+- B4: não entra no HTML. Apenas registra que foi visto e descartado.
 
 ## Tipografia resolvida (da referência)
 - **Display:** <família ou categoria> — <Npx> — peso <W> — kerning <±N%>

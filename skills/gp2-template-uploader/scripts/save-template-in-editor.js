@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Open a GetPosts/HealthMarket template in the full editor and click
+ * Open a template in the full editor of the platform and click
  * "Salvar Alterações" so the product generates/refreshes thumbnails.
  *
  * This script intentionally receives credentials through CLI/env and never prints

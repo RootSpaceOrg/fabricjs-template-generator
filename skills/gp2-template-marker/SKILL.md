@@ -154,7 +154,7 @@ python3 ../../scripts/audit-template-markup.py artifacts/gp2-template-marker/<sl
 
 ## `data-te-description` — fórmula dos 4 componentes
 
-A description **vai literal no prompt do LLM gerador de copy** (`healthmarket-lambda-ai-idea-to-template/copy_processor.py:_format_elements_context`). Description vaga gera output inconsistente entre slides; description estruturada com formato e exemplos guia o LLM para output consistente.
+A description **vai literal no prompt do LLM gerador de copy** da lambda de geração de copy da plataforma. Description vaga gera output inconsistente entre slides; description estruturada com formato e exemplos guia o LLM para output consistente.
 
 **Toda description segue a fórmula:**
 
@@ -236,7 +236,7 @@ Slide N: <CTA / fechamento>
 Regras:
 
 - **Não** escreva `# Resumo do template —`, `# Template summary —`, `## Arco`, `## Por slide`, `Descrição Geral:`, `Propósito do template:`, `Modelo adaptável:` ou qualquer outro cabeçalho. Eles viram lixo no Supabase.
-- **Não** mencione "HealthMarket", "KultivAi" nem nome de plataforma.
+- **Não** mencione nome de plataforma.
 - **Não** detalhe campos editáveis — isso é metadado, não conteúdo da descrição.
 - Use os papéis narrativos reais do `brief.md` (passo 3b) para cada slide; não invente papéis genéricos.
 - Mantenha curto: 2-3 linhas de arco + 1 linha por slide. Templates têm um motivo para existir; a descrição deve refletir esse motivo de forma direta.

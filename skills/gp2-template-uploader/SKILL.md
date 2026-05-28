@@ -5,7 +5,7 @@ description: "Upload final da Pipeline GetPosts v2: lê slide-N.json + manifest.
 
 # gp2-template-uploader
 
-Skill terminal da Pipeline GetPosts v2: pega os artefatos prontos (slides Fabric.js do converter + descrição do marker) e publica o template na plataforma KultivAi (S3 + Supabase via `app-lambda-template-handler`).
+Skill terminal da Pipeline GetPosts v2: pega os artefatos prontos (slides Fabric.js do converter + descrição do marker) e publica o template na plataforma (S3 + Supabase via `app-lambda-template-handler`).
 
 O **objetivo** de cada template (arco narrativo, propósito, uso recomendado) é definido upstream pela [gp2-pipeline](../gp2-pipeline/SKILL.md) e suas skills parceiras — chega aqui já redigido em `template-summary.md`. Esta skill **não reescreve** essa descrição; apenas a propaga para o banco.
 

@@ -13,7 +13,7 @@ A `description` que você escreve aqui é injetada **literal** no prompt do LLM 
 
 Description vaga ("Eyebrow editorial") deixa o LLM adivinhar o formato. Description estruturada com formato e exemplos guia o LLM para output consistente entre slides.
 
-**Template é cross-vertical por design.** Pode ser usado em saúde, pet, beleza, fitness, educação, negócios, gastronomia — qualquer vertical da plataforma KultivAi. Descriptions presas em um vertical (ou no conteúdo do placeholder atual) quebram o template nos outros usos.
+**Template é cross-vertical por design.** Pode ser usado em saúde, pet, beleza, fitness, educação, negócios, gastronomia — qualquer vertical suportado pela plataforma. Descriptions presas em um vertical (ou no conteúdo do placeholder atual) quebram o template nos outros usos.
 
 ## Anatomia da description (4 componentes)
 

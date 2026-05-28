@@ -4,9 +4,8 @@
  *
  * Pós-processo determinístico que reaplica, em cada `ClippableImage` dos
  * slide JSONs emitidos pelo gp2-template-converter, o mesmo cover-crop
- * centralizado que o editor da plataforma executa em
- * `ClippableImage.replaceImage()`
- * (Frontend/mkt-platform-frontend/.../objects/clippable-image.ts).
+ * centralizado que o editor da plataforma executa quando o usuário troca
+ * a imagem do slot.
  *
  * O converter deve emitir cada ClippableImage com:
  *   - `src`                URL absoluta da imagem

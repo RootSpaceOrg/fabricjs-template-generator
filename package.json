@@ -2,7 +2,7 @@
   "name": "fabricjs-template-generator",
   "version": "0.1.0",
   "private": true,
-  "description": "GetPosts Pipeline v2 — HTML to Fabric.js para templates HealthMarket / KultivAi.",
+  "description": "GetPosts Pipeline v2 — HTML to Fabric.js para templates da plataforma.",
   "scripts": {
     "postinstall": "node -e \"console.log('\\n[ok] playwright instalado. Agora rode: npx playwright install chromium (baixa o binario do navegador, ~150MB).\\n')\"",
     "check-playwright": "node -e \"const { chromium } = require('playwright'); chromium.launch().then(b => b.close()).then(() => console.log('playwright OK')).catch(e => { console.error('FAIL:', e.message); process.exit(1); })\""

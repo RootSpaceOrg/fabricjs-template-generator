@@ -90,7 +90,7 @@ Estas vêm direto da spec técnica em [`skills/_shared/HTML_TECHNICAL_SPEC.md`](
 7. Pesos de fonte explícitos (400, 600, 700) — nunca só `bold`.
 8. Línguas/copy em português (verbatim do brief).
 9. `<meta name="hm-fonts" content="Fonte1,Fonte2">` no `<head>`.
-10. `<html data-template-name="..." data-segment="...">` (segmento é um dos 8 do HealthMarket).
+10. `<html data-template-name="..." data-segment="...">` (segmento é um dos suportados pela plataforma).
 
 ## O que o designer não faz
 

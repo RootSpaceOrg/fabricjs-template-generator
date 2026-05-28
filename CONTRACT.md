@@ -1,6 +1,6 @@
 # HTML → Fabric.js Contract
 
-A pipeline v2 produz HTML que migra deterministicamente para Fabric.js no editor HealthMarket. Toda a especificação vive dentro de `getposts-pipeline-v2/` — a pipeline é autocontida.
+A pipeline v2 produz HTML que migra deterministicamente para Fabric.js no editor da plataforma. Toda a especificação vive dentro deste repositório — a pipeline é autocontida.
 
 ## Fonte de verdade
 
@@ -26,7 +26,7 @@ Toda regra de markup do `gp2-html-designer`, `gp2-template-marker` e `gp2-templa
 | Estilo | Todo CSS inline nos elementos (`style="..."`). Proibido `<style>` blocks com classes |
 | Gradientes | `linear-gradient(...)` inline + `data-gradient` JSON obrigatório. `data-variable-stops="primary,secondary"` quando aplicável |
 | Fontes | `<meta name="hm-fonts" content="...">` listando todas |
-| Segmento | `<html data-segment="...">` (um dos 8 segmentos HealthMarket) |
+| Segmento | `<html data-segment="...">` (um dos segmentos suportados pela plataforma) |
 | Elementos AI-fillable | `data-template-element`, `data-te-description`, `data-te-max-chars` etc. |
 | Variáveis de perfil | `data-text-type="instagramHandle\|instagramName\|phone\|address"` |
 | Estáticos | `data-static="true"` |
@@ -40,10 +40,8 @@ Os dois validadores são autoritativos. Status `PASS` em ambos = HTML válido e 
 
 ## Onde o contrato pode mudar
 
-Mudanças no contrato (novos `data-*`, novos tipos de objeto Fabric, novos validadores) acontecem em **três lugares simultaneamente, todos dentro de `getposts-pipeline-v2/`**:
+Mudanças no contrato (novos `data-*`, novos tipos de objeto Fabric, novos validadores) acontecem em **três lugares simultaneamente, todos dentro deste repositório**:
 
 1. `skills/_shared/HTML_TECHNICAL_SPEC.md` e/ou `skills/_shared/GRADIENT_SYSTEM.md` (especificação).
 2. `scripts/validate-slides.js` (validador do Fabric JSON) e/ou `scripts/audit-template-markup.py` (auditor do HTML marcado).
 3. `skills/gp2-template-converter/SKILL.md` (mapeamento HTML → Fabric) e/ou `skills/gp2-template-marker/SKILL.md` (regras de marcação).
-
-Qualquer mudança que afete o editor HealthMarket também precisa refletir em `Frontend/kultivai-frontend/app/src/app/shared/fabricjs-editor/core/types.ts` e `utilities/colors.ts` (ou no equivalente atual do frontend KultivAi).

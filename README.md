@@ -1,14 +1,6 @@
-# GetPosts Pipeline v2 — HTML → Fabric.js para HealthMarket
+# GetPosts Pipeline v2 — HTML → Fabric.js
 
-Pipeline de produção de templates HealthMarket (Instagram feed/stories/carrossel) que parte de um pedido em linguagem natural e termina com um template publicado no editor, com qualidade de design comparável ao Claude Design e migração determinística para Fabric.js.
-
-Substitui a pipeline v1 em `../getposts-skills-20260513T181951Z/skills/`. Convive lado a lado durante a transição. O uploader v1 é reaproveitado tal qual.
-
-## Por que existe
-
-A v1 entrega o fluxo ponta-a-ponta (incluindo upload/thumbnails), mas o design final fica visivelmente abaixo do Claude Design. Causa raiz: o `getposts-html-designer` da v1 desenha "às cegas" a partir de um brief textual. A v2 explicita o loop de design renderizado (3 passos: low-fi → mid-fi → high-fi) dentro da própria skill de design — mesmo mecanismo que faz Claude Design funcionar bem, agora dentro do openclaw.
-
-A forma da pipeline foi preservada (gates múltiplos, marker pós-design separado, uploader atual reaproveitado), porque a auditoria confirmou que o problema não era estrutural, era estar concentrado em uma única etapa.
+Pipeline de produção de templates de social media (Instagram feed/stories/carrossel) que parte de um pedido em linguagem natural e termina com um template publicado na plataforma, com qualidade de design comparável ao Claude Design e migração determinística para Fabric.js.
 
 ## Setup local
 
@@ -32,7 +24,7 @@ npx playwright install chromium
 | 4 | `gp2-html-reviewer` | Critica os screenshots (técnico + fidelidade ao plano). Hard-gate em findings técnicos. | `html-review.json` + status |
 | 5 | `gp2-template-marker` | Marca `data-*` (absorve o antigo context-analyzer) + emite `template-summary.md`. | `template.html` marcado + `template-summary.md` |
 | 6 | `gp2-template-converter` | HTML marcado → `slide-N.json` Fabric. Emite `ClippableImage` cru e roda `scripts/center-clippable-images.js` para centralizar via natural size (espelha `ClippableImage.replaceImage()` do editor). Self-validation pós-emissão. | `output/<slug>/slide-N.json` + `manifest.json` |
-| 7 | `gp2-template-uploader` | Upload S3 + invoca `app-lambda-template-handler` (Supabase + embedding). | template ID |
+| 7 | `gp2-template-uploader` | Upload S3 + invoca a lambda do template handler (Supabase + embedding). | template ID |
 | — | `gp2-pipeline` | Orchestrator que roda tudo na ordem com iteration policy. | Relatório consolidado |
 | — | `gp2-template-suggester` | Orquestrador alternativo: gera N prompts autônomos para catálogo e dispara `gp2-pipeline` por sub-agente. | N templates publicados |
 
@@ -121,5 +113,4 @@ Após o teto, a pipeline para e reporta o gate que falhou com evidências.
 ## Validação ponta-a-ponta
 
 1. Rode `node scripts/validate-slides.js artifacts/gp2-template-converter/<slug>/` — exit code 0.
-2. Importe o JSON no editor HealthMarket (`Frontend/healthmarket-frontend/app`, `npm run start`), abra a aba **Brand**, troque entre 2-3 presets de cor: todos os elementos com `data-variable` devem trocar via `updateTemplateColors`.
-3. Rode `gp2-pipeline` em 1 template, confirme o ID retornado, abra no editor e clique "Salvar Alterações" para confirmar a thumbnail.
+2. Rode `gp2-pipeline` em 1 template, confirme o ID retornado, abra no editor da plataforma e clique "Salvar Alterações" para confirmar a thumbnail.

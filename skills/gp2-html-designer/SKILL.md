@@ -188,15 +188,32 @@ As 13 regras técnicas (estrutura, CSS inline, gradientes obrigatoriamente com `
 - Imagens reais (`<img>`), nunca CSS shapes simulando foto.
 - Gradiente em qualquer elemento → obrigatório `data-darken` (escurecimento neutro) ou `data-glow` (brand atmosférico). Cores brand hex em `linear-gradient` são proibidas.
 
-## Imagens contextuais (userAsset) — fluxo obrigatório
+## Imagens — fluxo determinístico via buckets B1–B4
 
-Para slots de `userAsset` (foto contextual, foto de ambiente, imagem ilustrativa), siga esta ordem:
+**Antes de qualquer decisão de imagem, leia `visual-plan.md → ### Imagens declaradas`.** O art-director já classificou cada imagem em B1 (slot da plataforma), B2 (URL picsum determinística), B3 (placeholder obrigatório) ou B4 (não replicar). Seu papel é **executar** a classificação, não revisitar.
 
-### 1. Tente URL pública estável
+Se a tabela `### Imagens declaradas` está ausente ou incompleta, **pare e reporte `status: blocked-on-art-director`** com `## Pedidos ao art-director: tabela de Imagens declaradas faltando` no `notes.md`. Não improvise.
 
+### B1 — slot da plataforma
+
+Use o atributo declarado pelo art-director. O conteúdo é preenchido pelo usuário em runtime; no template, use o placeholder visual correspondente:
+
+| `data-image-type` | Placeholder a embutir |
+|-------------------|------------------------|
+| `professionalPhoto` | `references/placeholders/professional-photo-{1\|2}.b64.txt` (o brief sugere qual) |
+| `brandLogo` | `references/placeholders/logo-quadrada.b64.txt` |
+| `instagramProfilePicture` | `references/placeholders/logo-quadrada.b64.txt` (genérico circular) |
+
+```html
+<img data-image-type="professionalPhoto" alt="Foto do profissional"
+     style="position:absolute; left:0; top:300px; width:540px; height:1050px;
+            object-fit:contain; object-position:bottom center;"
+     src="data:image/png;base64,iVBORw0KGgo...">
 ```
-https://picsum.photos/id/{ID}/{width}/{height}    ← determinística por ID
-```
+
+### B2 — imagem genérica buscável (URL picsum)
+
+Use a URL `picsum.photos/id/{ID}/{width}/{height}` **exatamente como declarada** no `visual-plan.md`. Não troque o `id`, não adicione query string.
 
 **Regras:**
 - Sempre use URLs determinísticas — mesma URL = mesma imagem em todo carregamento.
@@ -210,19 +227,38 @@ https://picsum.photos/id/{ID}/{width}/{height}    ← determinística por ID
      src="https://picsum.photos/id/1015/480/580">
 ```
 
-### 2. Fallback: placeholder pré-definido
+Se a URL falhar em renderização local, **não** caia para placeholder silenciosamente — reporte ao art-director em `notes.md → ## Pedidos ao art-director: URL picsum id={N} não renderizou; sugira id alternativo ou mude para B3?`. O fallback automático mascara o problema.
 
-Se sem internet ou URL retornar erro, use [`references/placeholders/image-placeholder.b64.txt`](./references/placeholders/image-placeholder.b64.txt):
+### B3 — imagem específica não-reproduzível (placeholder obrigatório)
+
+O art-director declarou `image-source: placeholder-required` porque o elemento da referência (símbolo de campanha, ilustração autoral, mascote, infográfico específico) **não existe** em banco público e **não** é slot. Use [`references/placeholders/image-placeholder.b64.txt`](./references/placeholders/image-placeholder.b64.txt) direto, com `alt` descritivo:
 
 ```html
-<img class="image-placeholder" alt="Imagem a substituir"
-     style="position:absolute; left:60px; top:200px; width:480px; height:580px; object-fit:cover;"
+<img class="image-placeholder" alt="Símbolo Março Amarelo - laço de campanha"
+     style="position:absolute; left:660px; top:80px; width:380px; height:1200px; object-fit:contain;"
      src="data:image/png;base64,iVBORw0KGgoAAAANS...">
 ```
 
-**Nunca gere SVG inline inventado. Nunca use CSS shapes fingindo foto.**
+**Regras hard de B3:**
+- **Nunca** tente URL picsum para um slot B3 — o art-director já decidiu que é não-reproduzível.
+- **Nunca** gere `<svg>` inline para "imitar" o símbolo (laço, fita, mascote, ilustração).
+- **Nunca** use `<div>` com `background-color` / `background-image` / formas CSS para fingir o elemento.
+- **Nunca** baixe base64 alternativo de outro arquivo que não seja `image-placeholder.b64.txt`.
+- `alt` deve descrever o que o elemento representava na referência — ajuda o reviewer e o futuro humano que substituir a imagem.
+
+Violar qualquer uma dessas regras é finding `b3-placeholder-violation` blocker no reviewer.
+
+### B4 — não replicar
+
+O elemento foi descartado pelo art-director (handle de outra marca, métrica de UI, selo verificado, etc.). **Não inclua no HTML.** Não tente "neutralizar" o elemento com texto genérico — simplesmente omita.
+
+### Regra hard geral
+
+**Nunca gere SVG inline inventado. Nunca use CSS shapes fingindo foto.** Imagem ausente no `### Imagens declaradas` do visual-plan = imagem ausente no HTML. Se faltou alguma, devolva ao art-director.
 
 ## Fotos profissionais (quando o brief pediu)
+
+`professionalPhoto` é um slot **B1** declarado no `### Imagens declaradas` do visual-plan. Esta seção complementa B1 com positioning + anti-patterns específicos do cutout.
 
 Tratamento padrão: **PNG cutout** (figura com fundo transparente). Use `object-fit: contain; object-position: bottom center; border-radius: 0;`. Avatar circular **só** se a referência/pedido pedir explicitamente.
 

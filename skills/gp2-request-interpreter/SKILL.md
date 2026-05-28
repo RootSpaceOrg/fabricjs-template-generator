@@ -17,6 +17,7 @@ A v2 separa **interpretação de conteúdo** (este skill) de **direção visual*
 |----------|---------------------|
 | Asset type, dimensions, slide count | Hard input; can't be inferred later |
 | **Vertical / segmento de marca** (livre — inferido do pedido) | Drives editor metadata and `data-segment`; não há lista fixa de valores |
+| **Fidelidade** (`recreate` / `inspired` / `free`) | Sinal determinístico para o art-director decidir A0 vs catálogo — ver "Fidelidade" abaixo |
 | **Sequência narrativa** (Standard / Listicle / Tutorial / Comparação / Single-post) | Determina arco do carrossel e alternância de background — ver "Sequências narrativas" abaixo |
 | Per-slide narrative role (1–2 lines) | Story arc — derivado da sequência mas pode customizar |
 | **Hook do Slide 1** (fórmula + 1 linha de copy) | Slide 1 mata ou salva o carrossel — ver "Hook do Slide 1" abaixo |
@@ -63,6 +64,26 @@ A skill detecta automaticamente em qual modo está com base na presença (ou nã
 4. Marque incertezas só quando travariam o art-director ou designer.
 
 **IMPORTANTE em reference-driven mode:** NÃO extraia paleta hex, tipografia, família estética, movimento memorável ou elementos editoriais da referência. Isso é responsabilidade exclusiva do `gp2-art-director`, que receberá a(s) imagem(ns) de referência do orquestrador.
+
+## Fidelidade
+
+Sinal determinístico que o interpreter emite no brief para o art-director decidir A0-custom-from-reference vs catálogo A1–A14. O interpreter NÃO decide arquétipo — apenas marca a intenção do usuário.
+
+Detecte por verbo no pedido (case-insensitive, casa substring):
+
+| Valor | Verbos-gatilho | Comportamento esperado do art-director |
+|-------|----------------|----------------------------------------|
+| `recreate` | `recrie`, `recriar`, `recria`, `reproduza`, `reproduzir`, `replique`, `replicar`, `igual a`, `igual à`, `idêntico`, `idêntica`, `mesma coisa`, `exato`, `exata`, `fielmente`, `fiel à referência` | A0-custom-from-reference é default em TODOS os slides; cair em A1–A14 só com justificativa por slide |
+| `inspired` | `nesse estilo`, `nesse estilo de`, `parecido com`, `parecida com`, `inspirado em`, `inspirada em`, `no estilo de`, `vibe de`, `tom de`, `look de` | Catálogo A1–A14 default; A0 só quando ≥15% desvio dos anchors |
+| `free` | nenhum verbo de fidelidade **e** sem imagem anexada | Free mode; A0 não disponível |
+
+**Regras de desempate:**
+- Verbo `recreate` ganha de `inspired` se ambos aparecerem ("recrie nesse estilo" → `recreate`).
+- Imagem anexada **sem** verbo de fidelidade explícito → `inspired` (default seguro: usuário anexou referência mas não disse "recriar").
+- Sem imagem **e** sem verbo → `free`.
+- Imagem anexada **com** verbo `recreate` → `recreate`.
+
+Em `recreate`, considere documentar 1 linha em `## Incertezas` se houver elementos da referência cuja replicação 1-pra-1 é ambígua (ex: "referência usa ilustração de campanha não reproduzível — art-director decide bucket").
 
 ## Sequências narrativas
 
@@ -153,6 +174,10 @@ Write `artifacts/gp2-request-interpreter/<slug>/brief.md`:
 
 ## Modo
 <free | reference-driven>
+
+## Fidelidade
+<recreate | inspired | free>
+<verbo-gatilho detectado em 1 linha — ex: "user disse 'recrie o template enviado' → recreate"; se free, "sem referência nem verbo de fidelidade">
 
 ## Entrega
 - Tipo: <post | carrossel | story | reel cover | ad>
@@ -259,6 +284,7 @@ Neutros (branco, preto, cinza) **nunca** são contados como brand color.
 
 ```markdown
 Modo: <free | reference-driven>
+Fidelidade: <recreate | inspired | free>
 Brief gerado: `<path>/brief.md`
 Referência visual: <"imagem(ns) anexada(s) — análise visual no próximo passo (art-director)" | "nenhuma">
 Sequência: <Standard | Listicle | Tutorial | Comparação | Single-post>
