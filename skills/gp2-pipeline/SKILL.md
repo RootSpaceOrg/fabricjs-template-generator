@@ -24,7 +24,7 @@ Sempre que o usuário pedir para criar um template de social media completo (pos
 3. gp2-html-designer                → template-v1-lowfi.html → template-v2-midfi.html → template.html (3 entregáveis materializados com auto-critique entre passos; pode reportar status: blocked-on-art-director para gancho retroativo)
 4. gp2-html-reviewer                → PASS|REVISE|FAIL (gate técnico + archetype/move/typography fidelity + reference fidelity + delight detail)
 5. gp2-template-marker              → template.html marcado + template-summary.md
-6. gp2-template-converter           → slide-N.json + manifest.json (inclui self-validation pós-emissão)
+6. gp2-template-converter           → slide-N.json + manifest.json (emite ClippableImage cru → roda scripts/center-clippable-images.js para centralizar via natural size → self-validation pós-emissão)
 7. gp2-template-uploader            → upload S3 + Supabase
 8. Relatório consolidado
 ```
@@ -66,7 +66,7 @@ Upload **só** acontece quando todos abaixo são verdadeiros:
 - `gp2-art-director` produziu `visual-plan.md` completo (família, paleta, plano de slides, movimento memorável, mapeamento data-variable; em reference-driven mode, inclui vocabulário visual extraído da referência);
 - `gp2-html-reviewer.status === "PASS"` (findings técnicos críticos = 0; fidelidade ao plano: faithful ou partial com divergências documentadas; execução: adequada ou forte);
 - `gp2-template-marker` audit: `PASS`;
-- `gp2-template-converter` validator (`validate-slides.js`): exit 0 + self-validation pós-emissão sem criticals;
+- `gp2-template-converter`: `scripts/center-clippable-images.js` exit 0 (todas as `ClippableImage` centralizadas via natural size) + `scripts/validate-slides.js` exit 0 + self-validation pós-emissão sem criticals;
 - nenhuma incompatibilidade catastrófica conhecida com o editor.
 
 Se algum falha:

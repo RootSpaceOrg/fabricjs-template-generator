@@ -2,7 +2,7 @@
 
 Spec compartilhada entre `gp2-html-designer`, `gp2-html-reviewer`, `gp2-template-marker` e `gp2-template-converter`. **Não duplique este conteúdo nas SKILLs** — referencie.
 
-Para o contrato high-level e intercambialidade com Claude Design / Estratégia A, ver [`../../CONTRACT.md`](../../CONTRACT.md). Para o sistema de gradientes, ver [`./GRADIENT_SYSTEM.md`](./GRADIENT_SYSTEM.md).
+Para o contrato high-level e o mapa dos validadores, ver [`../../CONTRACT.md`](../../CONTRACT.md). Para o sistema de gradientes, ver [`./GRADIENT_SYSTEM.md`](./GRADIENT_SYSTEM.md).
 
 ## As 13 regras
 

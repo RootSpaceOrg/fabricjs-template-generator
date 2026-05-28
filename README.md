@@ -31,7 +31,7 @@ npx playwright install chromium
 | 3 | `gp2-html-designer` | Gera HTML em **3 iterações com render** (low-fi → mid-fi → high-fi) executando o visual-plan. | `template.html` + `screenshots/` |
 | 4 | `gp2-html-reviewer` | Critica os screenshots (técnico + fidelidade ao plano). Hard-gate em findings técnicos. | `html-review.json` + status |
 | 5 | `gp2-template-marker` | Marca `data-*` (absorve o antigo context-analyzer) + emite `template-summary.md`. | `template.html` marcado + `template-summary.md` |
-| 6 | `gp2-template-converter` | HTML marcado → `slide-N.json` Fabric (inclui self-validation pós-emissão). | `output/<slug>/slide-N.json` + `manifest.json` |
+| 6 | `gp2-template-converter` | HTML marcado → `slide-N.json` Fabric. Emite `ClippableImage` cru e roda `scripts/center-clippable-images.js` para centralizar via natural size (espelha `ClippableImage.replaceImage()` do editor). Self-validation pós-emissão. | `output/<slug>/slide-N.json` + `manifest.json` |
 | 7 | `gp2-template-uploader` | Upload S3 + invoca `app-lambda-template-handler` (Supabase + embedding). | template ID |
 | — | `gp2-pipeline` | Orchestrator que roda tudo na ordem com iteration policy. | Relatório consolidado |
 | — | `gp2-template-suggester` | Orquestrador alternativo: gera N prompts autônomos para catálogo e dispara `gp2-pipeline` por sub-agente. | N templates publicados |
@@ -52,25 +52,27 @@ Em seguida o editor é aberto para salvar e gerar thumbnails.
 
 ## Contrato HTML → Fabric
 
-O HTML produzido pela v2 segue **exatamente** o mesmo contrato do Claude Design: [`CLAUDE_DESIGN_RULES.md`](../claude_design_to_fabric/CLAUDE_DESIGN_RULES.md). Isso significa:
+A pipeline v2 é autocontida. O contrato HTML → Fabric vive em:
 
-- HTML da v2 é convertível pelo agent `claude-design-to-fabricjs-converter` da Estratégia A.
-- HTML do Claude Design (Estratégia A) é convertível pela v2 sem mudanças.
-- O validador `scripts/validate-slides.js` é uma cópia do validador da Estratégia A.
+- [`skills/_shared/HTML_TECHNICAL_SPEC.md`](./skills/_shared/HTML_TECHNICAL_SPEC.md) — regras estruturais, tabela de `data-*`, anti-patterns.
+- [`skills/_shared/GRADIENT_SYSTEM.md`](./skills/_shared/GRADIENT_SYSTEM.md) — sistema de gradientes (`data-darken` / `data-glow` / `data-gradient`).
+- [`CONTRACT.md`](./CONTRACT.md) — resumo high-level e mapa dos validadores.
+- [`DESIGN_PRINCIPLES.md`](./DESIGN_PRINCIPLES.md) — protocolo de 3 renders do designer.
 
-Veja [`CONTRACT.md`](./CONTRACT.md) para o resumo. Veja [`DESIGN_PRINCIPLES.md`](./DESIGN_PRINCIPLES.md) para o protocolo de 3 renders.
+O validador `scripts/validate-slides.js` é a fonte de verdade do Fabric JSON emitido; `scripts/audit-template-markup.py` audita o HTML marcado. PASS em ambos = pronto para o editor.
 
 ## Estrutura
 
 ```
-fabricjs-template-generator/
+getposts-pipeline-v2/
 ├── README.md                    ← este arquivo
 ├── DESIGN_PRINCIPLES.md         ← protocolo das 3 iterações renderizadas
 ├── CONTRACT.md                  ← contrato HTML que garante migração 100%
 ├── scripts/
-│   ├── validate-slides.js       ← validador Fabric JSON (cópia da Estratégia A)
-│   ├── audit-template-markup.py ← validador dos data-* no marker
-│   └── render-html-screenshots.js ← helper headless para designer e reviewer
+│   ├── validate-slides.js          ← validador Fabric JSON
+│   ├── audit-template-markup.py    ← validador dos data-* no marker
+│   ├── center-clippable-images.js  ← pós-processo do converter: centraliza ClippableImage via natural size (espelha replaceImage do editor)
+│   └── render-html-screenshots.js  ← helper headless para designer e reviewer
 └── skills/
     ├── _shared/                    ← specs cross-skill (gradient system, HTML technical spec)
     ├── gp2-pipeline/

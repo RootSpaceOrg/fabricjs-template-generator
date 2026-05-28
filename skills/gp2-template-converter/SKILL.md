@@ -1,20 +1,21 @@
 ---
 name: gp2-template-converter
-description: "Converte HTML marcado (do gp2-template-marker) em Fabric.js CanvasJSON pronto para o editor HealthMarket. Adota CLAUDE_DESIGN_RULES.md como contrato e roda validate-slides.js (mesma cópia da Estratégia A) como gate. HTML produzido pela v2 é 100% intercambiável com HTML do Claude Design. Use após gp2-template-marker (audit PASS), antes de gp2-template-uploader."
+description: "Converte HTML marcado (do gp2-template-marker) em Fabric.js CanvasJSON pronto para o editor HealthMarket. Adota a spec técnica de HTML + sistema de gradientes da pipeline v2 (`skills/_shared/`) como contrato e roda `scripts/validate-slides.js` como gate. Use após gp2-template-marker (audit PASS), antes de gp2-template-uploader."
 ---
 
 # gp2-template-converter
 
-Migra `template.html` marcado para uma série de `slide-N.json` Fabric.js — um por `<section class="slide">`. Output validado por `validate-slides.js`, o **mesmo** validador usado pela Estratégia A (`Pocs/claude_design_to_fabric/`).
+Migra `template.html` marcado para uma série de `slide-N.json` Fabric.js — um por `<section class="slide">`. Output validado por `scripts/validate-slides.js` (na raiz da pipeline v2).
 
 ## Contrato
 
-A spec completa de mapeamento HTML → Fabric vive em [`../../../claude_design_to_fabric/CLAUDE_DESIGN_RULES.md`](../../../claude_design_to_fabric/CLAUDE_DESIGN_RULES.md) (autoritativo) e [`../../../claude_design_to_fabric/skill.md`](../../../claude_design_to_fabric/skill.md) (mapeamento detalhado). Este SKILL.md sumariza só o essencial. Quando em dúvida, leia o contrato.
+A pipeline v2 é autocontida. As fontes de verdade do contrato HTML → Fabric vivem **dentro de `getposts-pipeline-v2/`**:
 
-Por que isso é crítico:
-- HTML produzido pela pipeline v2 segue **exatamente** o mesmo formato do Claude Design.
-- O validador (`scripts/validate-slides.js`) é cópia byte-a-byte do validador da Estratégia A.
-- Você pode até converter HTML da v2 com o agent `claude-design-to-fabricjs-converter` (Estratégia A) e vice-versa.
+- [`../_shared/HTML_TECHNICAL_SPEC.md`](../_shared/HTML_TECHNICAL_SPEC.md) — regras estruturais do HTML, tabela de `data-*`, anti-patterns.
+- [`../_shared/GRADIENT_SYSTEM.md`](../_shared/GRADIENT_SYSTEM.md) — presets de `data-darken` / `data-glow` / `data-gradient` e emissão Fabric.
+- [`../../CONTRACT.md`](../../CONTRACT.md) — resumo high-level e mapa dos validadores.
+
+Este SKILL.md sumariza o essencial do mapeamento HTML → Fabric. Quando em dúvida, leia as specs compartilhadas acima.
 
 ## Inputs
 
@@ -42,7 +43,7 @@ artifacts/gp2-template-converter/<slug>/
 
 ## Conversion contract (essencial)
 
-Toda regra abaixo está detalhada em `CLAUDE_DESIGN_RULES.md` e `claude_design_to_fabric/skill.md`. Reúno aqui só os erros mais comuns que travam validador/editor:
+Toda regra abaixo se apoia em `_shared/HTML_TECHNICAL_SPEC.md` (HTML) e `_shared/GRADIENT_SYSTEM.md` (gradientes). Reúno aqui só os erros mais comuns que travam validador/editor:
 
 | Regra | Detalhe |
 |-------|---------|
@@ -51,7 +52,7 @@ Toda regra abaixo está detalhada em `CLAUDE_DESIGN_RULES.md` e `claude_design_t
 | Sem `rect` | use **sempre** `roundedRect` (cantos `0` quando sem radius). Plain `rect` quebra deserialize com gradiente |
 | Origem | todo objeto: `originX: "center"`, `originY: "center"` |
 | Conversão de coords | HTML top-left → Fabric center: `left = htmlLeft + width/2`, `top = htmlTop + height/2` |
-| Nomes | todo objeto tem `name` (rótulo PT-BR, ver tabela em `claude_design_to_fabric/skill.md` §Object Naming) |
+| Nomes | todo objeto tem `name` (rótulo PT-BR descritivo: `"Título"`, `"Subtítulo"`, `"Corpo"`, `"Eyebrow"`, `"CTA"`, `"Foto"`, `"Foto profissional"`, `"Logo"`, `"Avatar"`, `"Card"`, `"Faixa"`, `"Divisor"`, `"Overlay legibilidade"`, `"Escurecimento atmosferico"`, `"Glow <variable> <posição>"`, etc. — use o rótulo mais específico que ainda fizer sentido para o usuário do editor) |
 | **border-radius → corners** | `roundedRect` corners são **percentagens de `min(width, height)/2`**. Fórmula: `corner = (border_radius_px / (min(width, height) / 2)) * 100`, clampado a 0–100. Ex: `border-radius: 46px` num card 964×1210 → `(46 / 482) * 100 = 9.54` → `topLeft: 9.54`. **Nunca passe o valor px direto** — `46` significa 46%, não 46px |
 | Textbox | sempre `styles: {}` (mesmo vazio); sem `styles` quebra Fabric |
 | `lineHeight` | clampado a >= 1.0 (Fabric 5.x renderiza < 1.0 inconsistente) |
@@ -64,153 +65,76 @@ Toda regra abaixo está detalhada em `CLAUDE_DESIGN_RULES.md` e `claude_design_t
 | Spans | inline `<span>` em texto editável → **uma** textbox com `styles[lineIndex][charIndex]`; **nunca** uma textbox por span |
 | Profile vars | `data-text-type` → `textType: "..."` no objeto, sem `isTemplateElement` |
 | Templates | `data-template-element="true"` → `isTemplateElement: true` + bloco `templateElement` |
-| Imagens cropadas (cover) | `data-image-crop="true"` ou `border-radius != 0` ou `object-fit:cover` → `ClippableImage` com crop centrado |
-| Imagens cutout (contain) | `object-fit:contain` em `data-image-type="professionalPhoto"` → `ClippableImage` **sem crop** + `originY:"bottom"` quando `object-position` inclui `bottom` (ver seção dedicada abaixo) |
+| Imagens (todas) | toda `<img>` → `ClippableImage` com `originX:"center"`, `originY:"center"`, `src` absoluto, `width`/`height` = dimensões do **frame visual no HTML** (slot), `topLeft/topRight/bottomRight/bottomLeft` em % derivados do `border-radius`. **NÃO calcule `cropX/cropY`, `scaleX/scaleY`, `originWidth/originHeight`** — o script `center-clippable-images.js` faz isso deterministicamente pós-emissão, espelhando o `ClippableImage.replaceImage()` do editor (ver seção dedicada abaixo) |
 | Gradientes | `type: "linear"\|"radial"` (NUNCA `linearGradient`); inclui `coords`, `colorStops`, `offsetX`, `offsetY`, `gradientUnits: "percentage"`, `gradientTransform: null` |
 | Background gradiente | **Nunca** string CSS `"linear-gradient(...)"`. Overlays com `data-darken` → `roundedRect` com gradient fill neutro. **Nunca** emita `backgroundVariableConfig` gradient — o editor só suporta sólido. `data-variable-stops` foi eliminado — se encontrado, ignore |
 
-## ClippableImage crop (CRÍTICO)
+## ClippableImage — emissão crua + pós-processo determinístico
 
-Para qualquer `<img>` com `border-radius`, `object-fit: cover`, ou `data-image-crop="true"`:
+A partir da v2, o converter **não calcula crop**. Emita cada `<img>` como `ClippableImage` no estado "cru", e o script [`../../scripts/center-clippable-images.js`](../../scripts/center-clippable-images.js) reaplica deterministicamente o mesmo cover-crop centralizado que o editor da plataforma executa quando o usuário troca a imagem (`ClippableImage.replaceImage()` em `Frontend/mkt-platform-frontend/.../objects/clippable-image.ts`).
 
-1. Use a caixa do HTML como **frame visual** (`visualWidth`, `visualHeight`).
-2. Carregue dimensões naturais da imagem (`naturalW`, `naturalH`) → vira `originWidth`, `originHeight`.
-3. Calcule centered cover crop:
+**Toda `ClippableImage` é cover crop centrado.** Não existe mais ramo "cutout" / `originY:"bottom"`. Se o HTML usa `object-fit:contain` (ex: PNG cutout de `professionalPhoto`), o pós-processo vai tratar como cover. Isso é intencional: o editor faz a mesma coisa quando o usuário sobe uma foto, então o resultado pós-conversão é exatamente o que o usuário verá depois.
+
+### O que o converter emite
+
+Para cada `<img>`:
+
+```json
+{
+  "type": "ClippableImage",
+  "name": "<rótulo PT-BR>",
+  "src": "<URL absoluta>",
+  "left": "<htmlLeft + slotWidth / 2>",
+  "top":  "<htmlTop  + slotHeight / 2>",
+  "width":  "<slotWidth>",
+  "height": "<slotHeight>",
+  "originX": "center",
+  "originY": "center",
+  "topLeft": "<0..100>", "topRight": "<0..100>",
+  "bottomRight": "<0..100>", "bottomLeft": "<0..100>",
+  "crossOrigin": "anonymous",
+  "imageType": "professionalPhoto|userAsset|brandLogo",
+  "isTemplateElement": "<bool>",
+  "templateElement": { "description": "...", "removeBackground": false }
+}
+```
+
+Regras:
+
+- `width`/`height` = dimensões do **frame visual no HTML** (o slot). Sem `scaleX`/`scaleY` (defaults `1.0`).
+- Sem `cropX`/`cropY`/`originWidth`/`originHeight` — o pós-processo preenche.
+- `topLeft/topRight/bottomRight/bottomLeft` derivam do `border-radius` do HTML (mesma fórmula `%` de `min(width,height)/2` da tabela acima).
+- `left`/`top` em Fabric center conforme tabela geral.
+
+### O que o pós-processo faz
+
+`center-clippable-images.js` itera sobre todos os `slide-*.json` de uma pasta, lê `naturalWidth`/`naturalHeight` de cada `src` (decode direto de magic bytes para `data:` URLs e HTTP genéricos — sem browser; Playwright só como fallback opcional para formatos exóticos) e patcheia o objeto com:
 
 ```js
+const visualWidth  = width  * scaleX;   // = slot, antes do patch
+const visualHeight = height * scaleY;
 const objectAspect = visualWidth / visualHeight;
-const imageAspect = naturalW / naturalH;
+const imageAspect  = naturalW / naturalH;
+
 let cropW, cropH;
-if (imageAspect > objectAspect) {
-  cropH = naturalH;
-  cropW = cropH * objectAspect;
-} else {
-  cropW = naturalW;
-  cropH = cropW / objectAspect;
-}
+if (imageAspect > objectAspect) { cropH = naturalH; cropW = cropH * objectAspect; }
+else                            { cropW = naturalW; cropH = cropW / objectAspect; }
 const cropX = (naturalW - cropW) / 2;
 const cropY = (naturalH - cropH) / 2;
 const scale = visualWidth / cropW;
+
+obj.originWidth  = naturalW;
+obj.originHeight = naturalH;
+obj.width  = cropW;   obj.height = cropH;
+obj.cropX  = cropX;   obj.cropY  = cropY;
+obj.scaleX = scale;   obj.scaleY = scale;
 ```
 
-4. Emita:
+Idempotente: rodar duas vezes produz o mesmo JSON.
 
-```json
-{
-  "type": "ClippableImage",
-  "name": "Foto",
-  "originWidth": naturalW,
-  "originHeight": naturalH,
-  "cropX": cropX,
-  "cropY": cropY,
-  "width": cropW,
-  "height": cropH,
-  "scaleX": scale,
-  "scaleY": scale,
-  "left": htmlLeft + visualWidth / 2,
-  "top": htmlTop + visualHeight / 2,
-  "originX": "center", "originY": "center",
-  "src": "<URL absoluta>",
-  "crossOrigin": "anonymous",
-  "imageType": "professionalPhoto|userAsset|brandLogo",
-  "topLeft": <0..100>, "topRight": <0..100>, "bottomRight": <0..100>, "bottomLeft": <0..100>
-}
-```
+### Regra de origin (atualizada)
 
-`width`/`height` são as dimensões do crop **na fonte original**, NÃO o frame visual. O frame visível é `width * scaleX` por `height * scaleY`.
-
-**Quando a imagem fonte é menor que o frame visual (CRÍTICO):** Se a URL da imagem entrega dimensões menores que o frame no HTML (ex: imagem 400×300 num slot de 834×660), a imagem precisa ser **escalada para cima** para preencher o frame. O cálculo de `object-fit: cover` já trata isso — `scale = visualWidth / cropW` será > 1.0 (zoom in). Nunca emita `scaleX: 1.0, scaleY: 1.0` quando a imagem é menor que o frame — o resultado seria uma imagem pequena centralizada em vez de preencher o slot. Para URLs `picsum.photos/id/{ID}/{W}/{H}`, o W×H pedido deve coincidir com o frame visual para evitar esse problema.
-
-## ClippableImage cutout — `object-fit: contain` (CRÍTICO para `professionalPhoto`)
-
-**Quando aplicar:** `<img>` com `object-fit: contain` (default da pipeline v2 para `data-image-type="professionalPhoto"` — ver `gp2-html-designer/references/professional-photo-placements.md`). O PNG é cutout transparente e a figura inteira deve aparecer dentro do slot, ancorada na borda escolhida via `object-position`.
-
-**A diferença em uma frase:** em `cover` o frame é o slot e a imagem é cropada para preencher; em `contain` o frame é a própria imagem natural e o slot apenas restringe a área onde ela cabe — sem crop.
-
-**Anti-pattern observado em produção:** emitir cutout como se fosse cover (frame = slot, `originWidth/Height` inventados a partir do slot). O placeholder renderiza a figura distorcida ou ocupando metade do slot, e quando o usuário sobe a foto real o `image-variable.ts:84-94` calcula scale com base nas dimensões erradas e arruina o resultado. **Sintoma típico:** `originWidth/originHeight = 1200/1800` (proporção do slot) quando o PNG cutout fonte é ~700×900 (proporção 0.78). A figura aparece ancorada no topo cobrindo só metade do slot.
-
-**Algoritmo correto:**
-
-```js
-// 1. Dimensões NATURAIS do PNG (não do slot!).
-//    Para placeholders base64, use ImageBitmap/Image API para ler.
-const naturalW = imgEl.naturalWidth;   // ex: 700
-const naturalH = imgEl.naturalHeight;  // ex: 900
-
-// 2. Slot do HTML (apenas usado para posicionar; NÃO vira originW/H)
-const slotW = parsePx(style.width);    // ex: 1200
-const slotH = parsePx(style.height);   // ex: 2365.71
-const slotL = parsePx(style.left);
-const slotT = parsePx(style.top);
-
-// 3. Scale "contain": preserva aspect ratio do PNG dentro do slot
-const scale = Math.min(slotW / naturalW, slotH / naturalH);
-
-// 4. Resolver object-position
-//    Padrão da pipeline v2: "bottom center"
-const objPos = style.objectPosition || 'center center';
-const anchorY = objPos.includes('bottom') ? 'bottom'
-              : objPos.includes('top')    ? 'top'
-              : 'center';
-const anchorX = objPos.includes('right') ? 'right'
-              : objPos.includes('left')  ? 'left'
-              : 'center';
-
-// 5. Calcular left/top em coords Fabric (com originX/Y já considerado)
-//    Fabric: left/top é o ponto de origin; com originY:"bottom" o top é a borda inferior visual.
-const cx = slotL + slotW / 2;                    // centro horizontal do slot
-const topByAnchor = anchorY === 'bottom' ? slotT + slotH
-                   : anchorY === 'top'   ? slotT
-                   : slotT + slotH / 2;
-const fabricOriginY = anchorY === 'bottom' ? 'bottom'
-                     : anchorY === 'top'    ? 'top'
-                     : 'center';
-```
-
-**JSON emitido:**
-
-```json
-{
-  "type": "ClippableImage",
-  "name": "Foto profissional",
-  "imageType": "professionalPhoto",
-  "isTemplateElement": true,
-  "templateElement": {
-    "description": "<descrição do marker>",
-    "removeBackground": false
-  },
-
-  "originWidth":  700,    // ← naturalW do PNG, NÃO do slot
-  "originHeight": 900,    // ← naturalH do PNG, NÃO do slot
-  "width":        700,    // ← idem (não há crop em contain)
-  "height":       900,    // ← idem
-  "cropX": 0, "cropY": 0,
-
-  "scaleX": 0.857,        // ← Math.min(slotW/700, slotH/900)
-  "scaleY": 0.857,        // ← idem (mesmo valor — preserva ratio)
-
-  "left": 660,            // ← centro horizontal do slot
-  "top":  3270.71,        // ← borda inferior do slot (slotT + slotH)
-  "originX": "center",
-  "originY": "bottom",    // ← chave! reflete object-position: bottom
-
-  "topLeft": 0, "topRight": 0, "bottomRight": 0, "bottomLeft": 0,
-  "src": "data:image/png;base64,...",
-  "crossOrigin": "anonymous"
-}
-```
-
-**Por que isso funciona em produção:**
-
-- `originWidth/Height` reflete o PNG real → quando o usuário sobe a foto e o runtime executa `Math.min(maxOriginalWidth/newWidth, maxOriginalHeight/newHeight)` (`image-variable.ts:84`), os ratios batem e a foto entra com escala correta.
-- `originY: "bottom"` faz a figura ancorar no rodapé do slot, espelhando o anchor `bottom-center` do runtime para `professionalPhoto`. A face fica na zona superior, sem distorção.
-- `width === originWidth` e `cropX/Y = 0` indicam ao Fabric que **não há crop** — toda a textura PNG é desenhada.
-
-**Tabela de exceção da regra geral de origin:**
-
-A regra "todo objeto: `originX: "center"`, `originY: "center"`" aplica-se a todos os tipos exceto `ClippableImage` cutout, que usa `originY: "bottom"` (ou `"top"`) conforme `object-position` do HTML. O validador (`validate-slides.js`) já aceita `originY` ≠ `"center"` para imagens; só textboxes/shapes são forçados a center/center.
-
-**Avatar circular (exceção da exceção):** quando `professionalPhoto` é avatar circular (`border-radius: 50%; object-fit: cover`), volta para a regra de cover acima — usa crop centrado, frame = slot, `originX/Y: "center"`.
+Todo objeto — **inclusive `ClippableImage`** — usa `originX: "center"` e `originY: "center"`. Não há mais exceção para cutout.
 
 ## Gradientes — emissão Fabric via `data-darken`
 
@@ -372,7 +296,7 @@ Regras críticas (em qualquer caso): `type` = `"linear"`/`"radial"` (nunca strin
 3. Para cada `<section class="slide">`, parse e emita `slide-N.json`:
    - Walk DOM em order (z-order).
    - Calcule coordenadas absolute → Fabric center.
-   - Aplique tabela de mapeamento HTML → Fabric (`claude_design_to_fabric/skill.md` §Element Type Mapping).
+   - Aplique mapeamento HTML → Fabric: `<p>`/`<h*>`/`<span>` → `textbox`; `<div>` com `border-radius` ou cor → `roundedRect`; `<img>` → `ClippableImage`; `<section>` define o canvas. Detalhes de cada tipo na tabela acima e em `_shared/HTML_TECHNICAL_SPEC.md`.
    - **Para cada elemento com `data-gradient`:** leia o JSON, use como `fill` diretamente (adicionar `offsetX:0, offsetY:0, gradientUnits:"percentage", gradientTransform:null`). NUNCA use computed styles para estes elementos.
    - Se `<section>` tem `data-gradient` (fallback raro): emita roundedRect com o gradient de `data-gradient` como fill. Sem `fillVariableConfig` — overlays são neutros.
    - Detecte cores brand (explícitas via `data-variable` ou auto-detect).
@@ -410,18 +334,26 @@ Regras críticas (em qualquer caso): `type` = `"linear"`/`"radial"` (nunca strin
 }
 ```
 
-5. Rode o validador:
+6. **Rode o pós-processo de centralização** (preenche `cropX/cropY/scaleX/scaleY/originWidth/originHeight` de cada `ClippableImage` baixando a imagem e medindo o natural size):
+
+```bash
+node ../../scripts/center-clippable-images.js artifacts/gp2-template-converter/<slug>/output/
+```
+
+Exit `0` = todas as imagens centralizadas. Exit `1` = uma ou mais URLs falharam ao carregar (404, CORS, etc.) — leia o stdout, corrija o `src` do objeto ofensor (ou pegue uma URL alternativa) e rode novamente.
+
+7. Rode o validador:
 
 ```bash
 node ../../scripts/validate-slides.js artifacts/gp2-template-converter/<slug>/output/
 ```
 
-6. Para cada erro, leia o slide ofensor, corrija com Edit, salve. Loop máximo: **2 fixes**.
-7. Quando o validador retornar exit `0`, escreva `conversion-report.md` resumindo.
+8. Para cada erro, leia o slide ofensor, corrija com Edit, salve. Loop máximo: **2 fixes**.
+9. Quando o validador retornar exit `0`, escreva `conversion-report.md` resumindo.
 
 ## Validate-and-fix loop
 
-Tabela de erros e fixes em [`../../../claude_design_to_fabric/skill.md`](../../../claude_design_to_fabric/skill.md) §Validate-and-Fix Loop. Os comuns:
+Erros típicos retornados por `scripts/validate-slides.js` e como corrigir. Loop máximo: **2 fixes** antes de escalar ao orquestrador.
 
 | Erro | Fix |
 |------|-----|
@@ -429,7 +361,7 @@ Tabela de erros e fixes em [`../../../claude_design_to_fabric/skill.md`](../../.
 | `textbox is missing "styles"` | adicione `"styles": {}` |
 | `lineHeight X is below 1.0` | clampe para `1.0` |
 | `originX/Y must be "center"` | corrija |
-| `ClippableImage missing "originWidth"` etc. | adicione campo, recalcule crop |
+| `ClippableImage missing "originWidth"`/`cropX`/`scaleX` etc. | rode `scripts/center-clippable-images.js` (passo 6 do workflow). Se já rodou e ainda falta, a URL do `src` falhou ao baixar — corrija o `src` e rode de novo |
 | `roundedRect corner X must be 0–100` | recalcule: `corner = (border_radius_px / (min(width, height) / 2)) * 100` |
 | `variable must be "primary"\|"secondary"` | corrija valor |
 | `charSpacing X is below -150` | clampe para `-150` |

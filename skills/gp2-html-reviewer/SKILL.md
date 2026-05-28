@@ -81,7 +81,7 @@ Cada item abaixo é um check acionável aplicado contra o `template.html`. Para 
 - `<img>` sem `src` ou com `src` quebrado.
 - Slide sem conteúdo principal identificável.
 - Fonte usada no CSS ausente do `<meta name="hm-fonts">`.
-- Placeholder de imagem complexo (texto, anatomia, ícones) — viola CLAUDE_DESIGN_RULES seção 6.
+- Placeholder de imagem complexo (texto, anatomia, ícones) — viola `_shared/HTML_TECHNICAL_SPEC.md` (regra de "imagens reais").
 - Pseudo-elementos `::before`/`::after`, `@keyframes`, `mix-blend-mode`, `backdrop-filter` complexo.
 - Posicionamento via flex/grid dentro de `.slide` (deve ser absoluto).
 - `box-shadow` com cor brand (`rgba(R,G,B,A)` onde RGB ≠ 0,0,0 e a cor corresponde a primary/secondary da paleta) — sombras devem ser neutras para adaptabilidade.

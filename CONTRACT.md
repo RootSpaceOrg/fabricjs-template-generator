@@ -1,12 +1,17 @@
 # HTML → Fabric.js Contract
 
-A pipeline v2 produz HTML que respeita o mesmo contrato do Claude Design (Estratégia A). Isto garante migração determinística para Fabric.js no editor HealthMarket.
+A pipeline v2 produz HTML que migra deterministicamente para Fabric.js no editor HealthMarket. Toda a especificação vive dentro de `getposts-pipeline-v2/` — a pipeline é autocontida.
 
 ## Fonte de verdade
 
-[`../claude_design_to_fabric/CLAUDE_DESIGN_RULES.md`](../claude_design_to_fabric/CLAUDE_DESIGN_RULES.md) é o documento autoritativo. Toda regra de markup do `gp2-html-designer` e do `gp2-template-marker` aponta para ele.
+Os documentos autoritativos vivem em [`skills/_shared/`](./skills/_shared/):
 
-Não duplique regras aqui — só referencie. Quando o contrato evoluir, ele evolui em um único lugar.
+- [`skills/_shared/HTML_TECHNICAL_SPEC.md`](./skills/_shared/HTML_TECHNICAL_SPEC.md) — regras estruturais do HTML, tabela de `data-*`, anti-patterns, verificações estruturais.
+- [`skills/_shared/GRADIENT_SYSTEM.md`](./skills/_shared/GRADIENT_SYSTEM.md) — presets de `data-darken`/`data-glow`, fallback `data-gradient`, emissão Fabric.
+- [`skills/_shared/COMPOSITIONS.md`](./skills/_shared/COMPOSITIONS.md) — arquétipos A1–A8 usados pelo art-director.
+- [`skills/_shared/CAROUSEL_MOVES.md`](./skills/_shared/CAROUSEL_MOVES.md) — moves M* do art-director.
+
+Toda regra de markup do `gp2-html-designer`, `gp2-template-marker` e `gp2-template-converter` aponta para essas specs. Não duplique regras nas SKILLs individuais — só referencie. Quando o contrato evoluir, ele evolui em um único lugar.
 
 ## Resumo do que o contrato exige
 
@@ -33,22 +38,12 @@ Não duplique regras aqui — só referencie. Quando o contrato evoluir, ele evo
 
 Os dois validadores são autoritativos. Status `PASS` em ambos = HTML válido e Fabric JSON pronto para o editor.
 
-## Intercambialidade com a Estratégia A
-
-Por seguirem o mesmo contrato:
-
-1. HTML emitido pela v2 pode ser convertido com o agent `claude-design-to-fabricjs-converter` (Estratégia A) sem mudanças.
-2. HTML emitido pelo Claude Design (Estratégia A) pode ser marcado e convertido pela v2 sem mudanças.
-3. O mesmo `validate-slides.js` valida ambos.
-
-Isto é por design: o objetivo é nunca depender exclusivamente de uma fonte de design.
-
 ## Onde o contrato pode mudar
 
-Mudanças no contrato (novos `data-*`, novos tipos de objeto Fabric, novos validadores) acontecem em **três lugares simultaneamente**:
+Mudanças no contrato (novos `data-*`, novos tipos de objeto Fabric, novos validadores) acontecem em **três lugares simultaneamente, todos dentro de `getposts-pipeline-v2/`**:
 
-1. `claude_design_to_fabric/CLAUDE_DESIGN_RULES.md` (especificação).
-2. `claude_design_to_fabric/validate-slides.js` + `fabricjs-template-generator/scripts/validate-slides.js` (validador — manter as cópias em sincronia).
-3. `claude_design_to_fabric/skill.md` + skill do converter da v2 (mapeamento).
+1. `skills/_shared/HTML_TECHNICAL_SPEC.md` e/ou `skills/_shared/GRADIENT_SYSTEM.md` (especificação).
+2. `scripts/validate-slides.js` (validador do Fabric JSON) e/ou `scripts/audit-template-markup.py` (auditor do HTML marcado).
+3. `skills/gp2-template-converter/SKILL.md` (mapeamento HTML → Fabric) e/ou `skills/gp2-template-marker/SKILL.md` (regras de marcação).
 
-Qualquer mudança que afete o editor HealthMarket também precisa refletir em `Frontend/healthmarket-frontend/app/src/app/shared/fabricjs-editor/core/types.ts` e `utilities/colors.ts`.
+Qualquer mudança que afete o editor HealthMarket também precisa refletir em `Frontend/kultivai-frontend/app/src/app/shared/fabricjs-editor/core/types.ts` e `utilities/colors.ts` (ou no equivalente atual do frontend KultivAi).

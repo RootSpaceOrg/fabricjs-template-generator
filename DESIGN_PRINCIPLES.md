@@ -45,7 +45,7 @@ Aplicar em cima do `template-v1.html`:
 - **Paleta de marca** com primary/secondary cumprindo papéis explícitos (fundo? acento? CTA? destaque tipográfico?). Neutros (brancos, pretos, cinzas) **não** são tratados como brand variables.
 - **Tipografia distintiva**: parear display + body com personalidade. Evite uma única família genérica. Sugestões em [`skills/gp2-html-designer/references/aesthetic-families.md`](./skills/gp2-html-designer/references/aesthetic-families.md).
 - **Texturas e elementos editoriais**: divisores, faixas coloridas, numeração editorial, etiquetas, linhas finas, sangrias deliberadas. Use no máximo um "movimento memorável" por carrossel (eyebrow numerado, faixa diagonal, etc.).
-- **Fotos reais ou placeholders válidos**: uma `<img>` por região de imagem. Placeholders só padrão diagonal neutro (ver `CLAUDE_DESIGN_RULES.md` seção 6). Sem ilustrações CSS fingindo foto.
+- **Fotos reais ou placeholders válidos**: uma `<img>` por região de imagem. Placeholders só padrão diagonal neutro (ver `skills/_shared/HTML_TECHNICAL_SPEC.md` §"Atributos `data-*` reconhecidos" — `data-image-type`). Sem ilustrações CSS fingindo foto.
 
 Entrega: `template-v2.html` + `screenshots/v2-slide-N.png`.
 
@@ -71,7 +71,7 @@ Em cima do `template-v2.html`:
 - **Micro-alinhamentos**: pixel-perfect entre elementos relacionados (eyebrow alinhado com início do título, etc.).
 - **Espaçamento vertical**: aplicar ritmo (4px, 8px, 16px, 24px, 48px) em vez de números aleatórios.
 - **Hierarquia tonal**: aplicar opacidades sutis em textos secundários (80%, 65%) quando faz sentido para profundidade.
-- **Garantir** que todas as regras de `CLAUDE_DESIGN_RULES.md` ainda são respeitadas (posição absoluta, `<img>` por imagem, sem flex/grid no canvas, sem `::before`/`::after`).
+- **Garantir** que todas as regras de [`skills/_shared/HTML_TECHNICAL_SPEC.md`](./skills/_shared/HTML_TECHNICAL_SPEC.md) ainda são respeitadas (posição absoluta, `<img>` por imagem, sem flex/grid no canvas, sem `::before`/`::after`).
 
 Entrega final: `template.html` (sem sufixo) + `screenshots/slide-N.png` (sem sufixo). Esses são os arquivos consumidos pelo `gp2-html-reviewer`.
 
@@ -79,7 +79,7 @@ Entrega final: `template.html` (sem sufixo) + `screenshots/slide-N.png` (sem suf
 
 ## Regras de HTML invioláveis em todos os 3 passos
 
-Estas vêm direto do contrato `CLAUDE_DESIGN_RULES.md` (Estratégia A):
+Estas vêm direto da spec técnica em [`skills/_shared/HTML_TECHNICAL_SPEC.md`](./skills/_shared/HTML_TECHNICAL_SPEC.md):
 
 1. Uma `<section class="slide" data-width="N" data-height="M">` por slide.
 2. Posicionamento absoluto para tudo dentro de `.slide`. **Sem flex/grid no canvas.**
