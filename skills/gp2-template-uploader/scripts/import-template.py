@@ -189,17 +189,17 @@ def build_description(
     enrich it — that only produces duplication and dilution.
 
     Precedence:
-      1. context._summary (template-summary.md loaded from artifacts)
-      2. user_hint (passed via --description-hint; usually the same file's content)
+      1. user_hint (passed via --description-hint) — explicit CLI flag always wins.
+      2. context._summary (template-summary.md loaded from artifacts)
       3. error — on v2 the summary is mandatory.
     """
     context = context or {}
-    summary_md = (context.get("_summary") or "").strip()
-    if summary_md:
-        return summary_md
     hint = (user_hint or "").strip()
     if hint:
         return hint
+    summary_md = (context.get("_summary") or "").strip()
+    if summary_md:
+        return summary_md
     raise RuntimeError(
         "No description source available. Expected template-summary.md from "
         "gp2-template-marker artifacts or --description-hint. Pipeline v2 "
