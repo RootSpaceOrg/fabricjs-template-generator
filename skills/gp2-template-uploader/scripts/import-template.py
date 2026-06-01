@@ -240,7 +240,7 @@ def build_payload(
         "images": images,
         "description": description,
         "status": args.status,
-        "template_type": "ai",
+        "template_type": args.template_type,
         "owner_user_id": args.owner_user_id,
         "created_by": "templateGenerator",
         "content_type": args.content_type,
@@ -386,6 +386,11 @@ def main():
         help="Optional template id; default generates nanoid-like id",
     )
     parser.add_argument("--content-type", default="instagram-feed")
+    parser.add_argument(
+        "--template-type",
+        default="ai",
+        help="template_type column (default: ai)",
+    )
     parser.add_argument("--tags", default="")
     parser.add_argument("--status", default="review")
     parser.add_argument(

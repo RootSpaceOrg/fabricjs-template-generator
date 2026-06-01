@@ -100,6 +100,8 @@ python skills/gp2-template-uploader/scripts/import-template.py \
 
 > `business_type` é sempre vazio (template neutro em relação a nicho) e o status default é `review`. Não passe `--business-type` nem `--status draft`.
 
+Para sobrescrever o `template_type` (default `ai`), use `--template-type <valor>`. Use só quando o usuário pedir explicitamente — a regra padrão continua sendo `ai`.
+
 Para dev, adicione `--env dev`. Sem flag = prod.
 
 Use sempre `--description-hint` apontando para o `template-summary.md` produzido pelo marker. Consulte `skills/gp2-template-uploader/SKILL.md` para detalhes de dry-run, blockers e checklist.
