@@ -1,6 +1,6 @@
 ---
 name: gp2-art-director
-description: "Segunda etapa da Pipeline v2 (após gp2-request-interpreter, antes de gp2-html-designer). Define a direção visual do template: paleta com hexs concretos, escala tipográfica resolvida, um arquétipo composicional A* por slide (catálogo _shared/COMPOSITIONS.md), 1-2 carousel moves M* (catálogo _shared/CAROUSEL_MOVES.md) e mapeamento data-variable. Em free mode inventa; em reference-driven mode extrai da(s) imagem(ns). Produz visual-plan.md como orientação para o designer — não como contrato rígido. Também opera em modo de resposta quando o designer reporta status: blocked-on-art-director. Não escreve HTML."
+description: "Segunda etapa da Pipeline v2 (após gp2-request-interpreter, antes de gp2-html-designer). Define a direção visual do template: paleta com hexs concretos, escala tipográfica resolvida, um arquétipo composicional A* por slide (catálogo _shared/COMPOSITIONS.md), 1-2 carousel moves M* (catálogo _shared/CAROUSEL_MOVES.md) e mapeamento data-variable. Em free mode inventa; em reference-driven mode extrai da(s) imagem(ns). Quando o brief tem um style preset (## Estilo), trava o vocabulário visual nas regras do preset (catálogo _shared/STYLE_PRESETS.md), sobrescrevendo escolha livre de família e alternância de background. Produz visual-plan.md como orientação para o designer — não como contrato rígido. Também opera em modo de resposta quando o designer reporta status: blocked-on-art-director. Não escreve HTML."
 ---
 
 # gp2-art-director
@@ -44,6 +44,23 @@ artifacts/gp2-art-director/<slug>/visual-plan.md
 ### 1. Leia o brief e detecte o modo
 
 Leia `brief.md` inteiro. O campo `## Modo` indica `free` ou `reference-driven`.
+
+---
+
+### 1a. Detecte o style preset
+
+Leia `brief.md → ## Estilo`. Se ≠ `nenhum`, abra [`../_shared/STYLE_PRESETS.md`](../_shared/STYLE_PRESETS.md) no preset indicado e trate as **regras hard do preset como restrições que se sobrepõem a todas as suas escolhas livres** ao longo deste workflow:
+
+- **Família estética travada** — não escolha livremente de `../gp2-html-designer/references/aesthetic-families.md`; use a direção do preset.
+- **Paleta** — derive do segmento (free) ou extraia da referência (reference-driven), mas obedeça às regras de paleta do preset (ex: `editorial-premium` → fundo sempre claro, 1 acento de marca cirúrgico).
+- **Alternância de background** — se o preset restringe (ex: `editorial-premium` proíbe DARK/Brand full-bleed), **sobrescreva** a alternância da sequência narrativa do brief: todos os slides seguem a regra do preset.
+- **Arquétipos e moves** — restritos à allowlist do preset (a regra de diversidade ≥2/≥3 continua valendo dentro da allowlist).
+- **Logo / foto profissional** — siga a regra do preset (ex: `editorial-premium` → capa + CTA, nunca centralizado).
+- **Conflito com a referência** (reference-driven) — o **preset tem prioridade**. Onde a referência conflita com o preset (ex: fundo escuro, gradiente forte), resolva a favor do preset e documente cada conflito em `## Notas para o designer`.
+
+Registre `## Estilo aplicado: <slug | nenhum>` no topo do `visual-plan.md` (ver templates abaixo) — é assim que o designer e o reviewer herdam o sinal.
+
+Se `## Estilo: nenhum`, ignore esta etapa: comportamento livre normal.
 
 ---
 
@@ -349,6 +366,9 @@ Este mapeamento é importante para que o designer aplique os atributos desde o H
 ## Modo
 free
 
+## Estilo aplicado
+<editorial-premium | nenhum>
+
 ## Paleta resolvida
 - **Primary:** `#RRGGBB` — <papel>
 - **Secondary:** `#RRGGBB` — <papel>
@@ -421,6 +441,9 @@ Em free mode, declare aqui cada imagem que cada slide vai conter, classificada e
 
 ## Modo
 reference-driven
+
+## Estilo aplicado
+<editorial-premium | nenhum>
 
 ## Análise da referência
 
@@ -528,6 +551,7 @@ Tabela determinística que o designer **deve** consumir antes de qualquer decis�
 ```markdown
 Plano visual gerado: `artifacts/gp2-art-director/<slug>/visual-plan.md`
 Modo: free
+Estilo aplicado: <editorial-premium | nenhum>
 Paleta: primary <hex> / secondary <hex> / neutro claro <hex> / neutro escuro <hex>
 Tipografia: <display> + <body>
 Slides planejados: <N>
@@ -542,6 +566,7 @@ Próximo passo: gp2-html-designer
 ```markdown
 Plano visual gerado: `artifacts/gp2-art-director/<slug>/visual-plan.md`
 Modo: reference-driven
+Estilo aplicado: <editorial-premium | nenhum>
 Paleta: primary <hex> / secondary <hex> / neutro claro <hex> / neutro escuro <hex>
 Tipografia: <display> + <body>
 Slides planejados: <N>

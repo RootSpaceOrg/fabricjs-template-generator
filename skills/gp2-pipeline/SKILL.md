@@ -19,8 +19,8 @@ Sempre que o usuário pedir para criar um template de social media completo (pos
 ## Sequência oficial
 
 ```
-1. gp2-request-interpreter          → brief.md (conteúdo/intenção; em reference-driven mode, marca que há referência visual)
-2. gp2-art-director                 → visual-plan.md (paleta com hexs, escala tipográfica resolvida, arquétipo A* por slide [_shared/COMPOSITIONS.md], 1-2 moves M* [_shared/CAROUSEL_MOVES.md], mapeamento data-variable; em reference-driven mode, extrai o vocabulário visual completo da referência)
+1. gp2-request-interpreter          → brief.md (conteúdo/intenção; em reference-driven mode, marca que há referência visual; detecta style preset nomeado via palavra-chave e emite ## Estilo)
+2. gp2-art-director                 → visual-plan.md (paleta com hexs, escala tipográfica resolvida, arquétipo A* por slide [_shared/COMPOSITIONS.md], 1-2 moves M* [_shared/CAROUSEL_MOVES.md], mapeamento data-variable; em reference-driven mode, extrai o vocabulário visual completo da referência; quando ## Estilo ≠ nenhum, trava o vocabulário visual no preset [_shared/STYLE_PRESETS.md] e emite ## Estilo aplicado)
 3. gp2-html-designer                → template-v1-lowfi.html → template-v2-midfi.html → template.html (3 entregáveis materializados com auto-critique entre passos; pode reportar status: blocked-on-art-director para gancho retroativo)
 4. gp2-html-reviewer                → PASS|REVISE|FAIL (gate técnico + archetype/move/typography fidelity + reference fidelity + delight detail)
 5. gp2-template-marker              → template.html marcado + template-summary.md
@@ -124,6 +124,7 @@ Por template processado:
 - template ID (do Supabase);
 - nome;
 - contagem de slides;
+- estilo aplicado: `<editorial-premium | nenhum>` (do brief `## Estilo` / visual-plan `## Estilo aplicado`);
 - art-director: família estética + composições usadas (A1–A8 por slide);
 - HTML reviewer status + findings técnicos + fidelidade ao plano + data-variable cobertura;
 - marker audit status;
@@ -178,6 +179,7 @@ artifacts/
 - **Artifact:** `artifacts/.../<slug>/`
 
 ### Direção criativa (art-director)
+- Estilo aplicado: `<editorial-premium | nenhum>`
 - Paleta: primary `<hex>` / secondary `<hex>`
 - Tipografia: <display> + <body>
 - Arquétipos: slide1=<A?>, slide2=<A?>, ... (diversidade: <N> tipos distintos)

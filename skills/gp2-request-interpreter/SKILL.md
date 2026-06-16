@@ -1,6 +1,6 @@
 ---
 name: gp2-request-interpreter
-description: "First step of GetPosts Pipeline v2. Two modes: (a) Free mode — pedido só em texto, captura os fatos de conteúdo e deixa direção estética livre para o art-director decidir; (b) Reference-driven mode — usuário anexou imagem ou citou referência, captura os mesmos fatos de conteúdo (pode ver a imagem para informar decisões como nº slides, sequência narrativa, foto profissional) mas NÃO extrai direção visual (paleta, tipografia, família, movimento, orientação de navegação) — isso é responsabilidade do gp2-art-director. Nunca converte/marca/upload."
+description: "First step of GetPosts Pipeline v2. Two modes: (a) Free mode — pedido só em texto, captura os fatos de conteúdo e deixa direção estética livre para o art-director decidir; (b) Reference-driven mode — usuário anexou imagem ou citou referência, captura os mesmos fatos de conteúdo (pode ver a imagem para informar decisões como nº slides, sequência narrativa, foto profissional) mas NÃO extrai direção visual (paleta, tipografia, família, movimento, orientação de navegação) — isso é responsabilidade do gp2-art-director. Também detecta style presets nomeados ativados por palavra-chave (ex: 'estilo laserpro' → editorial-premium) e marca o sinal no brief para o art-director travar o vocabulário visual. Nunca converte/marca/upload."
 ---
 
 # gp2-request-interpreter
@@ -84,6 +84,22 @@ Detecte por verbo no pedido (case-insensitive, casa substring):
 - Imagem anexada **com** verbo `recreate` → `recreate`.
 
 Em `recreate`, considere documentar 1 linha em `## Incertezas` se houver elementos da referência cuja replicação 1-pra-1 é ambígua (ex: "referência usa ilustração de campanha não reproduzível — art-director decide bucket").
+
+## Estilo (style preset nomeado)
+
+Sinal determinístico que o interpreter emite quando o usuário ativa explicitamente um **style preset** — uma direção de arte nomeada e opinativa (catálogo em [`../_shared/STYLE_PRESETS.md`](../_shared/STYLE_PRESETS.md)). O interpreter **só detecta o gatilho e marca o slug** — não aplica as regras do preset (isso é do art-director).
+
+Detecte por palavra-chave (substring, case-insensitive):
+
+| Valor | Gatilhos | Efeito (no art-director) |
+|-------|----------|--------------------------|
+| `editorial-premium` | `laserpro`, `estilo laserpro`, `modo laserpro`, `editorial premium`, `estilo editorial premium` | Art-director trava o vocabulário visual no preset (fundo sempre claro, 1 acento de marca, tipografia editorial, muito respiro, sem gradiente forte, foto profissional na capa + CTA, allowlist de arquétipos/moves). |
+| `nenhum` | nenhum gatilho de estilo no pedido | Comportamento atual — art-director escolhe livremente. |
+
+**Regras:**
+- O estilo é **ortogonal** ao Modo e à Fidelidade — pode coexistir com `free` ou `reference-driven`, com qualquer valor de Fidelidade.
+- Em **reference-driven mode** com preset ativo: o preset tem **prioridade** sobre direção conflitante da referência. Se você (interpreter) percebe um conflito provável (ex: referência claramente escura mas user pediu "estilo laserpro" que força fundo claro), anote 1 linha em `## Incertezas` — o art-director resolve a favor do preset.
+- Não invente preset que não está na tabela. Sem gatilho exato → `nenhum`.
 
 ## Sequências narrativas
 
@@ -178,6 +194,10 @@ Write `artifacts/gp2-request-interpreter/<slug>/brief.md`:
 ## Fidelidade
 <recreate | inspired | free>
 <verbo-gatilho detectado em 1 linha — ex: "user disse 'recrie o template enviado' → recreate"; se free, "sem referência nem verbo de fidelidade">
+
+## Estilo
+<editorial-premium | nenhum>
+<palavra-gatilho detectada em 1 linha — ex: "user disse 'no estilo laserpro' → editorial-premium"; se nenhum, "sem gatilho de estilo">
 
 ## Entrega
 - Tipo: <post | carrossel | story | reel cover | ad>
@@ -285,6 +305,7 @@ Neutros (branco, preto, cinza) **nunca** são contados como brand color.
 ```markdown
 Modo: <free | reference-driven>
 Fidelidade: <recreate | inspired | free>
+Estilo: <editorial-premium | nenhum>
 Brief gerado: `<path>/brief.md`
 Referência visual: <"imagem(ns) anexada(s) — análise visual no próximo passo (art-director)" | "nenhuma">
 Sequência: <Standard | Listicle | Tutorial | Comparação | Single-post>

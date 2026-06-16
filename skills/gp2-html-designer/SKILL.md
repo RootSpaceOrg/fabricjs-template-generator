@@ -46,6 +46,7 @@ Antes de qualquer passo, leia `brief.md` + `visual-plan.md` inteiros e abra [`..
 - Os 1–2 carousel moves M* e em quais slides aparecem
 - O mapeamento de data-variable
 - Tom, segmento, foto profissional
+- **Style preset** — se `visual-plan.md → ## Estilo aplicado` ≠ `nenhum`, abra [`../_shared/STYLE_PRESETS.md`](../_shared/STYLE_PRESETS.md) no preset indicado e trate suas **regras hard** como invioláveis nos 3 passos (ex: `editorial-premium` → fundo sempre claro, sem gradiente forte, muito respiro, allowlist de arquétipos/moves). No Passo 1 os fundos já são claros por padrão; o preset garante que os Passos 2/3 **não** virem para DARK/Brand full-bleed nem apliquem gradiente forte.
 
 ---
 
