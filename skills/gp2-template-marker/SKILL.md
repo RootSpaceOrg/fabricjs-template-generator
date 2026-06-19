@@ -69,9 +69,26 @@ artifacts/gp2-template-marker/<slug>/
    - Opcional: `<meta name="hm-detected-primary" content="#...">` e `secondary` se você quiser fixar e pular auto-detecção.
 3b. **Leia o contexto antes de marcar qualquer elemento** — este passo é obrigatório:
    - Leia `brief.md` inteiro: extraia o arco narrativo por slide (papel de cada lâmina: capa, educativo, prova, CTA…) e o segmento/tom do template.
-   - Leia `visual-plan.md` inteiro: extraia o copy orientativo e o elemento-chave por slide.
+   - Leia `visual-plan.md` inteiro: extraia, **por slide**, (a) o copy orientativo e o elemento-chave e (b) o **arquétipo composicional** declarado em `## Plano de slides` (`Arquétipo: A<N> — <slug>`). O arquétipo é a chave para entender a **estrutura interna da lâmina** — quantos itens, se é lista, grade, comparação, passo-a-passo.
+   - Para cada arquétipo citado, abra a seção `A<N>` correspondente em [`../_shared/COMPOSITIONS.md`](../_shared/COMPOSITIONS.md) e leia os **slots nomeados** dele (ex: A5 define `item-zone-N`, `item-number`, `item-text`; A11 define grade 2×2 `item 1..4`; A9 define lados A e B). Esses nomes são o papel de cada elemento na composição — você vai usá-los no passo 3c e no passo 4.
    - Os textos reais no HTML são o melhor sinal do formato esperado — leia-os antes de escrever qualquer `data-te-description`.
-   - Monte internamente um mapa: `slide N → papel narrativo (brief) → elemento-chave (visual-plan) → textos reais (HTML)`. Use esse mapa no passo 4 para derivar descriptions que reflitam o contexto do template.
+   - Monte internamente um mapa: `slide N → papel narrativo (brief) → arquétipo + slots (visual-plan + COMPOSITIONS) → elemento-chave → textos reais (HTML)`. Use esse mapa nos passos 3c e 4.
+
+3c. **Pré-análise composicional da lâmina (obrigatório, antes de marcar):** para cada slide, identifique o **padrão da lâmina** e mapeie cada elemento templated ao seu **slot** dentro do padrão. Isto é o que evita o "genérico ruim": sem este passo, 3 itens de um checklist saem com 3 descriptions idênticas e o LLM downstream não sabe que formam uma sequência ordenada.
+   - **Nomeie o padrão** do slide (derive do arquétipo do passo 3b, confirme pelos textos reais do HTML):
+     - **checklist / lista numerada** (A5, A13) — título/cabeçalho + N itens em sequência;
+     - **grade / bento** (A11) — N células equivalentes numa grade;
+     - **comparação** (A9) — lado A vs lado B + veredicto;
+     - **passo-a-passo** (tutorial) — N passos ordenados;
+     - **capa** (A1, A2, A10, A12, A14) — gancho + apoio;
+     - **dado / prova** (A7) — número grande + caption;
+     - **CTA** (A6) — chamada + contato;
+     - **livre** — se nenhum padrão claro, trate cada elemento pelo seu papel narrativo isolado.
+   - **Atribua a cada elemento templated seu papel na composição**, incluindo, quando o slot se repete:
+     - `índice` e `contagem` — ex: "item 1 de 3", "célula 2 de 4", "passo 3 de 5";
+     - **relação pai/filho** — ex: "cabeçalho que governa a lista de 3 itens abaixo", "número que rotula o item 2";
+     - **lado / ordem** — ex: "lado A da comparação", "veredicto após A e B".
+   - Esse papel na composição é o **4º componente da fórmula** (ver "fórmula dos 5 componentes" abaixo) e é o que diferencia slots repetidos **dentro da mesma lâmina**.
 
 4. **Caminhe slide por slide** (cada `<section class="slide">`) e para cada elemento decida na hora:
    - **Papel narrativo do slide** (capa/abertura, miolo educativo, prova/dado, CTA, fechamento). Use o mapa do passo 3b para confirmar o papel.
@@ -80,10 +97,11 @@ artifacts/gp2-template-marker/<slug>/
      1. Consulte `references/element-descriptions.md` → escolha o role canônico mais próximo.
      2. **Texto**: derive `ex1` do texto real do elemento no HTML, generalizando vertical e tema. O texto é pista de **formato e comprimento**, não de tema. Ex: "Seu conhecimento clínico está virando pacientes?" → `'Seu conhecimento está virando resultados?'` (manteve formato pergunta + comprimento; trocou "clínico/pacientes" por termos cross-vertical).
      3. **Imagem**: **ignore o tema do placeholder**. O placeholder (foto que o designer colocou no slot) é só preview visual para validar o layout — não dita o conteúdo real. O role da imagem vem do **papel do slide** (capa? prova? CTA?), não do que está dentro do `<img>`. Anti-pattern explícito: placeholder de café+mesa virando `"formato foto de mesa/objeto; sem pessoa em destaque"` é proibido. A description fixa **função no slide** + **bounds técnicas** (sem texto na imagem, sem watermark, editorial natural), deixando tema e enquadramento abertos.
-     4. Adicione hint de sequência quando o elemento funciona em par narrativo com vizinhos: `após eyebrow categórico; seguido de corpo educativo`.
-     5. Adicione 2 exemplos **cross-vertical** adicionais cobrindo variação saudável. Mistura intencional entre nichos — nunca 3 exemplos do mesmo vertical (saúde, pet, beleza).
-     6. **Bounds são técnicas/estruturais, não temáticas.** `"até 60 chars"`, `"2 linhas"`, `"editorial natural"` — sim. `"sem pessoa"`, `"foco em objeto"`, `"vista de cima"` — não (a menos que o aspect ratio do slot **realmente** force esse enquadramento).
-     7. A description resultante **deve seguir a fórmula** — nunca escreva prosa descritiva.
+     4. **Insira o papel na composição** (do passo 3c) como componente da description: `cabeçalho que governa a lista`, `item 1 de 3 de uma lista sequencial`, `célula 2 de 4 de uma grade`, `lado A da comparação`, `passo 3 de 5`. **Este componente é obrigatório sempre que o slot se repete na mesma lâmina** — é ele que diferencia item 1, item 2 e item 3. Sem ele, slots repetidos saem idênticos e quebram a sequência.
+     5. Adicione hint de sequência quando o elemento funciona em par narrativo com vizinhos: `após eyebrow categórico; seguido de corpo educativo`.
+     6. Adicione 2 exemplos **cross-vertical** adicionais cobrindo variação saudável. Mistura intencional entre nichos — nunca 3 exemplos do mesmo vertical (saúde, pet, beleza).
+     7. **Bounds são técnicas/estruturais, não temáticas.** `"até 60 chars"`, `"2 linhas"`, `"editorial natural"` — sim. `"sem pessoa"`, `"foco em objeto"`, `"vista de cima"` — não (a menos que o aspect ratio do slot **realmente** force esse enquadramento).
+     8. A description resultante **deve seguir a fórmula dos 5 componentes** — nunca escreva prosa descritiva.
 5. Aplique a classificação (ver tabela abaixo).
 6. Mapeie cores de marca: cada elemento cuja cor (fill/stroke/background) deve trocar com o preset da marca recebe `data-variable="primary|secondary"` + opcional `data-variable-target`.
 6b. **Valide atributos `data-darken` (safety net obrigatória):**
@@ -129,7 +147,7 @@ python3 ../../scripts/audit-template-markup.py artifacts/gp2-template-marker/<sl
 
 ## Regras críticas
 
-- **`data-te-description` NUNCA é prosa descritiva.** Sempre a fórmula de 4 componentes. Se você está escrevendo uma frase como "texto neutro e adaptável para qualquer nicho, com linguagem concreta e sem jargão" ou "título intermediário adaptável para qualquer área de atuação" — pare. Isso é o anti-pattern que quebra o LLM downstream. Use o catálogo + fórmula + exemplos derivados do texto real.
+- **`data-te-description` NUNCA é prosa descritiva.** Sempre a fórmula de 5 componentes (role / formato / bound / papel na composição / exemplos). Se você está escrevendo uma frase como "texto neutro e adaptável para qualquer nicho, com linguagem concreta e sem jargão" ou "título intermediário adaptável para qualquer área de atuação" — pare. Isso é o anti-pattern que quebra o LLM downstream. Use o catálogo + fórmula + exemplos derivados do texto real.
 
   ```
   ❌ PROIBIDO:
@@ -147,20 +165,22 @@ python3 ../../scripts/audit-template-markup.py artifacts/gp2-template-marker/<sl
 - **Neutros não viram brand variables.** Branco, off-white, cinza, preto de body — ficam literais.
 - **Acentos brand sem `data-variable` são bug.** Se há um botão laranja no design e a marca é azul, o usuário vai abrir o template no editor e o botão continua laranja. Isso quebra a promessa do produto.
 - **Conservador no editável.** Quando em dúvida entre static e template-element, escolha static.
-- **`data-te-description` é genérico no role, mas contextualizado nos exemplos.** Não escreva "Título sobre laserterapia premium" — escreva seguindo a fórmula `<role>; formato '<máscara>'; <bound>; ex: '<a>', '<b>', '<c>'`. Catálogo canônico em [`references/element-descriptions.md`](./references/element-descriptions.md). Template vai ser usado por dezenas de nichos; descriptions são reutilizáveis. **Porém:** use o **texto atual do elemento** como primeiro exemplo (generalizado), e descreva a **relação com elementos vizinhos** (anterior/posterior) para que o LLM entenda a sequência narrativa (ver regras de contextualização abaixo).
+- **`data-te-description` é genérico no role, mas contextualizado nos exemplos.** Não escreva "Título sobre laserterapia premium" — escreva seguindo a fórmula `<role>; formato '<máscara>'; <bound>; <papel na composição>; ex: '<a>', '<b>', '<c>'`. Catálogo canônico em [`references/element-descriptions.md`](./references/element-descriptions.md). Template vai ser usado por dezenas de nichos; descriptions são reutilizáveis. **Porém:** use o **texto atual do elemento** como primeiro exemplo (generalizado), e descreva a **relação com elementos vizinhos** (anterior/posterior) para que o LLM entenda a sequência narrativa (ver regras de contextualização abaixo).
 - **`data-te-max-chars` calculado pelo box, não pelo texto atual.** Estimativa: `floor((width × lines) / (fontSize × 0.6))`. Arredonde para cima na próxima dezena.
 - **Repetidos entre slides usam mesma classificação.** Logo aparece em 5 slides? Todos com mesmo `data-image-type="brandLogo"`. Se o conteúdo deve ser o mesmo (logo, handle, foto profissional), use `data-te-link-id="logo"` (mesmo slug) em todos.
 - **Preserve `text-transform`.** Se CSS tem `text-transform: uppercase`, adicione `data-te-text-case="uppercase"` para que o converter mantenha a intenção quando o AI preencher.
 
-## `data-te-description` — fórmula dos 4 componentes
+## `data-te-description` — fórmula dos 5 componentes
 
-A description **vai literal no prompt do LLM gerador de copy** da lambda de geração de copy da plataforma. Description vaga gera output inconsistente entre slides; description estruturada com formato e exemplos guia o LLM para output consistente.
+A description **vai literal no prompt do LLM gerador de copy** da lambda de geração de copy da plataforma. Description vaga gera output inconsistente entre slides; description estruturada com formato, **papel na composição** e exemplos guia o LLM para output consistente.
 
 **Toda description segue a fórmula:**
 
 ```
-<role narrativo>; formato '<máscara>'; <bound 1>; <bound 2>; ex: '<ex1>', '<ex2>', '<ex3>'
+<role narrativo>; formato '<máscara>'; <bound 1>; <papel na composição>; <bound 2>; ex: '<ex1>', '<ex2>', '<ex3>'
 ```
+
+O **`<papel na composição>`** é o componente que diz **quem o elemento é dentro da estrutura da lâmina** (vem do passo 3c): `cabeçalho que governa a lista`, `item 1 de 3 de uma lista sequencial`, `célula 2 de 4 de uma grade`, `lado A da comparação`, `passo 3 de 5`. Ele é **obrigatório sempre que o slot se repete na mesma lâmina** (itens de checklist, células de grade, passos de tutorial) e **recomendado** quando o elemento tem relação pai/filho clara (título que governa uma lista). Para slots únicos sem repetição (um único título de capa, um único CTA), o componente pode ser omitido ou reduzido ao papel narrativo já presente.
 
 **Catálogo canônico de descriptions por role:** [`references/element-descriptions.md`](./references/element-descriptions.md). Cobre eyebrow numerado, eyebrow simples, hook, subtítulo, corpo educativo, bullet, dado numérico, caption, citação, CTA, linha de contato, foto contextual, foto profissional, logo. **Sempre consulte primeiro o catálogo** antes de compor uma description nova.
 
@@ -185,7 +205,9 @@ Eyebrow sobre laserterapia premium; rótulo da clínica do Dr. João
 
 **Regras invioláveis:**
 
-1. **Slots equivalentes em slides diferentes recebem a mesma string.** Eyebrow do slide 1, slide 3 e slide 5 → mesma description. O LLM diferencia pelo contexto da página (mensagem-chave da narrative arc, que ele já vê separadamente).
+1. **Slots equivalentes em SLIDES DIFERENTES recebem a mesma string — mas slots repetidos DENTRO da mesma lâmina NÃO.** Esta regra tem duas faces:
+   - **Cross-slide (mesma string):** eyebrow do slide 1, slide 3 e slide 5 → mesma description. O LLM diferencia pelo contexto da página (mensagem-chave da narrative arc, que ele já vê separadamente).
+   - **Within-slide (string varia pelo papel na composição):** item 1, item 2 e item 3 de um checklist na **mesma** lâmina **não** recebem strings idênticas. Eles compartilham role, formato e exemplos, mas o componente `<papel na composição>` muda: `item 1 de 3 de uma lista sequencial` / `item 2 de 3 ...` / `item 3 de 3 ...`. Aqui o LLM **não** tem contexto separado para diferenciar — a única pista de que formam uma sequência ordenada está na description. Aplicar a mesma string a slots repetidos na mesma lâmina é o anti-pattern que você está corrigindo.
 2. **Exemplos NUNCA citam o vertical atual do template.** O template vai ser usado em dezenas de verticais diferentes; descriptions são reutilizáveis. Use exemplos de formato (`'01 / DOR'`, `'03 / O ESTUDO'`), não de conteúdo específico de vertical (`'01 / FISIOTERAPIA'`).
 3. **Formato e conteúdo são coisas diferentes.** `formato 'NN / TEMA'` é estrutura; `ex:` mostra como aplicar.
 4. **3 exemplos é o sweet spot.** 1 vira regra rígida, 5+ vira ruído. 3 cobrem variação curto/médio/longo.
@@ -218,6 +240,54 @@ Gancho principal da lâmina; formato pergunta provocativa; 1 frase;
 ex: 'Sua ideia ficou clara?', 'O erro está no recorte',
 'Mostre o próximo passo'
 ```
+
+**Exemplo completo — lâmina de CHECKLIST (1 título + 3 itens):**
+
+Padrão da lâmina (passo 3c): **checklist** — arquétipo A5-listicle-numbered-row. Slots: `título` (cabeçalho que governa a lista) + `item 1..3` (cada um com número + texto). Textos reais no HTML: título "Use este roteiro antes de criar qualquer peça."; item 1 "Qual percepção eu quero elevar?"; item 2 "Qual critério prova que existe método?"; item 3 "Qual convite faz sentido agora?".
+
+✅ Correto — título carrega o papel de cabeçalho; cada item carrega seu índice na sequência:
+
+Título (cabeçalho):
+```
+Título da lâmina de checklist; formato afirmação que introduz uma lista
+de verificação; 1 frase em até 2 linhas; cabeçalho que governa a lista
+de 3 itens abaixo; 30-60 chars; ex: 'Use este roteiro antes de começar',
+'Confira antes de publicar', 'O que validar em cada etapa'
+```
+
+Item 1:
+```
+Item de checklist; formato pergunta curta de verificação OU instrução
+objetiva; 1 linha; item 1 de 3 de uma lista sequencial — abre a
+progressão; até 70 chars; ex: 'Qual percepção eu quero elevar?',
+'Defini o objetivo principal?', 'O ambiente está pronto?'
+```
+
+Item 2 (mesma role/formato/exemplos do item 1; muda só o papel na composição):
+```
+Item de checklist; formato pergunta curta de verificação OU instrução
+objetiva; 1 linha; item 2 de 3 de uma lista sequencial — desenvolve o
+critério central; até 70 chars; ex: 'Qual percepção eu quero elevar?',
+'Defini o objetivo principal?', 'O ambiente está pronto?'
+```
+
+Item 3:
+```
+Item de checklist; formato pergunta curta de verificação OU instrução
+objetiva; 1 linha; item 3 de 3 de uma lista sequencial — fecha com o
+próximo passo; até 70 chars; ex: 'Qual percepção eu quero elevar?',
+'Defini o objetivo principal?', 'O ambiente está pronto?'
+```
+
+❌ Errado — as 3 strings idênticas que o template original produzia (o LLM não sabe que formam uma sequência ordenada, nem quantos itens são):
+```
+Texto editável de apoio; formato frase curta conectada ao assunto
+da lâmina; até 90 chars; ex: 'Diagnóstico', 'Critério',
+'explique o ponto principal'
+```
+(aplicada igual ao item 1, 2 e 3 — sem índice, sem contagem, sem cabeçalho)
+
+> **Numeração visual (`1`, `2`, `3`) é estática**, não template-element: o número do item não muda por post, é `data-static="true"`. O que muda é o **texto** de cada item — esse sim leva `data-template-element` com o índice na composição.
 
 ## `template-summary.md` (vira `description` do Supabase verbatim)
 

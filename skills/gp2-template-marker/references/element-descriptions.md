@@ -15,12 +15,12 @@ Description vaga ("Eyebrow editorial") deixa o LLM adivinhar o formato. Descript
 
 **Template é cross-vertical por design.** Pode ser usado em saúde, pet, beleza, fitness, educação, negócios, gastronomia — qualquer vertical suportado pela plataforma. Descriptions presas em um vertical (ou no conteúdo do placeholder atual) quebram o template nos outros usos.
 
-## Anatomia da description (4 componentes)
+## Anatomia da description (5 componentes)
 
 Toda description segue a fórmula:
 
 ```
-<role narrativo>; formato '<máscara>'; <bound 1>; <bound 2>; ex: '<ex1>', '<ex2>', '<ex3>'
+<role narrativo>; formato '<máscara>'; <bound 1>; <papel na composição>; <bound 2>; ex: '<ex1>', '<ex2>', '<ex3>'
 ```
 
 | Componente | O que é | Exemplo |
@@ -28,9 +28,29 @@ Toda description segue a fórmula:
 | **Role narrativo** | Função do elemento na lâmina | "Eyebrow editorial da lâmina" |
 | **Formato** | Máscara da string em aspas simples | "formato 'NN / TEMA'" |
 | **Bounds** | Restrições quantitativas (chars, linhas, presença de número) | "até 30 chars" + "TEMA em CAPS" |
+| **Papel na composição** | Quem o elemento é dentro da estrutura da lâmina (índice/contagem de slots repetidos, relação pai/filho, lado/ordem) | "item 1 de 3 de uma lista sequencial", "cabeçalho que governa a lista" |
 | **Exemplos** | 3 exemplos curtos cobrindo variação saudável de formato (cross-vertical — nunca presos ao nicho do template atual nem ao conteúdo do placeholder) | "ex: '01 / DOR', '03 / O ESTUDO', '07 / CTA'" |
 
 **Sweet spot**: 200-300 chars por description. Cada description vai pra cada elemento de cada template no prompt do LLM — pesar tokens importa.
+
+### Componente "Papel na composição" (o que evita o "genérico ruim")
+
+Este componente é o que diz **quem o elemento é dentro da lâmina**, não só o que ele é em abstrato. Sem ele, um checklist de 3 itens sai com 3 descriptions idênticas e o LLM downstream não sabe que formam uma sequência ordenada.
+
+**É obrigatório sempre que o slot se repete na mesma lâmina** (itens de lista, células de grade, passos de tutorial, lados de comparação). É **recomendado** quando o elemento tem relação pai/filho clara. Para slots únicos (um título de capa, um único CTA), pode ser omitido.
+
+Frases canônicas (use estas, derive do passo 3c do marker):
+
+| Padrão da lâmina | Frase do papel na composição |
+|------------------|------------------------------|
+| Checklist / lista numerada | `cabeçalho que governa a lista` (no título) · `item N de M de uma lista sequencial` (em cada item) |
+| Grade / bento | `célula N de M de uma grade` |
+| Comparação | `lado A da comparação` · `lado B da comparação` · `veredicto após A e B` |
+| Passo-a-passo / tutorial | `passo N de M` |
+| Dado + caption | `número em destaque` · `legenda que explica o número acima` |
+| Capa | (geralmente omitido — slot único; use só o role narrativo) |
+
+**Quando há índice, adicione um micro-hint da função na progressão** quando ele agrega (`item 1 de 3 — abre a progressão`, `item 3 de 3 — fecha com o próximo passo`). Não invente função onde os itens são genuinamente intercambiáveis — aí basta `item N de M`.
 
 ## Anti-patterns — descriptions que QUEBRAM o LLM downstream
 
@@ -45,8 +65,9 @@ Antes de escrever qualquer `data-te-description`, verifique se você está caind
 | **Bounds inventadas a partir do placeholder** | "Sem pessoa em destaque", "foto noturna", "objeto em plano fechado" — restrições derivadas do placeholder atual que travam o template nos outros usos | `"sem pessoa em destaque"` (porque o placeholder não tem pessoa) | Bound real: `"editorial natural; sem texto na imagem; sem watermark"` (técnica, não temática) |
 | **ex1 genérico ignorando o texto real** | O primeiro exemplo deve derivar do texto real no HTML (generalizado) — inventar do zero descarta a melhor pista de **formato/comprimento**. Mas só usa o texto real como base de formato, não de tema | Texto real: `"Seu conhecimento clínico está virando pacientes?"` → ex1 inventado: `"Sua ideia ficou clara?"` (perdeu o formato pergunta longa) | ex1 derivado: `"Seu conhecimento está virando resultados?"` (mantém formato pergunta + comprimento, generaliza vertical) |
 | **Título do template como description** | A description é o prompt para o LLM gerar copy, não uma label do elemento | `"Título do slide sobre mitos de produtividade"` | `"Título da lâmina intermediária; formato afirmação que desmonta crença; ..."` |
+| **Slots repetidos na mesma lâmina com string idêntica** | Item 1, 2 e 3 de um checklist com a mesma description — o LLM não sabe que formam uma sequência ordenada, nem quantos são, nem qual abre/fecha. Diferente do caso cross-slide, aqui o LLM **não** tem contexto separado para diferenciar | 3 itens com `"Texto editável de apoio; formato frase curta; até 90 chars; ex: ..."` igual nos três | Role/formato/exemplos compartilhados, mas papel na composição varia: `"... item 1 de 3 de uma lista sequencial — abre a progressão; ..."` / `"... item 2 de 3 ...; ..."` / `"... item 3 de 3 — fecha com o próximo passo; ..."` |
 
-**Regra de ouro:** se você remover a description e o LLM não souber o *formato*, o *tamanho* e o *estilo* do que deve gerar — a description está errada. E se a description só funciona porque o usuário vai escrever sobre o mesmo tema do placeholder — também está errada.
+**Regra de ouro:** se você remover a description e o LLM não souber o *formato*, o *tamanho*, o *estilo* e — em slots repetidos — *qual posição na sequência* o elemento ocupa, a description está errada. E se a description só funciona porque o usuário vai escrever sobre o mesmo tema do placeholder — também está errada.
 
 ---
 
@@ -57,7 +78,7 @@ Antes de escrever qualquer `data-te-description`, verifique se você está caind
 3. **Bounds são técnicas/estruturais, não temáticas.** `"até 60 chars"`, `"2 linhas"`, `"sem texto na imagem"`, `"editorial natural"` — sim. `"sem pessoa"`, `"foco em objeto"`, `"vista de cima"` — não (a menos que o slot tenha aspect ratio que **realmente** exija esse enquadramento).
 4. **Formato e conteúdo são coisas diferentes.** `formato 'NN / TEMA'` define a estrutura. `ex:` mostra como aplicar. Nunca escrever `formato 'NN / nutrição'` (mistura).
 5. **3 exemplos é o sweet spot.** 1 vira regra rígida. 5+ vira ruído. 3 cobrem variação saudável (curto/médio/longo, ou close/médio/aberto para imagens).
-6. **Mesma description para slots equivalentes.** Eyebrow no slide 1 e eyebrow no slide 5 recebem **a mesma string**. O LLM diferencia pelo contexto da página (mensagem-chave, que ele já vê separadamente).
+6. **Mesma description para slots equivalentes EM SLIDES DIFERENTES — mas não para slots repetidos NA MESMA lâmina.** Eyebrow no slide 1 e eyebrow no slide 5 recebem **a mesma string** (o LLM diferencia pelo contexto da página, que ele já vê separadamente). Já item 1, item 2 e item 3 de um checklist **na mesma lâmina** compartilham role/formato/exemplos mas têm o componente `<papel na composição>` distinto (`item 1 de 3` / `item 2 de 3` / `item 3 de 3`) — aqui o LLM não tem contexto separado e a sequência só existe na description.
 7. **Quando em dúvida, escolha a description menor do catálogo** em vez de inventar um role novo.
 
 ---
@@ -140,6 +161,44 @@ Item de lista educativa; formato '<verbo|substantivo curto>: <explicação
 em 1 linha>' OU somente afirmação curta; até 100 chars; ex: 'Comece
 pequeno: 1 ação concreta por dia', 'Constância vale mais que
 intensidade', 'Revise o que funcionou na semana'
+```
+
+### Cabeçalho de lista (título que governa um checklist/grade)
+
+Título que **introduz e governa** uma lista de N itens na mesma lâmina (checklist, listicle numerado, grade). Diferente de um título de capa ou de miolo: o role aqui inclui que ele encabeça itens abaixo. Use o componente `<papel na composição>` = `cabeçalho que governa a lista de N itens abaixo`.
+
+```
+Título da lâmina de checklist; formato afirmação que introduz uma lista
+de verificação OU pergunta que a lista responde; 1 frase em até 2 linhas;
+cabeçalho que governa a lista de N itens abaixo; 30-60 chars; ex: 'Use
+este roteiro antes de começar', 'Confira antes de publicar', 'O que
+validar em cada etapa'
+```
+
+### Item de checklist / lista numerada (slot repetido)
+
+Cada item de uma lista enumerada na **mesma** lâmina. **Os N itens compartilham role, formato e exemplos — só o componente `<papel na composição>` muda** (`item N de M de uma lista sequencial`). Adicione o micro-hint de progressão quando agrega (`abre a progressão`, `fecha com o próximo passo`); omita se os itens são intercambiáveis.
+
+```
+Item de checklist; formato pergunta curta de verificação OU instrução
+objetiva; 1 linha; item N de M de uma lista sequencial; até 70 chars;
+ex: 'Defini o objetivo principal?', 'O ambiente está pronto?',
+'Revisei o resultado antes de publicar?'
+```
+
+Aplicado a 3 itens (note só o trecho `item N de M ...` mudando):
+- Item 1: `... ; item 1 de 3 de uma lista sequencial — abre a progressão; ...`
+- Item 2: `... ; item 2 de 3 de uma lista sequencial — desenvolve o critério central; ...`
+- Item 3: `... ; item 3 de 3 de uma lista sequencial — fecha com o próximo passo; ...`
+
+### Célula de grade / bento (slot repetido)
+
+Cada célula de uma grade (A11-bento-2x2). Mesma lógica do item de checklist, mas o papel é `célula N de M de uma grade`. Células de grade costumam ser mais intercambiáveis que itens de checklist — geralmente sem micro-hint de progressão.
+
+```
+Texto de célula de grade; formato rótulo curto OU frase de 1 linha;
+até 50 chars; célula N de M de uma grade; ex: 'Atendimento próximo',
+'Resultado comprovado', 'Processo transparente'
 ```
 
 ### Dado numérico (prova social)
@@ -253,15 +312,16 @@ ex: 'marca horizontal completa', 'monograma circular',
 
 ## Como o marker usa este catálogo
 
-1. Ao caminhar pelos slides, o marker identifica o role de cada elemento (eyebrow, hook, corpo, dado, foto contextual, foto profissional, etc).
+1. Ao caminhar pelos slides, o marker **primeiro identifica o padrão composicional da lâmina** (passo 3c do SKILL: checklist, grade, comparação, passo-a-passo, capa, dado, CTA — derivado do arquétipo `A<N>` do `visual-plan.md` + `_shared/COMPOSITIONS.md`) e mapeia cada elemento ao seu slot dentro do padrão. Só então identifica o role de cada elemento (eyebrow, hook, corpo, dado, item de checklist, etc).
 2. Para cada elemento `data-template-element="true"`:
    a. Escolha o role canônico mais próximo do catálogo.
    b. **Para textos**, derive o primeiro exemplo do texto atual do elemento — generalizando vertical e tema. O texto no HTML é a melhor pista de **formato e comprimento**, mas não de **tema**.
    c. **Para imagens**, ignore o tema do placeholder. O role da imagem vem do papel narrativo do slide (capa? prova? CTA?), não da foto que o designer colocou.
-   d. **Adicione hint de sequência narrativa** quando o elemento funciona em par com vizinhos: `após eyebrow categórico; seguido de subtítulo de apoio`. Mantém coerência adjacente.
-   e. Complete com 2 exemplos cross-vertical adicionais cobrindo variação saudável.
-3. Para slots equivalentes em slides diferentes (ex: eyebrow do slide 1, 3, 5), aplica **a mesma string**. O LLM diferencia pelo contexto da página.
-4. Se um role não bate com nenhum do catálogo, componha seguindo a fórmula dos 4 componentes — sempre com exemplos cross-vertical.
+   d. **Insira o componente `<papel na composição>`** (do passo 3c): índice/contagem em slots repetidos (`item N de M`, `célula N de M`), relação pai/filho (`cabeçalho que governa a lista`), lado/ordem (`lado A da comparação`). **Obrigatório em slots repetidos na mesma lâmina.**
+   e. **Adicione hint de sequência narrativa** quando o elemento funciona em par com vizinhos: `após eyebrow categórico; seguido de subtítulo de apoio`. Mantém coerência adjacente.
+   f. Complete com 2 exemplos cross-vertical adicionais cobrindo variação saudável.
+3. Para slots equivalentes **em slides diferentes** (ex: eyebrow do slide 1, 3, 5), aplica **a mesma string** (o LLM diferencia pelo contexto da página). Para slots repetidos **na mesma lâmina** (itens de checklist, células de grade), aplica strings que diferem **só** no componente `<papel na composição>`.
+4. Se um role não bate com nenhum do catálogo, componha seguindo a fórmula dos 5 componentes — sempre com exemplos cross-vertical.
 
 ### Exemplo de contextualização (texto)
 
