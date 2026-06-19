@@ -21,6 +21,32 @@ THEME_SPECIFIC_DESCRIPTION_RE = re.compile(
     re.I,
 )
 
+# --- Composition coherence (forces SKILL step 3c) -------------------------------
+# Repeated-slot phrase: "item 2 de 4 de uma lista", "célula 3 de 4 de uma grade",
+# "passo 1 de 5". Captures kind, index, count.
+COMPOSITION_INDEX_RE = re.compile(
+    r"\b(item|c[ée]lula|passo)\s+(\d+)\s+de\s+(\d+)\b",
+    re.I,
+)
+# Comparison-side phrases that a comparison slide MUST use on its column titles.
+COMPARISON_SIDE_RE = re.compile(r"\blado\s+[ab]\s+da\s+compara", re.I)
+COMPARISON_VERDICT_RE = re.compile(r"\bveredicto\b", re.I)
+# Narrative role an image description MUST carry (function in the slide, not theme).
+IMAGE_ROLE_RE = re.compile(
+    r"\b(capa|abertura|prova|fechamento|cta|apoio\s+contextual|contextual\s+da\s+l[âa]mina|mensagem-chave)\b",
+    re.I,
+)
+# Image theme/style lock that travels the placeholder theme into the description.
+# These are concrete *subjects/scene* words — never allowed (theme must stay open).
+# Style registers (dark, editorial, premium…) are handled by IMAGE_STYLE_OK_RE below
+# and are NOT flagged here; only locked subjects are.
+IMAGE_THEME_LOCK_RE = re.compile(
+    r"\b(joelho|articula[çc][ãa]o|anatomia|mitoc[ôo]ndria|c[ée]lula\b|m[úu]sculo|tend[ãa]o|"
+    r"caf[ée]|mesa|caderno|x[íi]cara|escrit[óo]rio|cozinha|cl[íi]nic[ao]|consult[óo]rio|paciente|"
+    r"vermelho-alaranjado|azul-ciano|neon|glow|sci-fi|hologr[áa]fic|grid\s+digital)\b",
+    re.I,
+)
+
 class Node:
     def __init__(self, tag, attrs, line, parent=None):
         self.tag = tag
@@ -82,6 +108,24 @@ def is_inline_text_run(node: Node) -> bool:
 
 def theme_specific_description(value: str | None) -> bool:
     return bool(value and THEME_SPECIFIC_DESCRIPTION_RE.search(" ".join(value.split())))
+
+def enclosing_slide(node: Node) -> Node | None:
+    p = node.parent
+    while p:
+        if p.tag == "section" and "slide" in p.attrs.get("class", ""):
+            return p
+        p = p.parent
+    return None
+
+def description_role(value: str | None) -> str:
+    """Coarse role key = first component of the 5-part formula (text before first ';').
+    Used to group equivalent slots within a slide. Normalized + index stripped so
+    'item 1 de 4...' and 'item 2 de 4...' share the same role key."""
+    if not value:
+        return ""
+    head = value.split(";", 1)[0]
+    head = COMPOSITION_INDEX_RE.sub(lambda m: f"{m.group(1).lower()} N de M", head)
+    return " ".join(head.lower().split())
 
 def main() -> int:
     html_path = read_html(sys.argv[1] if len(sys.argv) > 1 else "")
@@ -205,10 +249,24 @@ def main() -> int:
         if n.attrs.get("data-text-type"):
             issue(n, "Business profile text cannot also be a template element.")
         if n.tag == "img":
-            if not n.attrs.get("data-te-description"):
+            desc = n.attrs.get("data-te-description")
+            if not desc:
                 issue(n, "Editable image missing data-te-description.")
-            elif theme_specific_description(n.attrs.get("data-te-description")):
-                issue(n, "Editable image data-te-description is theme/style-specific. Use a generic role description that works for any theme.")
+            else:
+                # NOTE: the coarse THEME_SPECIFIC regex is intentionally NOT applied to images.
+                # Images are allowed to carry a STYLE register (dark/premium/editorial) as a bound;
+                # only locked SUBJECTS/SCENES are forbidden (handled by IMAGE_THEME_LOCK_RE below).
+                # Theme/subject of the placeholder must NOT be locked into the description.
+                locked = sorted({m.group(0).lower() for m in IMAGE_THEME_LOCK_RE.finditer(" ".join(desc.split()))})
+                if locked:
+                    issue(n, f"Editable image data-te-description locks the placeholder theme/scene ({', '.join(locked)}). "
+                              "Theme MUST stay open (reflect the slide's mensagem-chave). Keep only the visual STYLE register "
+                              "(ex: 'dark premium editorial') as a bound, not the subject.")
+                # Image must carry its NARRATIVE ROLE in the slide (capa/prova/CTA/apoio), not just an aesthetic.
+                if not IMAGE_ROLE_RE.search(" ".join(desc.split())):
+                    issue(n, "Editable image data-te-description is missing the narrative role of the slide "
+                              "(ex: 'imagem de capa/abertura', 'imagem de prova', 'imagem de fechamento/CTA', 'apoio contextual da lâmina'). "
+                              "The role comes from the slide's purpose, not from the placeholder photo.")
             if n.attrs.get("data-image-type") != "userAsset":
                 warn(n, "Editable image is usually data-image-type=userAsset.")
         elif textish(n):
@@ -226,6 +284,94 @@ def main() -> int:
                         issue(n, "data-te-max-chars must be positive.")
                 except ValueError:
                     issue(n, "data-te-max-chars must be an integer.")
+
+    # --- Composition coherence per slide (forces SKILL step 3c) ------------------
+    # Group editable TEXT elements by their enclosing slide and validate that
+    # repeated slots within the same slide carry a correct, non-restarting index,
+    # that equivalent slots don't share a byte-identical description, and that
+    # comparison layouts actually use lado A / lado B / veredicto phrasing.
+    text_editable = [n for n in editable if n.tag != "img" and textish(n) and not is_inline_text_run(n)]
+    by_slide: dict[int, list[Node]] = {}
+    for n in text_editable:
+        slide = enclosing_slide(n)
+        if slide is None:
+            continue
+        by_slide.setdefault(id(slide), []).append(n)
+
+    for slide in slides:
+        elems = by_slide.get(id(slide), [])
+        if not elems:
+            continue
+
+        # (a) Repeated-slot index/count coherence.
+        #     Collect every "<kind> N de M" found among this slide's descriptions.
+        #     A comparison legitimately repeats item 1..M per side, so the group key
+        #     includes the side ("lado a"/"lado b"/"coluna a"/"coluna b") when present —
+        #     each side is then validated as its own independent sequence.
+        SIDE_RE = re.compile(r"\b(?:lado|coluna)\s+([ab])\b", re.I)
+        seq: dict[str, list[tuple[int, int, Node]]] = {}
+        for n in elems:
+            desc = n.attrs.get("data-te-description") or ""
+            side_m = SIDE_RE.search(desc)
+            side = side_m.group(1).lower() if side_m else ""
+            for m in COMPOSITION_INDEX_RE.finditer(desc):
+                kind = m.group(1).lower().replace("é", "e")
+                key = f"{kind}|{side}" if side else kind
+                idx, count = int(m.group(2)), int(m.group(3))
+                seq.setdefault(key, []).append((idx, count, n))
+        for key, entries in seq.items():
+            kind, _, side = key.partition("|")
+            label = f"{kind} N de M" + (f" (lado {side.upper()})" if side else "")
+            counts = {c for _, c, _ in entries}
+            indices = [i for i, _, _ in entries]
+            declared = next(iter(counts))
+            actual = len(entries)
+            # M must agree across the group and match how many slots actually exist.
+            if len(counts) > 1:
+                issue(slide, f"Composition '{label}' on this slide declares inconsistent M values "
+                              f"({sorted(counts)}). All items of the same group must share the same total M.")
+            elif declared != actual:
+                issue(slide, f"Composition '{label}' declares M={declared} but the slide has {actual} "
+                              f"'{kind}' slots in this group. M must equal the real number of repeated slots.")
+            # Indices must be the unique sequence 1..M with no restart/gap/dup.
+            if sorted(indices) != list(range(1, actual + 1)):
+                issue(slide, f"Composition '{label}' indices are {indices}; expected a single "
+                              f"non-restarting sequence 1..{actual}. Restarting indices (e.g. 1,2,3,1,2,3) mean two "
+                              f"distinct groups were marked as one — likely a comparison/grid mislabeled as one list. "
+                              f"Use 'lado A/lado B' (or separate groups) so each side is its own sequence.")
+
+        # (b) Byte-identical descriptions on equivalent slots in the SAME slide.
+        seen: dict[str, Node] = {}
+        for n in elems:
+            desc = n.attrs.get("data-te-description") or ""
+            if not desc:
+                continue
+            if desc in seen:
+                issue(n, "Two editable texts in the same slide share a byte-identical data-te-description. "
+                          "Slots repeated within a slide must differ in the '<papel na composição>' component "
+                          "(item 1 de N / item 2 de N …). Identical strings make the copy LLM duplicate content.")
+            else:
+                seen[desc] = n
+
+        # (c) Comparison detection: 2 column-title-like slots sharing a role +
+        #     symmetric bullet groups, but no 'lado A/B' phrasing anywhere.
+        roles: dict[str, list[Node]] = {}
+        for n in elems:
+            roles.setdefault(description_role(n.attrs.get("data-te-description")), []).append(n)
+        has_restarting_index = any(
+            sorted([i for i, _, _ in entries]) != list(range(1, len(entries) + 1))
+            for entries in seq.values()
+        )
+        slide_descs = " ".join((n.attrs.get("data-te-description") or "") for n in elems)
+        looks_comparison = has_restarting_index or any(len(v) == 2 for v in roles.values() if v)
+        if looks_comparison and not COMPARISON_SIDE_RE.search(slide_descs):
+            # Only escalate when there's a real signal of two parallel groups.
+            paired_roles = [k for k, v in roles.items() if len(v) >= 2]
+            if has_restarting_index or len(paired_roles) >= 2:
+                issue(slide, "Slide looks like a COMPARISON (parallel/duplicated slots or restarting indices) but no "
+                              "description uses 'lado A da comparação' / 'lado B da comparação' / 'veredicto'. "
+                              "Mark column titles and their bullets with the comparison composition role so the copy LLM "
+                              "keeps each side coherent.")
 
     for n in imgs:
         img_type = n.attrs.get("data-image-type")

@@ -100,7 +100,7 @@ artifacts/gp2-template-marker/<slug>/
      4. **Insira o papel na composição** (do passo 3c) como componente da description: `cabeçalho que governa a lista`, `item 1 de 3 de uma lista sequencial`, `célula 2 de 4 de uma grade`, `lado A da comparação`, `passo 3 de 5`. **Este componente é obrigatório sempre que o slot se repete na mesma lâmina** — é ele que diferencia item 1, item 2 e item 3. Sem ele, slots repetidos saem idênticos e quebram a sequência.
      5. Adicione hint de sequência quando o elemento funciona em par narrativo com vizinhos: `após eyebrow categórico; seguido de corpo educativo`.
      6. Adicione 2 exemplos **cross-vertical** adicionais cobrindo variação saudável. Mistura intencional entre nichos — nunca 3 exemplos do mesmo vertical (saúde, pet, beleza).
-     7. **Bounds são técnicas/estruturais, não temáticas.** `"até 60 chars"`, `"2 linhas"`, `"editorial natural"` — sim. `"sem pessoa"`, `"foco em objeto"`, `"vista de cima"` — não (a menos que o aspect ratio do slot **realmente** force esse enquadramento).
+     7. **Bounds são técnicas/estruturais, não temáticas — e nunca contagem de char.** `"2 linhas"`, `"em CAPS"`, `"editorial natural"` — sim. `"até 60 chars"` — **não** (mora no `data-te-max-chars`; ver regra abaixo). `"sem pessoa"`, `"foco em objeto"`, `"vista de cima"` — não (a menos que o aspect ratio do slot **realmente** force esse enquadramento).
      8. A description resultante **deve seguir a fórmula dos 5 componentes** — nunca escreva prosa descritiva.
 5. Aplique a classificação (ver tabela abaixo).
 6. Mapeie cores de marca: cada elemento cuja cor (fill/stroke/background) deve trocar com o preset da marca recebe `data-variable="primary|secondary"` + opcional `data-variable-target`.
@@ -157,7 +157,7 @@ python3 ../../scripts/audit-template-markup.py artifacts/gp2-template-marker/<sl
 
   ✅ CORRETO:
   "Título da lâmina intermediária; formato afirmação direta OU inversão de expectativa;
-  1 frase em 2 linhas; após eyebrow categórico; seguido de corpo educativo; 30-60 chars;
+ 1 frase em 2 linhas; após eyebrow categórico; seguido de corpo educativo;
   ex: 'Paciente não compra expertise', 'O corpo fala antes de doer', 'Resultado não é só número'"
   ```
 
@@ -182,6 +182,8 @@ A description **vai literal no prompt do LLM gerador de copy** da lambda de gera
 
 O **`<papel na composição>`** é o componente que diz **quem o elemento é dentro da estrutura da lâmina** (vem do passo 3c): `cabeçalho que governa a lista`, `item 1 de 3 de uma lista sequencial`, `célula 2 de 4 de uma grade`, `lado A da comparação`, `passo 3 de 5`. Ele é **obrigatório sempre que o slot se repete na mesma lâmina** (itens de checklist, células de grade, passos de tutorial) e **recomendado** quando o elemento tem relação pai/filho clara (título que governa uma lista). Para slots únicos sem repetição (um único título de capa, um único CTA), o componente pode ser omitido ou reduzido ao papel narrativo já presente.
 
+> ⚠️ **Bounds NÃO repetem o número de caracteres.** O limite de chars é responsabilidade **exclusiva** do atributo `data-te-max-chars` (calculado pela caixa). **NUNCA** escreva `até 60 chars`, `30-70 chars`, `máximo 42 caracteres` dentro da `data-te-description`. Isso cria dois números concorrentes que quase sempre divergem do `data-te-max-chars` real (medido: 26 conflitos num único template de produção) — o LLM segue o número da prosa e a validação técnica rejeita. Os `<bound>` da description são **estruturais/de formato**: `1 linha`, `1 frase em 2-3 linhas`, `em CAPS`, `sem ponto final`. O comprimento vem do `data-te-max-chars`. A lambda de copy hoje remove defensivamente qualquer número de chars que escape para a description, mas a origem (aqui) não deve gerá-lo.
+
 **Catálogo canônico de descriptions por role:** [`references/element-descriptions.md`](./references/element-descriptions.md). Cobre eyebrow numerado, eyebrow simples, hook, subtítulo, corpo educativo, bullet, dado numérico, caption, citação, CTA, linha de contato, foto contextual, foto profissional, logo. **Sempre consulte primeiro o catálogo** antes de compor uma description nova.
 
 **Exemplo (eyebrow numerado em todo slide do carrossel):**
@@ -189,7 +191,7 @@ O **`<papel na composição>`** é o componente que diz **quem o elemento é den
 ✅ Boa — formato + 3 exemplos genéricos:
 ```
 Eyebrow editorial da lâmina; formato 'NN / TEMA' onde NN é o número
-sequencial do slide e TEMA é categoria curta em CAPS; até 30 chars;
+sequencial do slide e TEMA é categoria curta em CAPS;
 ex: '01 / DOR CRÔNICA', '03 / O ESTUDO', '07 / PRÓXIMO PASSO'
 ```
 
@@ -208,10 +210,11 @@ Eyebrow sobre laserterapia premium; rótulo da clínica do Dr. João
 1. **Slots equivalentes em SLIDES DIFERENTES recebem a mesma string — mas slots repetidos DENTRO da mesma lâmina NÃO.** Esta regra tem duas faces:
    - **Cross-slide (mesma string):** eyebrow do slide 1, slide 3 e slide 5 → mesma description. O LLM diferencia pelo contexto da página (mensagem-chave da narrative arc, que ele já vê separadamente).
    - **Within-slide (string varia pelo papel na composição):** item 1, item 2 e item 3 de um checklist na **mesma** lâmina **não** recebem strings idênticas. Eles compartilham role, formato e exemplos, mas o componente `<papel na composição>` muda: `item 1 de 3 de uma lista sequencial` / `item 2 de 3 ...` / `item 3 de 3 ...`. Aqui o LLM **não** tem contexto separado para diferenciar — a única pista de que formam uma sequência ordenada está na description. Aplicar a mesma string a slots repetidos na mesma lâmina é o anti-pattern que você está corrigindo.
+   - **Exceção (título de miolo que governa estrutura distinta):** "mesma string cross-slide" vale para slots **genuinamente equivalentes** (eyebrow, page-counter). Um **título de miolo NÃO é genuinamente equivalente** quando cada slide tem uma estrutura/função diferente (slide de checklist vs. slide de comparação vs. slide de alerta). Aí a mensagem-chave da página, sozinha, não impede o LLM de gerar o **mesmo título em dois slides** (sintoma real observado: "SINAIS DE SOBRECARGA" repetido nos slides 1 e 2). Para títulos de miolo, embuta no `<papel na composição>` a **função do slide na narrativa** — `cabeçalho que governa a lista de N itens`, `título do slide de comparação A vs B`, `título do slide de alerta` — derivada do `brief.md`. Isso dá ao LLM o sinal que falta para diferenciar títulos entre slides.
 2. **Exemplos NUNCA citam o vertical atual do template.** O template vai ser usado em dezenas de verticais diferentes; descriptions são reutilizáveis. Use exemplos de formato (`'01 / DOR'`, `'03 / O ESTUDO'`), não de conteúdo específico de vertical (`'01 / FISIOTERAPIA'`).
 3. **Formato e conteúdo são coisas diferentes.** `formato 'NN / TEMA'` é estrutura; `ex:` mostra como aplicar.
 4. **3 exemplos é o sweet spot.** 1 vira regra rígida, 5+ vira ruído. 3 cobrem variação curto/médio/longo.
-5. **Sweet spot de tamanho: 200-300 chars por description.** Cada description vai pra cada elemento de cada template no prompt do LLM — pesar tokens importa.
+5. **Sweet spot de tamanho da própria description: ≈200-300 caracteres.** (Isto é sobre o comprimento da *description* em si — não um bound do campo, que mora no `data-te-max-chars`.) Cada description vai pra cada elemento de cada template no prompt do LLM — pesar tokens importa.
 6. **Quando em dúvida, escolha o role canônico mais próximo do catálogo** em vez de inventar.
 
 **Regras de contextualização (NEW — evita descriptions desconexas):**
@@ -229,7 +232,7 @@ Eyebrow acima: `"conteúdo clínico"` | Subtítulo abaixo: body educativo
 ```
 Gancho principal da lâmina; formato pergunta provocativa OU afirmação
 que gera curiosidade; 1 frase em 2-3 linhas; após eyebrow categórico;
-seguido de corpo educativo; 50-90 chars; ex: 'Seu conhecimento está
+seguido de corpo educativo; ex: 'Seu conhecimento está
 virando resultados?', 'Você sabe o que seu paciente realmente busca?',
 'O que faz um conteúdo converter de verdade?'
 ```
@@ -251,7 +254,7 @@ Título (cabeçalho):
 ```
 Título da lâmina de checklist; formato afirmação que introduz uma lista
 de verificação; 1 frase em até 2 linhas; cabeçalho que governa a lista
-de 3 itens abaixo; 30-60 chars; ex: 'Use este roteiro antes de começar',
+de 3 itens abaixo; ex: 'Use este roteiro antes de começar',
 'Confira antes de publicar', 'O que validar em cada etapa'
 ```
 
@@ -259,7 +262,7 @@ Item 1:
 ```
 Item de checklist; formato pergunta curta de verificação OU instrução
 objetiva; 1 linha; item 1 de 3 de uma lista sequencial — abre a
-progressão; até 70 chars; ex: 'Qual percepção eu quero elevar?',
+progressão; ex: 'Qual percepção eu quero elevar?',
 'Defini o objetivo principal?', 'O ambiente está pronto?'
 ```
 
@@ -267,7 +270,7 @@ Item 2 (mesma role/formato/exemplos do item 1; muda só o papel na composição)
 ```
 Item de checklist; formato pergunta curta de verificação OU instrução
 objetiva; 1 linha; item 2 de 3 de uma lista sequencial — desenvolve o
-critério central; até 70 chars; ex: 'Qual percepção eu quero elevar?',
+critério central; ex: 'Qual percepção eu quero elevar?',
 'Defini o objetivo principal?', 'O ambiente está pronto?'
 ```
 
@@ -275,14 +278,14 @@ Item 3:
 ```
 Item de checklist; formato pergunta curta de verificação OU instrução
 objetiva; 1 linha; item 3 de 3 de uma lista sequencial — fecha com o
-próximo passo; até 70 chars; ex: 'Qual percepção eu quero elevar?',
+próximo passo; ex: 'Qual percepção eu quero elevar?',
 'Defini o objetivo principal?', 'O ambiente está pronto?'
 ```
 
 ❌ Errado — as 3 strings idênticas que o template original produzia (o LLM não sabe que formam uma sequência ordenada, nem quantos itens são):
 ```
 Texto editável de apoio; formato frase curta conectada ao assunto
-da lâmina; até 90 chars; ex: 'Diagnóstico', 'Critério',
+da lâmina; ex: 'Diagnóstico', 'Critério',
 'explique o ponto principal'
 ```
 (aplicada igual ao item 1, 2 e 3 — sem índice, sem contagem, sem cabeçalho)
@@ -318,6 +321,14 @@ python3 ../../scripts/audit-template-markup.py artifacts/gp2-template-marker/<sl
 ```
 
 O script gera `marker-audit.json` + `marker-audit.md`. Loop máximo: **2 fixes**. Se ainda falhar, escale para o orquestrador.
+
+Além das checagens de forma (atributos, classes, gradientes), o audit agora **reprova (FAIL)** problemas de **coerência composicional** — exatamente os que produziam copy ruim downstream. Se algum disparar, o erro está no passo 3c, não no layout:
+
+- **Índice/contagem incoerente** — `item N de M` cujo M não bate com o nº real de slots irmãos no slide, ou índices que **reiniciam** (`1,2,3,1,2,3`) dentro do mesmo slide. Reinício = dois grupos marcados como um (provável comparação tratada como lista). Numa comparação legítima, marque cada lado com `lado A/lado B` — aí o audit valida cada lado como sequência própria.
+- **Descriptions byte-idênticas em slots da mesma lâmina** — itens de checklist/grade com a mesma string. Devem diferir no componente `<papel na composição>` (`item 1 de N` / `item 2 de N` …).
+- **Comparação sem `lado A/B`** — slide com slots paralelos mas sem `lado A da comparação` / `lado B da comparação` / `veredicto`.
+- **Imagem sem papel narrativo** — `data-te-description` de imagem que não declara a função no slide (`imagem de capa/abertura`, `de prova`, `de fechamento/CTA`, `apoio contextual da lâmina`).
+- **Imagem com tema/cena travado** — description que fixa o assunto do placeholder (joelho, mitocôndria, café, mesa, glow neon, sci-fi…). Mantenha só o **registro de estilo** (`dark premium editorial`) e deixe o **tema aberto**. Ver `references/element-descriptions.md` §"Foto contextual".
 
 ## Resposta final ao orquestrador
 
