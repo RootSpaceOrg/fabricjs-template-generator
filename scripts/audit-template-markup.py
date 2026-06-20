@@ -46,6 +46,16 @@ IMAGE_THEME_LOCK_RE = re.compile(
     r"vermelho-alaranjado|azul-ciano|neon|glow|sci-fi|hologr[áa]fic|grid\s+digital)\b",
     re.I,
 )
+# Visual STYLE register an image description MUST carry — inherited from the
+# art-director's "Registro visual das imagens". This is the link that makes the
+# generated image match the template's dark/light/premium identity. Open list of
+# common registers; the marker copies it from the visual-plan, not invents it.
+IMAGE_STYLE_OK_RE = re.compile(
+    r"\b(dark|escur[ao]|claro|clara|light|premium|editorial|minimalista|flat|"
+    r"cinematogr[áa]fic|alto\s+contraste|luz\s+natural|paleta\s+quente|paleta\s+fria|"
+    r"vibrante|pastel|mon[oó]crom|alto-key|low-key|moody)\b",
+    re.I,
+)
 
 class Node:
     def __init__(self, tag, attrs, line, parent=None):
@@ -267,6 +277,14 @@ def main() -> int:
                     issue(n, "Editable image data-te-description is missing the narrative role of the slide "
                               "(ex: 'imagem de capa/abertura', 'imagem de prova', 'imagem de fechamento/CTA', 'apoio contextual da lâmina'). "
                               "The role comes from the slide's purpose, not from the placeholder photo.")
+                # Image MUST carry the template's VISUAL STYLE register (inherited from the
+                # art-director's "Registro visual das imagens"), so the generated image matches
+                # the dark/light/premium identity of the template.
+                if not IMAGE_STYLE_OK_RE.search(" ".join(desc.split())):
+                    issue(n, "Editable image data-te-description is missing the visual STYLE register "
+                              "(ex: 'estilo dark premium editorial', 'claro e arejado, luz natural'). "
+                              "Inherit it literally from the visual-plan's 'Registro visual das imagens' so the generated "
+                              "image matches the template's dark/light/premium identity — do not invent or omit it.")
             if n.attrs.get("data-image-type") != "userAsset":
                 warn(n, "Editable image is usually data-image-type=userAsset.")
         elif textish(n):

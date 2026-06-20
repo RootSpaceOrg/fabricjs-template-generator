@@ -392,6 +392,21 @@ free
 - **Slide N (CTA):** <posição — ex: CTA-footer-left, 140px>
 - **Outros slides (opcional):** <slide M: posição + tamanho>
 
+## Registro visual das imagens
+
+Uma frase curta com o **registro de estilo** que as imagens geradas devem seguir para casar com o design do template — derivada da paleta + preset que você acabou de resolver. Este é o `style_anchor` da peça: descreve **como** as imagens parecem (luz, mood, paleta, contraste), **nunca o assunto** (que é livre e definido pela copy em runtime).
+
+```
+## Registro visual das imagens
+- **Registro global:** <ex: "dark premium editorial, alto contraste, luz cinematográfica" | "claro e arejado, luz natural suave, paleta quente" | "flat minimalista, fundo neutro claro, sem sombras pesadas">
+```
+
+Regras:
+- Derive do template, não invente: fundo escuro/near-black → registro **dark**; preset `editorial-premium` (fundo sempre claro) → registro **claro/editorial premium**; paleta quente → cite "paleta quente".
+- É **estilo**, não tema. Proibido citar assunto concreto (joelho, café, mesa) — isso trava o template num nicho.
+- Quando o **background varia entre slides** (capa dark + miolo light + CTA brand), declare o registro por slide no `## Plano de slides` (campo `Registro de imagem:`); o registro global vale como fallback.
+- Este registro é **herdado literalmente** pelo `gp2-template-marker` no componente *estilo* de toda `data-te-description` de imagem (`userAsset`). É o elo que garante que a imagem gerada pela lambda siga a identidade visual do template.
+
 ## Imagens declaradas
 
 Em free mode, declare aqui cada imagem que cada slide vai conter, classificada em bucket B1–B3 (não há B4 em free — não existe referência para descartar). Designer consome esta tabela e não inventa imagens fora dela.
@@ -410,6 +425,7 @@ Em free mode, declare aqui cada imagem que cada slide vai conter, classificada e
 ### Slide 1 — <papel narrativo> (background: claro/escuro/brand)
 - **Arquétipo:** A<N> — <slug>
 - **Gradientes:** <nenhum | overlay bottom 0.70 | escurecimento-atmosférico diagonal-se 0.80 | ...>
+- **Registro de imagem:** <só quando difere do registro global — ex: "dark" numa capa escura de um template majoritariamente claro; omitir se segue o global>
 - **Copy orientativo:** <copy real do brief>
 - **Notas de execução:** <desvios do arquétipo, elementos específicos a destacar>
 
@@ -494,6 +510,20 @@ Tabela determinística que o designer **deve** consumir antes de qualquer decis�
 - B3: **nunca** sugira URL nem SVG. Apenas declare `image-source: placeholder-required` + motivo curto. Designer usa `references/placeholders/image-placeholder.b64.txt` automaticamente.
 - B4: não entra no HTML. Apenas registra que foi visto e descartado.
 
+## Registro visual das imagens
+
+Registro de estilo que as imagens geradas devem seguir — **extraído da referência** (a imagem de referência mostra se é dark/clara, mood, contraste). É estilo, nunca assunto.
+
+```
+## Registro visual das imagens
+- **Registro global:** <ex: "dark premium editorial, alto contraste" | "claro e arejado, luz natural suave">
+```
+
+- Extraia do tratamento visual da referência (fundo dominante, luz, paleta), não do assunto das fotos.
+- É **estilo**, não tema — proibido citar o assunto concreto da foto de referência.
+- Quando o background varia entre slides, declare por slide em `## Plano de slides` (`Registro de imagem:`); o global é fallback.
+- **Herdado literalmente** pelo `gp2-template-marker` no componente *estilo* de toda `data-te-description` de imagem (`userAsset`).
+
 ## Tipografia resolvida (da referência)
 - **Display:** <família ou categoria> — <Npx> — peso <W> — kerning <±N%>
 - **Subtítulo:** <família> — <Npx> — peso <W>
@@ -519,6 +549,7 @@ Tabela determinística que o designer **deve** consumir antes de qualquer decis�
 
 ### Slide 1 — <papel narrativo> (background: claro/escuro/brand)
 - **Arquétipo:** A<N> — <slug>   <!-- ou A0-custom-from-reference -->
+- **Registro de imagem:** <só quando difere do registro global — ex: "dark" numa capa escura de template majoritariamente claro; omitir se segue o global>
 - **Anchors (apenas se A0):**
   - `<nome-zone-1>`: x=N–N%, y=N–N% — <o que vai aqui>
   - `<nome-zone-2>`: x=N–N%, y=N–N% — <o que vai aqui>
