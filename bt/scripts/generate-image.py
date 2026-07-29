@@ -16,7 +16,7 @@ import sys
 import urllib.request
 from pathlib import Path
 
-REPO_ROOT = Path(__file__).resolve().parents[3]
+REPO_ROOT = Path(__file__).resolve().parents[2]
 UPLOADER = REPO_ROOT / "skills" / "gp2-template-uploader" / "scripts" / "import-template.py"
 
 OPENAI_URL = "https://api.openai.com/v1/images/generations"

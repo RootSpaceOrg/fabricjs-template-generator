@@ -27,7 +27,7 @@ npx playwright install chromium
 | 7 | `gp2-template-uploader` | Upload S3 + invoca a lambda do template handler (Supabase + embedding). | template ID |
 | — | `gp2-pipeline` | Orchestrator que roda tudo na ordem com iteration policy. | Relatório consolidado |
 | — | `gp2-template-suggester` | Orquestrador alternativo: gera N prompts autônomos para catálogo e dispara `gp2-pipeline` por sub-agente. | N templates publicados |
-| — | `gp2-business-template` | Orquestrador alternativo: ideia + `business_type` → template final específico de negócio, com imagens geradas por IA (sem placeholder). Não altera as demais skills. | 1 template publicado com `business_type` |
+| — | `gp2-business-template` | Pipeline separada em [`bt/`](./bt/README.md): ideia + `business_type` → template final `userReady`, best-of-N (3 candidatos + juiz independente), dossiê por nicho, storyline de funil, imagens geradas por IA. Reusa marker/converter/uploader. | 1 template publicado com `business_type` |
 
 > O step v1 `gp2-template-result-reviewer` foi removido — os checks úteis foram absorvidos pelo `gp2-template-converter` como self-validation pós-emissão. O script `scripts/review-fabric-json.py` continua disponível para debug standalone.
 
