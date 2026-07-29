@@ -207,9 +207,9 @@ Após preencher a checklist, escreva 5 listas distintas:
 
 ---
 
-### 1c. Decisão de fidelidade composicional — REFERENCE-DRIVEN MODE ONLY
+### 1c. Decisão de fidelidade composicional
 
-Antes de planejar slides, decida explicitamente: a identidade composicional da referência **cabe no catálogo A1–A14** com ajuste, ou **exige A0-custom-from-reference**?
+Antes de planejar slides, decida explicitamente a origem da composição: **catálogo A1–A14**, **A0-custom-from-reference** (anchors derivados da referência) ou **A0-custom-autoral** (anchors derivados do conteúdo, sem referência).
 
 **Gatilho determinístico — leia `brief.md → ## Fidelidade`:**
 
@@ -217,7 +217,8 @@ Antes de planejar slides, decida explicitamente: a identidade composicional da r
 |----------------------|----------------------|
 | `recreate` | **A0-custom-from-reference é default em TODOS os slides.** Cair em A1–A14 só com justificativa explícita por slide em `## Notas para o designer` (ex: "Slide 3 cabe em A5 sem desvio porque a referência usa exatamente a estrutura listicle numerada de A5 — anchors batem ≤5%"). Sem justificativa documentada, mantenha A0. |
 | `inspired` | Catálogo A1–A14 default. A0 só quando ≥15% de desvio dos anchors ou quando a referência claramente repete um padrão único irrepetível no catálogo. |
-| `free` | Catálogo. A0 não disponível (free mode não tem referência). |
+| `autoral` | **A0-custom-autoral é default em TODOS os slides.** Você desenha a composição a partir do conteúdo — copy, papel narrativo, imagens declaradas, tom — e declara os anchors por slide, como faria em recreate mas sem referência externa. O catálogo A1–A14 vira **inspiração/vocabulário**, nunca jaula: usar um A* exige justificativa por slide. A regra de diversidade ≥2/≥3 arquétipos é substituída por: **não repita a mesma estrutura de anchors em 3+ slides consecutivos** (variedade real, medida nos anchors, salvo mono-composição declarada como identidade da peça em `## Decisão composicional`). |
+| `free` | Catálogo. A0 não disponível (free mode sem sinal autoral). |
 
 Depois do gatilho acima, aplique também os critérios visuais abaixo (úteis principalmente em `inspired`, e como sanity check em `recreate`):
 
@@ -289,6 +290,7 @@ Para **cada slide** do brief, declare:
 - Slide CTA final tipicamente em `A6-cta-button-anchored`.
 - Slide capa tipicamente em `A1`, `A2`, `A10` ou `A12`.
 - **Exceção (reference-driven mode):** quando A0-custom-from-reference é declarado em ≥2 slides porque a referência é mono-arquétipo intencional, a regra de ≥2/≥3 arquétipos distintos é **suspensa**. Documente a decisão em `## Notas para o designer`.
+- **Exceção (`Fidelidade: autoral`):** slides em A0-custom-autoral não contam para a regra ≥2/≥3 — a variedade é medida nos anchors declarados (não repetir a mesma estrutura de anchors em 3+ slides consecutivos, salvo mono-composição declarada como identidade em `## Decisão composicional`).
 
 ---
 

@@ -480,14 +480,16 @@ Cada arquétipo é um **esqueleto inicial** — o designer adapta coords exatas 
 
 ---
 
-## A0 — custom-from-reference (reference-driven mode only)
+## A0 — custom (from-reference ou autoral)
 
-Arquétipo de escape. **Não tem layout pré-definido** — o art-director declara os anchors caso a caso, derivando-os diretamente da referência visual.
+Arquétipo de escape. **Não tem layout pré-definido** — o art-director declara os anchors caso a caso. Duas origens:
+
+- **`A0-custom-from-reference`** (reference-driven mode): anchors derivados diretamente da referência visual.
+- **`A0-custom-autoral`** (`Fidelidade: autoral` no brief): anchors derivados do **conteúdo** — copy, papel narrativo do slide, imagens declaradas, tom. É o modo "composição desenhada para esta peça", sem referência externa. Default de todos os slides quando o brief marca `autoral` (ex: pedidos do `gp2-business-template`).
 
 **Quando usar:**
-- Modo `reference-driven` apenas.
-- A referência tem identidade composicional que nenhum A1–A14 reproduz sem achatar (ex: tipografia diagonal, grid 3 colunas, texto em arco, headline com bleed intencional, número editorial ocupando 60% do slide, layout que repete propositalmente em todos os slides).
-- O art-director avalia: "se eu mapear isso pra A3/A8/A10, perco o que define a peça?" Se sim → A0.
+- `reference-driven`: a referência tem identidade composicional que nenhum A1–A14 reproduz sem achatar (ex: tipografia diagonal, grid 3 colunas, texto em arco, headline com bleed intencional, número editorial ocupando 60% do slide, layout que repete propositalmente em todos os slides). O art-director avalia: "se eu mapear isso pra A3/A8/A10, perco o que define a peça?" Se sim → A0.
+- `autoral`: sempre — é o default. O catálogo A1–A14 vira inspiração/vocabulário; usar um A* literal exige justificativa por slide.
 
 **Como declarar no `visual-plan.md`:**
 
@@ -505,13 +507,13 @@ Arquétipo de escape. **Não tem layout pré-definido** — o art-director decla
 ```
 
 **Regras:**
-- A0 só é válido em reference-driven mode. Em free mode, escolha A1–A14.
-- Anchors declarados em A0 substituem o catálogo para fins de validação do reviewer (compara HTML contra os anchors declarados, não contra A1–A14).
-- Quando A0 aparece em ≥2 slides, a regra de diversidade ≥2/≥3 arquétipos é suspensa (mono-arquétipo é fidelidade à referência, não preguiça).
+- A0 é válido em reference-driven mode (`from-reference`) ou quando o brief marca `Fidelidade: autoral` (`autoral`). Em free mode sem sinal autoral, escolha A1–A14.
+- Anchors declarados em A0 substituem o catálogo para fins de validação do reviewer (compara HTML contra os anchors declarados, não contra A1–A14). Vale para as duas origens — **A0 sem anchors declarados é inválido**.
+- Quando A0-from-reference aparece em ≥2 slides, a regra de diversidade ≥2/≥3 arquétipos é suspensa (mono-arquétipo é fidelidade à referência, não preguiça). Em `autoral`, a diversidade é medida nos anchors: não repetir a mesma estrutura em 3+ slides consecutivos, salvo mono-composição declarada como identidade da peça.
 - A0 não dispensa as regras técnicas hard do reviewer (contraste, overflow, ancoragem de foto profissional, data-variable, etc.).
 
 **Anti-uso:**
-- Free mode (sem referência). Sem âncora externa, A0 vira "designer faz o que quer" — use o catálogo.
+- Free mode sem sinal autoral no brief. Sem âncora (externa ou de conteúdo declarada), A0 vira "designer faz o que quer" — use o catálogo. A diferença entre `autoral` e "faz o que quer" é o contrato: anchors declarados no visual-plan ANTES do designer codificar.
 - Quando a referência claramente cabe em A1–A14 com ajuste de coords (≤15% de desvio dos anchors da tabela). Use o A* mais próximo e documente o ajuste em `notes.md` — A0 não é atalho para evitar o catálogo.
 
 ---
@@ -519,7 +521,7 @@ Arquétipo de escape. **Não tem layout pré-definido** — o art-director decla
 ## Como o reviewer usa o catálogo
 
 - Confere que cada slide tem **um** A* declarado no `visual-plan.md`.
-- Confere diversidade (regra de ≥2/≥3 arquétipos por tamanho de carrossel). **Exceção:** suspensa quando ≥2 slides usam A0 em reference-driven mode.
+- Confere diversidade (regra de ≥2/≥3 arquétipos por tamanho de carrossel). **Exceção:** suspensa quando ≥2 slides usam A0 em reference-driven mode; em `Fidelidade: autoral` a diversidade é medida nos anchors declarados, não nos slugs.
 - Para cada slide, confere que os anchors do A* declarado têm contraparte plausível no HTML (não exige px exato — exige que `headline-zone` esteja onde a tabela define, com tolerância ±5% do canvas).
 - Para A0: compara HTML contra os anchors declarados pelo art-director no `visual-plan.md` (não contra o catálogo). Tolerância ±5% também.
 - Desvio silencioso (HTML não bate com A* sem nota) → finding `archetype-mismatch` severity blocker.

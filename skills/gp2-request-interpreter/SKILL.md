@@ -75,6 +75,7 @@ Detecte por verbo no pedido (case-insensitive, casa substring):
 |-------|----------------|----------------------------------------|
 | `recreate` | `recrie`, `recriar`, `recria`, `reproduza`, `reproduzir`, `replique`, `replicar`, `igual a`, `igual à`, `idêntico`, `idêntica`, `mesma coisa`, `exato`, `exata`, `fielmente`, `fiel à referência` | A0-custom-from-reference é default em TODOS os slides; cair em A1–A14 só com justificativa por slide |
 | `inspired` | `nesse estilo`, `nesse estilo de`, `parecido com`, `parecida com`, `inspirado em`, `inspirada em`, `no estilo de`, `vibe de`, `tom de`, `look de` | Catálogo A1–A14 default; A0 só quando ≥15% desvio dos anchors |
+| `autoral` | `composição livre`, `composição autoral`, `layout livre`, `layout autoral`, `design autoral`, `sem catálogo`, `sem arquétipos`, `fuja do catálogo`, `estilo claude design` — **ou** o pedido veio do `gp2-business-template` (que marca autoral por default) | A0-custom-autoral é default em TODOS os slides: art-director deriva anchors do próprio conteúdo (sem referência); catálogo A1–A14 vira inspiração, usado só com justificativa por slide |
 | `free` | nenhum verbo de fidelidade **e** sem imagem anexada | Free mode; A0 não disponível |
 
 **Regras de desempate:**
@@ -82,6 +83,7 @@ Detecte por verbo no pedido (case-insensitive, casa substring):
 - Imagem anexada **sem** verbo de fidelidade explícito → `inspired` (default seguro: usuário anexou referência mas não disse "recriar").
 - Sem imagem **e** sem verbo → `free`.
 - Imagem anexada **com** verbo `recreate` → `recreate`.
+- Gatilho `autoral` **com** imagem anexada → a imagem vira referência de vocabulário visual (paleta/tipografia via art-director), mas a composição segue `autoral` (anchors do conteúdo, não da referência).
 
 Em `recreate`, considere documentar 1 linha em `## Incertezas` se houver elementos da referência cuja replicação 1-pra-1 é ambígua (ex: "referência usa ilustração de campanha não reproduzível — art-director decide bucket").
 

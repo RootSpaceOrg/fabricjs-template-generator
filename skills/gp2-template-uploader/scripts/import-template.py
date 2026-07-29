@@ -244,7 +244,7 @@ def build_payload(
         "owner_user_id": args.owner_user_id,
         "created_by": "templateGenerator",
         "content_type": args.content_type,
-        "business_type": "",
+        "business_type": args.business_type,
         "tags": tags,
         "scope": args.scope,
     }
@@ -397,6 +397,11 @@ def main():
         "--owner-user-id",
         default="templateGenerator",
         help="owner_user_id column (default: templateGenerator)",
+    )
+    parser.add_argument(
+        "--business-type",
+        default="",
+        help="business_type column (default: empty — generic multi-niche template)",
     )
     parser.add_argument("--tenant-id", default=None, help="tenant_id (default: null)")
     parser.add_argument(
