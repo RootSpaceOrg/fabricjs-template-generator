@@ -18,6 +18,6 @@ Os beats do brief estão visíveis na sequência? Cada slide tem UMA ideia a ser
 A peça é inconfundivelmente DESTE nicho — jargão, imagem, contexto — ou é genérica com palavras trocadas? A copy soa como o profissional fala? Existe algum detalhe que só quem conhece o nicho colocaria?
 - 3: troque 3 palavras e vira outro nicho · 6: claramente do nicho · 9: parece feito por especialista do nicho.
 
-## 5. consistência (a peça é UMA)
-Paleta, tipografia e vocabulário visual coerentes nos N slides; imagens da mesma "sessão"; variedade composicional SEM perder identidade (nem mono-layout preguiçoso, nem colcha de retalhos).
-- 3: slides de decks diferentes · 6: coerente · 9: sistema de design próprio.
+## 5. continuidade (a peça é UMA fita)
+Julgue no `strip.png`: os slides lado a lado fecham como peça panorâmica? Dispositivos de continuidade (foto bleed, tipografia atravessada, fio condutor, bloco que vira na fronteira) presentes e intencionais? Paleta/tipografia coerentes; imagens da mesma "sessão"; nenhuma fronteira com corte acidental.
+- 3: N cartões independentes (ou fronteiras cortando por acidente) · 6: coerente com 1 dispositivo de continuidade · 9: a fita inteira é uma composição só e cada slide ainda funciona isolado.

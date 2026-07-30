@@ -4,7 +4,7 @@ Dois modos: **julgar candidatos** (dentro da pipeline) e **eval de regressão** 
 
 ## Insumos (só isso)
 
-- `screenshots/` de cada candidato, anonimizados (A/B/C — sem design-notes, sem saber a família de cada um)
+- `screenshots/` + `strip.png` de cada candidato, anonimizados (A/B/C — sem design-notes, sem saber a família de cada um). O `strip.png` é a fita panorâmica: julgue continuidade nele; julgue cada slide isolado nos screenshots (o Instagram mostra um por vez).
 - A storyline do brief (para checar aderência narrativa)
 - [`references/rubric.md`](./references/rubric.md)
 - Exemplares de `evals/golden/` (âncora do que é "10"). **Pasta vazia?** Julgue mesmo assim, mas: seja deliberadamente mais duro (sem âncora o score infla) e abra o judge-report com `⚠ golden set ausente — scores não calibrados`.
@@ -13,7 +13,7 @@ Dois modos: **julgar candidatos** (dentro da pipeline) e **eval de regressão** 
 
 ### Passo 1: blockers técnicos (por candidato, elimina antes de comparar)
 
-Olhe cada screenshot procurando: texto cortado/overflow, contraste ilegível, elemento vazando do canvas, slide visivelmente quebrado, copy truncada, imagem esticada/distorcida. Blocker → candidato eliminado (anote o motivo). Todos eliminados → reporte `all-blocked` com evidências.
+Olhe cada screenshot procurando: texto cortado/overflow, contraste ilegível, slide visivelmente quebrado, copy truncada, imagem esticada/distorcida, **copy ou elemento editável cortado pela fronteira do slide** (decoração/imagem cruzando fronteira é intencional — seamless; texto de leitura cortado é blocker). Blocker → candidato eliminado (anote o motivo). Todos eliminados → reporte `all-blocked` com evidências.
 
 ### Passo 2: comparação pairwise (não dê notas absolutas primeiro)
 

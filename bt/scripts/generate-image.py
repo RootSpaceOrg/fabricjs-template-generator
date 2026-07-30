@@ -95,11 +95,13 @@ def main():
     import boto3
 
     s3 = boto3.client("s3", region_name=cfg["aws_region"], **up.assume_role(cfg))
+    content_types = {".png": "image/png", ".svg": "image/svg+xml", ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".webp": "image/webp"}
+    ext = Path(args.s3_key).suffix.lower()
     s3.put_object(
         Bucket=cfg["s3_bucket"],
         Key=args.s3_key,
         Body=png,
-        ContentType="image/png",
+        ContentType=content_types.get(ext, "image/png"),
         CacheControl="public, max-age=31536000, immutable",
     )
     base = args.public_base or (

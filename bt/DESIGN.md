@@ -1,8 +1,46 @@
 # bt-design — Um candidato de design
 
-Você é UM de N designers competindo. Recebe: `brief.md` + uma **família estética atribuída** + (opcional) referência visual. Entrega em `artifacts/bt/<slug>/candidates/<X>/`: `template.html`, `screenshots/`, `design-notes.md`.
+Você é UM de N designers competindo. Recebe: `brief.md` + uma **família estética atribuída** + (opcional) referência visual. Entrega em `artifacts/bt/<slug>/candidates/<X>/`: `strip.html`, `template.html` (fatiado), `strip.png`, `screenshots/`, `design-notes.md`.
 
 Você decide direção de arte E executa — sem handoff. Desenhe a MELHOR peça possível dentro da sua família; o juiz compara depois.
+
+## Autoria panorâmica (seamless) — a peça é UMA fita, não N cartões
+
+Carrossel profissional é desenhado como **um canvas contínuo de N×1080 px** e fatiado depois — é isso que faz elementos "continuarem" de um slide pro outro e mata o cheiro de template. Você autora `strip.html`:
+
+```html
+<div class="strip" data-slides="N" data-slide-width="1080" data-slide-height="1350"
+     style="position:relative;width:<N*1080>px;height:1350px;overflow:hidden">
+  <!-- filhos DIRETOS, todos position:absolute com left/top INLINE em px
+       (coordenadas globais da fita — left pode passar de 1080) -->
+</div>
+```
+
+**Com o que construir decoração (nesta ordem — ver [`references/assets/README.md`](./references/assets/README.md)):**
+1. CSS puro: bloco de cor, arco via `border-radius`, círculo, diagonal via `transform: rotate`, linha reta, tipografia gigante.
+2. Biblioteca de SVGs (`bt/references/assets/`): onda, rabisco, blob, contornos, pontos — recolorir copiando o arquivo e trocando o hex; opacity/rotate/escala via CSS no `<img>`.
+3. Imagem gerada: só para textura/elemento que nem CSS nem a biblioteca entregam.
+Nunca invente SVG inline na hora. Asset que faltou → anote em design-notes.md.
+
+**Dispositivos de continuidade (use 2–3 por peça, escolha os que servem a família estética):**
+- **Foto bleed**: imagem que termina ~30–60% dentro do slide seguinte.
+- **Tipografia atravessada**: palavra gigante decorativa (≥300px, baixa opacidade ou outline) cruzando 2–3 slides.
+- **Fio condutor**: linha/onda/traço contínuo que percorre a fita inteira na mesma altura.
+- **Bloco de cor que vira**: fundo que muda de cor exatamente na fronteira, ou forma (arco, diagonal) que completa no slide seguinte.
+- **Objeto na fronteira**: número, badge ou forma sentado exatamente sobre o corte (metade em cada slide).
+
+**Zonas de segurança (regra dura):**
+- **Copy e elementos editáveis** (títulos, corpo, CTA, slots de logo/foto): inteiramente dentro do próprio slide, a ≥60px das fronteiras laterais. O Instagram mostra 1 slide por vez — cada slide precisa funcionar sozinho; quem cruza fronteira é só decoração e imagem.
+- Elemento que cruza fronteira é **estático por natureza** (o marker não o torna editável).
+- O slide 1 é a capa do feed: precisa parar o scroll MESMO cortado da fita.
+
+**Fatiamento (determinístico — nunca fatie de cabeça):**
+
+```bash
+node bt/scripts/slice-strip.js candidates/<X>/strip.html candidates/<X>/
+```
+
+Emite `template.html` (sections no contrato do converter; elemento de fronteira aparece nos dois slides com offsets certos) + `strip.png` (a fita inteira, que o juiz usa para julgar continuidade). Depois renderize os slides fatiados com `render-html-screenshots.js` normal.
 
 ## Contrato técnico (inviolável — é o que garante a conversão Fabric)
 
@@ -28,13 +66,13 @@ Leia antes de codificar: [`skills/_shared/HTML_TECHNICAL_SPEC.md`](../skills/_sh
 
 Com referência visual: herde paleta/tipografia/vocabulário editorial dela; NUNCA herde logo, fotos específicas, handles, selos, métricas de UI de outra marca.
 
-## Execução — 3 renders obrigatórios
+## Execução — 3 renders obrigatórios (sempre sobre a FITA)
 
-Protocolo completo: [`../DESIGN_PRINCIPLES.md`](../DESIGN_PRINCIPLES.md). Render via `node scripts/render-html-screenshots.js`.
+Protocolo base: [`../DESIGN_PRINCIPLES.md`](../DESIGN_PRINCIPLES.md), aplicado ao `strip.html`. A cada passo: fatie (`slice-strip.js`) e olhe **os dois** — `strip.png` (continuidade) e os slides fatiados (cada um sozinho).
 
-1. **Low-fi**: estrutura + copy real + caixas cinzas + 1 família neutra. Check: hierarquia instantânea, grade implícita, margem ≥60px, capa/miolo/CTA visualmente distintos.
-2. **Mid-fi**: paleta + tipografia + imagens + elementos editoriais. Check: contraste WCAG AA, paleta consistente, **zero AI tells** (tudo centralizado, card-spam, sombra genérica, gradiente arco-íris), 1 movimento memorável.
-3. **High-fi**: pesos finos, tracking negativo em display grande, ritmo de espaçamento (8/16/24/48), opacidades tonais em secundários. Entrega `template.html` + `screenshots/slide-N.png` finais.
+1. **Low-fi**: estrutura da fita + copy real + caixas cinzas + onde cada dispositivo de continuidade corre. Check: hierarquia instantânea por slide, fronteiras com continuidade intencional (não corte acidental de texto!), margem ≥60px, capa funciona isolada.
+2. **Mid-fi**: paleta + tipografia + imagens + dispositivos de continuidade de verdade. Check: contraste AA, paleta consistente, **zero AI tells** (tudo centralizado, card-spam, sombra genérica), a fita lê como UMA peça.
+3. **High-fi**: pesos finos, tracking negativo em display grande, ritmo de espaçamento (8/16/24/48), opacidades tonais. Entrega final: `strip.html` + `template.html` fatiado + `strip.png` + `screenshots/slide-N.png`.
 
 1 retry por passo se o auto-check falhar; depois anote em design-notes.md e siga.
 
@@ -45,6 +83,7 @@ Protocolo completo: [`../DESIGN_PRINCIPLES.md`](../DESIGN_PRINCIPLES.md). Render
 - Cada slide tem UMA ideia visual clara a serviço do beat narrativo?
 - Tensão visual: assimetria intencional, escala ousada em 1 elemento por slide, respiro de verdade?
 - Consistência: os N slides são claramente da mesma peça (paleta, tipo, vocabulário)?
+- Continuidade: colocando os slides lado a lado, a fita fecha? Os dispositivos de continuidade convidam o swipe (quero ver o resto da foto/palavra)?
 
 ## Não faça
 

@@ -26,7 +26,7 @@ Siga [`CONTEXT.md`](./CONTEXT.md). Produz `artifacts/bt/<slug>/brief.md` com: do
 Spawne **N sub-agents em paralelo** (uma única mensagem, N chamadas Agent). Cada um:
 
 - Recebe: o `brief.md` completo + [`DESIGN.md`](./DESIGN.md) como instrução + **uma família estética distinta** (você atribui — 3 famílias diferentes de `skills/gp2-html-designer/references/aesthetic-families.md`, coerentes com o tom do brief; com referência visual anexada, os 3 herdam a referência mas variam a interpretação).
-- Produz: `artifacts/bt/<slug>/candidates/<A|B|C>/template.html` + `screenshots/` + `design-notes.md`.
+- Produz: `artifacts/bt/<slug>/candidates/<A|B|C>/strip.html` (fita panorâmica) + `template.html` (fatiado via `slice-strip.js`) + `strip.png` + `screenshots/` + `design-notes.md`.
 
 Candidato que falhar não derruba o batch — o judge decide entre os que entregaram (≥1 obrigatório).
 
