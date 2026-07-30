@@ -36,9 +36,13 @@ Spawne **1 sub-agent em contexto limpo** com [`JUDGE.md`](./JUDGE.md). Ele receb
 
 - Todos os candidatos com blocker insanável → 1 nova rodada de candidatos (máx 1); persiste → pare e reporte com evidências.
 
-### 5. Revisão do vencedor
+### 5. Barra de publicação + revisão do vencedor
 
-O candidato vencedor aplica os top-3 fixes do judge (1 passada, re-render, screenshots finais). Não re-julgue — fixes são pontuais, não redesign.
+**Vencer não basta — tem que passar a barra: total ≥30/50 E craft ≥6.**
+
+- **Passou a barra** → aplica os top-3 fixes do judge (1 passada, re-render, screenshots finais). Não re-julgue — fixes são pontuais.
+- **Não passou** → os 3 candidatos eram medíocres; "o menos pior" NUNCA é publicado. Rode **1 rodada de redesign**: novos candidatos com os defeitos apontados pelo judge como restrições explícitas no prompt (ex: "fita monocromática reprovada — ≥2 mudanças de fundo obrigatórias") e famílias estéticas diferentes das da rodada 1. Re-julgue.
+- **Segunda rodada também abaixo da barra** → pare e reporte com o judge-report + strips das duas rodadas. Publicar peça fraca custa mais caro que não publicar.
 
 ### 6. Finalização e publicação
 
@@ -61,7 +65,7 @@ Siga [`FINALIZE.md`](./FINALIZE.md): imagens geradas → marcação → convers�
 ## Regras do orquestrador
 
 - Nunca pule o judge, mesmo com N=1 (com 1 candidato ele vira gate de qualidade + blockers técnicos).
-- Nunca publique candidato reprovado ou sem os fixes aplicados.
+- Nunca publique candidato reprovado, abaixo da barra (total <30 ou craft <6) ou sem os fixes aplicados.
 - Storyline sem os 5 beats → volte ao passo 2, não siga.
 - Após publicar, anexe o score do vencedor em `bt/evals/scores.jsonl` (ver `evals/README.md`).
 - Mudou qualquer arquivo de `bt/`? Rode a regressão de `evals/` antes do próximo batch de produção.

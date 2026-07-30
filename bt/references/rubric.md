@@ -7,7 +7,7 @@ O slide 1 pararia o scroll de quem NÃO segue a conta? Headline 5–8 palavras c
 - 3: capa que qualquer nicho podia usar · 6: para o público do nicho · 9: para qualquer um.
 
 ## 2. craft (execução visual)
-Hierarquia instantânea, grade implícita, tipografia com personalidade e pesos certos, respiro real (margem ≥60px), contraste AA, micro-alinhamentos, ritmo de espaçamento. **AI tells descontam direto**: tudo centralizado, card-spam, sombras genéricas, gradientes decorativos sem função, densidade uniforme slide a slide.
+Hierarquia instantânea, grade implícita, tipografia com personalidade e pesos certos, respiro real (margem ≥60px), contraste AA, micro-alinhamentos, ritmo de espaçamento, **ritmo tonal na fita (≥2 mudanças de fundo — fita monocromática trava craft em ≤5)**. **AI tells descontam direto**: tudo centralizado, card-spam, sombras genéricas, gradientes decorativos sem função, densidade uniforme slide a slide, slides com >35% de área morta, decoração que parece UI de app (pills/toggles sem função).
 - 3: template de Canva · 6: limpo e correto · 9: parece estúdio.
 
 ## 3. narrativa (aderência à storyline)

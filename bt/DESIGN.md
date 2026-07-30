@@ -29,6 +29,10 @@ Nunca invente SVG inline na hora. Asset que faltou → anote em design-notes.md.
 - **Bloco de cor que vira**: fundo que muda de cor exatamente na fronteira, ou forma (arco, diagonal) que completa no slide seguinte.
 - **Objeto na fronteira**: número, badge ou forma sentado exatamente sobre o corte (metade em cada slide).
 
+**Ritmo tonal da fita (regra dura):** a fita precisa de **≥2 mudanças de fundo** ao longo dos N slides (ex: capa dark → miolo claro → CTA brand). Fita inteira no mesmo fundo é o defeito nº 1 de peça amadora — pesada, monótona, ilegível. Use o dispositivo "bloco de cor que vira na fronteira" para fazer a transição ser parte do design, não uma quebra. Continuidade ≠ monocromia: o fio condutor (linha, tipografia atravessada) é o que costura fundos diferentes numa peça só.
+
+**Densidade (regra dura):** nenhum slide com mais de ~35% de área visualmente morta. Slide de respiro é intencional e composto (1 elemento âncora + espaço negativo trabalhando); slide vazio é preguiça. Elementos decorativos que parecem UI de app (pills, toggles, botões sem função) são proibidos — decoração é editorial, não interface.
+
 **Zonas de segurança (regra dura):**
 - **Copy e elementos editáveis** (títulos, corpo, CTA, slots de logo/foto): inteiramente dentro do próprio slide, a ≥60px das fronteiras laterais. O Instagram mostra 1 slide por vez — cada slide precisa funcionar sozinho; quem cruza fronteira é só decoração e imagem.
 - Elemento que cruza fronteira é **estático por natureza** (o marker não o torna editável).
@@ -60,7 +64,7 @@ Leia antes de codificar: [`skills/_shared/HTML_TECHNICAL_SPEC.md`](../skills/_sh
 | 1,N | logo | `brandLogo` slot | posição extremidade |
 
    - `generate` = imagem sob medida (hero/capa, conceito central). Durante o design use picsum como stand-in; o finalizador troca.
-   - Slots (`brandLogo`, `professionalPhoto`, `instagramProfilePicture`) são preenchidos pelo usuário — só posicione.
+   - Slots (`brandLogo`, `professionalPhoto`, `instagramProfilePicture`) são preenchidos pelo usuário — só posicione, usando **exclusivamente os placeholders canônicos** de [`skills/gp2-html-designer/references/placeholders/`](../skills/gp2-html-designer/references/placeholders/) (`professional-photo-1/2.b64.txt` são cutouts de foto REAL — jaleco/blazer; `logo-quadrada.b64.txt` para logo; snippet HTML pronto no README da pasta). **REGRA DURA: nunca desenhe, ilustre ou gere pessoa/avatar/logo você mesmo** — avatar ilustrado no lugar de professionalPhoto é violação eliminatória no judge. O placeholder some em produção (o runtime troca pela foto do usuário via `imageType`).
 5. **Registro visual das imagens**: 1 frase de estilo (luz, mood, contraste) — nunca assunto. Herdado pelos prompts de geração e pelas descrições do marker.
 6. **Mapeie o que recebe `data-variable`** (fundos brand, acentos, CTA) em design-notes.md — o marker confirma depois.
 

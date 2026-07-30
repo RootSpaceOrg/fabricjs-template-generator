@@ -13,7 +13,22 @@ Dois modos: **julgar candidatos** (dentro da pipeline) e **eval de regressão** 
 
 ### Passo 1: blockers técnicos (por candidato, elimina antes de comparar)
 
-Olhe cada screenshot procurando: texto cortado/overflow, contraste ilegível, slide visivelmente quebrado, copy truncada, imagem esticada/distorcida, **copy ou elemento editável cortado pela fronteira do slide** (decoração/imagem cruzando fronteira é intencional — seamless; texto de leitura cortado é blocker). Blocker → candidato eliminado (anote o motivo). Todos eliminados → reporte `all-blocked` com evidências.
+Olhe cada screenshot procurando: texto cortado/overflow, contraste ilegível, slide visivelmente quebrado, copy truncada, imagem esticada/distorcida, **copy ou elemento editável cortado pela fronteira do slide** (decoração/imagem cruzando fronteira é intencional — seamless; texto de leitura cortado é blocker), **pessoa/avatar ilustrado ou logo desenhado onde deveria haver slot com placeholder de foto real** (violação do contrato de slots). Blocker → candidato eliminado (anote o motivo). Todos eliminados → reporte `all-blocked` com evidências.
+
+### Passo 1b: checklist de regras duras (por candidato, resposta sim/não — sem julgamento)
+
+Responda LITERALMENTE cada item olhando os screenshots; violação → efeito indicado:
+
+| # | Regra | Efeito se violada |
+|---|-------|--------------------|
+| R1 | Pessoa/avatar ILUSTRADO onde deveria haver slot de foto (professionalPhoto é cutout de foto real) | eliminado |
+| R2 | Texto de leitura cortado pela fronteira ou pelo canvas | eliminado |
+| R3 | Fita monocromática (menos de 2 mudanças de fundo ao longo dos slides) | craft máximo = 5 |
+| R4 | Algum slide com >35% de área visualmente morta | craft máximo = 6 |
+| R5 | Decoração que imita UI de app (pill, toggle, botão sem função) | craft máximo = 6 |
+| R6 | Contraste ilegível em qualquer copy | eliminado |
+
+O resultado (R1–R6 por candidato) entra no judge-report ANTES dos scores. Regra dura violada não é "compensável" por outros méritos — o teto/eliminação se aplica mesmo que o resto seja excelente.
 
 ### Passo 2: comparação pairwise (não dê notas absolutas primeiro)
 
@@ -21,7 +36,7 @@ Compare A vs B, vencedor vs C — **duas vezes cada par, trocando a ordem de apr
 
 ### Passo 3: score do vencedor
 
-Pontue o vencedor na rubrica (1–10 por eixo) contra os exemplares do golden set — "o slide 1 disso para o scroll tanto quanto o exemplar X?". Score honesto: 6 é "publicável", 8 é "nível estúdio", 10 é raro.
+Pontue o vencedor na rubrica (1–10 por eixo) contra os exemplares do golden set. **Protocolo de calibração obrigatório:** para cada eixo, nomeie o exemplar do golden mais próximo e responda "por que este candidato NÃO está no nível dele?" — a resposta é a evidência do score. Adjetivo sem comparação ("premium", "elegante") não é evidência. Aplique os tetos do passo 1b. Score honesto: 6 é "publicável", 8 é "nível estúdio", 10 é raro — e um candidato com regra dura violada nunca "parece premium".
 
 ### Passo 4: top-3 fixes
 
@@ -31,6 +46,11 @@ Os 3 ajustes de maior impacto no vencedor (pontuais e executáveis em 1 passada 
 
 ```markdown
 # Judge — <slug>
+Golden set: <N exemplares usados | ⚠ ausente — scores não calibrados>
+## Regras duras (R1–R6)
+| Candidato | R1 avatar | R2 corte | R3 monocromia | R4 área morta | R5 UI-decor | R6 contraste |
+|-----------|-----------|----------|----------------|----------------|--------------|---------------|
+| A | ok/VIOLA | ... | ... | ... | ... | ... |
 Eliminados: <X: motivo | nenhum>
 Pairwise: A vs B → <?> (ordem 1), <?> (ordem 2) · <vencedor> vs C → ...
 ## Vencedor: <X>
