@@ -52,7 +52,17 @@ GANCHO → PROBLEMA → EXPLICAÇÃO → SOLUÇÃO → [RECAP] → CTA
 | Recap | penúltimo, se ≥7 slides | takeaway salvável em 1 frase |
 | CTA | último | específico e conectado ao valor ("Salve para consultar antes da 1ª sessão" ✅ / "link na bio" ❌) |
 
-**Regras:** 1 carrossel = 1 ideia. Todo slide termina em open loop puxando o próximo. Beat não se mistura. Etapa do funil dosa os beats (topo = gancho forte, fundo = solução densa), nunca reordena. 6–13 slides (8–12 educação profunda, 5–6 peça rápida). 1–2 frases por slide além da headline. Métrica servida: swipe-through ≥70%.
+**Princípio herói/guia (universal, todo arco):** o LEITOR é o herói da história; o profissional é o guia que dá o plano. A copy nunca posiciona o serviço como salvador ("só eu resolvo") — posiciona como caminho. Além de tom melhor, é o que mantém a peça dentro do compliance (sem autopromoção, sem promessa).
+
+**Arcos alternativos sancionados** (a espinha acima é o default; escolha um destes quando servir melhor a etapa — nunca invente um quarto):
+
+| Arco | Estrutura | Quando usar |
+|------|-----------|-------------|
+| `antes-depois-ponte` | onde a pessoa está → onde quer chegar → o serviço como PONTE | fundo/prova: mostra resultado sem prometer resultado (o caminho é a oferta) — o arco mais seguro para compliance de saúde |
+| `premissa-provocacao-prova` | ideia forte → provoca a lógica comum → prova com dado/exemplo/metáfora | meio/posicionamento: autoridade com ponto de vista |
+| `conflito-virada-licao` | dilema real → quebra de expectativa → aprendizado | retenção/humanização (equivale ao vulnerable-story da taxonomia) |
+
+**Regras (valem para QUALQUER arco):** 1 carrossel = 1 ideia. Todo slide termina em open loop puxando o próximo. Beat não se mistura. Etapa do funil dosa os beats, nunca reordena o arco escolhido. 6–13 slides (8–12 educação profunda, 5–6 peça rápida). 1–2 frases por slide além da headline. Herói/guia sempre. Declare o arco escolhido na storyline e no relatório. Métrica servida: swipe-through ≥70%.
 
 ## 4. Doutrina de design (entra no brief)
 

@@ -1,6 +1,6 @@
 # Golden set — guia de curadoria (30 min do Gustavo)
 
-Screenshots 1080×1350 (ou proporção 4:5), nomeados `<familia>-<n>.png` (ex: `editorial-clinico-1.png`). Alvo: 10–20 imagens. **Só humano adiciona/remove aqui.**
+Screenshots 1080×1350 (ou proporção 4:5), nomeados `<familia>-<eixo-que-ancora>-<n>.<ext>` (ex: `editorial-clinico-scrollstop-1.png`, `premium-minimal-continuidade-1.jpg`). Alvo: 10–20 imagens. **Só humano adiciona/remove aqui** (aprovação do Gustavo; o agente prepara candidatos em `_staging/`).
 
 ## De onde tirar (em ordem de facilidade)
 

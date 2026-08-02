@@ -28,6 +28,7 @@ Nunca invente SVG inline na hora. Asset que faltou → anote em design-notes.md.
 - **Fio condutor**: linha/onda/traço contínuo que percorre a fita inteira na mesma altura.
 - **Bloco de cor que vira**: fundo que muda de cor exatamente na fronteira, ou forma (arco, diagonal) que completa no slide seguinte.
 - **Objeto na fronteira**: número, badge ou forma sentado exatamente sobre o corte (metade em cada slide).
+- **Card-peek**: conteúdo em cards com a beirada do card seguinte visível na fronteira do slide — o vislumbre puxa o swipe sem exigir foto contínua (ver `evals/golden/premium-minimal-continuidade-2.png`).
 
 **Ritmo tonal da fita (regra dura):** a fita precisa de **≥2 mudanças de fundo** ao longo dos N slides (ex: capa dark → miolo claro → CTA brand). Fita inteira no mesmo fundo é o defeito nº 1 de peça amadora — pesada, monótona, ilegível. Use o dispositivo "bloco de cor que vira na fronteira" para fazer a transição ser parte do design, não uma quebra. Continuidade ≠ monocromia: o fio condutor (linha, tipografia atravessada) é o que costura fundos diferentes numa peça só.
 
