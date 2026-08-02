@@ -82,6 +82,15 @@ Quando qualquer arquivo de `bt/` muda, antes do próximo batch de produção:
 
 4. Compare com as últimas linhas dos mesmos prompt_ids: média caiu ≥3 pontos → a mudança regrediu; reverta ou corrija antes de produzir.
 
+## Modo 3 — Verificação de fidelidade (pós-swap de imagens ou pós-conversão)
+
+Entrada: strip/screenshots APROVADOS + strip/screenshots ATUAIS. Pergunta única: **é a mesma peça?** Cheque R1–R6 de novo + os 5 itens do gate de fidelidade do FINALIZE. Saída: `FIEL` ou lista de divergências (slide, o que mudou). Sem re-pontuar, sem re-julgar mérito — só fidelidade.
+
+## Integridade do relatório (obrigatório)
+
+- O judge-report descreve o estado **no momento do julgamento** — é imutável. Fixes aplicados depois entram no relatório do FINALIZE, nunca editados retroativamente na tabela R1–R6 (dizer "ok — corrigido depois" numa linha de verificação é falsificar a evidência; se violou, a tabela diz VIOLA e o fix é registrado adiante).
+- Toda afirmação da tabela R1–R6 deve ser verificável no screenshot correspondente — cite o slide.
+
 ## Vieses a policiar em si mesmo
 
 - **Auto-preferência**: você tende a preferir o que soa como você escreveria. A rubrica e os exemplares mandam, não seu gosto default.

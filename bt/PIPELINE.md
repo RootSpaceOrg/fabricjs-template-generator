@@ -64,6 +64,8 @@ Siga [`FINALIZE.md`](./FINALIZE.md): imagens geradas → marcação → convers�
 
 ## Regras do orquestrador
 
+- **Ambiente é mecânico, não narrativo**: o ambiente pedido pelo usuário vira `--env <x>` literal em TODO comando (resolve_tenant, generate-image, uploader) e aparece no cabeçalho do relatório. Pedido "dev" + qualquer comando sem `--env dev` = bug seu. NUNCA suba pra prod quando o pedido diz dev — na dúvida, dev.
+
 - Nunca pule o judge, mesmo com N=1 (com 1 candidato ele vira gate de qualidade + blockers técnicos).
 - Nunca publique candidato reprovado, abaixo da barra (total <30 ou craft <6) ou sem os fixes aplicados.
 - Storyline sem os 5 beats → volte ao passo 2, não siga.
