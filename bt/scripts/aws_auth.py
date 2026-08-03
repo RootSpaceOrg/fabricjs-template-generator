@@ -52,9 +52,12 @@ ROLE_ARN_BY_ENV = {
 PROFILE_BY_ENV = {"prod": "mkt-platform-prod", "dev": "mkt-platform-dev"}
 
 # Diretorio dos .env de credenciais (mesmo default do template-generator).
-SECRETS_DIR = Path(
-    os.environ.get("GP2_SECRETS_DIR", "/root/.openclaw/workspace/secrets")
-)
+# Caminho neutro (serve qualquer runtime: OpenClaw, Hermes, local).
+# Fallback legado: diretório antigo do OpenClaw, se o neutro não existir.
+_default = Path("/root/secrets")
+if not _default.exists():
+    _default = Path("/root/.openclaw/workspace/secrets")
+SECRETS_DIR = Path(os.environ.get("GP2_SECRETS_DIR", _default))
 
 
 def _aws_env_path(env: str) -> Path:

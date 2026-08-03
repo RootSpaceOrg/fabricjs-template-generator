@@ -18,11 +18,12 @@ from typing import Any
 import boto3
 
 # Diretório onde estão os arquivos .env de credenciais AWS.
-# Default (legado openclaw): /root/.openclaw/workspace/secrets
-# Em Windows ou em VPS com layout diferente, defina GP2_SECRETS_DIR.
-SECRETS_DIR = Path(
-    os.environ.get("GP2_SECRETS_DIR", "/root/.openclaw/workspace/secrets")
-)
+# Default: /root/secrets (neutro — serve OpenClaw, Hermes ou local);
+# fallback legado: /root/.openclaw/workspace/secrets. Override: GP2_SECRETS_DIR.
+_default_secrets = Path("/root/secrets")
+if not _default_secrets.exists():
+    _default_secrets = Path("/root/.openclaw/workspace/secrets")
+SECRETS_DIR = Path(os.environ.get("GP2_SECRETS_DIR", _default_secrets))
 
 ENV_CONFIG = {
     "dev": {
