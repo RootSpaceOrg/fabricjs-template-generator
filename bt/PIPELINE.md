@@ -98,6 +98,7 @@ Siga [`FINALIZE.md`](./FINALIZE.md): imagens geradas → marcação → convers�
 
 ## Regras do orquestrador
 
+- **Conhecimento é estado da fábrica — sincronize via git**: no INÍCIO de toda run/certificação, `git pull --rebase`. Ao FINAL (e sempre que escrever dossiê, lesson ou score), commit + push **apenas dos caminhos de conhecimento**: `bt/knowledge/`, `bt/evals/lessons.md`, `bt/evals/scores.jsonl`, `bt/styles/*/lessons.md` e artefatos de certificação de estilo (`bt/styles/<slug>/`). Mensagem curta (ex: `knowledge: dossiê laserterapia atualizado`). NUNCA commite `artifacts/` nem mudanças em regras/skills sem pedido do Gustavo. Conflito em arquivo append-only (lessons/scores) → resolva mantendo as duas linhas. Sem isso, cada runtime (OpenClaw, Hermes) acumula conhecimento divergente no próprio clone.
 - **Ambiente é mecânico, não narrativo**: o ambiente pedido pelo usuário vira `--env <x>` literal em TODO comando (resolve_tenant, generate-image, uploader) e aparece no cabeçalho do relatório. Pedido "dev" + qualquer comando sem `--env dev` = bug seu. NUNCA suba pra prod quando o pedido diz dev — na dúvida, dev.
 
 - Nunca pule o judge, mesmo com N=1 (com 1 candidato ele vira gate de qualidade + blockers técnicos).
