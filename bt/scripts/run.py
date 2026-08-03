@@ -61,10 +61,32 @@ FORBIDDEN_CSS = [
 ]
 
 
+PLACEHOLDERS_DIR = REPO / "skills" / "gp2-html-designer" / "references" / "placeholders"
+
+
+def _canonical_b64_signatures() -> list[str]:
+    sigs = []
+    for f in PLACEHOLDERS_DIR.glob("professional-photo-*.b64.txt"):
+        try:
+            sigs.append(f.read_text(encoding="utf-8", errors="replace").strip()[:64])
+        except OSError:
+            pass
+    return sigs
+
+
 def lint_strip(strip: Path) -> list[str]:
     """Regras duras do DESIGN.md verificáveis por código (contrato + zonas de segurança)."""
     html = strip.read_text(encoding="utf-8", errors="replace")
     errs = []
+    # R1 mecânico: slot de professionalPhoto exige o b64 CANÔNICO embutido —
+    # avatar desenhado/gerado no lugar é a violação mais reincidente da pipeline.
+    if "professionalPhoto" in html:
+        sigs = _canonical_b64_signatures()
+        if sigs and not any(s in html for s in sigs):
+            errs.append(
+                "slot professionalPhoto presente mas SEM o placeholder canônico embutido "
+                "(professional-photo-1/2.b64.txt) — pessoa ilustrada/gerada no slot é violação R1"
+            )
     for f in FORBIDDEN_CSS:
         if f in html:
             errs.append(f"CSS proibido pelo contrato: `{f.strip()}`")
