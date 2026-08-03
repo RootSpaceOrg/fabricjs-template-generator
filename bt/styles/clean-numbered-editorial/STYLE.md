@@ -37,12 +37,24 @@ Listicle de especialista em fundo claro: **um erro/ponto numerado por slide**, a
 
 Item idêntico repetido é a assinatura nº 1 de conteúdo IA — a referência varia a composição a cada slide. O blueprint define **3 variantes de layout** e os itens rotacionam entre elas (nunca a mesma variante em slides adjacentes; numa fita de 4 itens, use as 3):
 
-| | Variante A | Variante B | Variante C |
-|--|-----------|-----------|-----------|
-| `[N]` + headline | topo-esquerda | topo-direita, alinhado à direita | `[N]` GIGANTE (~200px) à esquerda, headline ao lado |
-| Watermark | horizontal atrás do centro | **vertical** na lateral | ausente (o número gigante ocupa o papel) |
-| Evidência | foto P&B pequena rotacionada (-3°..+4°) na base oposta à headline | foto maior (~45% largura) sangrando na borda | ícone-objeto ou bloco destacado no acento |
-| Body | abaixo da headline | sobre a foto (caixa branca) | coluna direita |
+**Anchors por variante (px, canvas 1080×1350 — desvio máximo ±5%; isto é contrato, não sugestão):**
+
+**Variante A — editorial esquerda** (o layout atual)
+- `[N]`: x=90 y=80, 52px · headline: x=90 y=150, largura 620, alinhada à esquerda
+- watermark horizontal: y=430 (centro vertical da palavra), 170px, NUNCA acima de y=380 (folga ≥40px da headline)
+- body: x=90 y=560, largura 520 · evidência: foto P&B x=600 y=760, ~380px, rotação +2..4° · tag preta: x=110 y=800
+
+**Variante B — invertida à direita**
+- `[N]`: x=940 y=80 · headline: alinhada à DIREITA, margem direita 90, y=150, largura 620
+- watermark VERTICAL: rotacionada -90°, encostada na lateral esquerda (x≈40), ocupando y=200..1150
+- evidência: foto GRANDE ~500px, SANGRANDO a borda esquerda (x=-60), y=620 · body: caixa branca sobre a foto, x=520 y=980, largura 460 · tag preta sobre o canto da foto
+
+**Variante C — número ostentatório**
+- `[N]` GIGANTE: 220px no acento, x=70 y=280 · headline: ao lado, x=360 y=330, largura 600
+- SEM watermark (o número ocupa o papel) · body: x=360 y=560, largura 560
+- evidência: ícone-objeto OU bloco no acento com palavra-chave, x=680 y=880, ~300px
+
+**Regra anti-sobreposição (dura):** watermark nunca intercepta a caixa de headline nem de body (folga mínima 40px); texto nunca sobre texto. Violação = R2, judge QA reprova o slide.
 
 - Elementos comuns a todas (identidade): `[N]` no acento, tipografia, carimbos (máx 2), paleta.
 - 1 item do meio pode usar o **respiro invertido** (fundo do acento, texto branco) — conta como variante própria.

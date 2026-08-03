@@ -47,7 +47,7 @@ Falhou algo estrutural num estilo certificado → é bug do estilo: registre em 
 
 1. Nasce de uma referência aprovada pelo Gustavo (`reference.png`) — pin, peça de agência, ou vencedor excepcional da pipeline livre.
 2. Escrever o STYLE.md (tokens exatos, receitas por papel, slots com limites).
-3. Produzir o `strip-blueprint.html` no OpenClaw com loop de render (3 passos do DESIGN.md), com copy de exemplo real.
+3. Produzir o `strip-blueprint.html` com loop de render, **construção incremental por variante**: monte CADA variante de slide como arquivo isolado primeiro (`variant-A.html`, `variant-B.html`...), renderize, confira contra os anchors do STYLE.md (posições ±5%, zero sobreposição de texto) e SÓ depois monte a fita completa com as variantes aprovadas. Nunca desenhe a fita inteira de uma vez — é assim que as variantes colapsam num layout só.
 4. Rodar o corredor inteiro com a copy de exemplo: slice → marker (só descrições) → converter → `validate-slides` exit 0 → **abrir na plataforma e comparar com os screenshots** (gate de fidelidade) → registrar tudo em `certification.md`. **A instância de certificação deve exercitar TODAS as variantes de layout do blueprint** (cada variante de item aparece ≥1 vez na fita certificada) — variante não exercitada no corredor não está certificada e não pode ser sorteada em produção.
 5. **Gustavo aprova visualmente** o resultado na plataforma contra a `reference.png`. Só então `status: certificado` no STYLE.md.
 6. **Salvar e commitar.** O que fica na pasta do estilo após aprovação (o resto da run de certificação é descartável):
