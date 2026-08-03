@@ -37,8 +37,11 @@ def main():
     resolve = json.loads((d / "resolve.json").read_text(encoding="utf-8"))
     if not resolve.get("ok"):
         sys.exit("resolve.json com ok=false — não há tenant/business_type válidos")
-    if state.get("stage") not in ("upload", "done"):
-        sys.exit(f"run está em '{state.get('stage')}' — upload só no estágio upload (rode advance até lá)")
+    if state.get("stage") not in ("finalize", "upload", "done"):
+        sys.exit(
+            f"run está em '{state.get('stage')}' — upload permitido só em finalize "
+            "(upload de teste, necessário pro gate de fidelidade no editor) ou upload (final)"
+        )
 
     bt_value = (resolve.get("matchedBusinessType") or {}).get("value")
     if not bt_value:

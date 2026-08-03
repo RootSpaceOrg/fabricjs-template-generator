@@ -65,7 +65,7 @@ node scripts/validate-slides.js artifacts/bt/<slug>/output/   # exige exit 0
 
 ## 3b. Gate de fidelidade visual (pós-conversão — o gate que faltava no run 2)
 
-Depois de converter e validar, renderize o resultado REAL: abra o template na plataforma (fluxo do `save-template-in-editor.js`) e capture screenshot de cada slide como o editor renderiza. Compare lado a lado com os screenshots aprovados pelo judge, slide a slide, verificando literalmente:
+**Ordem correta (resolve o deadlock fidelidade×upload):** o gate precisa do template NO editor — então o upload acontece DENTRO do finalize: rode `bt/scripts/upload.py <slug> --name ... --execute` (permitido no estágio finalize; o template entra `status review`, invisível pro usuário final), abra-o na plataforma (fluxo do `save-template-in-editor.js`) e capture screenshot de cada slide como o editor renderiza. O estágio `upload` do runner vira o fechamento: registrar `template_id` (`run.py set`) e reportar — sem segundo upload. Compare lado a lado com os screenshots aprovados pelo judge, slide a slide, verificando literalmente:
 
 - [ ] Fundo de cada slide na MESMA família tonal (claro continua claro, dark continua dark)?
 - [ ] professionalPhoto/brandLogo presentes e na posição aprovada?
