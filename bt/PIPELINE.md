@@ -48,7 +48,15 @@ Candidato que falhar não derruba o batch — o judge decide entre os que entreg
 
 ### 4. Julgamento
 
-Preferência: **1 sub-agent em contexto limpo** com [`JUDGE.md`](./JUDGE.md), recebendo só screenshots anonimizados (A/B/C) + storyline + rubrica + exemplares. **Fallback (delegação indisponível/falhou 1×):** julgue na própria sessão seguindo o JUDGE.md à risca — abra SOMENTE os screenshots e strip.png (não releia design-notes/HTML dos candidatos) e registre no report `judge: same-session (fallback)`. Julgamento imperfeito e registrado > pipeline morta. Produz `judge-report.md` com: vencedor, scores, blockers técnicos e **top-3 fixes**.
+**Antes de julgar, gere as flags de procedência R1** (determinístico, você mesmo):
+
+```bash
+grep -l "professional-photo-[12]" artifacts/bt/<slug>/candidates/*/template.html
+```
+
+Candidato com slot de pessoa: match = `procedência: canônico`; sem match = `procedência: outro`. Passe a flag por candidato como insumo do judge.
+
+Preferência: **1 sub-agent em contexto limpo** com [`JUDGE.md`](./JUDGE.md), recebendo só screenshots anonimizados (A/B/C) + **flags de procedência R1** + storyline + rubrica + exemplares. **Fallback (delegação indisponível/falhou 1×):** julgue na própria sessão seguindo o JUDGE.md à risca — abra SOMENTE os screenshots e strip.png (não releia design-notes/HTML dos candidatos) e registre no report `judge: same-session (fallback)`. Julgamento imperfeito e registrado > pipeline morta. Produz `judge-report.md` com: vencedor, scores, blockers técnicos e **top-3 fixes**.
 
 - Todos os candidatos com blocker insanável → 1 nova rodada de candidatos (máx 1); persiste → pare e reporte com evidências.
 

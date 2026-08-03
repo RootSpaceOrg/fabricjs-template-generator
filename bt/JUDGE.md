@@ -21,7 +21,7 @@ Responda LITERALMENTE cada item olhando os screenshots; violação → efeito in
 
 | # | Regra | Efeito se violada |
 |---|-------|--------------------|
-| R1 | Pessoa/avatar ILUSTRADO onde deveria haver slot de foto (professionalPhoto é cutout de foto real) | eliminado |
+| R1 | Pessoa/avatar no slot de foto que NÃO é o placeholder canônico — decidido pela **flag de procedência** fornecida pelo orquestrador (grep no template.html por `professional-photo-1/2`), NUNCA pela aparência no screenshot. `procedência: canônico` → R1 ok mesmo que o placeholder pareça ilustração (é asset interno; o runtime troca pela foto real do usuário). `procedência: outro` → eliminado. | eliminado |
 | R2 | Texto de leitura cortado pela fronteira ou pelo canvas | eliminado |
 | R3 | Fita monocromática (menos de 2 mudanças de fundo ao longo dos slides) | craft máximo = 5 |
 | R4 | Algum slide com >35% de área visualmente morta | craft máximo = 6 |
