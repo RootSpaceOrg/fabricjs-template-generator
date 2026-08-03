@@ -33,11 +33,20 @@ Listicle de especialista em fundo claro: **um erro/ponto numerado por slide**, a
 - `instagramProfilePicture` (avatar ~64px) + `instagramName`/`instagramHandle` na base da coluna esquerda.
 - 1 elemento gráfico do acento (círculo/carimbo) meio-cortado pela borda, atrás/ao lado da foto.
 
-### item (miolo — papel repetível 4–8×)
-- `[N]` no acento no topo + headline do erro/ponto UPPERCASE 1–3 linhas.
-- Body 2–4 linhas explicando; 1 trecho pode ganhar fundo do acento (bloco destacado, texto branco).
-- Watermark da palavra-tema atrás.
-- **Evidência visual OBRIGATÓRIA (regra dura)**: 1 por item — imagem gerada (fórmula do slot), foto P&B pequena ou ícone-objeto — ocupando a metade inferior, alternando esq/dir entre slides. Item sem evidência = metade inferior morta = R4; o judge QA reprova.
+### item (miolo — papel repetível 4–8×) — TRÊS VARIANTES, nunca duas iguais adjacentes
+
+Item idêntico repetido é a assinatura nº 1 de conteúdo IA — a referência varia a composição a cada slide. O blueprint define **3 variantes de layout** e os itens rotacionam entre elas (nunca a mesma variante em slides adjacentes; numa fita de 4 itens, use as 3):
+
+| | Variante A | Variante B | Variante C |
+|--|-----------|-----------|-----------|
+| `[N]` + headline | topo-esquerda | topo-direita, alinhado à direita | `[N]` GIGANTE (~200px) à esquerda, headline ao lado |
+| Watermark | horizontal atrás do centro | **vertical** na lateral | ausente (o número gigante ocupa o papel) |
+| Evidência | foto P&B pequena rotacionada (-3°..+4°) na base oposta à headline | foto maior (~45% largura) sangrando na borda | ícone-objeto ou bloco destacado no acento |
+| Body | abaixo da headline | sobre a foto (caixa branca) | coluna direita |
+
+- Elementos comuns a todas (identidade): `[N]` no acento, tipografia, carimbos (máx 2), paleta.
+- 1 item do meio pode usar o **respiro invertido** (fundo do acento, texto branco) — conta como variante própria.
+- **Evidência visual continua OBRIGATÓRIA** em toda variante (R4).
 
 ### cta (último)
 - Fundo do acento full-bleed; recap em 1 frase + pedido único (comentar palavra / salvar / seguir — conforme funil).
