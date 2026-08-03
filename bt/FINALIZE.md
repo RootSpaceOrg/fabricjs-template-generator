@@ -51,7 +51,7 @@ Audite com `scripts/audit-template-markup.py` (máx 2 fixes).
 
 **Nota seamless:** o `template.html` fatiado tem elementos com `left` negativo ou passando de 1080 (decoração/imagem que cruza a fronteira — intencional). O Fabric renderiza clipado pelo canvas, isso é o esperado. Se `validate-slides.js` ou o self-check do converter reprovarem coordenada fora do canvas **em elemento decorativo/imagem**, não "conserte" movendo o elemento (quebra a continuidade) — reporte o caso com o objeto e a regra que reprovou, para decidirmos ajustar a tolerância do validador. Copy/editável fora do canvas é bug de verdade (zona de segurança violada no design).
 
-Rode `skills/gp2-template-converter/` para emitir `output/slide-N.json` + `manifest.json`, **e antes do `center-clippable-images.js`** troque os assets da biblioteca por vetor nativo:
+**A conversão é trabalho SEU, não de um executável** — não existe (ainda) converter em código. Você lê o `template-marked.html` e emite `output/slide-N.json` + `manifest.json` seguindo à risca as regras de [`skills/gp2-template-converter/SKILL.md`](../skills/gp2-template-converter/SKILL.md) (mapeamento elemento→objeto Fabric, ClippableImage cru, etc.). Os scripts são pós-processo e gate, não o converter. Depois de emitir, **e antes do `center-clippable-images.js`**, troque os assets da biblioteca por vetor nativo:
 
 ```bash
 python bt/scripts/svg_assets.py swap artifacts/bt/<slug>/output/

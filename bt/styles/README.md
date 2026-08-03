@@ -41,6 +41,23 @@ Falhou algo estrutural num estilo certificado → é bug do estilo: registre em 
 3. Produzir o `strip-blueprint.html` no OpenClaw com loop de render (3 passos do DESIGN.md), com copy de exemplo real.
 4. Rodar o corredor inteiro com a copy de exemplo: slice → marker (só descrições) → converter → `validate-slides` exit 0 → **abrir na plataforma e comparar com os screenshots** (gate de fidelidade) → registrar tudo em `certification.md`.
 5. **Gustavo aprova visualmente** o resultado na plataforma contra a `reference.png`. Só então `status: certificado` no STYLE.md.
+6. **Salvar e commitar.** O que fica na pasta do estilo após aprovação (o resto da run de certificação é descartável):
+
+   | Arquivo | Conteúdo |
+   |---------|----------|
+   | `STYLE.md` | com `status: certificado` |
+   | `strip-blueprint.html` | o blueprint final pré-anotado — o ativo principal |
+   | `reference.png` | a âncora original |
+   | `certification.md` | data, sha256 do blueprint, output dos gates (validate-slides, fidelidade), `template_id` do template de teste em dev, e o slug da run de certificação |
+   | `certification-strip.png` | render final aprovado (a prova visual do que foi certificado) |
+   | `lessons.md` | (segue vazio/acumulando) |
+
+   Commit imediato: `git commit -m "style: certifica <slug>"` + push — o blueprint é código-fonte da fábrica; sem commit, a VPS e o local divergem e a certificação não é reproduzível. Re-certificações = novo commit (o histórico do estilo vive no git). Templates GERADOS pelo estilo não são commitados — vivem em S3/Supabase; `artifacts/` é workspace descartável.
+
+## Roadmap (não construir antes da 1ª certificação provar o fluxo)
+
+- **Fabric-blueprint**: a certificação pode salvar também os `slide-N.json` convertidos com placeholders — runtime patcharia só texto/src em vez de reconverter (elimina a conversão LLM do modo estilo por completo). Construir quando o 1º estilo estiver certificado e estável.
+- **Converter determinístico** (código, Playwright → Fabric) para o modo livre.
 
 ## Regras do sistema
 
