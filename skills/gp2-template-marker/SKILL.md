@@ -5,6 +5,8 @@ description: "Anota o HTML aprovado com data-template-element, data-te-*, data-i
 
 # gp2-template-marker
 
+> **Runs da pipeline `bt/`**: o mapeamento de `data-variable` NÃO é decisão sua — venha EXATAMENTE do `design-notes.md` do candidato (regras no `bt/FINALIZE.md` §Marcação: fundo neutro é sempre literal). Em modo estilo certificado, o blueprint já vem pré-anotado e você só gera `data-te-description`. O restante deste arquivo vale integralmente para a pipeline genérica gp2.
+
 Adiciona os atributos `data-*` ao `template.html` aprovado para que o `gp2-template-converter` possa emitir Fabric JSON com elementos editáveis, variáveis de perfil e estáticos corretamente classificados.
 
 ## Mudança vs v1: context-analyzer absorvido

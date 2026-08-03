@@ -5,6 +5,15 @@ Saída: **1 template publicado** (`userReady`, `status review`) + relatório.
 
 Defaults: `tenant kultivai`, `vertical health`, ambiente **dev** (prod só quando o usuário pedir "em prod"), **N=3** candidatos (N=1 se o usuário pedir "rápido").
 
+## Dois modos de geração
+
+| Modo | Quando | Como |
+|------|--------|------|
+| **Estilo certificado** (default quando existe estilo com fit) | pedido nomeia um estilo de `bt/styles/`, OU o context encontra estilo `status: certificado` com fit (família × funil × vertical) | Passo 3 vira **instanciação**: preencher o `strip-blueprint.html` do estilo (copy nos placeholders respeitando min/max + imagens pelas fórmulas `data-bt-generate` + blocos opcionais), N=1, judge em modo QA (R1–R6 + overflow + coerência das imagens; sem pairwise). Marker só gera `data-te-description` (o resto vem pré-anotado). Ver `bt/styles/README.md`. |
+| **Livre (laboratório)** | nenhum estilo certificado serve, pedido explícito "design livre", ou criação de candidato a novo estilo | Fluxo completo abaixo (best-of-N + judge pairwise). Vencedores excepcionais viram candidatos a novo estilo (protocolo de certificação no README de styles). |
+
+Enquanto não houver estilos `certificado`, todo pedido roda em modo livre.
+
 ## Estado obrigatório — `bt/scripts/run.py`
 
 A coordenação é mecânica, não narrativa. TODA execução:
@@ -17,6 +26,7 @@ python bt/scripts/run.py advance <slug>                         # só avança se
 
 - Estágios: resolve → context → candidates → judge → fixes → finalize → upload. Cada um exige artefato em disco (lista no `--help`); `advance` **nega** sem ele.
 - **Nunca declare um estágio concluído sem `advance` ter aceitado.** "Disparei o sub-agente" não é progresso; artefato no disco é.
+- **Um `advance` aceito NÃO é ponto de parada** — é o sinal para começar o próximo estágio IMEDIATAMENTE, na mesma sessão. A run só para em 3 situações: `done`, gate reprovado com evidência, ou pergunta que só o usuário responde. "Checkpoint pronto" anunciado como entrega é a falha de condução nº 1 desta pipeline — se precisar encerrar a sessão no meio, poste o output do `status` e diga explicitamente "run INCOMPLETA em <estágio>".
 - **Retomada**: execução interrompida (sub-agente que morreu, sessão cortada) se retoma com `status <slug>` — ele diz exatamente o que falta; continue dali. Nunca recomece do zero se o run.json existe.
 - O `--env` gravado no `new` é imutável e é o único ambiente permitido em todos os comandos da run.
 

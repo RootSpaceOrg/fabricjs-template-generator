@@ -32,7 +32,9 @@ Esta skill escreve em S3 e invoca a Lambda de produção. Antes de executar:
 - não sobrescreva um template existente a não ser que explicitamente solicitado;
 - não execute se `validate-slides.js` não passou (exit 0).
 
-**Standing rule do Gustavo:** quando HTML reviewer e Fabric validator passam, suba automaticamente com `template_type: ai`, `status: review`, `owner_user_id: templateGenerator`, `scope: platform`. Ambiente padrão: **prod**. Não pergunte confirmação — é a regra padrão. Templates entram como `review` para humano aprovar via tela de gerenciamento antes de virarem `published`.
+**Standing rule do Gustavo (SÓ pipeline genérica gp2):** quando HTML reviewer e Fabric validator passam, suba automaticamente com `template_type: ai`, `status: review`, `owner_user_id: templateGenerator`, `scope: platform`. Ambiente padrão: **prod**. Não pergunte confirmação — é a regra padrão. Templates entram como `review` para humano aprovar via tela de gerenciamento antes de virarem `published`.
+
+> **Runs da pipeline `bt/` NÃO usam esta standing rule**: os parâmetros vêm do `bt/FINALIZE.md` (`template_type userReady`, `--business-type`, `scope vertical`, tenant/vertical resolvidos) e o ambiente vem do `run.json` (default **dev**). Em run bt, este arquivo é só o manual do script.
 
 ## Inputs esperados
 
@@ -169,7 +171,7 @@ python skills/gp2-template-uploader/scripts/import-template.py \
   --execute
 ```
 
-> **`business_type` é sempre vazio.** Templates gerados pela pipeline são neutros em relação a nicho — não aceitam `--business-type` e o payload envia `business_type: ""`. Direcionamento por nicho acontece em outra camada (Pipeline 2/3 quando gera o post final).
+> **`business_type` default é vazio** (templates da pipeline genérica são neutros de nicho; o payload envia `business_type: ""`). O script aceita `--business-type` opcional — usado pela pipeline `bt/` (templates específicos de negócio); na pipeline genérica, não passe a flag.
 
 Para forçar outro status (ex: `published` durante migrações controladas):
 

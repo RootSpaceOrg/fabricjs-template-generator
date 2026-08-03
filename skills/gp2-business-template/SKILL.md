@@ -9,6 +9,6 @@ Toda a pipeline vive em [`bt/`](../../bt/README.md) — este arquivo é só o ga
 
 1. Leia [`bt/PIPELINE.md`](../../bt/PIPELINE.md) e siga-o como orquestrador.
 2. Os estágios que ele delega: [`bt/CONTEXT.md`](../../bt/CONTEXT.md) (dossiê + funil + storyline), [`bt/DESIGN.md`](../../bt/DESIGN.md) (candidatos em paralelo), [`bt/JUDGE.md`](../../bt/JUDGE.md) (julgamento em contexto limpo), [`bt/FINALIZE.md`](../../bt/FINALIZE.md) (imagens, marcação, conversão, upload).
-3. Defaults: tenant `kultivai`, vertical `health`, ambiente **dev**, N=3 candidatos.
+3. Defaults: tenant `kultivai`, vertical `health`, ambiente **dev**. Dois modos: **estilo certificado** (`bt/styles/`, N=1 + judge QA — default quando houver estilo com fit) e **livre** (best-of-N=3 + judge pairwise — laboratório e pedidos fora do catálogo).
 
 Regras que nunca mudam: `status review` (humano aprova), business_type sempre validado pelo `bt/scripts/resolve_tenant.py`, judge nunca é pulado, mudança em `bt/` roda a regressão de `bt/evals/` antes de produção.

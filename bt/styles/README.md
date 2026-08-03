@@ -1,0 +1,51 @@
+# Sistema de estilos — determinismo por blueprint certificado
+
+A fábrica de templates: **20–30 estilos certificados × copy × imagens = milhares de templates com falha baixa.** Todo o risco estrutural (layout, marcação, conversão) é resolvido UMA vez, na criação do estilo; cada geração só varia conteúdo dentro de uma estrutura já validada.
+
+## Anatomia de um estilo
+
+```
+bt/styles/<slug>/
+├── STYLE.md                ← tokens + receitas por papel de slide + slots (o contrato)
+├── reference.png           ← imagem-âncora aprovada pelo Gustavo (de onde o estilo nasceu)
+├── strip-blueprint.html    ← fita paramétrica PRÉ-ANOTADA (produzida na certificação)
+├── certification.md        ← evidência de que o corredor inteiro passou (ver protocolo)
+└── lessons.md              ← lições DESTE estilo (1 linha por evento; ver regra abaixo)
+```
+
+**Lessons por estilo:** todo defeito, rejeição humana ou fix de run que aconteça em template gerado por um estilo vai no `lessons.md` DO estilo (`- <data> <run/template_id>: <o que> → <ação: blueprint corrigido? regra nova? nada ainda>`). O `bt/evals/lessons.md` global fica só para lições da pipeline/corredor (que afetam todos os estilos). Regras:
+- Lição recorrente (2×) no mesmo estilo → corrigir o blueprint e **re-certificar** (nova entrada no certification.md).
+- Estilo que acumula 3+ lições estruturais sem correção → volta para `status: draft` (sai da fábrica até consertar).
+- O judge QA e o context DEVEM ler o lessons.md do estilo escolhido antes de gerar/julgar — é o histórico do que esse estilo costuma errar.
+
+**O blueprint é a peça-chave:** um `strip.html` completo do estilo com:
+- slots de copy como placeholders nomeados (`{{s1_headline}}`, `{{s3_body}}`) com min/max chars;
+- slots de imagem marcados (`data-image-type` para slots de usuário; `data-bt-generate="<fórmula do prompt>"` para imagens geradas);
+- **`data-template-element`, `data-te-max-chars`, `data-variable` JÁ APLICADOS** — o marker em runtime só gera as `data-te-description` da copy nova;
+- blocos opcionais delimitados (`<!-- bt:optional nome -->…<!-- /bt:optional -->`) para variação de nº de slides.
+
+## Gerar um template a partir de estilo certificado (runtime)
+
+1. `run.py new <slug> --env <e> --n 1`; context produz storyline mapeada nos **papéis de slide** do STYLE.md.
+2. **Instanciar**: preencher os placeholders do blueprint com a copy (respeitando min/max) + gerar as imagens pelas fórmulas `data-bt-generate` + fatiar/renderizar. **Artefatos vão nos caminhos que o runner espera**: `candidates/A/strip.html`, `template.html` (fatiado), `strip.png`, e `design-notes.md` (mínimo: estilo usado, mapa slot→copy, imagens geradas).
+3. **Judge em modo QA** (ver `bt/JUDGE.md` § Modo QA): R1–R6 + overflow + coerência das imagens + lessons.md do estilo. Produz `judge-report.md` com `QA: PASS|FAIL`. A barra de score (30/50, craft 6) NÃO se aplica — é do modo livre; aqui o gate é o QA.
+4. **Estágio fixes do runner**: se o QA passou sem defeitos, escreva `candidates/A/fixes.md` com `sem fixes — QA PASS direto` e re-renderize o strip (o runner exige strip mais novo que o judge-report). Defeito de copy/imagem → corrija o slot, re-render, re-QA. Defeito estrutural → bug do estilo (lessons.md do estilo; a run para).
+5. Finalize normal — mas o marker só adiciona `data-te-description`, e a conversão de um blueprint certificado já foi provada.
+
+Falhou algo estrutural num estilo certificado → é bug do estilo: registre em `lessons.md`, conserte o blueprint, re-certifique. Nunca remende na run.
+
+## Protocolo de certificação (uma vez por estilo)
+
+1. Nasce de uma referência aprovada pelo Gustavo (`reference.png`) — pin, peça de agência, ou vencedor excepcional da pipeline livre.
+2. Escrever o STYLE.md (tokens exatos, receitas por papel, slots com limites).
+3. Produzir o `strip-blueprint.html` no OpenClaw com loop de render (3 passos do DESIGN.md), com copy de exemplo real.
+4. Rodar o corredor inteiro com a copy de exemplo: slice → marker (só descrições) → converter → `validate-slides` exit 0 → **abrir na plataforma e comparar com os screenshots** (gate de fidelidade) → registrar tudo em `certification.md`.
+5. **Gustavo aprova visualmente** o resultado na plataforma contra a `reference.png`. Só então `status: certificado` no STYLE.md.
+
+## Regras do sistema
+
+- Estilo não-certificado NÃO gera template de produção.
+- A pipeline livre (best-of-N do DESIGN.md) continua existindo para: criar candidatos a novos estilos e pedidos fora do catálogo. É o laboratório; os estilos são a fábrica.
+- Variação dentro do estilo é SÓ o que o blueprint parametriza (copy, imagens, blocos opcionais, nº de slides no range). Mudar layout/cor/fonte na run = violação.
+- Cores de marca: o blueprint usa `data-variable` nos pontos certos — o mesmo estilo serve qualquer marca do tenant.
+- Escolha do estilo na geração: usuário nomeia OU o context escolhe pelo fit (família × etapa do funil × vertical) declarado no STYLE.md.

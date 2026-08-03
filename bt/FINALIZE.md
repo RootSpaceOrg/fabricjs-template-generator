@@ -2,6 +2,18 @@
 
 Entrada: candidato vencedor pós-fixes (`template.html` + `design-notes.md` + screenshots finais). Reusa a maquinaria determinística da pipeline genérica — não reimplemente nada dela.
 
+## Artefatos padronizados (o `run.py` verifica exatamente estes caminhos)
+
+| Artefato | Caminho (relativo a `artifacts/bt/<slug>/`) | Verificação do runner |
+|----------|---------------------------------------------|------------------------|
+| Fixes aplicados | `candidates/<winner>/fixes.md` + `strip.png` re-renderizado | strip.png mais novo que judge-report.md |
+| HTML marcado | `template-marked.html` (na raiz da run) | toda `<img>` com `data-image-type`; todo `data-template-element` com `data-te-description` |
+| Conversão | `output/slide-N.json` + `manifest.json` | `validate-slides.js` executado pelo runner, exit 0 |
+| Fidelidade | `fidelity.md` | checklist toda `[x]` + linha literal `VEREDITO: FIEL` |
+| Descrição | `template-summary.md` (na raiz da run — saída do marker) | exigido pelo `upload.py` |
+
+`fidelity.md` divergente NÃO vira "VEREDITO: FIEL na próxima tentativa" sem correção real — registre a divergência, corrija a etapa culpada, re-render, re-compare.
+
 ## Regra zero — cadeia de custódia
 
 O que o judge aprovou é EXATAMENTE o que se publica. Antes de começar, calcule e registre `sha256` do `template.html` e do `strip.png` aprovados; todo passo abaixo opera sobre esses arquivos (as únicas mutações permitidas: troca de src de imagem gerada, marcação `data-*` do marker). O relatório final inclui os hashes. Redesenhar, regenerar slide ou "melhorar" qualquer coisa nesta fase é violação — se algo precisa mudar visualmente, volta pro judge, não segue adiante.
@@ -65,20 +77,14 @@ Qualquer "não" → **NÃO reporte sucesso**: identifique a etapa que divergiu (
 
 > ponytail: comparação visual pelo agente por enquanto; script determinístico (SSIM por slide via Playwright) é o upgrade quando o fluxo estabilizar.
 
-## 4. Upload
+## 4. Upload — SEMPRE via wrapper (nunca componha flags do uploader à mão)
 
 ```bash
-python skills/gp2-template-uploader/scripts/import-template.py artifacts/bt/<slug>/ \
-  --name "<nome>" \
-  --template-type userReady \
-  --business-type "<slug canônico>" \
-  --tags "<business_type>,funil-<etapa>,<tema>" \
-  --tenant-id <t> --vertical-id <v> --scope vertical \
-  --description-hint "$(cat .../template-summary.md)" \
-  --env <env> --execute
+python bt/scripts/upload.py <slug> --name "<nome>" [--tags extra1,extra2]        # dry-run
+python bt/scripts/upload.py <slug> --name "<nome>" [--tags extra1,extra2] --execute
 ```
 
-`status review` + `owner_user_id templateGenerator` (default do script). Dry-run primeiro; inspecione o payload.
+O wrapper monta tudo do estado (env do run.json; business_type/tenant/vertical do resolve.json; `template_type userReady`, `scope vertical`, tags automáticas `<business_type>,funil-<etapa>`; description do `template-summary.md`) e recusa rodar fora do estágio `upload`. Antes do `--execute`, registre `set <slug> funil <etapa>` para a tag automática. Dry-run primeiro; inspecione o payload. Após executar: `run.py set <slug> template_id <id>`.
 
 ## 5. Pós-publicação
 

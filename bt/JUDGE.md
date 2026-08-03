@@ -60,7 +60,7 @@ Pairwise: A vs B → <?> (ordem 1), <?> (ordem 2) · <vencedor> vs C → ...
 | craft | ?/10 | ... |
 | narrativa | ?/10 | ... |
 | especificidade | ?/10 | ... |
-| consistência | ?/10 | ... |
+| continuidade | ?/10 | ... |
 **Total: ?/50**
 ## Top-3 fixes
 1. <slide N: fix>
@@ -77,10 +77,14 @@ Quando qualquer arquivo de `bt/` muda, antes do próximo batch de produção:
 3. Anexe uma linha por resultado em `bt/evals/scores.jsonl`:
 
 ```json
-{"date":"YYYY-MM-DD","prompt_id":"P1","score_total":38,"scores":{"scroll_stop":8,"craft":7,"narrativa":8,"especificidade":8,"consistencia":7},"change":"<o que mudou em bt/>","template":"artifacts/bt/<slug>"}
+{"date":"YYYY-MM-DD","prompt_id":"P1","score_total":38,"scores":{"scroll_stop":8,"craft":7,"narrativa":8,"especificidade":8,"continuidade":7},"change":"<o que mudou em bt/>","template":"artifacts/bt/<slug>"}
 ```
 
 4. Compare com as últimas linhas dos mesmos prompt_ids: média caiu ≥3 pontos → a mudança regrediu; reverta ou corrija antes de produzir.
+
+## Modo QA — geração por estilo certificado
+
+Para runs em modo estilo (`bt/styles/`): **sem pairwise, sem scores** — a estrutura já foi julgada na certificação. Verifique no candidato único: R1–R6 (checklist do passo 1b) + overflow de copy nos slots (min/max respeitados mas o RENDER cabe?) + imagens geradas coerentes com o registro do estilo e com o slide + lessons.md do estilo (erros recorrentes dele). Saída: `QA: PASS` ou lista de defeitos (copy do slot X estoura, imagem do slide Y fora do registro). Defeito de layout/estrutura = bug do estilo → lessons.md do estilo, não conserto na run.
 
 ## Modo 3 — Verificação de fidelidade (pós-swap de imagens ou pós-conversão)
 

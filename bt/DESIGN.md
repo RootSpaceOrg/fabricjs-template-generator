@@ -49,7 +49,9 @@ Emite `template.html` (sections no contrato do converter; elemento de fronteira 
 
 ## Contrato técnico (inviolável — é o que garante a conversão Fabric)
 
-Leia antes de codificar: [`skills/_shared/HTML_TECHNICAL_SPEC.md`](../skills/_shared/HTML_TECHNICAL_SPEC.md) e [`skills/_shared/GRADIENT_SYSTEM.md`](../skills/_shared/GRADIENT_SYSTEM.md). Resumo do que mais quebra: posicionamento absoluto (sem flex/grid no canvas), uma `<img>` real por região de imagem, sem pseudo-elementos/animations/blend-modes, pesos de fonte explícitos, `<meta name="hm-fonts">`, Google Fonts via `<link>`.
+Leia antes de codificar: [`skills/_shared/HTML_TECHNICAL_SPEC.md`](../skills/_shared/HTML_TECHNICAL_SPEC.md) e [`skills/_shared/GRADIENT_SYSTEM.md`](../skills/_shared/GRADIENT_SYSTEM.md). Resumo do que mais quebra: posicionamento absoluto (sem flex/grid no canvas), uma `<img>` real por região de imagem, sem pseudo-elementos/animations/blend-modes, pesos de fonte explícitos, Google Fonts via `<link>`. O `strip.html` deve carregar no próprio arquivo: `<html lang="pt-BR" data-template-name="<slug>" data-segment="<segmento>">` + `<meta name="hm-fonts" content="...">` — o `slice-strip.js` preserva ambos no `template.html` fatiado.
+
+**Precedência**: o `DESIGN_PRINCIPLES.md` e as specs `_shared` são protocolo base; onde conflitarem com este arquivo, **este arquivo vence**. Dois conflitos conhecidos já resolvidos: (1) autoria é panorâmica (strip), não section-por-slide desde o passo 1 — as sections nascem do fatiamento; (2) placeholders de slots são os canônicos fotográficos (`professional-photo-1/2.b64.txt`), não o "padrão diagonal neutro" citado no DESIGN_PRINCIPLES.
 
 ## Direção de arte (decida ANTES do primeiro render, registre em design-notes.md)
 

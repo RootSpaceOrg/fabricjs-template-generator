@@ -9,6 +9,7 @@ Gatilho: a skill fina [`skills/gp2-business-template/SKILL.md`](../skills/gp2-bu
 | Arquivo | Papel |
 |---------|-------|
 | [`PIPELINE.md`](./PIPELINE.md) | Orquestrador: resolve → contexto → N candidatos → judge → finaliza → publica |
+| [`styles/`](./styles/README.md) | **A fábrica**: estilos certificados (blueprint pré-anotado + tokens + receitas) — geração determinística por estilo; alvo 20–30 estilos |
 | [`CONTEXT.md`](./CONTEXT.md) | Cérebro de copy: dossiê por business_type, funil, storyline (espinha narrativa) |
 | [`DESIGN.md`](./DESIGN.md) | Um candidato de design: direção de arte + HTML em 3 renders, composição autoral |
 | [`JUDGE.md`](./JUDGE.md) | Juiz independente (pairwise, rubrica, exemplares) + eval harness de regressão |
@@ -29,7 +30,8 @@ Gatilho: a skill fina [`skills/gp2-business-template/SKILL.md`](../skills/gp2-bu
 
 ## Princípios desta pipeline
 
-1. **Best-of-N**: 3 candidatos de design independentes por pedido; um juiz escolhe. Nunca single-shot.
+1. **Best-of-N no modo livre** (3 candidatos + juiz pairwise); **N=1 + judge QA no modo estilo certificado** — a estrutura já foi julgada na certificação. Nunca single-shot SEM judge.
+1b. **Precedência**: onde um documento reusado da pipeline genérica (DESIGN_PRINCIPLES, skills gp2-*) conflitar com um arquivo de `bt/`, **o de `bt/` vence** — os reusados são maquinaria/protocolo base, não autoridade de regra.
 2. **Juiz ≠ autor**: o judge roda em contexto limpo, com rubrica e exemplares, comparação pairwise com troca de posição. Se o runtime permitir, modelo de outra família.
 3. **Eval-driven**: toda mudança nestes arquivos roda a regressão de `evals/` antes de valer.
 4. **Grounding**: copy nasce do dossiê; compliance nasce de fonte curada, não de pesquisa do modelo.
