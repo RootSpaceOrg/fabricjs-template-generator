@@ -27,7 +27,16 @@ bt/styles/<slug>/
 ## Gerar um template a partir de estilo certificado (runtime)
 
 1. `run.py new <slug> --env <e> --n 1`; context produz storyline mapeada nos **papéis de slide** do STYLE.md.
-2. **Instanciar**: preencher os placeholders do blueprint com a copy (respeitando min/max) + gerar as imagens pelas fórmulas `data-bt-generate` + fatiar/renderizar. **Artefatos vão nos caminhos que o runner espera**: `candidates/A/strip.html`, `template.html` (fatiado), `strip.png`, e `design-notes.md` (mínimo: estilo usado, mapa slot→copy, imagens geradas).
+2. **Instanciar**: preencher os placeholders do blueprint com a copy (respeitando min/max) + gerar as imagens pelas fórmulas `data-bt-generate` + fatiar/renderizar.
+
+   **Variação dentro do estilo (obrigatória — dois templates do mesmo estilo NUNCA saem idênticos):** o blueprint é um *baralho*, não um carimbo. Ele carrega todas as variantes de layout de cada papel de slide (ex: variantes A/B/C de item + respiro invertido), e a instanciação **sorteia e declara** no design-notes.md:
+   - **Sequência de variantes** dos slides repetíveis (respeitando "nunca duas iguais adjacentes") — sequência diferente da última instanciação do mesmo estilo (consulte os design-notes de runs anteriores em git, ou varie por padrão);
+   - **Nº de slides** dentro do range do estilo (blocos opcionais ligados/desligados);
+   - **Posição do slide invertido/acento** (quando o estilo tem);
+   - **Lados/rotações** dos elementos que a variante define como alternáveis;
+   - E o que já varia por natureza: copy, palavras de watermark, imagens geradas, cores da marca.
+
+   O que NUNCA varia (é a identidade certificada): tipografia, paleta de papéis, tokens, receitas internas de cada variante, marcação `data-*`. Variação é **recombinação do que foi certificado** — nunca invenção de layout novo na run. **Artefatos vão nos caminhos que o runner espera**: `candidates/A/strip.html`, `template.html` (fatiado), `strip.png`, e `design-notes.md` (mínimo: estilo usado, mapa slot→copy, imagens geradas).
 3. **Judge em modo QA** (ver `bt/JUDGE.md` § Modo QA): R1–R6 + overflow + coerência das imagens + lessons.md do estilo. Produz `judge-report.md` com `QA: PASS|FAIL`. A barra de score (30/50, craft 6) NÃO se aplica — é do modo livre; aqui o gate é o QA.
 4. **Estágio fixes do runner**: se o QA passou sem defeitos, escreva `candidates/A/fixes.md` com `sem fixes — QA PASS direto` e re-renderize o strip (o runner exige strip mais novo que o judge-report). Defeito de copy/imagem → corrija o slot, re-render, re-QA. Defeito estrutural → bug do estilo (lessons.md do estilo; a run para).
 5. Finalize normal — mas o marker só adiciona `data-te-description`, e a conversão de um blueprint certificado já foi provada.
@@ -39,7 +48,7 @@ Falhou algo estrutural num estilo certificado → é bug do estilo: registre em 
 1. Nasce de uma referência aprovada pelo Gustavo (`reference.png`) — pin, peça de agência, ou vencedor excepcional da pipeline livre.
 2. Escrever o STYLE.md (tokens exatos, receitas por papel, slots com limites).
 3. Produzir o `strip-blueprint.html` no OpenClaw com loop de render (3 passos do DESIGN.md), com copy de exemplo real.
-4. Rodar o corredor inteiro com a copy de exemplo: slice → marker (só descrições) → converter → `validate-slides` exit 0 → **abrir na plataforma e comparar com os screenshots** (gate de fidelidade) → registrar tudo em `certification.md`.
+4. Rodar o corredor inteiro com a copy de exemplo: slice → marker (só descrições) → converter → `validate-slides` exit 0 → **abrir na plataforma e comparar com os screenshots** (gate de fidelidade) → registrar tudo em `certification.md`. **A instância de certificação deve exercitar TODAS as variantes de layout do blueprint** (cada variante de item aparece ≥1 vez na fita certificada) — variante não exercitada no corredor não está certificada e não pode ser sorteada em produção.
 5. **Gustavo aprova visualmente** o resultado na plataforma contra a `reference.png`. Só então `status: certificado` no STYLE.md.
 6. **Salvar e commitar.** O que fica na pasta do estilo após aprovação (o resto da run de certificação é descartável):
 
