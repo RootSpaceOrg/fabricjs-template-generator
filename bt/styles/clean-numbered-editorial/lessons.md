@@ -1,3 +1,5 @@
 # Lessons — clean-numbered-editorial
 
 - 2026-08-04 (1ª tentativa de certificação, Hermes): sistema reconhecível ✓, mas: itens [1]–[4] sem evidência visual (metade inferior morta, R4) → evidência virou regra dura no STYLE.md; capa/CTA sem professionalPhoto e capa sem avatar → slots viraram obrigatórios; watermarks colidindo na costura S2→S3 ("HISTORICOSEGURANÇA") → regra de 1 watermark por fronteira + respiro ≥120px. Blueprint deve ser refeito com o spec atualizado.
+- 2026-08-03 certificação dev: feedback do Gustavo — os slides de miolo ficaram sem imagens/evidências visuais. O blueprint deve ter 1 evidência visual assimétrica por item (foto P&B pequena, print/mockup conceitual ou ícone-objeto), sem imitar UI real; re-renderizar e re-certificar antes de aprovação.
+- 2026-08-03 certificação dev: aprovação visual do Gustavo após correção — evidências visuais P&B nos slides 2–5 e `professionalPhoto` canônico na capa/CTA foram aprovados. Pendente apenas a certificação técnica (conversão Fabric + fidelidade no editor).
