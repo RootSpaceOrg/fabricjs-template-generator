@@ -28,18 +28,21 @@ Listicle de especialista em fundo claro: **um erro/ponto numerado por slide**, a
 ## Papéis de slide (receitas)
 
 ### capa (slide 1)
-- Número-total gigante no acento ("9") + título do listicle em 2–3 linhas UPPERCASE.
-- `instagramProfilePicture` (avatar ~64px) + `instagramName`/`instagramHandle` na base.
-- 1 elemento gráfico do acento (círculo/proibido/carimbo) meio-cortado pela borda.
+- Número-total gigante no acento ("9") + título do listicle em 2–3 linhas UPPERCASE, coluna esquerda.
+- **`professionalPhoto` OBRIGATÓRIO**: cutout ancorado na base, coluna direita (~38–45% da largura, do rodapé até ~70% da altura) — em saúde, rosto vende confiança; a metade inferior da capa nunca fica vazia.
+- `instagramProfilePicture` (avatar ~64px) + `instagramName`/`instagramHandle` na base da coluna esquerda.
+- 1 elemento gráfico do acento (círculo/carimbo) meio-cortado pela borda, atrás/ao lado da foto.
 
 ### item (miolo — papel repetível 4–8×)
 - `[N]` no acento no topo + headline do erro/ponto UPPERCASE 1–3 linhas.
 - Body 2–4 linhas explicando; 1 trecho pode ganhar fundo do acento (bloco destacado, texto branco).
-- Watermark da palavra-tema atrás; 1 evidência visual posicionada assimetricamente (alterna esq/dir entre slides).
+- Watermark da palavra-tema atrás.
+- **Evidência visual OBRIGATÓRIA (regra dura)**: 1 por item — imagem gerada (fórmula do slot), foto P&B pequena ou ícone-objeto — ocupando a metade inferior, alternando esq/dir entre slides. Item sem evidência = metade inferior morta = R4; o judge QA reprova.
 
 ### cta (último)
-- Recap em 1 frase + pedido único (comentar palavra / salvar / seguir — conforme funil).
-- Prova social leve como evidência (print de depoimento emoldurado) se disponível como imagem gerada conceitual.
+- Fundo do acento full-bleed; recap em 1 frase + pedido único (comentar palavra / salvar / seguir — conforme funil).
+- **`professionalPhoto` OBRIGATÓRIO**: cutout menor (~30% largura) ancorado na base direita — fecha a peça com o mesmo rosto que abriu.
+- `instagramHandle` no rodapé.
 
 ## Slots
 
@@ -53,9 +56,11 @@ Listicle de especialista em fundo claro: **um erro/ponto numerado por slide**, a
 | `cta_recap` + `cta_pedido` | copy | 60–140 chars total |
 | `item_evidencia` (por item) | imagem gerada | `data-bt-generate="<CONCEITO do item> como foto still editorial minimalista OU mockup de interface limpo, fundo neutro claro, sem texto legível"` |
 | avatar/nome/handle | slots plataforma | `instagramProfilePicture`, `instagramName`, `instagramHandle` |
+| foto do profissional | slot plataforma | `professionalPhoto` (placeholder canônico `professional-photo-1/2.b64.txt`) — capa e CTA, obrigatório |
 
 ## Continuidade
 - Watermark atravessando fronteiras (palavra começa num slide e termina no outro) — dispositivo principal.
+- **Regra dura da costura**: máx 1 palavra-watermark por fronteira, e ≥120px de respiro entre o fim de uma watermark e o início da seguinte — duas palavras se emendando na costura ("HISTORICOSEGURANÇA") é defeito, não continuidade.
 - Sistema `[N]` + acento + carimbos = identidade que costura sem monotonia.
 - Ritmo tonal: base clara constante com 1 slide de "respiro invertido" opcional (fundo do acento, texto branco) no meio da fita — bloco opcional do blueprint.
 
