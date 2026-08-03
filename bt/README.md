@@ -17,7 +17,7 @@ Gatilho: a skill fina [`skills/gp2-business-template/SKILL.md`](../skills/gp2-bu
 | `references/compliance/` | Regras de conselho profissional **curadas por humano** |
 | `evals/` | Golden set + prompts fixos de regressão + histórico de scores |
 | `knowledge/` | Dossiês por business_type (30 dias de validade) |
-| `scripts/` | `resolve_tenant.py`, `generate-image.py`, `aws_auth.py` |
+| `scripts/` | `run.py` (runner com estado — TODA execução passa por ele), `resolve_tenant.py`, `generate-image.py`, `slice-strip.js`, `svg_assets.py`, `aws_auth.py` |
 
 ## O que é reusado da pipeline genérica (não duplicar)
 

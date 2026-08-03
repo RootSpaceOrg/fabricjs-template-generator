@@ -5,6 +5,21 @@ Saída: **1 template publicado** (`userReady`, `status review`) + relatório.
 
 Defaults: `tenant kultivai`, `vertical health`, ambiente **dev** (prod só quando o usuário pedir "em prod"), **N=3** candidatos (N=1 se o usuário pedir "rápido").
 
+## Estado obrigatório — `bt/scripts/run.py`
+
+A coordenação é mecânica, não narrativa. TODA execução:
+
+```bash
+python bt/scripts/run.py new <slug> --env <dev|prod> [--n 3]   # primeiro comando, sempre
+python bt/scripts/run.py status <slug>                          # o que falta no estágio atual
+python bt/scripts/run.py advance <slug>                         # só avança se o artefato exigido existe
+```
+
+- Estágios: resolve → context → candidates → judge → fixes → finalize → upload. Cada um exige artefato em disco (lista no `--help`); `advance` **nega** sem ele.
+- **Nunca declare um estágio concluído sem `advance` ter aceitado.** "Disparei o sub-agente" não é progresso; artefato no disco é.
+- **Retomada**: execução interrompida (sub-agente que morreu, sessão cortada) se retoma com `status <slug>` — ele diz exatamente o que falta; continue dali. Nunca recomece do zero se o run.json existe.
+- O `--env` gravado no `new` é imutável e é o único ambiente permitido em todos os comandos da run.
+
 ## Passos
 
 ### 1. Resolver tenant + business_type
@@ -21,18 +36,19 @@ python bt/scripts/resolve_tenant.py --tenant <t> --vertical <v> --subject "<busi
 
 Siga [`CONTEXT.md`](./CONTEXT.md). Produz `artifacts/bt/<slug>/brief.md` com: dossiê aplicado, etapa do funil, storyline na espinha, copy por slide, restrições de compliance, doutrina de design.
 
-### 3. Candidatos de design (paralelo)
+### 3. Candidatos de design
 
-Spawne **N sub-agents em paralelo** (uma única mensagem, N chamadas Agent). Cada um:
+Cada candidato recebe: o `brief.md` completo + [`DESIGN.md`](./DESIGN.md) como instrução + **uma família estética distinta** (você atribui — 3 famílias diferentes de `skills/gp2-html-designer/references/aesthetic-families.md`, coerentes com o tom do brief; com referência visual anexada, os 3 herdam a referência mas variam a interpretação). Produz: `artifacts/bt/<slug>/candidates/<A|B|C>/strip.html` + `template.html` (fatiado via `slice-strip.js`) + `strip.png` + `screenshots/` + `design-notes.md`.
 
-- Recebe: o `brief.md` completo + [`DESIGN.md`](./DESIGN.md) como instrução + **uma família estética distinta** (você atribui — 3 famílias diferentes de `skills/gp2-html-designer/references/aesthetic-families.md`, coerentes com o tom do brief; com referência visual anexada, os 3 herdam a referência mas variam a interpretação).
-- Produz: `artifacts/bt/<slug>/candidates/<A|B|C>/strip.html` (fita panorâmica) + `template.html` (fatiado via `slice-strip.js`) + `strip.png` + `screenshots/` + `design-notes.md`.
+**Modo de execução (na ordem de preferência do runtime):**
+1. Sub-agentes em paralelo, SE o runtime tem delegação confiável.
+2. **Sequencial na própria sessão** (A, depois B, depois C) — mais lento e sempre funciona. Se um sub-agente morrer sem deixar `candidates/<X>/` completo, NÃO re-delegue: execute aquele candidato você mesmo, sequencialmente.
 
-Candidato que falhar não derruba o batch — o judge decide entre os que entregaram (≥1 obrigatório).
+Candidato que falhar não derruba o batch — o judge decide entre os que entregaram (≥1 obrigatório; `advance` avisa se ficou abaixo do alvo N).
 
 ### 4. Julgamento
 
-Spawne **1 sub-agent em contexto limpo** com [`JUDGE.md`](./JUDGE.md). Ele recebe só: screenshots dos candidatos (anonimizados A/B/C), a storyline do brief (para checar aderência), a rubrica e os exemplares. Produz `judge-report.md` com: vencedor, scores, blockers técnicos e **top-3 fixes**.
+Preferência: **1 sub-agent em contexto limpo** com [`JUDGE.md`](./JUDGE.md), recebendo só screenshots anonimizados (A/B/C) + storyline + rubrica + exemplares. **Fallback (delegação indisponível/falhou 1×):** julgue na própria sessão seguindo o JUDGE.md à risca — abra SOMENTE os screenshots e strip.png (não releia design-notes/HTML dos candidatos) e registre no report `judge: same-session (fallback)`. Julgamento imperfeito e registrado > pipeline morta. Produz `judge-report.md` com: vencedor, scores, blockers técnicos e **top-3 fixes**.
 
 - Todos os candidatos com blocker insanável → 1 nova rodada de candidatos (máx 1); persiste → pare e reporte com evidências.
 
