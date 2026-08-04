@@ -7,7 +7,7 @@ Dois modos: **julgar candidatos** (dentro da pipeline) e **eval de regressão** 
 - `screenshots/` + `strip.png` de cada candidato, anonimizados (A/B/C — sem design-notes, sem saber a família de cada um). O `strip.png` é a fita panorâmica: julgue continuidade nele; julgue cada slide isolado nos screenshots (o Instagram mostra um por vez).
 - A storyline do brief (para checar aderência narrativa)
 - [`references/rubric.md`](./references/rubric.md)
-- Exemplares de `gp3/evals/golden/` (âncora do que é "10"). **Pasta vazia?** Julgue mesmo assim, mas: seja deliberadamente mais duro (sem âncora o score infla) e abra o judge-report com `⚠ golden set ausente — scores não calibrados`.
+- Exemplares de `reference.png do pack/` (âncora do que é "10"). **Pasta vazia?** Julgue mesmo assim, mas: seja deliberadamente mais duro (sem âncora o score infla) e abra o judge-report com `⚠ golden set ausente — scores não calibrados`.
 
 ## Modo 1 — Julgar candidatos
 
