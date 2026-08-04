@@ -4,7 +4,7 @@
   "components": [
     {
       "c": "ds-photo",
-      "area": "1 / 1 / 4 / 4",
+      "area": "1 / 1 / 5 / 5",
       "layer": true,
       "static": true,
       "imageType": "userAsset",
@@ -13,7 +13,7 @@
     },
     {
       "c": "ds-photo",
-      "area": "9 / 10 / 13 / 13",
+      "area": "8 / 9 / 13 / 13",
       "layer": true,
       "static": true,
       "imageType": "userAsset",

@@ -15,7 +15,7 @@
     },
     {
       "c": "ds-photo",
-      "area": "1 / 10 / 4 / 13",
+      "area": "1 / 9 / 4 / 13",
       "layer": true,
       "static": true,
       "imageType": "userAsset",
@@ -24,7 +24,7 @@
     },
     {
       "c": "ds-number",
-      "area": "2 / 10 / 3 / 12",
+      "area": "4 / 10 / 5 / 12",
       "align": "right",
       "slot": "item_numero",
       "editable": {
@@ -35,7 +35,7 @@
     },
     {
       "c": "ds-headline",
-      "area": "4 / 6 / 7 / 12",
+      "area": "5 / 6 / 8 / 12",
       "align": "right",
       "slot": "item_headline",
       "editable": {
@@ -46,7 +46,7 @@
     },
     {
       "c": "ds-body",
-      "area": "8 / 7 / 10 / 12",
+      "area": "9 / 7 / 11 / 12",
       "tone": "muted",
       "align": "right",
       "slot": "item_body",
