@@ -66,12 +66,21 @@ const norm = (s) => (s || "").replace(/\s+/g, " ").trim().toUpperCase().slice(0,
 
   const files = fs.readdirSync(outDir).filter((f) => /^slide-\d+\.json$/.test(f))
     .sort((a, b) => parseInt(a.match(/\d+/)) - parseInt(b.match(/\d+/)));
+  const transparent = (c) => !c || /rgba\(\s*0,\s*0,\s*0,\s*0\s*\)/.test(c) || c === "transparent";
+
   files.forEach((f, i) => {
     const info = slides[i];
     if (!info) return;
     const doc = JSON.parse(fs.readFileSync(path.join(outDir, f), "utf-8"));
     let fixedT = 0, fixedS = 0;
-    doc.background = rgb2hex(info.bg);
+    // fundo real: root da section OU (root transparente) o shape full-size (div de bg do montador)
+    let slideBg = info.bg;
+    if (transparent(slideBg)) {
+      const full = info.shapes.find((s) => s.w >= 1070 && s.h >= 1340);
+      slideBg = full ? full.bg : "rgb(255,255,255)";
+    }
+    info.bg = slideBg;
+    doc.background = rgb2hex(slideBg);
     for (const o of doc.objects || []) {
       if (o.type === "textbox" && o.text) {
         const key = norm(o.text);
