@@ -38,7 +38,13 @@ const norm = (s) => (s || "").replace(/\s+/g, " ").trim().toUpperCase().slice(0,
           .map((n) => n.textContent)
           .join(" ");
         if (ownText.trim())
-          texts.push({ text: ownText, color: s.color });
+          texts.push({
+            text: ownText, color: s.color,
+            fs: parseFloat(s.fontSize), weight: s.fontWeight,
+            family: s.fontFamily.split(",")[0].replace(/["']/g, "").trim(),
+            width: r.width, align: s.textAlign,
+            spacing: parseFloat(s.letterSpacing) || 0,
+          });
         else if (el.children.length && el.innerText && el.innerText.trim() && el.tagName !== "SECTION") {
           // container cujo texto vem de filhos — ainda útil como fallback
           texts.push({ text: el.innerText, color: s.color, weak: true });
@@ -85,7 +91,16 @@ const norm = (s) => (s || "").replace(/\s+/g, " ").trim().toUpperCase().slice(0,
       if (o.type === "textbox" && o.text) {
         const key = norm(o.text);
         const hit = info.texts.find((t) => norm(t.text).startsWith(key) || key.startsWith(norm(t.text)));
-        if (hit) { o.fill = rgb2hex(hit.color); fixedT++; }
+        if (hit) {
+          o.fill = rgb2hex(hit.color);
+          if (hit.fs) o.fontSize = Math.round(hit.fs);
+          if (hit.weight) o.fontWeight = /^\d+$/.test(hit.weight) ? parseInt(hit.weight) : hit.weight;
+          if (hit.family) o.fontFamily = hit.family;
+          if (hit.width && (!o.width || Math.abs(o.width - hit.width) > 20)) o.width = Math.ceil(hit.width) + 4;
+          if (hit.align && hit.align !== "start") o.textAlign = hit.align;
+          if (hit.spacing) o.charSpacing = Math.round((hit.spacing / hit.fs) * 1000);
+          fixedT++;
+        }
       } else if ((o.type === "roundedRect" || o.type === "rect") && o.width && o.height) {
         // full-canvas = fundo do slide
         if (o.width >= 1070 && o.height >= 1340) { o.fill = rgb2hex(info.bg); fixedS++; continue; }
