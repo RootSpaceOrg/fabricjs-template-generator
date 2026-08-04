@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Runner gp3 — estados e gates mecânicos (adaptação do bt/scripts/run.py).
+"""Runner gp3 — estados e gates mecânicos (runner independente; herda o desenho do runner bt, sem dependê-lo).
 
 O agente executa o trabalho de cada estágio; o runner só avança quando o gate
 EXECUTA e passa. Estado em artifacts/gp3/<slug>/run.json; retomável.
@@ -12,14 +12,14 @@ Comandos:
   show <slug> | list
 
 Estágios e gates (artefatos relativos a artifacts/gp3/<slug>/):
-  resolve   resolve.json ok=true (bt/scripts/resolve_tenant.py)
+  resolve   resolve.json ok=true (gp3/engine/tools/resolve_tenant.py)
   context   dossie.md
   compose   draw.json (sorteio de recipes) + slides/slide-N.html
             gates: recipes existem no pack · nunca duas iguais adjacentes ·
             data-recipe do HTML == draw.json · data-pack == pack da run
   render    strip.png mais novo que todo slide-N.html (gp3/engine/assemble.js)
   convert   output/ via gp3/engine/convert.js · conservação data-el-id↔btElId ·
-            scripts/validate-slides.js exit 0
+            gp3/engine/tools/validate-slides.js exit 0
   judge     judge-report.md com PASS explícito (FAIL/all-blocked nega)
   finalize  fidelity.md com `VEREDITO: FIEL` e sem [ ]
   upload    template_id definido
@@ -74,7 +74,7 @@ def missing_for(slug: str, state: dict) -> list[str]:
     if stage == "resolve":
         f = d / "resolve.json"
         if not f.exists():
-            miss.append("resolve.json (stdout do bt/scripts/resolve_tenant.py; exit 0)")
+            miss.append("resolve.json (stdout do gp3/engine/tools/resolve_tenant.py; exit 0)")
         elif not json.loads(f.read_text(encoding="utf-8")).get("ok"):
             miss.append("resolve.json com ok=true (o atual tem ok=false)")
 
@@ -134,7 +134,7 @@ def missing_for(slug: str, state: dict) -> list[str]:
                 miss.append(f"conservação: {len(invented)} btElId inventados: {invented[:6]}")
             try:
                 r = subprocess.run(
-                    ["node", str(REPO / "scripts" / "validate-slides.js"), str(out)],
+                    ["node", str(REPO / "gp3" / "engine" / "tools" / "validate-slides.js"), str(out)],
                     capture_output=True, text=True, timeout=180,
                     encoding="utf-8", errors="replace",
                 )

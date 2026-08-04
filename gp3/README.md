@@ -17,14 +17,14 @@ design acopláveis. O que não está lá não existe.
 
 ```
 python gp3/engine/run.py new <slug> --env dev --pack clean-numbered-editorial --n 8
-# resolve  → bt/scripts/resolve_tenant.py > resolve.json
-# context  → dossie.md (bt/CONTEXT.md continua válido)
+# resolve  → gp3/engine/tools/resolve_tenant.py > resolve.json
+# context  → dossie.md (gp3/CONTEXT.md continua válido)
 # compose  → draw.json (sorteio de recipes) + slides/slide-N.html (CATALOG.md §Recipes→HTML)
 # render   → node gp3/engine/assemble.js artifacts/gp3/<slug>/slides
 # convert  → node gp3/engine/convert.js artifacts/gp3/<slug>/slides artifacts/gp3/<slug>/output --slug <slug>
-# judge    → judge-report.md (bt/JUDGE.md adaptado; strip.png é o objeto julgado)
+# judge    → judge-report.md (gp3/JUDGE.md adaptado; strip.png é o objeto julgado)
 # finalize → fidelity.md (VEREDITO: FIEL)
-# upload   → bt/scripts/upload.py → set <slug> template_id <id>
+# upload   → gp3/engine/tools/upload.py → set <slug> template_id <id>
 python gp3/engine/run.py advance <slug>   # entre cada estágio; gates negam avanço incompleto
 ```
 
@@ -35,7 +35,7 @@ runner), env imutável, judge com golden set, lessons por pack.
 ## Estado
 
 - Motor v1 funcional (smoke: `artifacts/gp3/_smoke/` — item-a convertido e
-  validado por `scripts/validate-slides.js`).
+  validado por `gp3/engine/tools/validate-slides.js`).
 - Pack 1 `clean-numbered-editorial` v1 em `status: draft` — **aguarda
   certificação com aprovação do Gustavo** (corredor completo 1×). Só depois a
   fábrica liga e o fluxo bt aposenta.

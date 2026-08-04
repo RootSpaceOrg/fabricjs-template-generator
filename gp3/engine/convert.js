@@ -9,7 +9,7 @@
  * Uso: node gp3/engine/convert.js <slides-dir> <outdir> [--slug <slug>]
  *   <slides-dir> contém slide-1.html, slide-2.html, ... (1 arquivo = 1 slide)
  * Saída: <outdir>/slide-N.json + manifest.json (crop das imagens completado
- * pelo scripts/center-clippable-images.js, encadeado automaticamente).
+ * pelo gp3/engine/tools/center-clippable-images.js, encadeado automaticamente).
  */
 
 const fs = require("fs");
