@@ -328,7 +328,7 @@ const rgb2hex = (c) => {
     slides: slides.map((sl, i) => ({ file: `slide-${i + 1}.json`, width: sl.W, height: sl.H })),
     detectedColors: {
       primary: (pack.variables && pack.variables.primary) || pack.tokens.accent || null,
-      secondary: (pack.variables && pack.variables.secondary) || pack.tokens.ink || null,
+      secondary: (pack.variables && pack.variables.secondary) || null,
     },
     generatedBy: "gp3/engine/convert.js",
   }, null, 2), "utf-8");

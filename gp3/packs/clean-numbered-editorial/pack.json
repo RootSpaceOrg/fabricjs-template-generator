@@ -3,9 +3,23 @@
   "version": 1,
   "status": "draft",
   "familia": "editorial clean / listicle expert",
-  "fit": { "funil": ["meio", "topo (erro/mito)"], "verticais": ["health"] },
-  "slides": { "min": 6, "max": 10 },
-  "format": { "width": 1080, "height": 1350 },
+  "fit": {
+    "funil": [
+      "meio",
+      "topo (erro/mito)"
+    ],
+    "verticais": [
+      "health"
+    ]
+  },
+  "slides": {
+    "min": 6,
+    "max": 10
+  },
+  "format": {
+    "width": 1080,
+    "height": 1350
+  },
   "tokens": {
     "paper": "#F5F4F2",
     "ink": "#141414",
@@ -29,11 +43,18 @@
     "css": "https://fonts.googleapis.com/css2?family=Archivo:wght@400;700;800&family=Inter:wght@400;600&display=swap",
     "meta": "Archivo:400,700,800|Inter:400,600"
   },
-  "variables": { "primary": "#E8291C", "secondary": "#141414" },
+  "variables": {
+    "primary": "#E8291C"
+  },
   "sorteio": {
     "abertura": "capa",
     "fechamento": "cta",
-    "miolo": ["item-a", "item-b", "item-c", "respiro"],
+    "miolo": [
+      "item-a",
+      "item-b",
+      "item-c",
+      "respiro"
+    ],
     "regras": [
       "nunca duas recipes iguais adjacentes (gate mecânico do runner)",
       "numa fita de 4+ itens, usar as 3 variantes a/b/c",
