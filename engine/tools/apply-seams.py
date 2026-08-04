@@ -25,7 +25,8 @@ tok = pack["tokens"]
 
 def obj(sm, cx):
     if sm["shape"] == "image":
-        src = (repo / "packs" / pack_slug / "assets" / sm["asset"]).as_uri()
+        import base64
+        src = "data:image/png;base64," + base64.b64encode((repo / "packs" / pack_slug / "assets" / sm["asset"]).read_bytes()).decode()
         return {"type": "ClippableImage", "name": "Costura", "left": cx, "top": sm["cy"],
                 "originX": "center", "originY": "center", "width": sm["d"], "height": sm["d"],
                 "topLeft": 0, "topRight": 0, "bottomRight": 0, "bottomLeft": 0,
