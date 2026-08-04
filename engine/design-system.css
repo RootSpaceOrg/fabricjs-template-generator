@@ -154,3 +154,7 @@ img[data-cutout] { object-fit: contain; object-position: bottom center; }
 .ds-shape[data-half="left"]  { border-radius: 999px 0 0 999px; }
 .ds-shape[data-half="right"][data-shape="ring"] { border-left: none; }
 .ds-shape[data-half="left"][data-shape="ring"]  { border-right: none; }
+/* tons vencem a cor base da forma (especificidade) */
+.ds-shape[data-tone="wm"] { color: var(--wm); }
+.ds-shape[data-tone="muted"] { color: var(--muted); }
+.ds-shape[data-tone="paper"] { color: var(--paper); }
