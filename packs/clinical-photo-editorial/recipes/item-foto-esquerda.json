@@ -6,6 +6,16 @@
     {
       "c": "ds-shape",
       "shape": "circle",
+      "half": "left",
+      "area": "11 / 12 / 13 / 13",
+      "tone": "accent",
+      "layer": true,
+      "static": true,
+      "slot": "forma"
+    },
+    {
+      "c": "ds-shape",
+      "shape": "circle",
       "area": "11 / 6 / 13 / 9",
       "tone": "wm",
       "layer": true,

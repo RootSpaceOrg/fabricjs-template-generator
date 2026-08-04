@@ -91,6 +91,7 @@ section.slide[data-invert] { background: var(--accent); color: var(--accent-ink)
 [data-tone="accent"] { color: var(--accent); }
 [data-tone="paper"]  { color: var(--paper); }
 [data-tone="accent-ink"] { color: var(--accent-ink); }
+[data-tone="wm"] { color: var(--wm); }
 [data-align="center"] { text-align: center; justify-self: center; }
 [data-align="right"]  { text-align: right; justify-self: end; }
 
