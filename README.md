@@ -24,8 +24,8 @@ python engine/run.py new <slug> --env dev --pack clean-numbered-editorial --n 8
 # resolve  → engine/tools/resolve_tenant.py > resolve.json
 # context  → dossie.md (CONTEXT.md)
 # compose  → draw.json (sorteio de recipes) + slides/slide-N.html (CATALOG.md §Recipes→HTML)
-# render   → node engine/assemble.js artifacts/runs/<slug>/slides
-# convert  → node engine/convert.js artifacts/runs/<slug>/slides artifacts/runs/<slug>/output --slug <slug>
+# render   → node engine/assemble.js artifacts/runs/<slug>/slides   (lê seams.json da run, se houver)
+# convert  → node engine/convert.js ... && python engine/tools/apply-seams.py artifacts/runs/<slug>  # costuras nos 2 slides vizinhos artifacts/runs/<slug>/slides artifacts/runs/<slug>/output --slug <slug>
 # judge    → judge-report.md (JUDGE.md; strip.png é o objeto julgado)
 # finalize → fidelity.md (VEREDITO: FIEL)
 # upload   → engine/tools/upload.py → set <slug> template_id <id>

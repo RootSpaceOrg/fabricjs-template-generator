@@ -7,8 +7,10 @@
  *
  * Uso: node engine/assemble.js <slides-dir> [outdir=<slides-dir>/..]
  *
- * ponytail: camada de costura (watermark cruzando fronteira) fica fora da v1 —
- * adicionar quando o pack 1 certificar e a costura virar requisito real.
+ * Costura (transição entre slides): <run>/seams.json define formas UMA vez em
+ * coordenadas da fita — [{boundary:N, shape:"ring|circle", cy, d, tone, stroke}]
+ * (centro em x = boundary*1080). O assemble desenha no strip; a conversão usa
+ * engine/tools/apply-seams.py para injetar o objeto nos DOIS slides vizinhos.
  */
 
 const fs = require("fs");
@@ -38,11 +40,26 @@ const REPO = path.resolve(__dirname, "..");
   });
   const head = (htmls[0].match(/<html[^>]*>/) || ["<html>"])[0];
   const dsHref = "file:///" + path.join(REPO, "engine", "design-system.css").replace(/\\/g, "/");
+    // costuras: fonte única em coordenadas da fita
+  let seamDivs = "";
+  const seamsPath = path.join(outDir, "seams.json");
+  if (fs.existsSync(seamsPath)) {
+    const seams = JSON.parse(fs.readFileSync(seamsPath, "utf-8"));
+    seamDivs = seams.map((sm) => {
+      const d = sm.d, x = sm.boundary * 1080 - d / 2, y = sm.cy - d / 2;
+      const tone = `var(--${sm.tone || "wm"})`;
+      const paint = sm.shape === "ring"
+        ? `border:${sm.stroke || 4}px solid ${tone};background:transparent`
+        : `background:${tone}`;
+      return `<div style="position:absolute;left:${x}px;top:${y}px;width:${d}px;height:${d}px;border-radius:50%;${paint}"></div>`;
+    }).join("");
+    console.log(`costuras: ${seams.length}`);
+  }
   const strip = `<!doctype html>${head}<head><meta charset="utf-8">
 <link rel="stylesheet" href="${dsHref}">
 ${pack.fonts && pack.fonts.css ? `<link rel="stylesheet" href="${pack.fonts.css}">` : ""}
-<style>${tokensCss} body{margin:0} #strip{display:flex;width:max-content}</style>
-</head><body><div id="strip">${sections.join("\n")}</div></body></html>`;
+<style>${tokensCss} body{margin:0} #strip{display:flex;width:max-content;position:relative}</style>
+</head><body><div id="strip">${sections.join("\n")}${seamDivs}</div></body></html>`;
   const stripPath = path.join(outDir, "strip.html");
   fs.writeFileSync(stripPath, strip, "utf-8");
 

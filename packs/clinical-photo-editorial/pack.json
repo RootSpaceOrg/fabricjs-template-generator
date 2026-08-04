@@ -44,7 +44,7 @@
     "fs-stamp": "24px",
     "fs-cta": "29px",
     "radius": "28px",
-    "shape-stroke": "8px"
+    "shape-stroke": "4px"
   },
   "fonts": {
     "css": "https://fonts.googleapis.com/css2?family=Anton&family=Manrope:wght@400;600&display=swap",

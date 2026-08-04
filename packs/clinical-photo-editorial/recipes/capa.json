@@ -12,16 +12,6 @@
       "slot": "forma"
     },
     {
-      "c": "ds-shape",
-      "shape": "circle",
-      "half": "left",
-      "area": "5 / 12 / 9 / 13",
-      "tone": "wm",
-      "layer": true,
-      "static": true,
-      "slot": "forma"
-    },
-    {
       "c": "ds-photo",
       "area": "1 / 8 / 5 / 13",
       "layer": true,
