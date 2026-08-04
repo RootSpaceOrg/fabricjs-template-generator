@@ -1,0 +1,51 @@
+{
+  "role": "item",
+  "variant": "B",
+  "nota": "espelhada: foto esquerda, texto alinhado a direita",
+  "components": [
+    {
+      "c": "ds-photo",
+      "area": "1 / 1 / 13 / 6",
+      "imageType": "generated",
+      "slot": "item_foto",
+      "editable": {
+        "desc": "Foto clinica no registro do pack",
+        "removeBg": false
+      }
+    },
+    {
+      "c": "ds-number",
+      "area": "2 / 10 / 3 / 12",
+      "align": "right",
+      "slot": "item_numero",
+      "editable": {
+        "desc": "[N]",
+        "min": 3,
+        "max": 4
+      }
+    },
+    {
+      "c": "ds-headline",
+      "area": "3 / 6 / 6 / 12",
+      "align": "right",
+      "slot": "item_headline",
+      "editable": {
+        "desc": "Headline do item UPPERCASE",
+        "min": 15,
+        "max": 48
+      }
+    },
+    {
+      "c": "ds-body",
+      "area": "7 / 7 / 9 / 12",
+      "tone": "muted",
+      "align": "right",
+      "slot": "item_body",
+      "editable": {
+        "desc": "Apoio do item",
+        "min": 70,
+        "max": 170
+      }
+    }
+  ]
+}

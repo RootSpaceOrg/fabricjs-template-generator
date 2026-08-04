@@ -1,0 +1,51 @@
+{
+  "role": "abertura",
+  "nota": "headline gigante em camada ATRAS do cutout (assinatura 1); pill-eyebrow outline; cta pill",
+  "components": [
+    {
+      "c": "ds-slot",
+      "area": "1 / 2 / 2 / 4",
+      "slotName": "logo",
+      "slot": "logo"
+    },
+    {
+      "c": "ds-stamp",
+      "area": "3 / 2 / 4 / 7",
+      "slot": "capa_eyebrow",
+      "editable": {
+        "desc": "Contexto curto antes do gancho, UPPERCASE, com dois-pontos",
+        "min": 8,
+        "max": 26
+      }
+    },
+    {
+      "c": "ds-headline",
+      "area": "4 / 2 / 9 / 12",
+      "size": "lg",
+      "layer": true,
+      "slot": "capa_headline",
+      "editable": {
+        "desc": "Gancho de 2-4 palavras fortes, UPPERCASE",
+        "min": 10,
+        "max": 32
+      }
+    },
+    {
+      "c": "ds-slot",
+      "area": "3 / 6 / 13 / 13",
+      "slotName": "professionalPhoto",
+      "cutout": true,
+      "slot": "foto_profissional"
+    },
+    {
+      "c": "ds-cta",
+      "area": "10 / 2 / 11 / 6",
+      "slot": "capa_cta",
+      "editable": {
+        "desc": "Micro-CTA da capa",
+        "min": 8,
+        "max": 22
+      }
+    }
+  ]
+}

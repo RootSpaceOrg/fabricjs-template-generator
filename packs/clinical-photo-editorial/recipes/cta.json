@@ -1,0 +1,63 @@
+{
+  "role": "fechamento",
+  "invert": true,
+  "nota": "verde profundo; serif sentence-case (assinatura 3); pill claro; cutout direita",
+  "components": [
+    {
+      "c": "ds-eyebrow",
+      "area": "3 / 2 / 4 / 6",
+      "tone": "accent-ink",
+      "slot": "cta_eyebrow",
+      "editable": {
+        "desc": "Eyebrow UPPERCASE tracked",
+        "min": 8,
+        "max": 20
+      }
+    },
+    {
+      "c": "ds-headline",
+      "area": "4 / 2 / 8 / 8",
+      "face": "serif",
+      "slot": "cta_headline",
+      "editable": {
+        "desc": "Frase serif sentence case, beneficio condicional (compliance)",
+        "min": 40,
+        "max": 110
+      }
+    },
+    {
+      "c": "ds-body",
+      "area": "8 / 2 / 10 / 7",
+      "tone": "accent-ink",
+      "slot": "cta_body",
+      "editable": {
+        "desc": "Apoio curto",
+        "min": 40,
+        "max": 120
+      }
+    },
+    {
+      "c": "ds-cta",
+      "area": "10 / 2 / 11 / 7",
+      "slot": "cta_pill",
+      "editable": {
+        "desc": "Pedido unico em 1a pessoa",
+        "min": 12,
+        "max": 32
+      }
+    },
+    {
+      "c": "ds-slot",
+      "area": "4 / 7 / 13 / 13",
+      "slotName": "professionalPhoto",
+      "cutout": true,
+      "slot": "foto_profissional"
+    },
+    {
+      "c": "ds-body",
+      "area": "12 / 2 / 13 / 5",
+      "textType": "instagramHandle",
+      "slot": "handle"
+    }
+  ]
+}

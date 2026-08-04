@@ -1,0 +1,53 @@
+{
+  "role": "item",
+  "variant": "C",
+  "nota": "foto full-bleed em camada + card com numero/headline/body",
+  "components": [
+    {
+      "c": "ds-photo",
+      "area": "1 / 1 / 13 / 13",
+      "layer": true,
+      "imageType": "generated",
+      "slot": "item_foto",
+      "editable": {
+        "desc": "Foto clinica ambiente, registro profundo",
+        "removeBg": false
+      }
+    },
+    {
+      "c": "ds-card",
+      "area": "7 / 2 / 12 / 9",
+      "slot": "item_card",
+      "children": [
+        {
+          "c": "ds-number",
+          "slot": "item_numero",
+          "editable": {
+            "desc": "[N]",
+            "min": 3,
+            "max": 4
+          }
+        },
+        {
+          "c": "ds-headline",
+          "slot": "item_headline",
+          "editable": {
+            "desc": "Headline do item UPPERCASE",
+            "min": 15,
+            "max": 44
+          }
+        },
+        {
+          "c": "ds-body",
+          "tone": "muted",
+          "slot": "item_body",
+          "editable": {
+            "desc": "Apoio do item",
+            "min": 60,
+            "max": 150
+          }
+        }
+      ]
+    }
+  ]
+}

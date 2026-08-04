@@ -1,8 +1,11 @@
-# Registro de imagem
+# Imagens - clinical-photo-editorial
 
-## Todos os slots gerados
-**clínico premium, tons profundos, luz dramática de baixa intensidade**; contraste teal/verde-profundo, sombras densas, acento aqua pontual, sem texto legível, sem foto clara/estourada. O assunto vem do dossiê.
+**Registro (toda imagem gerada):** clinica premium em tons teal profundos; luz suave
+direcional de baixa intensidade; superficies limpas; dessaturacao parcial com o verde
+dominando; NUNCA claro/estourado; nunca resultado clinico real (compliance).
 
-- `professionalPhoto`: slot de plataforma; cutout profissional, base direita, look clínico premium.
-- `item_evidencia`: foto clínica editorial com enquadramento dominante, nunca genérico em fundo branco.
-- `cta_evidencia`: profissional real com equipamento clínico em luz baixa; deve preservar área vazia para CTA à esquerda.
+| Slot | Formula do prompt |
+|------|-------------------|
+| item_foto (A/B) | "detalhe de ambiente clinico premium - {conceito do item} - tons verde-petroleo profundos, luz direcional suave, fotografia editorial, sem pessoas identificaveis, sem texto" |
+| item_foto (C, full-bleed) | "ambiente clinico amplo em penumbra premium, tons teal profundos, luz pontual suave, atmosfera calma, sem texto" |
+| foto_profissional | slot da plataforma (placeholder canonico no render; foto real do usuario em producao) |

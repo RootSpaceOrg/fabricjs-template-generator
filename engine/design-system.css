@@ -71,6 +71,8 @@ section.slide[data-invert] { background: var(--accent); color: var(--accent-ink)
   line-height: 1;
 }
 .ds-number[data-size="lg"] { font-size: var(--fs-number-lg); }
+.ds-headline[data-size="lg"] { font-size: var(--fs-headline-lg, 108px); line-height: 1.02; }
+[data-face="serif"] { font-family: var(--font-serif, var(--font-display)); text-transform: none; font-weight: 400; line-height: 1.15; }
 .ds-watermark {
   font-family: var(--font-display);
   font-size: var(--fs-wm);

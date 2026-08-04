@@ -57,7 +57,8 @@ Sobreposição entre componentes é violação, EXCETO componentes de camada:
 | `ds-slot` | `<img>` | `ClippableImage` | slot da plataforma: `data-slot="professionalPhoto\|instagramProfilePicture\|logo"` (vira `imageType`); `data-circle` para avatar, `data-cutout` para cutout ancorado na base |
 
 Modificadores globais: `data-tone` (muted/accent/paper/accent-ink) ·
-`data-align` (center/right) · `data-round`/`data-circle` (imagens).
+`data-align` (center/right) · `data-round`/`data-circle` (imagens) ·
+`data-size="lg"` (ds-number e ds-headline) · `data-face="serif"` (voz serif do pack via `--font-serif`, sentence case).
 
 ## data-* de metadados
 
