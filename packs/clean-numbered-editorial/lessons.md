@@ -12,3 +12,4 @@ Herdadas do bt/styles/clean-numbered-editorial (pagas com sangue, viraram estrut
 - 2026-08-04 (auditoria anti-resíduo gp2): pack declarava `secondary: #141414` (= ink) sem nenhuma recipe usar — e o motor tinha fallback `|| tokens.ink` pro secondary (chute estético no motor). Ambos removidos: variável de marca só existe se um componente a usa; motor nunca inventa cor.
 
 Novas lessons do pack gp3: registrar aqui com data; 2× recorrente → corrigir recipe e re-certificar.
+- 2026-08-04 (R3, variantes aprovadas pelo Gustavo): A/B/C aprovadas isoladamente. Blueprint final deve distribuir A→B→C→respiro invertido, mantendo anchors ±5%, evidência obrigatória e sem duplicar variante adjacente. A aprovação estrutural não dispensa copy completa, costuras panorâmicas de uma palavra por fronteira e os gates técnicos da certificação.
