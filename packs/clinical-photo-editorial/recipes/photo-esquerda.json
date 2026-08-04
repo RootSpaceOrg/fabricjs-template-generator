@@ -1,0 +1,46 @@
+{
+  "role": "item",
+  "variant": "A",
+  "components": [
+    {
+      "c": "ds-photo",
+      "area": "4 / 1 / 13 / 7",
+      "slot": "item_evidencia",
+      "imageType": "generated",
+      "editable": {
+        "desc": "Foto clínica editorial",
+        "removeBg": false
+      }
+    },
+    {
+      "c": "ds-number",
+      "area": "2 / 8 / 3 / 10",
+      "slot": "item_numero",
+      "editable": {
+        "desc": "Número",
+        "min": 3,
+        "max": 4
+      }
+    },
+    {
+      "c": "ds-headline",
+      "area": "4 / 8 / 7 / 13",
+      "slot": "item_headline",
+      "editable": {
+        "desc": "Headline",
+        "min": 25,
+        "max": 70
+      }
+    },
+    {
+      "c": "ds-body",
+      "area": "8 / 8 / 10 / 13",
+      "slot": "item_body",
+      "editable": {
+        "desc": "Corpo",
+        "min": 80,
+        "max": 200
+      }
+    }
+  ]
+}

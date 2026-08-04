@@ -1,0 +1,45 @@
+{
+  "role": "fechamento",
+  "components": [
+    {
+      "c": "ds-headline",
+      "area": "3 / 2 / 7 / 8",
+      "slot": "cta_recap",
+      "editable": {
+        "desc": "Recap de CTA",
+        "min": 30,
+        "max": 100
+      }
+    },
+    {
+      "c": "ds-body",
+      "area": "7 / 2 / 9 / 8",
+      "slot": "cta_body",
+      "editable": {
+        "desc": "Apoio do CTA",
+        "min": 40,
+        "max": 140
+      }
+    },
+    {
+      "c": "ds-cta",
+      "area": "10 / 2 / 11 / 7",
+      "slot": "cta_pedido",
+      "editable": {
+        "desc": "Botão de CTA",
+        "min": 8,
+        "max": 36
+      }
+    },
+    {
+      "c": "ds-photo",
+      "area": "5 / 8 / 13 / 13",
+      "slot": "cta_evidencia",
+      "imageType": "generated",
+      "editable": {
+        "desc": "Foto real com equipamento",
+        "removeBg": false
+      }
+    }
+  ]
+}

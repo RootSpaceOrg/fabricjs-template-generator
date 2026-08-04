@@ -1,0 +1,60 @@
+{
+  "pack": "clinical-photo-editorial",
+  "version": 1,
+  "status": "draft",
+  "familia": "editorial clínico premium / fotográfica",
+  "fit": {
+    "funil": [
+      "meio",
+      "fundo"
+    ],
+    "verticais": [
+      "health"
+    ]
+  },
+  "slides": {
+    "min": 6,
+    "max": 8
+  },
+  "format": {
+    "width": 1080,
+    "height": 1350
+  },
+  "tokens": {
+    "paper": "#E8F7F6",
+    "ink": "#053C3B",
+    "muted": "#4D8581",
+    "accent": "#008B8C",
+    "accent-ink": "#F6FFFE",
+    "deep": "#004E4C",
+    "font-display": "'DM Serif Display', serif",
+    "font-body": "'Manrope', sans-serif",
+    "fs-eyebrow": "22px",
+    "fs-headline": "64px",
+    "fs-body": "28px",
+    "fs-cta": "30px",
+    "radius": "28px"
+  },
+  "fonts": {
+    "css": "https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Manrope:wght@400;600;700;800&display=swap",
+    "meta": "DM Serif Display:400|Manrope:400,600,700,800"
+  },
+  "variables": {
+    "primary": "#008B8C",
+    "secondary": "#004E4C"
+  },
+  "sorteio": {
+    "abertura": "capa-fotografica",
+    "fechamento": "cta-profundo",
+    "miolo": [
+      "photo-esquerda",
+      "photo-direita",
+      "photo-imersiva"
+    ],
+    "regras": [
+      "nunca duas recipes iguais adjacentes",
+      "alternar lado da foto dominante entre variantes",
+      "usar photo-imersiva no máximo 1x por fita"
+    ]
+  }
+}

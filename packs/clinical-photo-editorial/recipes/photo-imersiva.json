@@ -1,0 +1,49 @@
+{
+  "role": "item",
+  "variant": "C",
+  "components": [
+    {
+      "c": "ds-photo",
+      "area": "1 / 1 / 13 / 13",
+      "slot": "item_evidencia",
+      "imageType": "generated",
+      "editable": {
+        "desc": "Foto clínica editorial imersiva",
+        "removeBg": false
+      }
+    },
+    {
+      "c": "ds-card",
+      "area": "7 / 2 / 12 / 11",
+      "components": [
+        {
+          "c": "ds-number",
+          "slot": "item_numero",
+          "editable": {
+            "desc": "Número",
+            "min": 3,
+            "max": 4
+          }
+        },
+        {
+          "c": "ds-headline",
+          "slot": "item_headline",
+          "editable": {
+            "desc": "Headline",
+            "min": 25,
+            "max": 70
+          }
+        },
+        {
+          "c": "ds-body",
+          "slot": "item_body",
+          "editable": {
+            "desc": "Corpo",
+            "min": 80,
+            "max": 200
+          }
+        }
+      ]
+    }
+  ]
+}
