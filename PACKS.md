@@ -19,13 +19,13 @@ Olhando SÓ a reference.png + o [`engine/CATALOG.md`](engine/CATALOG.md):
 4. **`lessons.md`** — inicia com as lições herdadas RELEVANTES (as que viraram estrutura, anote como estrutura; não copie história morta).
 5. `status: draft` no pack.json.
 
-## 3. Smoke por recipe (antes da fita) — COM CHECKPOINT HUMANO
+## 3. Construção e validação — POR FITA, ponta a ponta
 
-**Gate obrigatório: os renders das recipes vão pro Gustavo LADO A LADO com a referência, e a fita só começa com o aprove dele.** Pular esse checkpoint e entregar fita direto é violação de protocolo — foi assim que uma fita inteira nasceu longe da referência no primeiro teste.
+**Quem cria packs é o criador de packs** (Claude/Fable na sessão de trabalho com o Gustavo, com render validado via SSH) — não o agente de produção. O agente de produção só OPERA packs certificados (copy + imagens + sorteio).
 
-**Cláusula de evolução (aprovação por resultado):** quando 2 packs consecutivos tiverem as recipes aprovadas SEM correção do Gustavo, este checkpoint vira opcional — o agente entrega recipes + fita de uma vez, e o Gustavo aprova só o resultado final (com os lado-a-lado anexados como diagnóstico, consultados apenas se a fita reprovar). Extração que voltar a errar reativa o gate.
+O criador constrói o pack completo (tokens, recipes, images.md) e produz a FITA de certificação de uma vez — exercitando todas as recipes — iterando contra render real até estar fiel às referências. **A validação do Gustavo é sobre a fita renderizada** (composição geral, lado a lado com as referências): sem checkpoint de slides isolados. Renders por recipe são ferramenta interna de diagnóstico do criador, não gate.
 
-Para CADA recipe: gere um slide com copy de exemplo → `assemble.js` (render) → `convert.js` → confira o render contra a reference (posições, tipografia, respiro). Recipe que não passa não entra na fita. Rejeição do convert = recipe usa algo fora do catálogo → conserte a recipe (ou proponha componente novo ao motor — decisão separada, ver §6).
+Recipe que exigir componente fora do catálogo → §6 (mudança de motor, com aval do Gustavo).
 
 ## 4. Certificação (a run que prova o pack)
 
