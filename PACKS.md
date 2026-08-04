@@ -23,6 +23,8 @@ Olhando SÓ a reference.png + o [`engine/CATALOG.md`](engine/CATALOG.md):
 
 **Gate obrigatório: os renders das recipes vão pro Gustavo LADO A LADO com a referência, e a fita só começa com o aprove dele.** Pular esse checkpoint e entregar fita direto é violação de protocolo — foi assim que uma fita inteira nasceu longe da referência no primeiro teste.
 
+**Cláusula de evolução (aprovação por resultado):** quando 2 packs consecutivos tiverem as recipes aprovadas SEM correção do Gustavo, este checkpoint vira opcional — o agente entrega recipes + fita de uma vez, e o Gustavo aprova só o resultado final (com os lado-a-lado anexados como diagnóstico, consultados apenas se a fita reprovar). Extração que voltar a errar reativa o gate.
+
 Para CADA recipe: gere um slide com copy de exemplo → `assemble.js` (render) → `convert.js` → confira o render contra a reference (posições, tipografia, respiro). Recipe que não passa não entra na fita. Rejeição do convert = recipe usa algo fora do catálogo → conserte a recipe (ou proponha componente novo ao motor — decisão separada, ver §6).
 
 ## 4. Certificação (a run que prova o pack)
