@@ -142,3 +142,14 @@ img[data-round]  { border-radius: var(--radius); }
 img[data-circle] { border-radius: 50%; }
 /* cutout (professionalPhoto): ancora na base da área, sem crop de moldura */
 img[data-cutout] { object-fit: contain; object-position: bottom center; }
+
+/* ── formas abstratas de composição (ds-shape) ─────────────────────────── */
+.ds-shape { color: var(--accent); }
+.ds-shape[data-shape="circle"] { background: currentColor; border-radius: 50%; }
+.ds-shape[data-shape="pill"]   { background: currentColor; border-radius: 999px; }
+.ds-shape[data-shape="ring"]   { border: var(--shape-stroke, 14px) solid currentColor; border-radius: 50%; background: transparent; }
+/* metades na borda do slide: a forma CONTINUA no slide vizinho (transição da fita) */
+.ds-shape[data-half="right"] { border-radius: 0 999px 999px 0; }
+.ds-shape[data-half="left"]  { border-radius: 999px 0 0 999px; }
+.ds-shape[data-half="right"][data-shape="ring"] { border-left: none; }
+.ds-shape[data-half="left"][data-shape="ring"]  { border-right: none; }

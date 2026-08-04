@@ -4,6 +4,25 @@
   "nota": "foto direita + decor bokeh na base",
   "components": [
     {
+      "c": "ds-shape",
+      "shape": "circle",
+      "area": "9 / 1 / 11 / 2",
+      "tone": "wm",
+      "half": "right",
+      "layer": true,
+      "static": true,
+      "slot": "forma"
+    },
+    {
+      "c": "ds-shape",
+      "shape": "ring",
+      "area": "1 / 5 / 3 / 8",
+      "tone": "wm",
+      "layer": true,
+      "static": true,
+      "slot": "forma"
+    },
+    {
       "c": "ds-photo",
       "area": "1 / 8 / 13 / 13",
       "imageType": "generated",

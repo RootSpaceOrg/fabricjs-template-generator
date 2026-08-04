@@ -167,9 +167,12 @@ const rgb2hex = (c) => {
             runs: runsOf(el, s), ...textMeta(el, s), text: (el.innerText || "").trim() });
           return;
         }
-        // SHAPE: rect + filhos processados
+        // SHAPE: rect + filhos processados (ds-shape usa cantos por lado + stroke)
         nodes.push({ kind: "shape", ...base, bg: s.backgroundColor, bgImg,
-          radiusPx: parseFloat(s.borderTopLeftRadius) || 0 });
+          radiusPx: parseFloat(s.borderTopLeftRadius) || 0,
+          radiiPx: [s.borderTopLeftRadius, s.borderTopRightRadius, s.borderBottomRightRadius, s.borderBottomLeftRadius].map((v) => parseFloat(v) || 0),
+          borderW: Math.max(parseFloat(s.borderTopWidth) || 0, parseFloat(s.borderRightWidth) || 0, parseFloat(s.borderLeftWidth) || 0),
+          borderColor: (parseFloat(s.borderTopWidth) || parseFloat(s.borderRightWidth) || parseFloat(s.borderLeftWidth)) ? (s.borderTopColor || s.borderRightColor) : null });
         for (const c of el.children) walk(c, depth + 1);
       };
       for (const c of sec.children) walk(c, 0);
@@ -272,11 +275,13 @@ const rgb2hex = (c) => {
           process.exit(1);
         }
       } else if (n.kind === "shape") {
-        const rp = pct(n.radiusPx, n.w, n.h);
+        const rr = (n.radiiPx || [n.radiusPx, n.radiusPx, n.radiusPx, n.radiusPx]).map((v) => pct(v, n.w, n.h));
+        const shapeFill = n.bgImg ? gradientFromCss(n.bgImg, n.w, n.h) : (rgb2hex(n.bg) || "transparent");
         objects.push({ type: "roundedRect", name: "Forma", ...common,
           width: Math.round(n.w), height: Math.round(n.h),
-          fill: n.bgImg ? gradientFromCss(n.bgImg, n.w, n.h) : rgb2hex(n.bg),
-          topLeft: rp, topRight: rp, bottomRight: rp, bottomLeft: rp,
+          fill: shapeFill,
+          ...(n.borderColor ? { stroke: rgb2hex(n.borderColor), strokeWidth: n.borderW } : {}),
+          topLeft: rr[0], topRight: rr[1], bottomRight: rr[2], bottomLeft: rr[3],
           ...("data-variable" in n.attrs ? { fillVariableConfig: { type: "solid", variable: n.attrs["data-variable"], alpha: 1 } } : {}) });
       } else if (n.kind === "chip") {
         const rp = pct(n.radiusPx, n.w, n.h);

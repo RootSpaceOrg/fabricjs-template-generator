@@ -3,6 +3,16 @@
   "nota": "linguagem da capa: menta + decor bokeh + duo-tom + pill accent",
   "components": [
     {
+      "c": "ds-shape",
+      "shape": "ring",
+      "area": "4 / 1 / 6 / 2",
+      "tone": "accent",
+      "half": "right",
+      "layer": true,
+      "static": true,
+      "slot": "forma"
+    },
+    {
       "c": "ds-photo",
       "area": "1 / 1 / 5 / 5",
       "layer": true,

@@ -35,15 +35,16 @@
     "font-display": "'Anton', sans-serif",
     "font-body": "'Manrope', sans-serif",
     "fs-eyebrow": "24px",
-    "fs-headline": "58px",
+    "fs-headline": "64px",
     "fs-headline-lg": "112px",
-    "fs-body": "27px",
-    "fs-number": "54px",
+    "fs-body": "31px",
+    "fs-number": "58px",
     "fs-number-lg": "200px",
     "fs-wm": "170px",
-    "fs-stamp": "22px",
-    "fs-cta": "28px",
-    "radius": "28px"
+    "fs-stamp": "24px",
+    "fs-cta": "29px",
+    "radius": "28px",
+    "shape-stroke": "14px"
   },
   "fonts": {
     "css": "https://fonts.googleapis.com/css2?family=Anton&family=Manrope:wght@400;600&display=swap",

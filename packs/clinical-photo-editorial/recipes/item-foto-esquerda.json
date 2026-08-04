@@ -4,6 +4,15 @@
   "nota": "espelhada + decor topo-direita",
   "components": [
     {
+      "c": "ds-shape",
+      "shape": "circle",
+      "area": "11 / 6 / 13 / 9",
+      "tone": "wm",
+      "layer": true,
+      "static": true,
+      "slot": "forma"
+    },
+    {
       "c": "ds-photo",
       "area": "1 / 1 / 13 / 6",
       "imageType": "generated",
