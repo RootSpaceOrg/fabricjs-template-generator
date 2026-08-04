@@ -23,28 +23,35 @@ from pathlib import Path
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--in', dest='input_path', required=True, help='Source PNG file')
-    parser.add_argument('--out', dest='output_path', required=True, help='Destination .b64.txt file')
+    parser.add_argument(
+        "--in", dest="input_path", required=True, help="Source PNG file"
+    )
+    parser.add_argument(
+        "--out", dest="output_path", required=True, help="Destination .b64.txt file"
+    )
     args = parser.parse_args()
 
     src = Path(args.input_path)
     dst = Path(args.output_path)
 
     if not src.exists():
-        print(f'error: input file not found: {src}', file=sys.stderr)
+        print(f"error: input file not found: {src}", file=sys.stderr)
         return 1
-    if src.suffix.lower() != '.png':
-        print(f'warning: input is not a .png file ({src.suffix}); proceeding anyway', file=sys.stderr)
+    if src.suffix.lower() != ".png":
+        print(
+            f"warning: input is not a .png file ({src.suffix}); proceeding anyway",
+            file=sys.stderr,
+        )
 
-    payload = base64.b64encode(src.read_bytes()).decode('ascii')
-    data_url = f'data:image/png;base64,{payload}'
+    payload = base64.b64encode(src.read_bytes()).decode("ascii")
+    data_url = f"data:image/png;base64,{payload}"
 
     dst.parent.mkdir(parents=True, exist_ok=True)
-    dst.write_text(data_url, encoding='ascii')
+    dst.write_text(data_url, encoding="ascii")
 
-    print(f'wrote {dst} ({len(data_url):,} chars, source {src.stat().st_size:,} bytes)')
+    print(f"wrote {dst} ({len(data_url):,} chars, source {src.stat().st_size:,} bytes)")
     return 0
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(main())
