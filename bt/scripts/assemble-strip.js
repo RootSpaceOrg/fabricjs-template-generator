@@ -29,11 +29,16 @@ async function readSlide(page, file) {
   return page.evaluate(() => {
     const root = document.querySelector(".slide") || document.body;
     const rr = root.getBoundingClientRect();
+    const cs = getComputedStyle(root);
+    const bg = {
+      color: cs.backgroundColor,
+      image: cs.backgroundImage !== "none" ? cs.backgroundImage : null,
+    };
     const kids = [...root.children].map((el) => {
       const r = el.getBoundingClientRect();
       return { html: el.outerHTML, left: r.left - rr.left };
     });
-    return { kids, head: document.head.innerHTML,
+    return { kids, bg, head: document.head.innerHTML,
              htmlAttrs: (document.documentElement.outerHTML.match(/^<html[^>]*>/) || ["<html>"])[0] };
   });
 }
@@ -55,12 +60,17 @@ async function readSlide(page, file) {
   const page = await browser.newPage({ viewport: { width: 1200, height: 1500 } });
 
   let head = null, htmlAttrs = null;
+  const bgs = [];
   const parts = [];
   for (let i = 0; i < slides.length; i++) {
     const s = await readSlide(page, slides[i]);
     if (!head) { head = s.head; htmlAttrs = s.htmlAttrs; }
+    // fundo do root do slide vira retângulo da janela — preserva o ritmo tonal
+    // e isola o fundo de cada slide na fita (nada de contaminação entre janelas)
+    const bgStyle = `background-color:${s.bg.color}` + (s.bg.image ? `;background-image:${s.bg.image};background-size:cover` : "");
+    bgs.push(`<div data-slide-bg="${i + 1}" style="position:absolute;left:${i * W}px;top:0;width:${W}px;height:${H}px;${bgStyle}"></div>`);
     for (const k of s.kids) parts.push(shiftLeft(k.html, k.left + i * W));
-    console.log(`slide ${i + 1}: ${s.kids.length} elementos <- ${path.basename(slides[i])}`);
+    console.log(`slide ${i + 1}: ${s.kids.length} elementos, bg ${s.bg.color} <- ${path.basename(slides[i])}`);
   }
 
   let seams = "";
@@ -74,7 +84,7 @@ async function readSlide(page, file) {
     `<!DOCTYPE html>\n${htmlAttrs}\n<head>\n${head}\n</head>\n<body style="margin:0">\n` +
     `<div class="strip" data-slides="${slides.length}" data-slide-width="${W}" data-slide-height="${H}" ` +
     `style="position:relative;width:${slides.length * W}px;height:${H}px;overflow:hidden">\n` +
-    seams + "\n" + parts.join("\n") + `\n</div>\n</body>\n</html>\n`;
+    bgs.join("\n") + "\n" + seams + "\n" + parts.join("\n") + `\n</div>\n</body>\n</html>\n`;
   const out = path.join(outDir, "strip.html");
   fs.writeFileSync(out, strip, "utf-8");
 
