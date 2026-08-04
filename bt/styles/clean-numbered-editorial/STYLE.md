@@ -84,6 +84,7 @@ Item idêntico repetido é a assinatura nº 1 de conteúdo IA — a referência 
 - **Regra dura da costura**: máx 1 palavra-watermark por fronteira, e ≥120px de respiro entre o fim de uma watermark e o início da seguinte — duas palavras se emendando na costura ("HISTORICOSEGURANÇA") é defeito, não continuidade.
 - Sistema `[N]` + acento + carimbos = identidade que costura sem monotonia.
 - Ritmo tonal: base clara constante com 1 slide de "respiro invertido" opcional (fundo do acento, texto branco) no meio da fita — bloco opcional do blueprint.
+- **Exceção R3 declarada**: neste estilo, base clara constante É a identidade (como a referência); a regra "≥2 mudanças de fundo" é satisfeita por acentos fortes + CTA invertido. O judge NÃO reprova esta fita por monocromia — R3 aqui só reprova se nem acentos nem CTA invertido existirem.
 
 ## Riscos conhecidos (validar na certificação)
 - Densidade: R4 vigia área morta, mas o risco aqui é o oposto — poluição; máx 1 evidência + 2 carimbos por slide é regra dura.
