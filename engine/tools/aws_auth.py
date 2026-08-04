@@ -2,7 +2,7 @@
 """
 Autenticacao AWS compartilhada para a skill template-suggester.
 
-Espelha o padrao do template-generator (gp2-template-uploader/import-template.py):
+Autenticação AWS via .env versionado fora do repo:
 um IAM **user** `TemplateGenerator` (com chaves de longa duracao em um arquivo .env)
 assume uma **role** via STS, e os clients boto3 usam as credenciais temporarias.
 
@@ -14,7 +14,7 @@ ler `/default/supabase-database-credentials` (SSM), ler `tenantConfig` e escreve
 Modos (escolhidos automaticamente; force com SUGGESTER_AUTH_MODE=assume|profile):
 
   1. assume-role (default, igual ao template-generator / OpenClaw):
-       - le o .env de credenciais em GP2_SECRETS_DIR (default /root/.openclaw/workspace/secrets)
+       - le o .env de credenciais em SECRETS_DIR (default /root/.openclaw/workspace/secrets)
        - arquivo: aws-credentials-template-generator-mkt-platform-{env}.env
        - sts.assume_role(RoleArn=TemplateSuggesterRole) -> creds temporarias
 
@@ -22,7 +22,7 @@ Modos (escolhidos automaticamente; force com SUGGESTER_AUTH_MODE=assume|profile)
        - usa boto3.Session(profile_name=mkt-platform-{env}) com seu SSO local
 
 Env vars:
-  GP2_SECRETS_DIR        diretorio dos .env (default /root/.openclaw/workspace/secrets)
+  SECRETS_DIR        diretorio dos .env (default /root/.openclaw/workspace/secrets)
   SUGGESTER_ROLE_ARN_PROD / SUGGESTER_ROLE_ARN_DEV   override do ARN da role
   SUGGESTER_AUTH_MODE    'assume' | 'profile' (override do modo automatico)
 """
@@ -57,7 +57,7 @@ PROFILE_BY_ENV = {"prod": "mkt-platform-prod", "dev": "mkt-platform-dev"}
 _default = Path("/root/secrets")
 if not _default.exists():
     _default = Path("/root/.openclaw/workspace/secrets")
-SECRETS_DIR = Path(os.environ.get("GP2_SECRETS_DIR", _default))
+SECRETS_DIR = Path(os.environ.get("SECRETS_DIR", _default))
 
 
 def _aws_env_path(env: str) -> Path:

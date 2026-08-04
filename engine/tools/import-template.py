@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Upload GetPosts template JSON slides to S3 and insert public.templates row.
+"""Upload de template JSON slides to S3 and insert public.templates row.
 
 Default is dry-run. Add --execute to perform S3 uploads and Supabase insert.
 """
@@ -19,11 +19,11 @@ import boto3
 
 # Diretório onde estão os arquivos .env de credenciais AWS.
 # Default: /root/secrets (neutro — serve OpenClaw, Hermes ou local);
-# fallback legado: /root/.openclaw/workspace/secrets. Override: GP2_SECRETS_DIR.
+# fallback legado: /root/.openclaw/workspace/secrets. Override: SECRETS_DIR.
 _default_secrets = Path("/root/secrets")
 if not _default_secrets.exists():
     _default_secrets = Path("/root/.openclaw/workspace/secrets")
-SECRETS_DIR = Path(os.environ.get("GP2_SECRETS_DIR", _default_secrets))
+SECRETS_DIR = Path(os.environ.get("SECRETS_DIR", _default_secrets))
 
 ENV_CONFIG = {
     "dev": {
@@ -88,7 +88,7 @@ def check_credentials(environment: str) -> None:
         result["status"] = "fail"
         result["error"] = f"AWS env file not found: {aws_env_path}"
         result["hint"] = (
-            "Defina GP2_SECRETS_DIR para apontar para o diretório com os arquivos "
+            "Defina SECRETS_DIR para apontar para o diretório com os arquivos "
             "aws-credentials-template-generator-mkt-platform-{dev,prod}.env, "
             "ou copie os arquivos para o caminho mostrado em aws_env_path."
         )
@@ -144,11 +144,9 @@ def load_manifest(path: Path) -> dict[str, Any]:
 def load_context_analysis(path: Path) -> dict[str, Any]:
     """Load context-analysis.json or template-summary.md from the artifact tree when present."""
     base = path if path.is_dir() else path.parent
-    # v2: prefer template-summary.md from gp2-template-marker artifacts
+    # prefer template-summary.md when present
     summary_candidates = [
         base / "template-summary.md",
-        base.parent / "gp2-template-marker" / base.name / "template-summary.md",
-        base.parent.parent / "gp2-template-marker" / base.name / "template-summary.md",
     ]
     for candidate in summary_candidates:
         if candidate.exists():
@@ -185,7 +183,7 @@ def build_description(
 ) -> str:
     """Description = template-summary.md verbatim.
 
-    The marker (gp2-template-marker) is the single source of truth for the
+    The summary is the single source of truth for the
     template's narrative description. The uploader does not rewrite, wrap, or
     enrich it — that only produces duplication and dilution.
 
@@ -202,9 +200,8 @@ def build_description(
     if summary_md:
         return summary_md
     raise RuntimeError(
-        "No description source available. Expected template-summary.md from "
-        "gp2-template-marker artifacts or --description-hint. Pipeline v2 "
-        "requires the marker step to run before upload."
+        "No description source available. Expected template-summary.md next to "
+        "the slides or --description-hint."
     )
 
 
@@ -367,7 +364,7 @@ def invoke_template_handler(
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Import GetPosts v2 generated template JSONs into S3 + Supabase."
+        description="Import generated template JSONs into S3 + Supabase."
     )
     parser.add_argument(
         "path",

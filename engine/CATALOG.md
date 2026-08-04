@@ -1,4 +1,4 @@
-# GP3 — Catálogo de componentes (a interface)
+# Catálogo de componentes (a interface)
 
 Este documento + `design-system.css` são o contrato inteiro entre o html generator
 (agente) e o `convert.js`. O agente escreve HTML semântico: componentes deste
@@ -15,7 +15,7 @@ editar JSON (doutrina do conversor, herdada como lei).
 <head>
   <meta charset="utf-8">
   <meta name="hm-fonts" content="<fonts.meta do pack.json>">
-  <link rel="stylesheet" href="../../../../gp3/engine/design-system.css">
+  <link rel="stylesheet" href="../../../../engine/design-system.css">
 </head>
 <body>
   <section class="slide" data-recipe="<recipe>">  <!-- componentes aqui -->
@@ -49,7 +49,7 @@ Sobreposição entre componentes é violação, EXCETO componentes de camada:
 | `ds-body` | texto | `textbox` | corpo; `data-tone="muted"` para secundário |
 | `ds-number` | texto | `textbox` | `[N]` no acento; `data-size="lg"` = gigante |
 | `ds-watermark` | texto | `textbox` | camada (pode sobrepor); `data-static` implícito NÃO — marque `data-static`; `data-vertical` = rotacionada -90° |
-| `ds-stamp` | texto | `roundedRect` (stroke) + `textbox` | chip outline 1→2, mesmo `btElId`; rotação via `transform: rotate()` |
+| `ds-stamp` | texto | `roundedRect` (stroke) + `textbox` | chip outline 1→2, mesmo `elId`; rotação via `transform: rotate()` |
 | `ds-cta` | texto | `roundedRect` (fill) + `textbox` | pill preenchida 1→2 |
 | `ds-block` | container | `roundedRect` + filhos | bg do acento (`data-tone="ink"` = preto); filhos são componentes do catálogo |
 | `ds-card` | container | `roundedRect` + filhos | cartão no papel, cantos `--radius` |
@@ -59,11 +59,11 @@ Sobreposição entre componentes é violação, EXCETO componentes de camada:
 Modificadores globais: `data-tone` (muted/accent/paper/accent-ink) ·
 `data-align` (center/right) · `data-round`/`data-circle` (imagens).
 
-## data-* de metadados (mesma tabela do bt, mantida)
+## data-* de metadados
 
 | Atributo | Efeito no JSON |
 |----------|----------------|
-| `data-el-id="eN"` | `btElId` — obrigatório em TODO componente (lei de conservação) |
+| `data-el-id="eN"` | `elId` — obrigatório em TODO componente (lei de conservação) |
 | `data-template-element` + `data-te-description` + `data-te-min-chars`/`data-te-max-chars` (texto) | `isTemplateElement: true` + `templateElement{...}` — min/max obrigatórios em texto editável |
 | `data-te-remove-bg="true\|false"` (imagem editável) | `templateElement.removeBackground` |
 | `data-static` | sem templateElement |

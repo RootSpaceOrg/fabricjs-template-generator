@@ -1,6 +1,6 @@
 # Objectives & Frameworks — Referência Completa
 
-Doc autoritativa para a skill `gp2-template-suggester`. Captura **por que** cada framework existe, **para que objetivo** ele serve, e **como estruturar** os slides slide-a-slide.
+Doc autoritativa de frameworks narrativos para o estágio de contexto. Captura **por que** cada framework existe, **para que objetivo** ele serve, e **como estruturar** os slides slide-a-slide.
 
 Pesquisa consolidada em maio de 2026 a partir de fontes de Instagram marketing, copywriting clássico (AIDA/PAS) e benchmarks de engajamento 2026.
 
@@ -406,7 +406,7 @@ Use esta tabela quando estiver decidindo o batch do dia.
 
 ## Critérios de adaptação multi-nicho — checklist por slide
 
-Ao instruir o gp2-pipeline, garanta que cada framework respeite:
+Ao instruir a pipeline, garanta que cada framework respeite:
 
 - [ ] **Copy genérica em todos os slides** — usa "você", "pessoas", "seu público"; nunca "paciente", "cliente", "aluno", "tutor", "consultório", "loja".
 - [ ] **CTA do último slide** sempre da lista: salvar, compartilhar, comentar, marcar amigo, seguir. Nunca: agendar, comprar, ligar, contratar.

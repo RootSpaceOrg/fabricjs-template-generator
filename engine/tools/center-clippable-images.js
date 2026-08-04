@@ -3,7 +3,7 @@
  * center-clippable-images.js
  *
  * Pós-processo determinístico que reaplica, em cada `ClippableImage` dos
- * slide JSONs emitidos pelo gp2-template-converter, o mesmo cover-crop
+ * slide JSONs emitidos pelo conversor, o mesmo cover-crop
  * centralizado que o editor da plataforma executa quando o usuário troca
  * a imagem do slot.
  *
@@ -42,7 +42,7 @@
  * sempre a partir do estado atual, que vira invariante após a primeira passada).
  *
  * Uso:
- *   node scripts/center-clippable-images.js artifacts/gp2-template-converter/<slug>/output/
+ *   node engine/tools/center-clippable-images.js artifacts/conversor/<slug>/output/
  *
  * Saída: rewrite in-place dos slide-*.json + relatório no stdout.
  */
@@ -52,7 +52,7 @@ const path = require('path');
 
 function loadPlaywright() {
   const candidates = ['playwright', '/tmp/pw-run/node_modules/playwright'];
-  if (process.env.GP2_PLAYWRIGHT_DIR) candidates.unshift(process.env.GP2_PLAYWRIGHT_DIR);
+  if (process.env.PLAYWRIGHT_DIR) candidates.unshift(process.env.PLAYWRIGHT_DIR);
   for (const candidate of candidates) {
     try { return require(candidate); } catch (_) {}
   }
@@ -324,7 +324,7 @@ function applyPatch(obj, patch) {
 async function run() {
   const { dir, dryRun } = parseArgs(process.argv.slice(2));
   if (!dir) {
-    console.error('usage: node scripts/center-clippable-images.js <output-dir> [--dry-run]');
+    console.error('usage: node engine/tools/center-clippable-images.js <output-dir> [--dry-run]');
     process.exit(2);
   }
   if (!fs.existsSync(dir) || !fs.statSync(dir).isDirectory()) {

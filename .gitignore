@@ -1,6 +1,3 @@
-# History local do suggester (gerada em runtime)
-*/gp2-template-suggester/history
-
 # Node
 node_modules/
 npm-debug.log

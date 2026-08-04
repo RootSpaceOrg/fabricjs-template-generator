@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 /**
- * GP3 — assembler mecânico: slides isolados → fita de preview.
+ * Assembler mecânico: slides isolados → fita de preview.
  *
  * Lê <slides-dir>/slide-N.html, monta strip.html (sections lado a lado, tokens
  * do pack injetados) e renderiza strip.png + slide-N.png via Playwright.
  *
- * Uso: node gp3/engine/assemble.js <slides-dir> [outdir=<slides-dir>/..]
+ * Uso: node engine/assemble.js <slides-dir> [outdir=<slides-dir>/..]
  *
  * ponytail: camada de costura (watermark cruzando fronteira) fica fora da v1 —
  * adicionar quando o pack 1 certificar e a costura virar requisito real.
@@ -15,11 +15,11 @@ const fs = require("fs");
 const path = require("path");
 const { chromium } = require("playwright");
 
-const REPO = path.resolve(__dirname, "..", "..");
+const REPO = path.resolve(__dirname, "..");
 
 (async () => {
   const [slidesDir, outArg] = process.argv.slice(2);
-  if (!slidesDir) { console.error("uso: node gp3/engine/assemble.js <slides-dir> [outdir]"); process.exit(2); }
+  if (!slidesDir) { console.error("uso: node engine/assemble.js <slides-dir> [outdir]"); process.exit(2); }
   const outDir = outArg || path.resolve(slidesDir, "..");
   const files = fs.readdirSync(slidesDir).filter((f) => /^slide-\d+\.html$/.test(f))
     .sort((a, b) => parseInt(a.match(/\d+/)[0]) - parseInt(b.match(/\d+/)[0]));
@@ -28,7 +28,7 @@ const REPO = path.resolve(__dirname, "..", "..");
   const htmls = files.map((f) => fs.readFileSync(path.join(slidesDir, f), "utf-8"));
   const packSlug = (htmls[0].match(/data-pack="([^"]+)"/) || [])[1];
   if (!packSlug) { console.error("REJEITADO — <html> sem data-pack"); process.exit(1); }
-  const pack = JSON.parse(fs.readFileSync(path.join(REPO, "gp3", "packs", packSlug, "pack.json"), "utf-8"));
+  const pack = JSON.parse(fs.readFileSync(path.join(REPO, "packs", packSlug, "pack.json"), "utf-8"));
   const tokensCss = ":root{" + Object.entries(pack.tokens).map(([k, v]) => `--${k}:${v}`).join(";") + "}";
 
   const sections = htmls.map((h) => {
@@ -37,7 +37,7 @@ const REPO = path.resolve(__dirname, "..", "..");
     return m[0];
   });
   const head = (htmls[0].match(/<html[^>]*>/) || ["<html>"])[0];
-  const dsHref = "file:///" + path.join(REPO, "gp3", "engine", "design-system.css").replace(/\\/g, "/");
+  const dsHref = "file:///" + path.join(REPO, "engine", "design-system.css").replace(/\\/g, "/");
   const strip = `<!doctype html>${head}<head><meta charset="utf-8">
 <link rel="stylesheet" href="${dsHref}">
 ${pack.fonts && pack.fonts.css ? `<link rel="stylesheet" href="${pack.fonts.css}">` : ""}

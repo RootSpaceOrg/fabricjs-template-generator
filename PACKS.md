@@ -4,7 +4,7 @@ Um pack nasce de uma referência aprovada e vira dados que o motor carrega. Este
 
 ## 1. Origem
 
-- **`gp3/pack-queue/`**: referências visuais já aprovadas pelo Gustavo (pins, peças de agência, vencedores excepcionais). Escolha uma (ou o Gustavo indica) e mova-a para `gp3/packs/<slug>/reference.png`.
+- **`pack-queue/`**: referências visuais já aprovadas pelo Gustavo (pins, peças de agência, vencedores excepcionais). Escolha uma (ou o Gustavo indica) e mova-a para `packs/<slug>/reference.png`.
 - Slug: kebab-case descrevendo a estética, não o nicho (`clean-numbered-editorial`, não `dentista-vermelho`).
 
 ## 2. Extração (referência → dados)

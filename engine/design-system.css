@@ -1,4 +1,4 @@
-/* GP3 design system — a interface fechada agente↔conversor (contrato: CATALOG.md).
+/* Design system — a interface fechada agente↔conversor (contrato: CATALOG.md).
  * O agente NUNCA escreve CSS. Ele escreve componentes ds-* + grid-area inline +
  * modificadores data-*. Tokens (:root) são injetados do pack.json no render/convert.
  * Classe fora deste arquivo = rejeição na conversão. */
