@@ -66,7 +66,7 @@ gp3/packs/<slug>/
 |------|-----|-----------|
 | Agente (html generator) | storyline/copy do dossiê, sorteio e preenchimento de recipes, fórmulas→prompts de imagem | CSS, layout livre, conversão, edição de JSON |
 | Motor (código) | grid, conversão, montagem, gates, conservação | escolha estética |
-| Judge | QA visual (R-checks, coerência de imagem, golden set) | régua absoluta sem âncora |
+| Judge | QA visual (R-checks, coerência de imagem, fidelidade à reference.png do pack) | régua absoluta sem âncora |
 | Gustavo | referência de packs, certificação, aprovação em review, curadoria da pack-queue | — |
 
 ## 4. O que deliberadamente NÃO levamos do bt/gp2
