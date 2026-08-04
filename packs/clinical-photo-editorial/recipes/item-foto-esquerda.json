@@ -4,15 +4,6 @@
   "nota": "espelhada + decor topo-direita",
   "components": [
     {
-      "c": "ds-shape",
-      "shape": "ring",
-      "area": "10 / 9 / 13 / 13",
-      "tone": "wm",
-      "layer": true,
-      "static": true,
-      "slot": "forma"
-    },
-    {
       "c": "ds-photo",
       "area": "1 / 1 / 13 / 6",
       "imageType": "generated",
@@ -21,15 +12,6 @@
         "desc": "Foto clinica no registro do pack",
         "removeBg": false
       }
-    },
-    {
-      "c": "ds-photo",
-      "area": "1 / 9 / 4 / 13",
-      "layer": true,
-      "static": true,
-      "imageType": "userAsset",
-      "asset": "decor-blur-1.png",
-      "slot": "decor"
     },
     {
       "c": "ds-number",

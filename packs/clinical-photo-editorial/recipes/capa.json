@@ -3,30 +3,12 @@
   "nota": "duo-tom entrelacado + decor bokeh assimetrico",
   "components": [
     {
-      "c": "ds-shape",
-      "shape": "ring",
-      "area": "1 / 8 / 6 / 13",
-      "tone": "wm",
-      "layer": true,
-      "static": true,
-      "slot": "forma"
-    },
-    {
       "c": "ds-photo",
       "area": "1 / 8 / 5 / 13",
       "layer": true,
       "static": true,
       "imageType": "userAsset",
       "asset": "decor-blur-1.png",
-      "slot": "decor"
-    },
-    {
-      "c": "ds-photo",
-      "area": "9 / 1 / 13 / 5",
-      "layer": true,
-      "static": true,
-      "imageType": "userAsset",
-      "asset": "decor-blur-3.png",
       "slot": "decor"
     },
     {

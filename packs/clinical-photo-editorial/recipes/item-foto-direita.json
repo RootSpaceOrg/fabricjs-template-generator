@@ -4,15 +4,6 @@
   "nota": "foto direita + decor bokeh na base",
   "components": [
     {
-      "c": "ds-shape",
-      "shape": "ring",
-      "area": "10 / 1 / 13 / 4",
-      "tone": "wm",
-      "layer": true,
-      "static": true,
-      "slot": "forma"
-    },
-    {
       "c": "ds-photo",
       "area": "1 / 8 / 13 / 13",
       "imageType": "generated",
@@ -21,15 +12,6 @@
         "desc": "Foto clinica no registro do pack",
         "removeBg": false
       }
-    },
-    {
-      "c": "ds-photo",
-      "area": "10 / 5 / 13 / 8",
-      "layer": true,
-      "static": true,
-      "imageType": "userAsset",
-      "asset": "decor-blur-2.png",
-      "slot": "decor"
     },
     {
       "c": "ds-number",
