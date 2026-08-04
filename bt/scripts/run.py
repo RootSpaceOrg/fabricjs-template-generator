@@ -169,8 +169,15 @@ def missing_for(slug: str, state: dict) -> list[str]:
             state["candidates_ready"] = found
             miss.append(f"AVISO (não bloqueia): {len(found)}/{n} candidatos completos: {found}")
     elif stage == "judge":
-        if not (d / "judge-report.md").exists():
+        jr = d / "judge-report.md"
+        if not jr.exists():
             miss.append("judge-report.md")
+        else:
+            t = jr.read_text(encoding="utf-8", errors="replace")
+            if re.search(r"QA:\s*FAIL|all-blocked", t, re.IGNORECASE):
+                miss.append("judge-report com veredito FAIL/all-blocked — corrija o candidato e RE-JULGUE (substitua o report); avanço negado por veredito")
+            elif "PASS" not in t:
+                miss.append("judge-report sem veredito PASS explícito (QA: PASS ou gate PASS)")
     elif stage == "fixes":
         w = state.get("winner")
         strip = d / "candidates" / (w or "_") / "strip.png"
