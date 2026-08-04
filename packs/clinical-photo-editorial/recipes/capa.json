@@ -20,7 +20,7 @@
     },
     {
       "c": "ds-headline",
-      "area": "4 / 2 / 9 / 12",
+      "area": "4 / 2 / 9 / 10",
       "size": "lg",
       "layer": true,
       "slot": "capa_headline",
@@ -32,7 +32,7 @@
     },
     {
       "c": "ds-slot",
-      "area": "3 / 6 / 13 / 13",
+      "area": "3 / 7 / 13 / 13",
       "slotName": "professionalPhoto",
       "cutout": true,
       "slot": "foto_profissional"
