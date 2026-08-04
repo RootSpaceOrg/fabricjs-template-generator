@@ -1,0 +1,15 @@
+{
+  "role": "item",
+  "variant": "respiro",
+  "nota": "respiro invertido — fundo do acento full-bleed, texto claro; máx 1x por fita, no meio",
+  "section": { "invert": true, "variable": "primary", "variableTarget": "background" },
+  "components": [
+    { "c": "ds-number", "area": "1 / 2 / 2 / 4", "tone": "paper", "slot": "item_numero",
+      "editable": { "desc": "Número do item entre colchetes, ex: [5]", "min": 3, "max": 4 } },
+    { "c": "ds-eyebrow", "area": "3 / 2 / 4 / 9", "slot": "item_eyebrow", "static": true },
+    { "c": "ds-headline", "area": "4 / 2 / 8 / 12", "slot": "item_headline",
+      "editable": { "desc": "Frase-statement do item, UPPERCASE, grande", "min": 25, "max": 70 } },
+    { "c": "ds-body", "area": "8 / 2 / 10 / 9", "slot": "item_body",
+      "editable": { "desc": "Texto de apoio do item", "min": 80, "max": 200 } }
+  ]
+}

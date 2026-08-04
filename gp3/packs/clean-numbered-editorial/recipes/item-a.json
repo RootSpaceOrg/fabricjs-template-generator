@@ -1,0 +1,18 @@
+{
+  "role": "item",
+  "variant": "A",
+  "nota": "editorial esquerda — número topo, headline esquerda, watermark horizontal, evidência à direita",
+  "components": [
+    { "c": "ds-watermark", "area": "4 / 1 / 6 / 13", "slot": "item_watermark", "layer": true,
+      "editable": { "desc": "Palavra-tema do slide em caixa alta (1 palavra)", "min": 6, "max": 14 } },
+    { "c": "ds-number", "area": "1 / 2 / 2 / 4", "slot": "item_numero",
+      "editable": { "desc": "Número do item entre colchetes, ex: [3]", "min": 3, "max": 4 } },
+    { "c": "ds-headline", "area": "2 / 2 / 4 / 9", "slot": "item_headline",
+      "editable": { "desc": "Headline do item, UPPERCASE", "min": 25, "max": 70 } },
+    { "c": "ds-body", "area": "6 / 2 / 8 / 7", "slot": "item_body",
+      "editable": { "desc": "Texto de apoio do item", "min": 80, "max": 200 } },
+    { "c": "ds-photo", "area": "7 / 7 / 11 / 12", "rot": 3, "imageType": "generated", "slot": "item_evidencia",
+      "editable": { "desc": "Evidência visual do item (foto still editorial ou mockup limpo)", "removeBg": false } },
+    { "c": "ds-stamp", "area": "8 / 2 / 9 / 5", "rot": -4, "variable": "primary", "static": true, "slot": "item_tag" }
+  ]
+}

@@ -1,0 +1,142 @@
+/* GP3 design system — a interface fechada agente↔conversor (contrato: CATALOG.md).
+ * O agente NUNCA escreve CSS. Ele escreve componentes ds-* + grid-area inline +
+ * modificadores data-*. Tokens (:root) são injetados do pack.json no render/convert.
+ * Classe fora deste arquivo = rejeição na conversão. */
+
+:root {
+  /* defaults neutros — o pack sobrescreve tudo isto */
+  --paper: #ffffff;
+  --ink: #141414;
+  --muted: #5a5a5a;
+  --accent: #e8291c;
+  --accent-ink: #ffffff;
+  --wm: #e4e2de;
+  --font-display: Arial, sans-serif;
+  --font-body: Arial, sans-serif;
+  --fs-eyebrow: 22px;
+  --fs-headline: 52px;
+  --fs-body: 28px;
+  --fs-number: 52px;
+  --fs-number-lg: 220px;
+  --fs-wm: 180px;
+  --fs-stamp: 20px;
+  --fs-cta: 30px;
+  --radius: 24px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+/* ── slide: grid declarativo 12×12 ─────────────────────────────────────── */
+section.slide {
+  position: relative;
+  width: 1080px;
+  height: 1350px;
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  grid-template-rows: repeat(12, 1fr);
+  background: var(--paper);
+  overflow: hidden;
+  font-family: var(--font-body);
+  color: var(--ink);
+}
+/* respiro invertido / CTA: fundo do acento, texto claro */
+section.slide[data-invert] { background: var(--accent); color: var(--accent-ink); }
+
+/* ── componentes de texto ──────────────────────────────────────────────── */
+.ds-eyebrow {
+  font-family: var(--font-display);
+  font-size: var(--fs-eyebrow);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  align-self: center;
+}
+.ds-headline {
+  font-family: var(--font-display);
+  font-size: var(--fs-headline);
+  font-weight: 700;
+  text-transform: uppercase;
+  line-height: 1.08;
+}
+.ds-body {
+  font-family: var(--font-body);
+  font-size: var(--fs-body);
+  line-height: 1.4;
+}
+.ds-number {
+  font-family: var(--font-display);
+  font-size: var(--fs-number);
+  font-weight: 800;
+  color: var(--accent);
+  line-height: 1;
+}
+.ds-number[data-size="lg"] { font-size: var(--fs-number-lg); }
+.ds-watermark {
+  font-family: var(--font-display);
+  font-size: var(--fs-wm);
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--wm);
+  line-height: 1;
+  white-space: nowrap;
+  align-self: center;
+  overflow: visible;
+}
+.ds-watermark[data-vertical] { transform: rotate(-90deg); }
+
+/* tons (qualquer componente de texto) */
+[data-tone="muted"]  { color: var(--muted); }
+[data-tone="accent"] { color: var(--accent); }
+[data-tone="paper"]  { color: var(--paper); }
+[data-tone="accent-ink"] { color: var(--accent-ink); }
+[data-align="center"] { text-align: center; justify-self: center; }
+[data-align="right"]  { text-align: right; justify-self: end; }
+
+/* ── chips (1 elemento → rect + textbox no Fabric) ─────────────────────── */
+.ds-stamp {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 3px solid var(--accent);
+  border-radius: 999px;
+  color: var(--accent);
+  font-family: var(--font-display);
+  font-size: var(--fs-stamp);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 10px 26px;
+  place-self: center start;
+}
+.ds-cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--accent);
+  border-radius: 999px;
+  color: var(--accent-ink);
+  font-family: var(--font-display);
+  font-size: var(--fs-cta);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+section.slide[data-invert] .ds-cta { background: var(--paper); color: var(--accent); }
+
+/* ── formas/containers ─────────────────────────────────────────────────── */
+.ds-block { background: var(--accent); color: var(--accent-ink); padding: 36px; }
+.ds-block[data-tone="ink"] { background: var(--ink); color: var(--paper); }
+.ds-card  { background: var(--paper); border-radius: var(--radius); padding: 36px; }
+
+/* ── imagens ───────────────────────────────────────────────────────────── */
+img.ds-photo, img.ds-slot {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  align-self: stretch;
+  justify-self: stretch;
+}
+img[data-round]  { border-radius: var(--radius); }
+img[data-circle] { border-radius: 50%; }
+/* cutout (professionalPhoto): ancora na base da área, sem crop de moldura */
+img[data-cutout] { object-fit: contain; object-position: bottom center; }
