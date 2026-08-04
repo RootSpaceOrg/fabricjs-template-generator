@@ -1,7 +1,7 @@
 {
   "role": "item",
   "variant": "B",
-  "nota": "espelhada: foto esquerda, texto alinhado a direita",
+  "nota": "espelhada + decor topo-direita",
   "components": [
     {
       "c": "ds-photo",
@@ -12,6 +12,15 @@
         "desc": "Foto clinica no registro do pack",
         "removeBg": false
       }
+    },
+    {
+      "c": "ds-photo",
+      "area": "1 / 10 / 4 / 13",
+      "layer": true,
+      "static": true,
+      "imageType": "userAsset",
+      "asset": "decor-blur-1.png",
+      "slot": "decor"
     },
     {
       "c": "ds-number",
@@ -26,7 +35,7 @@
     },
     {
       "c": "ds-headline",
-      "area": "3 / 6 / 6 / 12",
+      "area": "4 / 6 / 7 / 12",
       "align": "right",
       "slot": "item_headline",
       "editable": {
@@ -37,7 +46,7 @@
     },
     {
       "c": "ds-body",
-      "area": "7 / 7 / 9 / 12",
+      "area": "8 / 7 / 10 / 12",
       "tone": "muted",
       "align": "right",
       "slot": "item_body",

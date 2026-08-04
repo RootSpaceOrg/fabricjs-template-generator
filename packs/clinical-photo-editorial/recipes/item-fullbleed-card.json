@@ -1,7 +1,7 @@
 {
   "role": "item",
   "variant": "C",
-  "nota": "foto full-bleed em camada + card com numero/headline/body",
+  "nota": "foto full-bleed + card",
   "components": [
     {
       "c": "ds-photo",

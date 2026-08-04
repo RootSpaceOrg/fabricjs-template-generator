@@ -1,8 +1,8 @@
 {
   "pack": "clinical-photo-editorial",
-  "version": 2,
+  "version": 3,
   "status": "draft",
-  "familia": "editorial clinico premium, fotografica",
+  "familia": "editorial clinico premium, fotografico e organico",
   "fit": {
     "funil": [
       "meio",
@@ -21,19 +21,18 @@
     "height": 1350
   },
   "assinaturas": [
-    "tipografia display teal profunda GIGANTE entrelacada com o cutout do profissional (headline em camada atras da foto)",
-    "paleta teal: papel menta claro + tinta teal profunda; CTA invertido em verde profundo com texto menta",
-    "CTA: voz serif elegante em sentence case + pill claro como unico elemento de alto contraste"
+    "tipografia display teal GIGANTE em duo-tom (palavra-chave no accent) entrelacada com o cutout do profissional",
+    "objetos cirurgicos DESFOCADOS (bokeh de primeiro plano) como decoracao assimetrica fundindo no papel menta",
+    "composicao assimetrica com sobreposicoes em camada; pills outline; clean robusto"
   ],
   "tokens": {
     "paper": "#E9F3F1",
     "ink": "#0E4F47",
     "muted": "#5E7D77",
-    "accent": "#0E5A50",
-    "accent-ink": "#E9F3F1",
+    "accent": "#2E8C7F",
+    "accent-ink": "#FFFFFF",
     "wm": "#D6E8E4",
     "font-display": "'Anton', sans-serif",
-    "font-serif": "'Prata', serif",
     "font-body": "'Manrope', sans-serif",
     "fs-eyebrow": "24px",
     "fs-headline": "58px",
@@ -47,11 +46,11 @@
     "radius": "28px"
   },
   "fonts": {
-    "css": "https://fonts.googleapis.com/css2?family=Anton&family=Prata&family=Manrope:wght@400;600&display=swap",
-    "meta": "Anton:400|Prata:400|Manrope:400,600"
+    "css": "https://fonts.googleapis.com/css2?family=Anton&family=Manrope:wght@400;600&display=swap",
+    "meta": "Anton:400|Manrope:400,600"
   },
   "variables": {
-    "primary": "#0E5A50"
+    "primary": "#2E8C7F"
   },
   "sorteio": {
     "abertura": "capa",

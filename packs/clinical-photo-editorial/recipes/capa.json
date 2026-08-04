@@ -1,7 +1,25 @@
 {
   "role": "abertura",
-  "nota": "headline gigante em camada ATRAS do cutout (assinatura 1); pill-eyebrow outline; cta pill",
+  "nota": "duo-tom entrelacado + decor bokeh assimetrico",
   "components": [
+    {
+      "c": "ds-photo",
+      "area": "1 / 9 / 4 / 13",
+      "layer": true,
+      "static": true,
+      "imageType": "userAsset",
+      "asset": "decor-blur-1.png",
+      "slot": "decor"
+    },
+    {
+      "c": "ds-photo",
+      "area": "10 / 1 / 13 / 4",
+      "layer": true,
+      "static": true,
+      "imageType": "userAsset",
+      "asset": "decor-blur-3.png",
+      "slot": "decor"
+    },
     {
       "c": "ds-slot",
       "area": "1 / 2 / 2 / 4",
@@ -13,7 +31,7 @@
       "area": "3 / 2 / 4 / 7",
       "slot": "capa_eyebrow",
       "editable": {
-        "desc": "Contexto curto antes do gancho, UPPERCASE, com dois-pontos",
+        "desc": "Contexto curto, UPPERCASE, com dois-pontos",
         "min": 8,
         "max": 26
       }
@@ -25,9 +43,9 @@
       "layer": true,
       "slot": "capa_headline",
       "editable": {
-        "desc": "Gancho de 2-4 palavras fortes, UPPERCASE",
+        "desc": "Gancho 2-4 palavras; palavra-chave em span accent",
         "min": 10,
-        "max": 32
+        "max": 40
       }
     },
     {
