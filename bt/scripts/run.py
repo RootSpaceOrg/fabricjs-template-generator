@@ -208,6 +208,19 @@ def missing_for(slug: str, state: dict) -> list[str]:
             elif n_desc < n_te:
                 miss.append(f"{n_te - n_desc} elemento(s) editáveis sem data-te-description ({n_desc}/{n_te})")
         out = d / "output"
+        # Lei de conservação: data-el-id do HTML == btElId dos JSONs (opt-in: só quando o HTML tem ids)
+        if marked.exists() and out.exists():
+            html_ids = set(re.findall(r'data-el-id="([^"]+)"', marked.read_text(encoding="utf-8", errors="replace")))
+            if html_ids:
+                json_ids: set = set()
+                for sf in out.glob("slide-*.json"):
+                    json_ids |= set(re.findall(r'"btElId"\s*:\s*"([^"]+)"', sf.read_text(encoding="utf-8", errors="replace")))
+                lost = sorted(html_ids - json_ids)
+                invented = sorted(json_ids - html_ids)
+                if lost:
+                    miss.append(f"conservação: {len(lost)} elemento(s) do HTML sem objeto no JSON (perdidos): {lost[:6]}")
+                if invented:
+                    miss.append(f"conservação: {len(invented)} btElId no JSON sem elemento no HTML (inventados): {invented[:6]}")
         if not (out / "slide-1.json").exists():
             miss.append("output/slide-1.json (conversão Fabric)")
         else:

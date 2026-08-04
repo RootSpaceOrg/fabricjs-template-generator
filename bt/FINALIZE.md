@@ -53,6 +53,13 @@ Audite com `scripts/audit-template-markup.py` (máx 2 fixes).
 
 **A conversão é trabalho SEU, não de um executável** — não existe (ainda) converter em código. Você lê o `template-marked.html` e emite `output/slide-N.json` + `manifest.json` seguindo à risca as regras de [`skills/gp2-template-converter/SKILL.md`](../skills/gp2-template-converter/SKILL.md) (mapeamento elemento→objeto Fabric, ClippableImage cru, etc.). Os scripts são pós-processo e gate, não o converter.
 
+**Lei de conservação de elementos (regra do Gustavo):** todo elemento HTML visível é contabilizado na conversão — nada some, nada é inventado. Mecânica:
+
+- Elementos do blueprint/template carregam `data-el-id="e1"..."eN"` (numerados na certificação; o marker preserva).
+- Todo objeto Fabric emitido carrega `btElId` apontando pro elemento de origem.
+- Mapeamentos válidos: **1→1** (default) · **1→2** declarado (ex: chip com fundo = rect + textbox, os DOIS com o mesmo btElId) · **N→1** (spans de cor → styles do textbox pai, spans não têm id próprio) · **1→0** só para wrapper sem papel visual (raro no nosso contrato flat).
+- O runner verifica no finalize: conjunto de `data-el-id` do template-marked.html == conjunto de `btElId` dos JSONs. Sobra de um lado = elemento perdido; sobra do outro = objeto inventado. Ambos negam o advance.
+
 **Pós-emissão OBRIGATÓRIO — correção determinística de estilos** (lição da certificação r3: a conversão manual errou TODOS os fills, fontSizes, pesos e larguras — classe inteira de erro agora corrigida por código):
 
 ```bash
