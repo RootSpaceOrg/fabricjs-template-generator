@@ -5,7 +5,7 @@
     {
       "c": "ds-shape",
       "shape": "ring",
-      "area": "6 / 1 / 10 / 4",
+      "area": "1 / 8 / 6 / 13",
       "tone": "wm",
       "layer": true,
       "static": true,
@@ -14,9 +14,9 @@
     {
       "c": "ds-shape",
       "shape": "circle",
-      "area": "1 / 12 / 3 / 13",
-      "tone": "wm",
       "half": "left",
+      "area": "5 / 12 / 9 / 13",
+      "tone": "wm",
       "layer": true,
       "static": true,
       "slot": "forma"

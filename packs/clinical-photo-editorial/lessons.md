@@ -4,3 +4,5 @@
 - Paleta é fechada: teal profundo/dramático, teal aqua e paper frio; cores fora de `pack.json` são defeito de extração.
 - CTA precisa de fundo deep, botão claro dominante e foto/equipamento; não usar foto clara/stand-in genérico.
 - Miolos precisam alternar posição real da foto (esquerda, direita, imersiva), não espelhar copy no mesmo grid.
+
+- 2026-08-04 (v7 reprovada pelo Gustavo): formas pequenas/sólidas/soltas = sem graça e sem nexo. REGRAS DE FORMA do pack: grande (>=4x4 células) ou nenhuma; SEMPRE cortada por borda do canvas OU emoldurando um elemento focal; tom wm (suave) — nunca sólido de accent no fundo; stroke fino (8px); máximo 1-2 por slide contando costuras.

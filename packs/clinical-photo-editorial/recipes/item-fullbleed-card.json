@@ -15,16 +15,6 @@
       }
     },
     {
-      "c": "ds-shape",
-      "shape": "circle",
-      "half": "right",
-      "area": "11 / 1 / 13 / 2",
-      "tone": "accent",
-      "layer": true,
-      "static": true,
-      "slot": "forma"
-    },
-    {
       "c": "ds-card",
       "area": "7 / 2 / 12 / 9",
       "slot": "item_card",

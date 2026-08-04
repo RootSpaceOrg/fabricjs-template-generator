@@ -5,9 +5,8 @@
     {
       "c": "ds-shape",
       "shape": "ring",
-      "area": "4 / 1 / 6 / 2",
-      "tone": "accent",
-      "half": "right",
+      "area": "4 / 1 / 10 / 3",
+      "tone": "wm",
       "layer": true,
       "static": true,
       "slot": "forma"
