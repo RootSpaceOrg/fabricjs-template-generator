@@ -12,6 +12,15 @@
       "slot": "decor"
     },
     {
+      "c": "ds-photo",
+      "area": "10 / 1 / 13 / 4",
+      "layer": true,
+      "static": true,
+      "imageType": "userAsset",
+      "asset": "decor-blur-3.png",
+      "slot": "decor"
+    },
+    {
       "c": "ds-slot",
       "area": "1 / 2 / 2 / 4",
       "slotName": "logo",

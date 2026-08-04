@@ -5,6 +5,15 @@
   "components": [
     {
       "c": "ds-photo",
+      "area": "11 / 10 / 13 / 13",
+      "layer": true,
+      "static": true,
+      "imageType": "userAsset",
+      "asset": "decor-blur-2.png",
+      "slot": "decor"
+    },
+    {
+      "c": "ds-photo",
       "area": "1 / 1 / 13 / 6",
       "imageType": "generated",
       "slot": "item_foto",

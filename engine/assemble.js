@@ -48,6 +48,10 @@ const REPO = path.resolve(__dirname, "..");
     seamDivs = seams.map((sm) => {
       const d = sm.d, x = sm.boundary * 1080 - d / 2, y = sm.cy - d / 2;
       const tone = `var(--${sm.tone || "wm"})`;
+      if (sm.shape === "image") {
+        const src = "file:///" + path.join(REPO, "packs", packSlug, "assets", sm.asset).replace(/\\/g, "/");
+        return `<img src="${src}" style="position:absolute;left:${x}px;top:${y}px;width:${d}px;height:${d}px;object-fit:cover">`;
+      }
       const paint = sm.shape === "ring"
         ? `border:${sm.stroke || 4}px solid ${tone};background:transparent`
         : `background:${tone}`;

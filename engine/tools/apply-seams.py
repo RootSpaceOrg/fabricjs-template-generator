@@ -24,6 +24,12 @@ pack = json.loads((repo / "packs" / pack_slug / "pack.json").read_text(encoding=
 tok = pack["tokens"]
 
 def obj(sm, cx):
+    if sm["shape"] == "image":
+        src = (repo / "packs" / pack_slug / "assets" / sm["asset"]).as_uri()
+        return {"type": "ClippableImage", "name": "Costura", "left": cx, "top": sm["cy"],
+                "originX": "center", "originY": "center", "width": sm["d"], "height": sm["d"],
+                "topLeft": 0, "topRight": 0, "bottomRight": 0, "bottomLeft": 0,
+                "crossOrigin": "anonymous", "src": src, "imageType": "userAsset"}
     tone = tok.get(sm.get("tone", "wm"), tok["wm"])
     ring = sm["shape"] == "ring"
     o = {"type": "roundedRect", "name": "Costura", "left": cx, "top": sm["cy"],
