@@ -11,13 +11,17 @@ Um pack nasce de uma referência aprovada e vira dados que o motor carrega. Este
 
 Olhando SÓ a reference.png + o [`engine/CATALOG.md`](engine/CATALOG.md):
 
-1. **`pack.json`** — tokens exatos (hexs, famílias/tamanhos, radius), `fit` (funil × verticais), range de slides, `variables` (**só as que algum componente vai usar** — nunca declare por preencher), `sorteio` (papéis, regras de adjacência).
+**0. Assinaturas primeiro (o passo que decide se o pack vai parecer a referência):** antes de qualquer token, liste as **2–3 assinaturas visuais** da referência — o que a torna ELA e não um template qualquer (ex: "tipografia entrelaçada com o cutout do profissional", "verde profundo dramático com luz baixa", "botão dominante como único elemento claro"). Cada assinatura DEVE mapear para recipe+componentes concretos; assinatura que o catálogo não expressa → pare e acione a §6. **Pack extraído sem as assinaturas capturadas é pack de outra coisa** — vai reprovar na certificação por infidelidade, não perca a run.
+
+1. **`pack.json`** — tokens exatos (hexs, famílias/tamanhos, radius), `fit` (funil × verticais), range de slides, `variables` (**só as que algum componente vai usar** — nunca declare por preencher), `sorteio` (papéis, regras de adjacência). **Paleta é FECHADA**: todo hex sampleado da referência; cor que não está nos tokens não existe no pack — recipes e slides não podem introduzir cor nova (candidato a verificação mecânica no convert: fill fora dos tokens = rejeição).
 2. **`recipes/`** — 1 JSON por papel de slide (abertura, 2–4 variantes de miolo, fechamento, opcionais). Cada recipe = componentes do catálogo × grid areas × slots editáveis com min/max. Variedade entre variantes é POSICIONAL (áreas diferentes), não só de conteúdo — itens uniformes são assinatura de IA.
 3. **`images.md`** — fórmulas de prompt por slot de imagem (estilo/luz/registro, nunca assunto) + o que é slot de plataforma vs gerada.
 4. **`lessons.md`** — inicia com as lições herdadas RELEVANTES (as que viraram estrutura, anote como estrutura; não copie história morta).
 5. `status: draft` no pack.json.
 
-## 3. Smoke por recipe (antes da fita)
+## 3. Smoke por recipe (antes da fita) — COM CHECKPOINT HUMANO
+
+**Gate obrigatório: os renders das recipes vão pro Gustavo LADO A LADO com a referência, e a fita só começa com o aprove dele.** Pular esse checkpoint e entregar fita direto é violação de protocolo — foi assim que uma fita inteira nasceu longe da referência no primeiro teste.
 
 Para CADA recipe: gere um slide com copy de exemplo → `assemble.js` (render) → `convert.js` → confira o render contra a reference (posições, tipografia, respiro). Recipe que não passa não entra na fita. Rejeição do convert = recipe usa algo fora do catálogo → conserte a recipe (ou proponha componente novo ao motor — decisão separada, ver §6).
 
