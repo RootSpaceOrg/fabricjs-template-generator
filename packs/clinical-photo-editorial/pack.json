@@ -1,8 +1,8 @@
 {
   "pack": "clinical-photo-editorial",
-  "version": 1,
+  "version": 2,
   "status": "draft",
-  "familia": "editorial clínico premium / fotográfica",
+  "familia": "editorial clínico premium / fotográfica dramática",
   "fit": {
     "funil": [
       "meio",
@@ -21,27 +21,30 @@
     "height": 1350
   },
   "tokens": {
-    "paper": "#E8F7F6",
-    "ink": "#053C3B",
-    "muted": "#4D8581",
-    "accent": "#008B8C",
-    "accent-ink": "#F6FFFE",
-    "deep": "#004E4C",
-    "font-display": "'DM Serif Display', serif",
+    "paper": "#E5F3F2",
+    "ink": "#004C4A",
+    "muted": "#6E9C9A",
+    "teal": "#007E7B",
+    "teal-bright": "#00A9A5",
+    "deep": "#004A47",
+    "accent-ink": "#D8F0EE",
+    "blue-scrub": "#1769A6",
+    "font-display": "'Anton', sans-serif",
+    "font-serif": "'DM Serif Display', serif",
     "font-body": "'Manrope', sans-serif",
     "fs-eyebrow": "22px",
-    "fs-headline": "64px",
+    "fs-headline": "72px",
     "fs-body": "28px",
     "fs-cta": "30px",
     "radius": "28px"
   },
   "fonts": {
-    "css": "https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Manrope:wght@400;600;700;800&display=swap",
-    "meta": "DM Serif Display:400|Manrope:400,600,700,800"
+    "css": "https://fonts.googleapis.com/css2?family=Anton&family=DM+Serif+Display&family=Manrope:wght@400;600;700;800&display=swap",
+    "meta": "Anton:400|DM Serif Display:400|Manrope:400,600,700,800"
   },
   "variables": {
-    "primary": "#008B8C",
-    "secondary": "#004E4C"
+    "primary": "#007E7B",
+    "secondary": "#004A47"
   },
   "sorteio": {
     "abertura": "capa-fotografica",
@@ -53,8 +56,46 @@
     ],
     "regras": [
       "nunca duas recipes iguais adjacentes",
-      "alternar lado da foto dominante entre variantes",
-      "usar photo-imersiva no máximo 1x por fita"
+      "photo-esquerda e photo-direita alternam a foto dominante em lados opostos",
+      "photo-imersiva no máximo 1x por fita",
+      "capa usa headline em camada sobre cutout; CTA é o único slide deep full-bleed"
     ]
-  }
+  },
+  "assinaturas": [
+    {
+      "signature": "Capa: headline condensada entrelaçada com cutout profissional",
+      "maps_to": {
+        "recipe": "capa-fotografica",
+        "components": [
+          "ds-headline (data-layer)",
+          "ds-slot[data-cutout]",
+          "ds-eyebrow",
+          "ds-cta"
+        ]
+      }
+    },
+    {
+      "signature": "Conjunto: teal profundo dramático, com luz baixa e acento aqua",
+      "maps_to": {
+        "recipe": "photo-esquerda/photo-direita/photo-imersiva",
+        "components": [
+          "ds-photo",
+          "ds-card",
+          "ds-number"
+        ]
+      }
+    },
+    {
+      "signature": "CTA: fundo verde-profundo com botão claro dominante e foto/equipamento",
+      "maps_to": {
+        "recipe": "cta-profundo",
+        "components": [
+          "ds-headline",
+          "ds-body",
+          "ds-cta",
+          "ds-photo"
+        ]
+      }
+    }
+  ]
 }

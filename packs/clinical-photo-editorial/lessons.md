@@ -1,4 +1,6 @@
 # Lessons — clinical-photo-editorial
 
-- Estrutura herdada: variação é posicional (foto dominante à esquerda, à direita e imersiva); não substituir por variação apenas de copy.
-- Fundos claros e CTA verde-profundo são componentes distintos; foto dominante exige área própria, sem texto concorrente.
+- Assinatura de capa é headline condensada entrelaçada com cutout profissional; se texto e cutout não se cruzam em camada, não é este pack.
+- Paleta é fechada: teal profundo/dramático, teal aqua e paper frio; cores fora de `pack.json` são defeito de extração.
+- CTA precisa de fundo deep, botão claro dominante e foto/equipamento; não usar foto clara/stand-in genérico.
+- Miolos precisam alternar posição real da foto (esquerda, direita, imersiva), não espelhar copy no mesmo grid.

@@ -1,7 +1,8 @@
 # Registro de imagem
 
-- `professionalPhoto`: slot de plataforma; cutout clínico premium, ancorado à base.
-- `item_evidencia`: foto still editorial clínico premium, luz profunda e direcional, contraste controlado, teal como acento; sem texto legível.
-- `cta_evidencia`: foto real de profissional com equipamento clínico, luz profunda, fundo teal/verde-profundo, sem texto legível.
+## Todos os slots gerados
+**clínico premium, tons profundos, luz dramática de baixa intensidade**; contraste teal/verde-profundo, sombras densas, acento aqua pontual, sem texto legível, sem foto clara/estourada. O assunto vem do dossiê.
 
-O registro descreve luz e linguagem visual; o assunto vem do dossiê.
+- `professionalPhoto`: slot de plataforma; cutout profissional, base direita, look clínico premium.
+- `item_evidencia`: foto clínica editorial com enquadramento dominante, nunca genérico em fundo branco.
+- `cta_evidencia`: profissional real com equipamento clínico em luz baixa; deve preservar área vazia para CTA à esquerda.
