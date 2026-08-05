@@ -14,12 +14,10 @@ Comandos:
 Estágios e gates (artefatos relativos a artifacts/runs/<slug>/):
   resolve   resolve.json ok=true (engine/tools/resolve_tenant.py)
   context   dossie.md
-  compose   draw.json (sorteio de recipes; "pares": [[i,i+1]] p/ par contínuo)
-            + slides/slide-N.html
-            gates: recipes existem no pack · nunca duas iguais adjacentes ·
-            data-recipe do HTML == draw.json · data-pack == pack da run ·
-            par contínuo declarado e com data-pos left/right nos vizinhos
-  render    strip.png mais novo que todo slide-N.html (engine/assemble.js)
+  compose   fita.html (fita inteira: N sections + .fita-layer de travessias)
+            gates: data-pack == pack da run · N dentro de pack.slides.min/max ·
+            data-role por seção (1ª=abertura, última=fechamento, meio=item)
+  render    strip.png mais novo que fita.html (engine/assemble.js)
   convert   output/ via engine/convert.js · conservação data-el-id↔elId ·
             engine/tools/validate-slides.js exit 0
   judge     judge-report.md com PASS explícito (FAIL/all-blocked nega)
@@ -60,13 +58,6 @@ def _save(slug: str, state: dict) -> None:
     )
 
 
-def _slide_files(d: Path) -> list[Path]:
-    sd = d / "slides"
-    if not sd.exists():
-        return []
-    return sorted(sd.glob("slide-*.html"), key=lambda p: int(re.search(r"\d+", p.name).group()))
-
-
 def missing_for(slug: str, state: dict) -> list[str]:
     d = _dir(slug)
     stage = state["stage"]
@@ -85,131 +76,48 @@ def missing_for(slug: str, state: dict) -> list[str]:
             miss.append("dossie.md (storyline/copy — CONTEXT.md continua válido)")
 
     elif stage == "compose":
-        draw_f = d / "draw.json"
-        slides = _slide_files(d)
-        if not draw_f.exists():
-            miss.append('draw.json (sorteio: {"recipes": ["capa", "item-a", ...]})')
-        if not slides:
-            miss.append("slides/slide-1.html ... (1 arquivo por slide)")
-        if draw_f.exists() and slides:
-            draw = json.loads(draw_f.read_text(encoding="utf-8")).get("recipes", [])
-            if len(draw) != len(slides):
-                miss.append(f"draw.json tem {len(draw)} recipes mas há {len(slides)} slides")
-            for r in set(draw):
-                if not (pack_dir / "recipes" / f"{r}.json").exists():
-                    miss.append(f"recipe inexistente no pack: {r}")
-            for a, b in zip(draw, draw[1:]):
-                if a == b:
-                    miss.append(f"recipes iguais adjacentes ({a}) — variação é recombinação, nunca repetição vizinha")
-            draw_obj = json.loads(draw_f.read_text(encoding="utf-8"))
-            htmls: list[str] = []
-            pos_by_slide: list[set] = []
-            for i, sf in enumerate(slides):
-                html = sf.read_text(encoding="utf-8", errors="replace")
-                htmls.append(html)
-                m = re.search(r'data-recipe="([^"]+)"', html)
-                if i < len(draw) and (not m or m.group(1) != draw[i]):
-                    miss.append(f"{sf.name}: data-recipe={m.group(1) if m else '∅'} ≠ draw.json[{i}]={draw[i]}")
-                if f'data-pack="{state["pack"]}"' not in html:
-                    miss.append(f"{sf.name}: data-pack ≠ pack da run ({state['pack']})")
-                pos_by_slide.append(set(re.findall(r'data-pos="([^"]+)"', html)))
-
-            # espelhamento: chave obrigatória; slide espelhado tem o grid-area do
-            # 1º componente da recipe espelhado de verdade (C' = 14 - C, invertidos)
-            esp = draw_obj.get("espelhados")
-            if esp is None:
-                miss.append('draw.json sem "espelhados" (lista de slides 1-based; pode ser vazia) — eixo de variância é parte do plano da fita')
+        fita = d / "fita.html"
+        if not fita.exists():
+            miss.append("fita.html (fita inteira: N sections + .fita-layer — CATALOG.md §Esqueleto)")
+        else:
+            html = fita.read_text(encoding="utf-8", errors="replace")
+            if f'data-pack="{state["pack"]}"' not in html:
+                miss.append(f"fita.html: data-pack ≠ pack da run ({state['pack']})")
+            roles = re.findall(r'<section[^>]*class="slide"[^>]*data-role="([^"]+)"', html) \
+                or re.findall(r'<section[^>]*data-role="([^"]+)"[^>]*class="slide"', html)
+            n_sec = len(re.findall(r'<section[^>]*class="slide"', html))
+            if n_sec == 0:
+                miss.append("fita.html sem <section class=\"slide\">")
             else:
-                for i in esp:
-                    if not (1 <= i <= len(slides)) or i - 1 >= len(draw):
-                        miss.append(f"espelhados: slide {i} fora da fita")
-                        continue
-                    rf = pack_dir / "recipes" / f"{draw[i-1]}.json"
-                    if not rf.exists():
-                        continue
-                    comp = next((c for c in json.loads(rf.read_text(encoding="utf-8"))["components"] if "area" in c), None)
-                    if comp:
-                        r1, c1, r2, c2 = [x.strip() for x in comp["area"].split("/")]
-                        mirrored = f"{r1} / {14 - int(c2)} / {r2} / {14 - int(c1)}"
-                        if mirrored not in htmls[i - 1]:
-                            miss.append(f"slide-{i} declarado espelhado mas o grid-area não confere (1º componente esperado \"{mirrored}\")")
-
-            # variância entre gerações: draw idêntico a run anterior do pack é reprovado
-            key = ",".join(draw) + "|" + ",".join(str(x) for x in sorted(esp or []))
-            log_f = pack_dir / "draws.log"
-            if log_f.exists() and key in log_f.read_text(encoding="utf-8").splitlines():
-                miss.append("draw idêntico a uma geração anterior deste pack (packs/<pack>/draws.log) — re-sorteie ordem do miolo e/ou espelhamentos")
-
-            # par contínuo: declarado em draw.json "pares", slides vizinhos, e as duas
-            # janelas embutidas DEVEM ser o split-pair.py da foto declarada (pixel a pixel)
-            pares = draw_obj.get("pares", [])
-            declared: set = set()
-            for p in pares:
-                foto = p.get("foto") if isinstance(p, dict) else None
-                a, b = (p.get("slides", [0, 0]) if isinstance(p, dict) else p)
-                declared |= {a, b}
-                if b != a + 1:
-                    miss.append(f"par {a},{b}: slides não são vizinhos")
-                    continue
-                if a < 1 or b > len(slides):
-                    miss.append(f"par {a},{b}: fora da fita (1..{len(slides)})")
-                    continue
-                if "left" not in pos_by_slide[a - 1]:
-                    miss.append(f"par {a},{b}: slide-{a} sem imagem data-pos=\"left\"")
-                if "right" not in pos_by_slide[b - 1]:
-                    miss.append(f"par {a},{b}: slide-{b} sem imagem data-pos=\"right\"")
-                if not foto:
-                    miss.append(f'par {a},{b}: declare "foto" (ex: {{"slides":[{a},{b}],"foto":"assets/x-wide.png"}}) — as janelas são verificadas contra ela')
-                    continue
-                fpath = d / foto
-                if not fpath.exists():
-                    miss.append(f"par {a},{b}: foto declarada inexistente: {foto}")
-                    continue
-                try:
-                    import base64
-                    import io
-
-                    from PIL import Image
-                except ImportError:
-                    miss.append("pillow ausente no runner — pip install pillow (verificação do par)")
-                    continue
-                src = Image.open(fpath)
-                W, H = src.size
-                cx = W // 2
-
-                def _half(idx: int, pos: str):
-                    h = htmls[idx - 1]
-                    mm = re.search(rf'data-pos="{pos}"[^>]*?src="data:image/[a-z]+;base64,([^"]+)"', h) \
-                        or re.search(rf'src="data:image/[a-z]+;base64,([^"]+)"[^>]*?data-pos="{pos}"', h)
-                    return Image.open(io.BytesIO(base64.b64decode(mm.group(1)))) if mm else None
-
-                half_l, half_r = _half(a, "left"), _half(b, "right")
-                if half_l and half_r:
-                    cw = half_l.size[0]
-                    ok_l = half_l.size[1] == H and src.crop((cx - cw, 0, cx, H)).tobytes() == half_l.convert(src.mode).tobytes()
-                    ok_r = half_r.size == half_l.size and src.crop((cx, 0, cx + cw, H)).tobytes() == half_r.convert(src.mode).tobytes()
-                    if not (ok_l and ok_r):
-                        miss.append(f"par {a}|{b}: janelas embutidas NÃO são o split-pair da foto declarada — rode engine/tools/split-pair.py {foto} e embuta as duas metades (foto inteira nos dois slides = reprovado)")
-            for i, poss in enumerate(pos_by_slide, 1):
-                if poss and i not in declared:
-                    miss.append(f"slide-{i}: data-pos sem par declarado em draw.json \"pares\"")
+                pk = json.loads((pack_dir / "pack.json").read_text(encoding="utf-8"))
+                lo, hi = pk.get("slides", {}).get("min", 1), pk.get("slides", {}).get("max", 12)
+                if not (lo <= n_sec <= hi):
+                    miss.append(f"fita com {n_sec} slides — pack pede {lo}..{hi}")
+                if len(roles) != n_sec:
+                    miss.append("toda <section class=\"slide\"> precisa de data-role (abertura|item|fechamento)")
+                else:
+                    if roles[0] != "abertura":
+                        miss.append("1ª seção deve ter data-role=\"abertura\"")
+                    if roles[-1] != "fechamento":
+                        miss.append("última seção deve ter data-role=\"fechamento\"")
+                    if any(r not in ("abertura", "item", "fechamento") for r in roles):
+                        miss.append("data-role inválido (use abertura|item|fechamento)")
 
     elif stage == "render":
         strip = d / "strip.png"
-        slides = _slide_files(d)
+        fita = d / "fita.html"
         if not strip.exists():
-            miss.append("strip.png (node engine/assemble.js <slides-dir>)")
-        elif slides and strip.stat().st_mtime <= max(s.stat().st_mtime for s in slides):
-            miss.append("strip.png ANTERIOR aos slides — re-renderize (assemble.js)")
+            miss.append("strip.png (node engine/assemble.js <run-dir>)")
+        elif fita.exists() and strip.stat().st_mtime <= fita.stat().st_mtime:
+            miss.append("strip.png ANTERIOR à fita.html — re-renderize (assemble.js)")
 
     elif stage == "convert":
         out = d / "output"
         if not (out / "slide-1.json").exists():
-            miss.append("output/slide-1.json (node engine/convert.js slides/ output/)")
+            miss.append("output/slide-1.json (node engine/convert.js <run-dir> output/)")
         else:
-            html_ids: set = set()
-            for sf in _slide_files(d):
-                html_ids |= set(re.findall(r'data-el-id="([^"]+)"', sf.read_text(encoding="utf-8", errors="replace")))
+            html_ids: set = set(re.findall(r'data-el-id="([^"]+)"',
+                (d / "fita.html").read_text(encoding="utf-8", errors="replace")))
             json_ids: set = set()
             for jf in out.glob("slide-*.json"):
                 json_ids |= set(re.findall(r'"elId"\s*:\s*"([^"]+)"', jf.read_text(encoding="utf-8", errors="replace")))
