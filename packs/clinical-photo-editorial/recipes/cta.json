@@ -4,13 +4,13 @@
   "components": [
     {
       "c": "ds-photo",
-      "area": "8 / 9 / 13 / 13",
+      "area": "1 / 9 / 4 / 13",
       "layer": true,
       "static": true,
       "imageType": "userAsset",
       "asset": "decor-laser-1.png",
       "slot": "decor",
-      "rot": 16
+      "rot": 14
     },
     {
       "c": "ds-eyebrow",
