@@ -22,6 +22,19 @@ const { chromium } = require("playwright");
 
 const REPO = path.resolve(__dirname, "..");
 
+// src local (file://) vira data-URI — o template final não pode depender de disco
+const MIME = { ".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".webp": "image/webp", ".gif": "image/gif" };
+const inlineSrc = (src, id) => {
+  if (!src || !src.startsWith("file://")) return src;
+  const p = require("url").fileURLToPath(src);
+  if (!fs.existsSync(p)) {
+    console.error(`REJEITADO — ${id}: src aponta arquivo inexistente: ${p}`);
+    process.exit(1);
+  }
+  const mime = MIME[path.extname(p).toLowerCase()] || "image/png";
+  return `data:${mime};base64,` + fs.readFileSync(p).toString("base64");
+};
+
 const rgb2hex = (c) => {
   const m = (c || "").match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/);
   if (!m) return c || null;
@@ -310,7 +323,7 @@ const rgb2hex = (c) => {
         ...(n.angle ? { angle: n.angle } : {}), ...(n.opacity < 1 ? { opacity: n.opacity } : {}) };
       if (n.kind === "img") {
         const rp = n.circle ? 50 : pct(n.radiusPx, n.w, n.h);
-        objects.push({ type: "ClippableImage", name: "Imagem", ...common, src: n.src,
+        objects.push({ type: "ClippableImage", name: "Imagem", ...common, src: inlineSrc(n.src, n.id),
           width: Math.round(n.w * 100) / 100, height: Math.round(n.h * 100) / 100,
           topLeft: rp, topRight: rp, bottomRight: rp, bottomLeft: rp,
           crossOrigin: "anonymous",
