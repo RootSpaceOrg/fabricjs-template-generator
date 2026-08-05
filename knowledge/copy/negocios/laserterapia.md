@@ -5,33 +5,7 @@ updated: 2026-08-05
 
 ## Regra de enquadramento
 
-`laserterapy` reúne aplicações muito diferentes. Antes de escrever, identificar o recorte: **depilação a laser** não é **fotobiomodulação/PBM**. Nunca transferir promessas, mecanismo ou fontes entre essas aplicações.
-
-## Depilação a laser
-
-### Público e dores
-
-Pessoas que começam depilação a laser querem reduzir a rotina de remoção de pelos, mas chegam com expectativa de uma mudança linear e imediata. As dúvidas centrais são intervalo, quantidade de sessões, tipo de pelo e por que algumas áreas respondem em ritmos diferentes.
-
-### Mitos e dúvidas frequentes
-
-- “Uma sessão já mostra o resultado final.”
-- “A décima sessão significa que o processo terminou para sempre.”
-- “Todo pelo e toda área respondem do mesmo jeito.”
-- “Se houver manutenção, o tratamento falhou.”
-
-### Jargão do nicho
-
-Ciclo do pelo, fase anágena, intervalo entre sessões, redução progressiva, avaliação individual, manutenção.
-
-### Ângulos que performam
-
-Educação de expectativa: comparar marcos da jornada sem prometer uma linha de chegada universal. O profissional entra como guia: avalia pele, pelo, área e intervalos; a pessoa acompanha o processo com informação realista.
-
-### Fontes
-
-- PubMed, *Efficacy of Laser in Hair Removal: A Network Meta-analysis* (2023), PMID 37493187: eficácia e necessidade de acompanhamento de longo prazo.
-- British Journal of Dermatology, *BC06: Efficacy of lasers and light-based devices in long-term hair removal* (2021): evidência limitada para declarar superioridade entre aparelhos e resposta influenciada pelo ciclo do pelo.
+Este negócio é **fotobiomodulação clínica** (LBI/PBM, ILIB, PDT, transcraniana) — confirmado pelo acervo real do setor (374 conteúdos, zero depilação). **Depilação a laser NÃO pertence a este dossiê**: se um pedido vier nesse recorte, é outro business_type, com promessas, mecanismos e fontes próprios — nunca transferir entre os dois.
 
 ## Fotobiomodulação / PBM / LLLT
 
