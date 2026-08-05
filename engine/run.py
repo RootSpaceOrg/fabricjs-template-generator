@@ -14,9 +14,11 @@ Comandos:
 Estágios e gates (artefatos relativos a artifacts/runs/<slug>/):
   resolve   resolve.json ok=true (engine/tools/resolve_tenant.py)
   context   dossie.md
-  compose   draw.json (sorteio de recipes) + slides/slide-N.html
+  compose   draw.json (sorteio de recipes; "pares": [[i,i+1]] p/ par contínuo)
+            + slides/slide-N.html
             gates: recipes existem no pack · nunca duas iguais adjacentes ·
-            data-recipe do HTML == draw.json · data-pack == pack da run
+            data-recipe do HTML == draw.json · data-pack == pack da run ·
+            par contínuo declarado e com data-pos left/right nos vizinhos
   render    strip.png mais novo que todo slide-N.html (engine/assemble.js)
   convert   output/ via engine/convert.js · conservação data-el-id↔elId ·
             engine/tools/validate-slides.js exit 0
@@ -99,6 +101,7 @@ def missing_for(slug: str, state: dict) -> list[str]:
             for a, b in zip(draw, draw[1:]):
                 if a == b:
                     miss.append(f"recipes iguais adjacentes ({a}) — variação é recombinação, nunca repetição vizinha")
+            pos_by_slide: list[set] = []
             for i, sf in enumerate(slides):
                 html = sf.read_text(encoding="utf-8", errors="replace")
                 m = re.search(r'data-recipe="([^"]+)"', html)
@@ -106,6 +109,27 @@ def missing_for(slug: str, state: dict) -> list[str]:
                     miss.append(f"{sf.name}: data-recipe={m.group(1) if m else '∅'} ≠ draw.json[{i}]={draw[i]}")
                 if f'data-pack="{state["pack"]}"' not in html:
                     miss.append(f"{sf.name}: data-pack ≠ pack da run ({state['pack']})")
+                pos_by_slide.append(set(re.findall(r'data-pos="([^"]+)"', html)))
+            # par contínuo: declarado em draw.json "pares" (1-based), slides vizinhos,
+            # A com data-pos=left e B com data-pos=right (janelas de UMA foto via split-pair.py)
+            pares = json.loads(draw_f.read_text(encoding="utf-8")).get("pares", [])
+            declared: set = set()
+            for p in pares:
+                a, b = p
+                declared |= {a, b}
+                if b != a + 1:
+                    miss.append(f"par {p}: slides não são vizinhos")
+                    continue
+                if a < 1 or b > len(slides):
+                    miss.append(f"par {p}: fora da fita (1..{len(slides)})")
+                    continue
+                if "left" not in pos_by_slide[a - 1]:
+                    miss.append(f"par {p}: slide-{a} sem imagem data-pos=\"left\"")
+                if "right" not in pos_by_slide[b - 1]:
+                    miss.append(f"par {p}: slide-{b} sem imagem data-pos=\"right\"")
+            for i, poss in enumerate(pos_by_slide, 1):
+                if poss and i not in declared:
+                    miss.append(f"slide-{i}: data-pos sem par declarado em draw.json \"pares\"")
 
     elif stage == "render":
         strip = d / "strip.png"
