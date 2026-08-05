@@ -5,7 +5,7 @@
   "components": [
     {
       "c": "ds-photo",
-      "area": "10 / 9 / 13 / 13",
+      "area": "9 / 8 / 13 / 13",
       "layer": true,
       "static": true,
       "imageType": "userAsset",

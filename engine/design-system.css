@@ -167,9 +167,9 @@ img[data-pos="right"] { object-position: right center; }
    para fora do slide — o overflow:hidden do slide faz o corte na borda.
    Rotação embutida na variante; não combinar com transform inline. */
 img[data-overhang] { object-fit: contain; object-position: center; }
-img[data-overhang="top"]    { transform: translateY(-45%) rotate(-12deg); }
-img[data-overhang="bottom"] { transform: translateY(45%) rotate(12deg); }
-img[data-overhang="tl"]     { transform: translate(-35%, -40%) rotate(-14deg); }
-img[data-overhang="tr"]     { transform: translate(35%, -40%) rotate(14deg); }
-img[data-overhang="bl"]     { transform: translate(-35%, 40%) rotate(18deg); }
-img[data-overhang="br"]     { transform: translate(35%, 40%) rotate(-12deg); }
+img[data-overhang="top"]    { transform: translateY(-35%) rotate(-12deg); }
+img[data-overhang="bottom"] { transform: translateY(35%) rotate(12deg); }
+img[data-overhang="tl"]     { transform: translate(-28%, -30%) rotate(-14deg); }
+img[data-overhang="tr"]     { transform: translate(28%, -30%) rotate(14deg); }
+img[data-overhang="bl"]     { transform: translate(-28%, 30%) rotate(18deg); }
+img[data-overhang="br"]     { transform: translate(28%, 30%) rotate(-12deg); }
