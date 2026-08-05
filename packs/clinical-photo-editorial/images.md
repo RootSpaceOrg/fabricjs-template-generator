@@ -11,3 +11,6 @@
 | foto_profissional | slot da plataforma (placeholder canonico no render) |
 
 **Par contínuo (A seguido de B):** as duas recipes recebem a MESMA imagem; A mostra a metade esquerda (`pos=left`), B a direita (`pos=right`) — transição suave entre os slides.
+
+**Foto do par contínuo:** obrigatoriamente PAISAGEM larga (>=1792x1024) — cada slide mostra uma faixa vertical estreita; foto estreita faz as duas faixas coincidirem (repetição). O crop right continua exatamente onde o left parou.
+**Decor:** blur gaussiano FORTE (objeto claramente fora de foco, bokeh fotográfico) e tema inequívoco da vertical — nitidez ou objeto genérico = reprovado.

@@ -310,7 +310,9 @@ function recalcCenterCrop(obj, naturalW, naturalH) {
 
   let cropX = (naturalW - cropW) / 2;
   if (obj.pos === 'left') cropX = 0;
-  else if (obj.pos === 'right') cropX = naturalW - cropW;
+  // right CONTINUA de onde o crop left parou (frames vizinhos na fita);
+  // clamp quando a foto não é larga o bastante — por isso foto do par deve ser paisagem
+  else if (obj.pos === 'right') cropX = Math.min(cropW, naturalW - cropW);
   const cropY = (naturalH - cropH) / 2;
   const scale = visualWidth / cropW;
 
