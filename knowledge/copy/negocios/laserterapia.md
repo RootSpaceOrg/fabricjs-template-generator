@@ -49,48 +49,48 @@ Fotobiomodulação (PBM), terapia a laser de baixa intensidade (LLLT), fototerap
 - Depilação: conteúdo educativo de planejamento funciona o ano inteiro; reforçar avaliação individual em períodos de maior procura por preparação para verão.
 
 
-## Acervo LaserPro — análise de 374 conteúdos reais do setor (2026-08-05)
+## Acervo LaserPro — gramática de copy do setor (14 carrosséis lidos lâmina a lâmina, 2026-08-05)
 
-Fonte: acervo profissional de lâminas usado pelo mercado (adm.laserpro.com.br — acesso com o Gustavo). É a referência de COMO o setor fala com o público. Insights destilados de 374 títulos + leitura lâmina a lâmina de 6 carrosséis arquetípicos.
+Fonte: acervo profissional real (374 conteúdos; acesso com o Gustavo; índice completo de temas em `laserterapia-acervo-index.md`). O que segue é o PADRÃO extraído das lâminas — como o setor escreve.
 
-### Territórios de conteúdo (o mapa do que o setor publica)
+### Anatomia do carrossel (6 lâminas — o esqueleto dominante)
 
-| Território | Exemplos de tema |
-|-----------|------------------|
-| Dor & ortopedia (maior volume) | tendinite, artrose, lombalgia, ciático, fascite plantar, esporão, túnel do carpo, ombro congelado, lesão pós-treino, fratura |
-| Feridas & cicatrização | úlceras (pressão/varicosas), pé diabético, queloides, queimadura solar, pós-operatório (plástica, implante dentário, cesárea) |
-| Pediatria | otite, bronquiolite, mão-pé-boca, sapinho/moníliase, assadura, pós-vacina, dentição |
-| Saúde da mulher & pós-parto | mastite, fissura mamilar, amamentação, candidíase, endometriose, TPM, cólica, menopausa/libido, episiotomia |
-| Mental & transcraniana | ansiedade, depressão, insônia, burnout, TDAH, TEA, Alzheimer, Parkinson, sequelas de AVC |
-| ILIB / sistêmico | imunidade, fadiga, glicose/diabetes, colesterol, "renovação do corpo" |
-| Estética | acne (PDT), estrias, bigode chinês, terapia capilar/calvície, rugas, fortalecimento de unhas |
-| Institucional & mitos | "o que é laserterapia", "não é milagre, é ciência", "laser causa câncer?", "laser dói?", "é seguro em crianças?" |
-| Sazonal | campanhas do mês (Janeiro Branco, Fevereiro Roxo, Setembro Amarelo, Outubro Rosa, Novembro Azul…), Carnaval (garganta/detox/herpes), Páscoa, Natal, verão (queimadura), volta às aulas (respiratórias) |
+| Lâmina | Papel | Como o setor escreve (exemplos verbatim) |
+|--------|-------|------------------------------------------|
+| 1 CAPA | condição gigante + validação + cena | headline = nome da condição ou pergunta-sintoma ("ENDOMETRIOSE", "MEU LEITE SECOU. E AGORA?") + subtítulo que VALIDA a dor ("A dor da endometriose não é \"mimimi\"") + 1 frase de cena concreta ("Se fosse só cólica, não teria dias em que levantar da cama parece impossível…") + "arrasta pro lado" |
+| 2 EMPATIA | desmonta o clichê, tira a culpa | abre com a frase que o paciente OUVE, entre aspas ("Aprenda a conviver com isso", "Mas você nem parece doente…") e desmonta ("saiba que não precisa ser assim"); ou acolhe direto ("É comum, sim. E não é culpa sua!") + causas com mecanismo em linguagem simples ("estresse e ansiedade aumentam o cortisol e bloqueiam a liberação do leite") |
+| 3 EXPLICAÇÃO | o que é / por que acontece | definição curta da condição ou da técnica, sempre com 1 mecanismo traduzido ("luz não ionizante — não altera o DNA") |
+| 4 SOLUÇÃO | a técnica como alívio | "A ajuda da Laserterapia" / "um alívio real para X" + 3-5 bullets com verbos modais em negrito (reduz inflamação, melhora a circulação, estimula a regeneração, sem efeitos colaterais); OU comparativo Convencional × Laser — sempre respeitoso ("Medicamentos & terapia são essenciais, mas podem levar tempo…") |
+| 5 FECHO EMOCIONAL | pertencimento/merecimento | "Se você sente essa dor, não está sozinha!" · "Você merece se sentir bem novamente!" |
+| 6 CTA | engajamento | "Marque alguém que precisa conhecer essa solução! COMPARTILHE" · "COMENTE 'EU QUERO SABER'" · "Salve para lembrar" · "CURTA e acompanhe o perfil" |
 
-### Arcos narrativos que o setor usa (observados nas lâminas)
+Também existe o formato **lâmina única**: pergunta-cena no topo + 2 parágrafos (dor concreta → mecanismo-benefício) + CTA comente ("Sente que está \"enferrujado\" ao levantar da cadeira? … reduz a inflamação das articulações e estimula a produção de cartilagem — mais leveza em cada passo. COMENTE 'EU QUERO SABER'").
 
-1. **Mito → Verdade** ("Laser pode causar câncer? A verdade que ninguém te conta"): nomeia o medo real → revela a verdade COM MECANISMO ("luz de irradiação NÃO ionizante — não altera o DNA, não provoca mutações") → argumento social ("se fosse perigoso, médicos, fisioterapeutas e dentistas do mundo todo não usariam") → desfecho de segurança → CTA de compartilhar ("marque alguém que precisa saber disso").
-2. **Validação da dor invisível** (Fibromialgia): abre com as frases que o paciente OUVE ("mas você nem parece doente…", "isso é coisa da sua cabeça…") + "Será mesmo?" → o que é a condição → o desafio do diagnóstico/compreensão → o benefício sem promessa ("auxilia no alívio… promovendo bem-estar") → CTA de apoio/campanha.
-3. **Comparativo com autonomia** (Mastite: Convencional ou Laserterapia?): pergunta de escolha → o que é a técnica (bullets de benefício) → X visual convencional vs laser ("dias para aliviar, com medicamentos" vs "alívio em poucas sessões") → fechamento "escolha o que é melhor para você" — nunca venda dura.
-4. **Provocação do hábito** ("Pare de tomar antibióticos toda vez que o ouvido dói!"): imperativo contra um hábito comum → mecanismo em 1 frase ("melhora a circulação local e acelera a cura da membrana timpânica — sem efeitos colaterais") → "SALVE PARA LEMBRAR".
-5. **Sinais do corpo / urgência suave** ("Seu corpo está pedindo socorro. E você ainda não ouviu?"): lista de sinais → "o corpo dá sinais quando está em desequilíbrio" → benefício → "não espere piorar. Cuide hoje!" → CTA "COMENTE 'EU QUERO SABER'".
-6. **Institucional/educativo** (Introdução à Laserterapia): "Você já ouviu falar em…" → o que é ("técnica moderna, natural e eficaz") → benefícios em 5 bullets (dor, inflamação, cicatrização, imunidade, qualidade de vida) → "CURTA e acompanhe o perfil".
+### Registro emocional por território (o tom muda com o público)
 
-### Fórmulas de título que dominam o acervo
+- **Saúde da mulher / mental**: acolhimento e desculpabilização — "não é culpa sua", "não está sozinha", "existe uma saída mais leve". A dor é validada ANTES de qualquer técnica.
+- **Dor / ortopedia**: cena cotidiana reconhecível — a cadeira, o salto, a noite sem dormir, o jogo de fim de semana. O leitor se vê ANTES de ler a solução.
+- **Pediatria**: fala com o MEDO e a rotina dos pais — sono, escola, "remédios demais" ("Pare de tomar antibióticos toda vez que o ouvido dói!", "resfriados frequentes afetam o sono e o dia a dia escolar").
+- **Institucional / mitos**: ciência acessível e alcance universal — "Não é milagre. É ciência!", "Ela estimula o próprio corpo a se curar", "Do bebê com assadura à avó com ferida crônica… todos podem se beneficiar".
 
-- Pergunta-sintoma direta: "Você sofre com X?", "X, e agora?", "Sente dores no…?", "Seu filho tem 8 resfriados por ano?"
-- Cena reconhecível: "Torceu o tornozelo naquele jogo de fim de semana?", "Travou as costas de novo?", "Dores que pioram à noite e te impedem de dormir?"
-- Provocação/contraste: "Pare de tomar antibióticos…", "Cansado de tratamentos que só mascaram sintomas?", "Você acha que suplementação basta?"
-- Mito: "Laser pode causar câncer?", "Laserterapia dói! Será mesmo?", "3 Mitos e Verdades da ILIB"
+### Micro-padrões (o acabamento que faz parecer do setor)
 
-### Jargão real do setor (usar com naturalidade)
-
-Laserterapia de baixa intensidade (LBI), fotobiomodulação, terapia transcraniana, ILIB/ilibterapia (laser aplicado no sangue), PDT/terapia fotodinâmica + fotossensibilizador, luz não ionizante, comprimento de onda / infravermelho, circulação local, regeneração tecidual, alívio da inflamação, sessões (protocolo em nº de sessões).
+1. **Frases ouvidas entre aspas** como gancho — o clichê que machuca ("isso é coisa da sua cabeça…") citado e desmontado.
+2. **"…, e agora?"** como sufixo de título recorrente (leite secou / TPM chegou / otite).
+3. **Sempre segunda pessoa**, sempre uma pergunta na capa ou no primeiro terço.
+4. **1 termo técnico por peça, traduzido no ato** (cortisol, serotonina, membrana timpânica, cartilagem, luz não ionizante) — autoridade sem hermetismo.
+5. **Contraste com remédio sem atacar a medicina**: "são essenciais, mas…", "sem efeitos colaterais", "natural e sem remédios".
+6. **Argumento social** nos mitos: "se fosse perigoso, profissionais do mundo todo não usariam".
+7. Benefícios sempre com **verbos modais** (reduz, alivia, melhora, estimula, acelera, pode ajudar) — nunca "cura/elimina" nos posts bons (ignorar os títulos que prometem: ver filtro abaixo).
 
 ### CTAs típicos (engajamento >> agendamento)
 
-"COMENTE 'EU QUERO SABER'" · "Salve para lembrar" · "Marque alguém que precisa saber / COMPARTILHE" · "Arrasta pro lado" (capa) · "CURTA e acompanhe o perfil" · agendamento só em fundo de funil.
+"COMENTE 'EU QUERO SABER'" · "Salve para lembrar" · "Marque alguém / COMPARTILHE" · "CURTA e acompanhe" · "arrasta pro lado" (capa). Agendamento direto só em fundo de funil.
+
+### Territórios de conteúdo (mapa dos 374 temas — índice completo no arquivo irmão)
+
+Dor & ortopedia (maior volume) · feridas & cicatrização/pós-operatório · pediatria · saúde da mulher & pós-parto · mental & transcraniana · ILIB/sistêmico · estética (acne/PDT, capilar, estrias) · institucional & mitos · sazonal (campanhas do mês + datas).
 
 ### ⚠ Filtro de compliance (obrigatório)
 
-O acervo frequentemente PROMETE ("Diga adeus à acne!", "Tadala nunca mais!!!"). **Aproveitar os ângulos, arcos e jargão — NUNCA as promessas**: nosso compliance (compliance/health.md) exige "auxilia/alivia/acelera/pode ajudar", zero garantia de resultado. "A Laserterapia não é milagre. É ciência!" é o tom-modelo do próprio acervo a seguir.
+Parte do acervo PROMETE ("Diga adeus à acne!", "Tadala nunca mais!!!"). **Aproveitar arcos, tom, cenas e jargão — NUNCA as promessas**: nosso compliance (compliance/health.md) exige modais e zero garantia. O tom-modelo é do próprio acervo: "A Laserterapia não é milagre. É ciência!".
