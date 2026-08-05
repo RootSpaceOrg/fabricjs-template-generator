@@ -26,6 +26,16 @@
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
+/* ── fita: N slides lado a lado + camada de travessias ─────────────────── */
+main.fita { display: flex; width: max-content; position: relative; }
+/* travessias: grid contínuo da fita (12·N colunas × 12 linhas, célula 90×112.5);
+   só elementos data-static + data-layer — pintam POR CIMA dos slides */
+main.fita > .fita-layer {
+  position: absolute; top: 0; left: 0; width: 100%; height: 1350px;
+  display: grid; grid-auto-columns: 90px; grid-template-rows: repeat(12, 112.5px);
+  pointer-events: none;
+}
+
 /* ── slide: grid declarativo 12×12 ─────────────────────────────────────── */
 section.slide {
   position: relative;
@@ -159,7 +169,6 @@ img[data-cutout] { object-fit: contain; object-position: bottom center; }
 .ds-shape[data-tone="wm"] { color: var(--wm); }
 .ds-shape[data-tone="muted"] { color: var(--muted); }
 .ds-shape[data-tone="paper"] { color: var(--paper); }
-/* data-pos: metadado do par contínuo (janelas pré-cortadas via split-pair.py) — sem efeito CSS */
 
 /* decor "voando": imagem INTEIRA (contain, sem crop) deslocada parcialmente
    para fora do slide — o overflow:hidden do slide faz o corte na borda.

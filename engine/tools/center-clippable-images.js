@@ -308,11 +308,7 @@ function recalcCenterCrop(obj, naturalW, naturalH) {
     cropH = cropW / objectAspect;
   }
 
-  let cropX = (naturalW - cropW) / 2;
-  // par contínuo: janelas ADJACENTES em volta do centro da foto (o sujeito mora no centro);
-  // clamp quando a foto não é larga o bastante — por isso foto do par deve ser paisagem
-  if (obj.pos === 'left') cropX = Math.max(0, naturalW / 2 - cropW);
-  else if (obj.pos === 'right') cropX = Math.min(naturalW / 2, naturalW - cropW);
+  const cropX = (naturalW - cropW) / 2;
   const cropY = (naturalH - cropH) / 2;
   const scale = visualWidth / cropW;
 
