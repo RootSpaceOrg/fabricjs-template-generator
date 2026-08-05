@@ -90,12 +90,11 @@ HTML, o compose decide — e registra em `draw.json` — o plano inteiro:
 1. **Sorteio do miolo**: quais recipes, quantas e em que ordem (regras do
    `pack.json` §sorteio). Gerações do mesmo pack DEVEM variar entre si.
 2. **Pares contínuos**: se `item-foto-direita` for seguido de
-   `item-foto-esquerda` (foto na borda comum), declare `"pares": [[i, i+1]]`
+   `item-foto-esquerda` (foto na borda comum), declare `"pares": [{"slides": [i, i+1], "foto": "assets/<paisagem>.png"}]`
    no draw.json e use **UMA foto paisagem** (>=1792x1024) cortada por
    `python engine/tools/split-pair.py <foto> <outL> <outR> --frame WxH` —
    janela esquerda no slide A (`data-pos="left"`), direita no B
-   (`data-pos="right"`). O gate do runner reprova par não declarado ou
-   incompleto. Fotos diferentes/repetidas nos dois lados = reprovado.
+   (`data-pos="right"`). O gate do runner verifica PIXEL A PIXEL que as janelas embutidas são o split-pair da foto declarada — foto inteira nos dois slides, fotos diferentes ou janelas repetidas = reprovado. Fotos diferentes/repetidas nos dois lados = reprovado.
 3. **Espelhamento (eixo de variância)**: por slide, sorteie espelhar o grid
    horizontalmente — `"R1 / C1 / R2 / C2"` vira `"R1 / (14−C2) / R2 / (14−C1)"`,
    `rot` inverte o sinal, `data-overhang` troca lado (`tl↔tr`, `bl↔br`);

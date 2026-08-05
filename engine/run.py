@@ -101,32 +101,95 @@ def missing_for(slug: str, state: dict) -> list[str]:
             for a, b in zip(draw, draw[1:]):
                 if a == b:
                     miss.append(f"recipes iguais adjacentes ({a}) — variação é recombinação, nunca repetição vizinha")
+            draw_obj = json.loads(draw_f.read_text(encoding="utf-8"))
+            htmls: list[str] = []
             pos_by_slide: list[set] = []
             for i, sf in enumerate(slides):
                 html = sf.read_text(encoding="utf-8", errors="replace")
+                htmls.append(html)
                 m = re.search(r'data-recipe="([^"]+)"', html)
                 if i < len(draw) and (not m or m.group(1) != draw[i]):
                     miss.append(f"{sf.name}: data-recipe={m.group(1) if m else '∅'} ≠ draw.json[{i}]={draw[i]}")
                 if f'data-pack="{state["pack"]}"' not in html:
                     miss.append(f"{sf.name}: data-pack ≠ pack da run ({state['pack']})")
                 pos_by_slide.append(set(re.findall(r'data-pos="([^"]+)"', html)))
-            # par contínuo: declarado em draw.json "pares" (1-based), slides vizinhos,
-            # A com data-pos=left e B com data-pos=right (janelas de UMA foto via split-pair.py)
-            pares = json.loads(draw_f.read_text(encoding="utf-8")).get("pares", [])
+
+            # espelhamento: chave obrigatória; slide espelhado tem o grid-area do
+            # 1º componente da recipe espelhado de verdade (C' = 14 - C, invertidos)
+            esp = draw_obj.get("espelhados")
+            if esp is None:
+                miss.append('draw.json sem "espelhados" (lista de slides 1-based; pode ser vazia) — eixo de variância é parte do plano da fita')
+            else:
+                for i in esp:
+                    if not (1 <= i <= len(slides)) or i - 1 >= len(draw):
+                        miss.append(f"espelhados: slide {i} fora da fita")
+                        continue
+                    rf = pack_dir / "recipes" / f"{draw[i-1]}.json"
+                    if not rf.exists():
+                        continue
+                    comp = next((c for c in json.loads(rf.read_text(encoding="utf-8"))["components"] if "area" in c), None)
+                    if comp:
+                        r1, c1, r2, c2 = [x.strip() for x in comp["area"].split("/")]
+                        mirrored = f"{r1} / {14 - int(c2)} / {r2} / {14 - int(c1)}"
+                        if mirrored not in htmls[i - 1]:
+                            miss.append(f"slide-{i} declarado espelhado mas o grid-area não confere (1º componente esperado \"{mirrored}\")")
+
+            # variância entre gerações: draw idêntico a run anterior do pack é reprovado
+            key = ",".join(draw) + "|" + ",".join(str(x) for x in sorted(esp or []))
+            log_f = pack_dir / "draws.log"
+            if log_f.exists() and key in log_f.read_text(encoding="utf-8").splitlines():
+                miss.append("draw idêntico a uma geração anterior deste pack (packs/<pack>/draws.log) — re-sorteie ordem do miolo e/ou espelhamentos")
+
+            # par contínuo: declarado em draw.json "pares", slides vizinhos, e as duas
+            # janelas embutidas DEVEM ser o split-pair.py da foto declarada (pixel a pixel)
+            pares = draw_obj.get("pares", [])
             declared: set = set()
             for p in pares:
-                a, b = p
+                foto = p.get("foto") if isinstance(p, dict) else None
+                a, b = (p.get("slides", [0, 0]) if isinstance(p, dict) else p)
                 declared |= {a, b}
                 if b != a + 1:
-                    miss.append(f"par {p}: slides não são vizinhos")
+                    miss.append(f"par {a},{b}: slides não são vizinhos")
                     continue
                 if a < 1 or b > len(slides):
-                    miss.append(f"par {p}: fora da fita (1..{len(slides)})")
+                    miss.append(f"par {a},{b}: fora da fita (1..{len(slides)})")
                     continue
                 if "left" not in pos_by_slide[a - 1]:
-                    miss.append(f"par {p}: slide-{a} sem imagem data-pos=\"left\"")
+                    miss.append(f"par {a},{b}: slide-{a} sem imagem data-pos=\"left\"")
                 if "right" not in pos_by_slide[b - 1]:
-                    miss.append(f"par {p}: slide-{b} sem imagem data-pos=\"right\"")
+                    miss.append(f"par {a},{b}: slide-{b} sem imagem data-pos=\"right\"")
+                if not foto:
+                    miss.append(f'par {a},{b}: declare "foto" (ex: {{"slides":[{a},{b}],"foto":"assets/x-wide.png"}}) — as janelas são verificadas contra ela')
+                    continue
+                fpath = d / foto
+                if not fpath.exists():
+                    miss.append(f"par {a},{b}: foto declarada inexistente: {foto}")
+                    continue
+                try:
+                    import base64
+                    import io
+
+                    from PIL import Image
+                except ImportError:
+                    miss.append("pillow ausente no runner — pip install pillow (verificação do par)")
+                    continue
+                src = Image.open(fpath)
+                W, H = src.size
+                cx = W // 2
+
+                def _half(idx: int, pos: str):
+                    h = htmls[idx - 1]
+                    mm = re.search(rf'data-pos="{pos}"[^>]*?src="data:image/[a-z]+;base64,([^"]+)"', h) \
+                        or re.search(rf'src="data:image/[a-z]+;base64,([^"]+)"[^>]*?data-pos="{pos}"', h)
+                    return Image.open(io.BytesIO(base64.b64decode(mm.group(1)))) if mm else None
+
+                half_l, half_r = _half(a, "left"), _half(b, "right")
+                if half_l and half_r:
+                    cw = half_l.size[0]
+                    ok_l = half_l.size[1] == H and src.crop((cx - cw, 0, cx, H)).tobytes() == half_l.convert(src.mode).tobytes()
+                    ok_r = half_r.size == half_l.size and src.crop((cx, 0, cx + cw, H)).tobytes() == half_r.convert(src.mode).tobytes()
+                    if not (ok_l and ok_r):
+                        miss.append(f"par {a}|{b}: janelas embutidas NÃO são o split-pair da foto declarada — rode engine/tools/split-pair.py {foto} e embuta as duas metades (foto inteira nos dois slides = reprovado)")
             for i, poss in enumerate(pos_by_slide, 1):
                 if poss and i not in declared:
                     miss.append(f"slide-{i}: data-pos sem par declarado em draw.json \"pares\"")
@@ -246,6 +309,13 @@ def cmd_advance(slug: str):
             print(f"  - {m}")
         sys.exit(1)
     idx = STAGES.index(state["stage"])
+    if state["stage"] == "compose":
+        # registra o draw aprovado — gerações futuras não podem repetir (variância)
+        draw_obj = json.loads((_dir(slug) / "draw.json").read_text(encoding="utf-8"))
+        key = ",".join(draw_obj.get("recipes", [])) + "|" + ",".join(
+            str(x) for x in sorted(draw_obj.get("espelhados") or []))
+        with open(REPO / "packs" / state["pack"] / "draws.log", "a", encoding="utf-8") as fh:
+            fh.write(key + "\n")
     state["history"].append({"stage": state["stage"], "at": time.strftime("%Y-%m-%d %H:%M:%S")})
     state["stage"] = STAGES[idx + 1]
     _save(slug, state)

@@ -159,9 +159,7 @@ img[data-cutout] { object-fit: contain; object-position: bottom center; }
 .ds-shape[data-tone="wm"] { color: var(--wm); }
 .ds-shape[data-tone="muted"] { color: var(--muted); }
 .ds-shape[data-tone="paper"] { color: var(--paper); }
-/* foto-par: mesma imagem continuando entre slides vizinhos */
-img[data-pos="left"]  { object-position: left center; }
-img[data-pos="right"] { object-position: right center; }
+/* data-pos: metadado do par contínuo (janelas pré-cortadas via split-pair.py) — sem efeito CSS */
 
 /* decor "voando": imagem INTEIRA (contain, sem crop) deslocada parcialmente
    para fora do slide — o overflow:hidden do slide faz o corte na borda.
