@@ -14,13 +14,13 @@
     },
     {
       "c": "ds-photo",
-      "area": "8 / 1 / 13 / 5",
+      "area": "11 / 1 / 13 / 6",
       "layer": true,
       "static": true,
       "imageType": "userAsset",
       "asset": "decor-laser-3.png",
       "slot": "decor",
-      "rot": 18
+      "rot": 20
     },
     {
       "c": "ds-slot",
