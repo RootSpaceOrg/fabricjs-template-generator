@@ -4,21 +4,23 @@
   "components": [
     {
       "c": "ds-photo",
-      "area": "1 / 5 / 4 / 8",
+      "area": "1 / 4 / 6 / 11",
       "layer": true,
       "static": true,
       "imageType": "userAsset",
       "asset": "decor-laser-1.png",
-      "slot": "decor"
+      "slot": "decor",
+      "rot": -14
     },
     {
       "c": "ds-photo",
-      "area": "10 / 1 / 13 / 4",
+      "area": "8 / 1 / 13 / 5",
       "layer": true,
       "static": true,
       "imageType": "userAsset",
       "asset": "decor-laser-3.png",
-      "slot": "decor"
+      "slot": "decor",
+      "rot": 18
     },
     {
       "c": "ds-slot",

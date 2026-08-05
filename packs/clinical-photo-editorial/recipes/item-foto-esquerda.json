@@ -5,12 +5,13 @@
   "components": [
     {
       "c": "ds-photo",
-      "area": "11 / 10 / 13 / 13",
+      "area": "10 / 8 / 13 / 13",
       "layer": true,
       "static": true,
       "imageType": "userAsset",
       "asset": "decor-laser-2.png",
-      "slot": "decor"
+      "slot": "decor",
+      "rot": -12
     },
     {
       "c": "ds-photo",

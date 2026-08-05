@@ -9,7 +9,8 @@
       "static": true,
       "imageType": "userAsset",
       "asset": "decor-laser-1.png",
-      "slot": "decor"
+      "slot": "decor",
+      "rot": 16
     },
     {
       "c": "ds-eyebrow",
