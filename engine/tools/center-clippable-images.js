@@ -309,10 +309,10 @@ function recalcCenterCrop(obj, naturalW, naturalH) {
   }
 
   let cropX = (naturalW - cropW) / 2;
-  if (obj.pos === 'left') cropX = 0;
-  // right CONTINUA de onde o crop left parou (frames vizinhos na fita);
+  // par contínuo: janelas ADJACENTES em volta do centro da foto (o sujeito mora no centro);
   // clamp quando a foto não é larga o bastante — por isso foto do par deve ser paisagem
-  else if (obj.pos === 'right') cropX = Math.min(cropW, naturalW - cropW);
+  if (obj.pos === 'left') cropX = Math.max(0, naturalW / 2 - cropW);
+  else if (obj.pos === 'right') cropX = Math.min(naturalW / 2, naturalW - cropW);
   const cropY = (naturalH - cropH) / 2;
   const scale = visualWidth / cropW;
 
