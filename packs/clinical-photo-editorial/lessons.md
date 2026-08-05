@@ -14,3 +14,4 @@
 - 2026-08-05 (blur via PIL reprovado): pós-processar blur com PIL degrada o asset — o desfoque deve vir da própria geração do modelo, já com objeto grande e quase abstrato. Decor jamais sobre o professionalPhoto.
 - 2026-08-05 (decors v3): assets gerados ja desfocados aprovados. Composição canônica: faixa RASA colada na borda (1-2 linhas de grid) — o object-fit:cover dá zoom no miolo do asset, então célula grande demais vira 'massa escura' sobre texto. Manter longe de logo, headline, CTA e professionalPhoto.
 - 2026-08-05 (regra de produção): assets do pack são exemplares de certificação — post definitivo exige decors gerados na hora, por tema do post; nunca reusar os do pack.
+- 2026-08-05 (fita v26 APROVADA pelo Gustavo): decors v4 inteiros com margem + data-overhang (corte pela borda, sem crop) fecham o visual. Estado salvo como baseline do pack; próxima etapa: testes em contextos reais antes da certificação.
