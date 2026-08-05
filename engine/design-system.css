@@ -129,7 +129,8 @@ section.slide[data-invert] .ds-cta { background: var(--paper); color: var(--acce
 /* ── formas/containers ─────────────────────────────────────────────────── */
 .ds-block { background: var(--accent); color: var(--accent-ink); padding: 36px; }
 .ds-block[data-tone="ink"] { background: var(--ink); color: var(--paper); }
-.ds-card  { background: var(--paper); border-radius: var(--radius); padding: 36px; }
+.ds-card  { background: var(--paper); border-radius: var(--radius); padding: 40px;
+  display: flex; flex-direction: column; gap: 18px; justify-content: center; }
 
 /* ── imagens ───────────────────────────────────────────────────────────── */
 img.ds-photo, img.ds-slot {
@@ -158,3 +159,6 @@ img[data-cutout] { object-fit: contain; object-position: bottom center; }
 .ds-shape[data-tone="wm"] { color: var(--wm); }
 .ds-shape[data-tone="muted"] { color: var(--muted); }
 .ds-shape[data-tone="paper"] { color: var(--paper); }
+/* foto-par: mesma imagem continuando entre slides vizinhos */
+img[data-pos="left"]  { object-position: left center; }
+img[data-pos="right"] { object-position: right center; }

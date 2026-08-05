@@ -152,7 +152,8 @@ const rgb2hex = (c) => {
         if (IMG.has(cls)) {
           if (el.tagName !== "IMG") { rejects.push({ id, reason: `${cls} deve ser <img>` }); return; }
           nodes.push({ kind: "img", ...base, src: el.currentSrc || el.src,
-            radiusPx: parseFloat(s.borderTopLeftRadius) || 0, circle: el.hasAttribute("data-circle") });
+            radiusPx: parseFloat(s.borderTopLeftRadius) || 0, circle: el.hasAttribute("data-circle"),
+            cutout: el.hasAttribute("data-cutout"), pos: el.getAttribute("data-pos") });
           return;
         }
         if (TEXT.has(cls)) {
@@ -268,6 +269,7 @@ const rgb2hex = (c) => {
           width: Math.round(n.w * 100) / 100, height: Math.round(n.h * 100) / 100,
           topLeft: rp, topRight: rp, bottomRight: rp, bottomLeft: rp,
           crossOrigin: "anonymous",
+          ...(n.cutout ? { cutout: true } : {}), ...(n.pos ? { pos: n.pos } : {}),
           imageType: n.attrs["data-image-type"] || n.attrs["data-slot"] || null,
           ...teImg(n.attrs) });
         if (!n.attrs["data-image-type"] && !n.attrs["data-slot"]) {

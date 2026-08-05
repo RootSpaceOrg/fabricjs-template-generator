@@ -277,6 +277,17 @@ async function measureNaturalSizeBatch(urls, playwrightFallback) {
 }
 
 function recalcCenterCrop(obj, naturalW, naturalH) {
+  // cutout (professionalPhoto): CONTAIN ancorado — imagem inteira, sem crop;
+  // ajusta a largura do frame para o aspect real (fit pela altura)
+  if (obj.cutout) {
+    const currentScaleY = obj.scaleY != null ? obj.scaleY : 1;
+    const visualH = (obj.height != null ? obj.height : naturalH) * currentScaleY;
+    const scale = visualH / naturalH;
+    obj.width = naturalW * scale / scale; // width em unidades pré-scale
+    return { originWidth: naturalW, originHeight: naturalH,
+      width: naturalW, height: naturalH, cropX: 0, cropY: 0,
+      scaleX: scale, scaleY: scale, originX: 'center', originY: 'center' };
+  }
   const currentScaleX = obj.scaleX != null ? obj.scaleX : 1;
   const currentScaleY = obj.scaleY != null ? obj.scaleY : 1;
   const currentW = obj.width != null ? obj.width : naturalW;
@@ -297,7 +308,9 @@ function recalcCenterCrop(obj, naturalW, naturalH) {
     cropH = cropW / objectAspect;
   }
 
-  const cropX = (naturalW - cropW) / 2;
+  let cropX = (naturalW - cropW) / 2;
+  if (obj.pos === 'left') cropX = 0;
+  else if (obj.pos === 'right') cropX = naturalW - cropW;
   const cropY = (naturalH - cropH) / 2;
   const scale = visualWidth / cropW;
 

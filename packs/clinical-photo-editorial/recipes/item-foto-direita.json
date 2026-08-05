@@ -11,7 +11,8 @@
       "editable": {
         "desc": "Foto clinica no registro do pack",
         "removeBg": false
-      }
+      },
+      "pos": "left"
     },
     {
       "c": "ds-number",
