@@ -67,6 +67,17 @@ GANCHO → PROBLEMA → EXPLICAÇÃO → SOLUÇÃO → [RECAP] → CTA
 
 **Regras (valem para QUALQUER arco):** 1 carrossel = 1 ideia. Todo slide termina em open loop puxando o próximo. Beat não se mistura. Etapa do funil dosa os beats, nunca reordena o arco escolhido. 6–13 slides (8–12 educação profunda, 5–6 peça rápida). 1–2 frases por slide além da headline. Herói/guia sempre. Declare o arco escolhido na storyline e no relatório. Métrica servida: swipe-through ≥70%.
 
+## 3b. Leis de qualidade da copy (valem para QUALQUER negócio — viram check do judge)
+
+Vereditos de 2026-08-05 (var-teste-1/2) destilados em lei geral:
+
+1. **Gancho com custo ou tensão, nunca anúncio de pauta.** "Primeira sessão feita." apenas declara o tema. "O que você faz nas próximas 48h decide metade do resultado" dá preço a ignorar o post. Todo gancho responde: por que o leitor NÃO pode pular isso?
+2. **História, não checklist.** Item de lista sem problema reconhecível antes e sem explicação depois é slop. A espinha (§3) é obrigatória de verdade: problema em que o leitor se vê → explicação que constrói autoridade → instrução.
+3. **Instrução sempre com mecanismo.** "Evite sol" não ensina; "a área tratada fica fotossensível por X, então evite sol por Y dias" soa profissional. Todo imperativo carrega um porquê — é onde a autoridade nasce.
+4. **Zero redundância entre slides.** Dois slides dizendo o mesmo com palavras diferentes = fita inchada; corte e aprofunde. Cada slide adiciona informação nova, e o open loop do fim de cada slide é real (pergunta/promessa que o próximo resolve).
+5. **Especificidade de nicho é obrigatória.** Se a copy serve igual para outro procedimento/segmento, ela reprova. Jargão e fatos do dossiê do negócio DEVEM aparecer — copy intercambiável é o sintoma nº 1 de slop.
+6. **CTA conectado ao valor entregue.** "Consulte sua clínica" é burocracia; o CTA nasce do que a peça acabou de dar ("Salve para consultar antes da 1ª sessão" só funciona se o guia mereceu save).
+
 ## 4. Doutrina de design (entra no brief)
 
 - Jargão do nicho encorajado; CTA de serviço permitido; `professionalPhoto` permitido quando o negócio vende confiança pelo rosto; iconografia do setor permitida.
