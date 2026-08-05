@@ -84,7 +84,7 @@ Quando qualquer arquivo da fábrica muda, antes do próximo batch de produção:
 
 ## Modo QA — geração por estilo certificado
 
-Para runs em modo pack (`packs/`): **sem pairwise, sem scores** — a estrutura já foi julgada na certificação. Verifique no candidato único: R1–R6 (checklist do passo 1b) + overflow de copy nos slots (min/max respeitados mas o RENDER cabe?) + imagens geradas coerentes com o registro do pack e com o slide + lessons.md do pack (erros recorrentes dele). Saída: `QA: PASS` ou lista de defeitos (copy do slot X estoura, imagem do slide Y fora do registro). Defeito de layout/estrutura = bug do pack → lessons.md do pack, não conserto na run.
+Para runs em modo pack (`packs/`): **sem pairwise, sem scores** — a estrutura já foi julgada na certificação. Verifique no candidato único: R1–R6 (checklist do passo 1b) + decor/travessia sobre texto, CTA, logo ou professionalPhoto (lei de legibilidade — FAIL) + overflow de copy nos slots (min/max respeitados mas o RENDER cabe?) + imagens geradas coerentes com o registro do pack e com o slide + lessons.md do pack (erros recorrentes dele). Saída: `QA: PASS` ou lista de defeitos (copy do slot X estoura, imagem do slide Y fora do registro). Defeito de layout/estrutura = bug do pack → lessons.md do pack, não conserto na run.
 
 ## Modo 3 — Verificação de fidelidade (pós-swap de imagens ou pós-conversão)
 

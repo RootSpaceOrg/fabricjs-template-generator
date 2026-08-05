@@ -17,12 +17,12 @@ existe na fábrica.
 │  runner (estados, gates mecânicos)                       │
 └──────────────────────────────────────────────────────────┘
              ▲ carrega                    ▲ produz
-┌─ PACKS (acopláveis, versionados) ─┐   ┌─ RUN ────────────┐
-│  <pack>/tokens.json               │   │ copy (dossiê)     │
-│  <pack>/recipes/  (composições)   │   │ imagens (fórmulas)│
-│  <pack>/images.md (fórmulas)      │   │ sorteio de recipes│
-│  <pack>/lessons.md                │   │ → HTML → Fabric   │
-└───────────────────────────────────┘   └───────────────────┘
+┌─ CONHECIMENTO (acoplável, em camadas) ─┐   ┌─ RUN ─────────────┐
+│  knowledge/copy/geral + negocios/<bt>  │   │ copy (dossiê)      │
+│  knowledge/design/geral                │   │ fita.html (design) │
+│  packs/<slug>/ (o estilo: tecnicas,    │   │ → Fabric por slide │
+│    exemplos, tokens, images, lessons)  │   │ → judge → upload   │
+└────────────────────────────────────────┘   └────────────────────┘
 ```
 
 ## 1. O motor
@@ -42,32 +42,46 @@ existe na fábrica.
 
 ### 1c. Fita e estado
 
-- Slide = arquivo isolado; fita = `assemble` (mecânico) com camada de costura; plataforma = `slice` + convert.
+- **A fita é a unidade de design**: o designer entrega UM `fita.html` (N seções
+  + `.fita-layer` de travessias). O conversor fatia por slide e emite elemento
+  de travessia nos DOIS vizinhos com centro deslocado (Fabric clipa off-canvas)
+  — par de fotos contínuas, decors na emenda e costuras são o MESMO mecanismo.
 - Runner com estados e gates que **executam** validação (não conferem existência) — provou valor.
 
-## 2. Os packs (conhecimento acoplável)
+## 2. O conhecimento (acoplável, em camadas)
 
-Um pack = um design conhecido, empacotado como DADOS:
+Camadas do geral ao específico — o mais específico vence:
+
+```
+knowledge/copy/geral (=CONTEXT.md)  → knowledge/copy/negocios/<business>.md
+knowledge/design/geral.md           → packs/<slug>/ (o estilo)
+```
+
+Um pack = uma skill de estilo, empacotada como CONHECIMENTO:
 
 ```
 packs/<slug>/
-├── pack.json      ← tokens (paleta/tipografia/espacamento), fit (funil×vertical), range de slides
-├── recipes/       ← composições de slide: grid areas × componentes (JSON/YAML declarativo, não HTML)
+├── pack.json      ← tokens (paleta/tipografia), fit (funil×vertical), range de slides
+├── tecnicas.md    ← dinâmicas do estilo (par contínuo, decor voando, duo-tom…)
+├── exemplos/      ← esqueletos e fitas APROVADOS — ponto de partida, nunca fôrma
 ├── images.md      ← fórmulas de prompt das imagens geradas + registro visual
 ├── reference.png  ← âncora visual aprovada pelo Gustavo
 ├── certification/ ← evidência do corredor completo (1× por versão do pack)
-└── lessons.md     ← histórico do pack
+└── lessons.md     ← histórico de vereditos do pack
 ```
 
-- O **html generator** (agente) recebe: pack carregado + copy + sorteio de recipes (variação = recombinação do certificado; nunca duas recipes iguais adjacentes). Ele compõe — não inventa layout, não escolhe cor, não escreve CSS.
+- O **designer** (agente) compõe a fita com liberdade DENTRO do estilo: catálogo
+  é lei, pack é conhecimento, exemplos são partida. Variância entre gerações do
+  mesmo pack é dever. Ele não escreve CSS, não converte, não edita JSON.
 - Packs são independentes do motor: criar/melhorar um pack nunca toca no motor; melhorar o motor beneficia todos os packs.
-- Certificação por versão do pack; rejeições do Gustavo → `lessons.md` do pack; 2× recorrente → corrige recipe e re-certifica.
+- Certificação por versão do pack; rejeições do Gustavo → `lessons.md`; padrão recorrente → vira técnica/lei no pack e re-certifica.
 
 ## 3. Papéis
 
 | Quem | Faz | NUNCA faz |
 |------|-----|-----------|
-| Agente (html generator) | storyline/copy do dossiê, sorteio e preenchimento de recipes, fórmulas→prompts de imagem | CSS, layout livre, conversão, edição de JSON |
+| Copy specialist (LLM) | dossiê: storyline, copy, briefs de imagem (CONTEXT.md + knowledge/copy/) | design, conversão |
+| Designer (LLM) | fita.html: composição livre dentro do estilo (CATALOG + knowledge/design/ + pack) | CSS, conversão, edição de JSON, copy de cabeça |
 | Motor (código) | grid, conversão, montagem, gates, conservação | escolha estética |
 | Judge | QA visual (R-checks, coerência de imagem, fidelidade à reference.png do pack) | régua absoluta sem âncora |
 | Gustavo | referência de packs, certificação, aprovação em review, curadoria da pack-queue | — |
@@ -79,7 +93,8 @@ Padrões banidos por causarem defeito recorrente — a lista imuniza contra regr
 - **Conversão manual por LLM** (causa raiz de infidelidade visual): a conversão HTML→Fabric é sempre código determinístico.
 - **Marcação de metadados como etapa LLM separada**: `data-*` nascem no componente, nunca são adicionados depois.
 - **Anchors em px escritos em prosa de spec**: posição vem do grid declarativo resolvido pelo browser.
-- **Layout congelado como HTML-modelo**: composição vem de recipes declarativas (variação natural por recombinação).
+- **Layout congelado como fôrma**: exemplos de pack são partida, nunca fôrma — duas gerações com o mesmo esqueleto são defeito.
+- **Design programado em gates**: gate mecânico verifica fato objetivo (conservação, papel narrativo, contagem); decisão estética vive em conhecimento + judge, nunca em script (aprendido nos gates de par/espelhamento da v1, aposentados).
 - **Checklist de design em prosa como protocolo do agente**: o render de conferência valida contra o grid, não contra texto.
 - **Documentos normativos de estética no motor**: todo gosto vive em pack; documento de inspiração não é norma.
 

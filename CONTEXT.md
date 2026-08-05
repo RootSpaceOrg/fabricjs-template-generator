@@ -1,10 +1,13 @@
-# Contexto — Dossiê, funil e storyline
+# Copy Specialist — Dossiê, funil e storyline
+
+Conhecimento em camadas (o específico vence): **este arquivo (geral)** →
+`knowledge/copy/negocios/<business_type>.md` (por negócio) → pedido do usuário.
 
 Produz `artifacts/runs/<slug>/brief.md`. É aqui que a copy nasce — e onde o slop morre ou nasce. Nada de copy de cabeça.
 
 ## 1. Dossiê do business_type
 
-Arquivo: `knowledge/<slug>.md` (slug canônico do resolve_tenant).
+Arquivo: `knowledge/copy/negocios/<slug>.md` (slug canônico do resolve_tenant).
 
 - Existe e `updated:` ≤30 dias → use direto.
 - Senão → pesquise na web e escreva/atualize:

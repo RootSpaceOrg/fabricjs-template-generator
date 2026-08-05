@@ -10,9 +10,8 @@
 | item_foto (C) | "ambiente clinico amplo em penumbra premium, tons teal, luz pontual suave, sem texto" |
 | foto_profissional | slot da plataforma (placeholder canonico no render) |
 
-**Par contínuo (A seguido de B):** as duas recipes recebem a MESMA imagem; A mostra a metade esquerda (`pos=left`), B a direita (`pos=right`) — transição suave entre os slides.
 
-**Foto do par contínuo:** obrigatoriamente PAISAGEM larga (>=1792x1024) — cada slide mostra uma faixa vertical estreita; foto estreita faz as duas faixas coincidirem (repetição). O crop right continua exatamente onde o left parou.
+**Foto do par contínuo (fita-v2):** paisagem larga (>=1792x1024), sujeito perto do CENTRO — ela vai INTEIRA na `.fita-layer` sobre a fronteira dos dois slides; a emenda corta a foto (sem split, sem pré-corte).
 **Decor:** blur gaussiano FORTE (objeto claramente fora de foco, bokeh fotográfico) e tema inequívoco da vertical — nitidez ou objeto genérico = reprovado.
 
 **Decor (regra de composição):** GRANDE (área de grid ampla), sempre COLADO numa borda do slide para ser cortado por ela (impressão de 'voar'), com rotação leve (10–20°) e blur gaussiano MUITO forte (objeto quase abstrato, não rouba foco de título/foto). Nunca pequeno e solto no meio do canvas.
