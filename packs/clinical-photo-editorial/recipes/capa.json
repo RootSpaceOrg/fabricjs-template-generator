@@ -4,23 +4,25 @@
   "components": [
     {
       "c": "ds-photo",
-      "area": "1 / 4 / 3 / 10",
+      "area": "1 / 3 / 6 / 9",
       "layer": true,
       "static": true,
       "imageType": "userAsset",
       "asset": "decor-laser-1.png",
       "slot": "decor",
-      "rot": -12
+      "overhang": "top",
+      "cutout": true
     },
     {
       "c": "ds-photo",
-      "area": "11 / 1 / 13 / 6",
+      "area": "10 / 3 / 13 / 7",
       "layer": true,
       "static": true,
       "imageType": "userAsset",
       "asset": "decor-laser-3.png",
       "slot": "decor",
-      "rot": 20
+      "overhang": "bottom",
+      "cutout": true
     },
     {
       "c": "ds-slot",
