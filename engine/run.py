@@ -217,13 +217,6 @@ def cmd_advance(slug: str):
             print(f"  - {m}")
         sys.exit(1)
     idx = STAGES.index(state["stage"])
-    if state["stage"] == "compose":
-        # registra o draw aprovado — gerações futuras não podem repetir (variância)
-        draw_obj = json.loads((_dir(slug) / "draw.json").read_text(encoding="utf-8"))
-        key = ",".join(draw_obj.get("recipes", [])) + "|" + ",".join(
-            str(x) for x in sorted(draw_obj.get("espelhados") or []))
-        with open(REPO / "packs" / state["pack"] / "draws.log", "a", encoding="utf-8") as fh:
-            fh.write(key + "\n")
     state["history"].append({"stage": state["stage"], "at": time.strftime("%Y-%m-%d %H:%M:%S")})
     state["stage"] = STAGES[idx + 1]
     _save(slug, state)
