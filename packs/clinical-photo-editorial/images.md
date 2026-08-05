@@ -18,3 +18,5 @@
 **Decor (regra de composição):** GRANDE (área de grid ampla), sempre COLADO numa borda do slide para ser cortado por ela (impressão de 'voar'), com rotação leve (10–20°) e blur gaussiano MUITO forte (objeto quase abstrato, não rouba foco de título/foto). Nunca pequeno e solto no meio do canvas.
 
 **Blur do decor nasce na GERAÇÃO** (prompt: 'extremely out of focus, dreamy bokeh, barely recognizable') — PROIBIDO aplicar blur em pós-processo (PIL/convert degrada e mata o realce natural do modelo). Decor NUNCA sobrepõe o professionalPhoto nem elementos de ação.
+
+**Assets do pack são EXEMPLARES, não estoque:** os `assets/decor-*.png` existem só para certificação/validação do pack. Em produção (posts definitivos), o agente SEMPRE gera decors novos, específicos do tema/segmento do post, seguindo as regras deste arquivo (objeto do tema, inteiro com margem, dreamy bokeh na geração, fundo transparente). Reusar os exemplares do pack em post final = reprovado.
