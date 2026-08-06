@@ -14,7 +14,7 @@ dominante é a PRIMARY do usuário (fundos chapados e tarjas).
 3. Headline sans-BOLD branca empilhada (`ds-headline` com `<br>` e
    `data-case="sentence"` — este pack NUNCA usa uppercase em headline, rows
    ~2–5, central): frase de curiosidade, 3 linhas, quebras pensadas.
-4. Sub-headline em TARJA (`ds-cta data-square` — cantos retos):
+4. Sub-headline em TARJA (`ds-cta data-square data-variable="primary"` — cantos retos, recolorida pela marca):
    1–2 linhas de promessa concreta, fundo accent (recolorido pela primary).
 5. O assunto da foto ocupa o meio-baixo SEM texto por cima.
 6. **Contraste da headline segue a parede**: fundo claro da foto → texto ink;
@@ -37,7 +37,8 @@ dominante é a PRIMARY do usuário (fundos chapados e tarjas).
 
 - Tipografia é a estrela: máximo 2 pesos (800 display, 500 texto), nunca
   itálico decorativo, quebras de linha SEMPRE intencionais.
-- 1 tarja por slide no máximo; tarja nunca com mais de 2 linhas.
+- 1 tarja por slide no máximo; tarja nunca com mais de 2 linhas; tarja e
+  qualquer caixa cheia SEMPRE com `data-variable="primary"`.
 - Meme = absurdo fotográfico com dignidade (luz real, film look) — nunca
   clipart, nunca cartoon, nunca rosto humano deformado.
 - Statement nunca divide atenção: ou colagem OU iconografia de margem, não os

@@ -47,3 +47,10 @@ aqui estão as leis de gosto que valem em todo estilo.
   foto real); pessoa/avatar desenhado no lugar é violação (R1).
 - Elementos editáveis respeitam min/max de caracteres e fazem sentido para
   OUTRO profissional do mesmo nicho adaptar no editor.
+
+## Cor da marca em caixas
+
+Todo elemento de CAIXA CHEIA em cor de acento (tarja, pill de CTA, bloco,
+overlay) leva `data-variable="primary"` — o conversor emite `fillVariableConfig`
+e a caixa se recolore com a marca do usuário, como os fundos chapados. Acento
+cravado sem variável é defeito: a peça inteira deve se vestir da primary.
