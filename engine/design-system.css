@@ -97,6 +97,7 @@ section.slide[data-invert] { background: var(--accent); color: var(--accent-ink)
 .ds-watermark[data-vertical] { transform: rotate(-90deg); }
 
 /* tons (qualquer componente de texto) */
+[data-tone="ink"]    { color: var(--ink); }
 [data-tone="muted"]  { color: var(--muted); }
 [data-tone="accent"] { color: var(--accent); }
 [data-tone="paper"]  { color: var(--paper); }
@@ -135,6 +136,9 @@ section.slide[data-invert] { background: var(--accent); color: var(--accent-ink)
   letter-spacing: 1px;
 }
 section.slide[data-invert] .ds-cta { background: var(--paper); color: var(--accent); }
+/* cartão claro sobre slide invertido não herda a cor clara da section */
+section.slide[data-invert] .ds-card { color: var(--ink); }
+section.slide[data-invert] .ds-card .ds-cta { background: var(--accent); color: var(--accent-ink); }
 
 /* ── formas/containers ─────────────────────────────────────────────────── */
 .ds-block { background: var(--accent); color: var(--accent-ink); padding: 36px; }
