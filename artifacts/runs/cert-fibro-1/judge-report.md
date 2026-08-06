@@ -1,33 +1,30 @@
 # Judge — cert-fibro-1
 
-QA do render vigente (`strip.png`, 2026-08-06) contra `clinical-photo-editorial/reference.png` e `exemplos/fita-aprovada-gram-teste-1.png`.
+Rejulgamento QA do render vigente após as correções de decor e composição de S5 (2026-08-06), contra `clinical-photo-editorial/reference.png` e `exemplos/fita-aprovada-gram-teste-1.png`.
 
 ## Regras duras (R1–R6)
 
 | Regra | Veredito | Evidência verificável |
 |---|---|---|
-| R1 avatar | ok | S1 e S6 usam `professionalPhoto` com placeholder canônico no `fita.html`. |
-| R2 corte | ok | S1–S6: não há texto de leitura ou slot editável cortado pela borda do slide/canvas. |
-| R3 fundos | ok | Há paper (S1, S4–S6), foto full-bleed (S2) e fundo accent (S3). |
-| R4 área morta | **VIOLA** | S5 deixa grande bloco inferior direito e base sem âncora; a área visualmente morta supera 35% do slide. Craft fica limitado a 6. |
-| R5 UI-decor | ok | Stamps e CTA têm função editorial; não há elemento decorativo imitando interface. |
-| R6 contraste | ok | Texto teal sobre paper, texto claro sobre accent e card de S2 sobre overlay são legíveis. |
+| R1 avatar | ok | S1 e S6 usam o slot `professionalPhoto` de procedência canônica no `fita.html`. |
+| R2 corte | ok | S1–S6: nenhum texto de leitura, CTA ou slot editável é cortado pela fronteira/canvas. |
+| R3 fundos | ok | Paper em S1 e S4–S6, foto full-bleed em S2 e fundo accent em S3 asseguram mudanças reais de fundo. |
+| R4 área morta | ok | S5 foi reancorado: bokeh de luz no canto inferior, selo editorial e copy distribuem peso visual sem criar ruído; não há bloco morto dominante. |
+| R5 UI-decor | ok | Stamps e CTA têm papel editorial explícito; não há pill/toggle/botão ornamental simulando interface. |
+| R6 contraste | ok | Teal sobre paper (S1, S4–S6), texto claro sobre accent (S3) e card de S2 sobre overlay permanecem legíveis. |
 
 ## QA do pack e imagens
 
-- S1 preserva o duo-tom entrelaçado ao `professionalPhoto`; S2 é o único full-bleed + overlay + card; S3|S4 usa travessia em rodapé equilibrada; S6 fecha com `professionalPhoto`.
-- A travessia S3|S4 permanece em fundo limpo e não encobre copy.
-- **Defeito:** o decor de S5 apresenta contorno/halo magenta visível no canto superior direito. A paleta de referência é teal/paper; o resíduo de chroma não pertence ao registro clínico-editorial nem parece bokeh natural.
+- S1 mantém a assinatura de headline duo-tom entrelaçada ao `professionalPhoto`; S2 é o único full-bleed + overlay + card alert; S3|S4 preserva a travessia paisagem equilibrada; S6 fecha com `professionalPhoto`.
+- A travessia S3|S4 passa no rodapé de fundo limpo e não encobre copy, CTA ou slot profissional.
+- O decor de S5 foi reemitido sem halo magenta: o bokeh está restrito ao registro teal/paper, é específico de PBM e o novo bokeh inferior ancora o fecho sem se sobrepor à copy.
 
 ## QA narrativo — CONTEXT.md §3b + gramática LaserPro
 
-- S1 usa frase ouvida entre aspas como tensão concreta; S2 acolhe e desculpabiliza sem culpabilizar a pessoa.
-- S3 traduz o mecanismo (amplificação de sinais de dor pelo sistema nervoso) e avança a história; S4 mantém a PBM como complemento e preserva o acompanhamento clínico como essencial.
-- S5 produz pertencimento, e S6 conecta comentário/salvamento à validação oferecida. A copy é específica de fibromialgia e não faz promessas clínicas.
+- **Gancho com tensão:** S1 usa a frase ouvida “nem parece doente” para nomear o custo concreto de uma dor invisível; não é anúncio de pauta.
+- **Arco sem redundância:** S2 acolhe e desculpabiliza; S3 traduz a amplificação dos sinais de dor; S4 posiciona PBM como complemento individual sem disputar o cuidado clínico; S5 devolve pertencimento; S6 convida a continuidade.
+- **Mecanismo e compliance:** S3 dá o porquê em linguagem acessível; S4 mantém acompanhamento clínico como essencial e usa “pode ser conversada” para a PBM, sem prometer resultado.
+- **Especificidade:** fibromialgia, sistema nervoso, dor invisível, fotobiomodulação e parâmetros tornam a copy exclusiva do recorte.
+- **CTA conectado:** “EU ME VEJO” e o salvamento são consequência direta da validação e da mensagem de pertencimento entregues na fita.
 
-## Defeitos a corrigir antes de novo render
-
-1. **S5:** redistribuir a composição para que o espaço abaixo do corpo seja intencionalmente ocupado por uma âncora editorial ou foto, sem transformar o slide em ruído. É defeito de layout/estrutura do pack para este tipo de fecho.
-2. **S5 decor:** regenerar o bokeh sem chroma residual/halo magenta; usar somente o registro teal/paper e validar o alpha no render.
-
-**QA: FAIL**
+**QA: PASS**
