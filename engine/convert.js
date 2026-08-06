@@ -105,10 +105,10 @@ const rgb2hex = (c) => {
     const runsOf = (el, s) => {
       const runs = [];
       for (const n of el.childNodes) {
-        if (n.nodeType === 3 && n.textContent) runs.push({ t: n.textContent, color: s.color });
+        if (n.nodeType === 3 && n.textContent) runs.push({ t: n.textContent.replace(/\\+n/g, "\n"), color: s.color });
         else if (n.nodeType === 1 && n.tagName === "BR") runs.push({ t: "\n", color: s.color });
         else if (n.nodeType === 1 && (n.tagName === "SPAN" || n.tagName === "B" || n.tagName === "EM")) {
-          runs.push({ t: n.innerText || "", color: getComputedStyle(n).color });
+          runs.push({ t: (n.innerText || "").replace(/\\+n/g, "\n"), color: getComputedStyle(n).color });
         } else if (n.nodeType === 1) {
           rejects.push({ id: el.getAttribute("data-el-id"), reason: `filho <${n.tagName.toLowerCase()}> dentro de componente de texto (só span/b/em/br)` });
         }
