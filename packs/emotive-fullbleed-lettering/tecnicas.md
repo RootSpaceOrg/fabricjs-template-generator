@@ -23,7 +23,7 @@ Estilo de PEÇA ÚNICA (data comemorativa; `data-role="unica"`), pode estender a
    2–3 linhas de homenagem — dentro do compliance, sem promessa.
 7. **Rodapé institucional** (veredito 2026-08-06): data + copy + linha
    telefone/instagram sobem (rows ~9–11) e o **logo fica sozinho, CENTRALIZADO
-   na base** (row 12, cols 6–8) com respiro próprio — nunca espremido no canto.
+   na base** (row 12, cols 6–8, `data-inset="bottom"` para não grudar na borda) — nunca espremido no canto.
 
 ## Leis do estilo
 

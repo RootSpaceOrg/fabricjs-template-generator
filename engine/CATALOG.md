@@ -78,7 +78,7 @@ Sobreposição entre componentes é violação, EXCETO componentes de camada:
 
 Modificadores globais: `data-tone` (muted/accent/paper/accent-ink) ·
 `data-align` (center/right) · `data-round`/`data-circle` (imagens) ·
-`data-overhang="top|bottom|tl|tr|bl|br"` (decor: imagem inteira sem crop, deslocada parcialmente para fora do slide — cortada pela borda, rotação embutida; usar junto com data-cutout) · `data-size="lg"` (ds-number e ds-headline) · `data-face="serif"` (voz serif do pack via `--font-serif`, sentence case).
+`data-overhang="top|bottom|tl|tr|bl|br"` (decor: imagem inteira sem crop, deslocada parcialmente para fora do slide — cortada pela borda, rotação embutida; usar junto com data-cutout) · `data-inset="bottom|top"` (respiro de 36px da borda sem mudar a célula) · `data-size="lg"` (ds-number e ds-headline) · `data-face="serif"` (voz serif do pack via `--font-serif`, sentence case).
 
 ## data-* de metadados
 
