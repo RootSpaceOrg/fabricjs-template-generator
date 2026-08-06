@@ -1,21 +1,17 @@
-# Imagens - clinical-photo-editorial (v3, referencia unica)
+# Imagens — clinical-photo-editorial
 
-**Registro:** clinica premium; papel menta #E9F3F1; teal profundo; luz suave; NUNCA estourado; nunca resultado clinico real.
+**Registro:** clínica premium; papel menta #E9F3F1; teal profundo; luz suave;
+NUNCA estourado; nunca resultado clínico real. O pack não guarda assets — TODA
+run gera fotos/decors na hora, específicos do tema, em `artifacts/runs/<slug>/assets/`.
 
-| Slot | Formula |
+| Slot | Fórmula |
 |------|---------|
-| decor | OBJETO DO TEMA desfocado com FUNDO TRANSPARENTE (ex.: aparelho de laser genérico em bokeh) — nunca fundo chapado ("bolha"); gerar por vertical/tema |
-| decor legado (decor-blur-N) | "objeto cirurgico (touca/mascara/gaze) COMPLETAMENTE desfocado, bokeh de primeiro plano, sobre fundo liso verde-menta #E9F3F1, luz suave, sem texto, 800x800" — regenerar so quando o pack pedir variacao |
-| item_foto (A/B) | "detalhe de ambiente clinico premium - {conceito} - tons verde-petroleo, luz direcional suave, editorial, sem pessoas identificaveis, sem texto" |
-| item_foto (C) | "ambiente clinico amplo em penumbra premium, tons teal, luz pontual suave, sem texto" |
-| foto_profissional | slot da plataforma (placeholder canonico no render) |
+| decor | OBJETO DO TEMA (aparelho, óculos, instrumento) JÁ GERADO extremamente fora de foco ("extremely out of focus, dreamy bokeh, barely recognizable"), fundo 100% transparente (RGBA), objeto INTEIRO com margem generosa nas 4 bordas. Blur em pós-processo (PIL) é PROIBIDO. Nitidez, objeto genérico ou fundo chapado = reprovado |
+| foto de miolo | "detalhe de ambiente/procedimento clínico premium — {conceito} — tons verde-petróleo, luz direcional suave, editorial, sem pessoas identificáveis, sem texto" |
+| foto imersiva (full-bleed) | "ambiente clínico amplo em penumbra premium, tons teal, luz pontual suave, sem texto" |
+| foto do par contínuo | paisagem larga (>=1792x1024), sujeito perto do CENTRO — vai INTEIRA na `.fita-layer` sobre a fronteira; a emenda corta a foto |
+| foto_profissional | slot da plataforma (placeholder canônico no render) |
 
-
-**Foto do par contínuo (fita-v2):** paisagem larga (>=1792x1024), sujeito perto do CENTRO — ela vai INTEIRA na `.fita-layer` sobre a fronteira dos dois slides; a emenda corta a foto (sem split, sem pré-corte).
-**Decor:** blur gaussiano FORTE (objeto claramente fora de foco, bokeh fotográfico) e tema inequívoco da vertical — nitidez ou objeto genérico = reprovado.
-
-**Decor (regra de composição):** GRANDE (área de grid ampla), sempre COLADO numa borda do slide para ser cortado por ela (impressão de 'voar'), com rotação leve (10–20°) e blur gaussiano MUITO forte (objeto quase abstrato, não rouba foco de título/foto). Nunca pequeno e solto no meio do canvas.
-
-**Blur do decor nasce na GERAÇÃO** (prompt: 'extremely out of focus, dreamy bokeh, barely recognizable') — PROIBIDO aplicar blur em pós-processo (PIL/convert degrada e mata o realce natural do modelo). Decor NUNCA sobrepõe o professionalPhoto nem elementos de ação.
-
-**Decors não têm estoque:** o pack não guarda assets — TODA run gera seus decors/fotos na hora, específicos do tema do post, seguindo as regras deste arquivo (objeto do tema, inteiro com margem nas 4 bordas, dreamy bokeh na geração, fundo transparente). Os arquivos vivem em `artifacts/runs/<slug>/assets/`.
+**Composição do decor:** grande, colado numa borda (cortado por ela — "voando"),
+rotação leve (10–20°); nunca pequeno/solto no meio do canvas; nunca sobre
+professionalPhoto, texto, CTA ou logo — só background limpo.

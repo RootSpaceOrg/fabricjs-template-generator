@@ -1,6 +1,6 @@
 {
   "pack": "clinical-photo-editorial",
-  "version": 5,
+  "version": 6,
   "status": "draft",
   "familia": "editorial clinico premium, fotografico e organico",
   "fit": {
@@ -22,7 +22,7 @@
   },
   "assinaturas": [
     "tipografia display teal GIGANTE em duo-tom (palavra-chave no accent) entrelacada com o cutout do profissional",
-    "objetos cirurgicos DESFOCADOS (bokeh de primeiro plano) como decoracao assimetrica fundindo no papel menta",
+    "objetos do TEMA desfocados (dreamy bokeh, fundo transparente) como decoracao assimetrica cortada pelas bordas",
     "composicao assimetrica com sobreposicoes em camada; pills outline; clean robusto"
   ],
   "tokens": {
@@ -43,8 +43,7 @@
     "fs-wm": "170px",
     "fs-stamp": "24px",
     "fs-cta": "29px",
-    "radius": "28px",
-    "shape-stroke": "4px"
+    "radius": "28px"
   },
   "fonts": {
     "css": "https://fonts.googleapis.com/css2?family=Anton&family=Manrope:wght@400;600&display=swap",
@@ -52,11 +51,5 @@
   },
   "variables": {
     "primary": "#2E8C7F"
-  },
-  "conhecimento": {
-    "tecnicas": "tecnicas.md",
-    "exemplos": "exemplos/ (esqueletos aprovados — ponto de partida, nunca fôrma)",
-    "imagens": "images.md",
-    "lessons": "lessons.md"
   }
 }
