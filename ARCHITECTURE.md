@@ -84,6 +84,7 @@ packs/<slug>/
 | Designer (LLM) | fita.html: composição livre dentro do estilo (CATALOG + knowledge/design/ + pack) | CSS, conversão, edição de JSON, copy de cabeça |
 | Motor (código) | grid, conversão, montagem, gates, conservação | escolha estética |
 | Judge | QA visual (R-checks, coerência de imagem, fidelidade à reference.png do pack) | régua absoluta sem âncora |
+| Criador de packs (Claude) | destila referências em conhecimento, conserta MOTOR quando a run trava, **critica a fita do agente ANTES do Gustavo** (arco, hierarquia, contraste, leis do pack) e devolve feedback ao agente até o nível passar | compor fita, escrever copy, editar HTML de run |
 | Gustavo | referência de packs, certificação, aprovação em review, curadoria da pack-queue | — |
 
 ## 4. Restrições de design (não-negociáveis)
@@ -94,6 +95,7 @@ Padrões banidos por causarem defeito recorrente — a lista imuniza contra regr
 - **Marcação de metadados como etapa LLM separada**: `data-*` nascem no componente, nunca são adicionados depois.
 - **Anchors em px escritos em prosa de spec**: posição vem do grid declarativo resolvido pelo browser.
 - **Layout congelado como fôrma**: exemplos de pack são partida, nunca fôrma — duas gerações com o mesmo esqueleto são defeito.
+- **Claude compondo a fita**: se o criador de packs escreve o `fita.html`, a certificação prova o Claude, não o pack — e o estágio de contexto (dossiê) some junto, produzindo copy sem arco. Composição é SEMPRE do agente; Claude conserta motor e critica resultado (aprendido em 2026-08-07).
 - **Design programado em gates**: gate mecânico verifica fato objetivo (conservação, papel narrativo, contagem); decisão estética vive em conhecimento + judge, nunca em script (aprendido nos gates de par/espelhamento da v1, aposentados).
 - **Checklist de design em prosa como protocolo do agente**: o render de conferência valida contra o grid, não contra texto.
 - **Documentos normativos de estética no motor**: todo gosto vive em pack; documento de inspiração não é norma.
