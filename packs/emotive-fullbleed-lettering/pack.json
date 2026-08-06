@@ -1,0 +1,43 @@
+{
+  "pack": "emotive-fullbleed-lettering",
+  "version": 1,
+  "status": "draft",
+  "familia": "comemorativo emocional: foto full-bleed fundida na cor da marca + lettering-arte gerado",
+  "fit": {
+    "funil": ["topo"],
+    "verticais": ["health"],
+    "ocasiao": "datas comemorativas"
+  },
+  "slides": { "min": 1, "max": 3 },
+  "format": { "width": 1080, "height": 1350 },
+  "assinaturas": [
+    "foto EMOCIONAL full-bleed (pessoas reais, luz quente) fundindo num gradiente da PRIMARY do usuario que sobe do rodape",
+    "lettering-arte central gerado por IA: palavra display gigante cream + palavra script sobreposta + objetos 3D do tema entrelacados nas letras",
+    "sparkles cream espalhados + copy curta central clara + rodape institucional compacto (logo, telefone, instagram)"
+  ],
+  "tokens": {
+    "paper": "#F4E8D0",
+    "ink": "#FFFFFF",
+    "muted": "#EBDFC9",
+    "accent": "#1E4E79",
+    "accent-ink": "#FFFFFF",
+    "wm": "#F4E8D0",
+    "font-display": "'Poppins', sans-serif",
+    "font-body": "'Manrope', sans-serif",
+    "fs-eyebrow": "22px",
+    "fs-headline": "54px",
+    "fs-headline-lg": "96px",
+    "fs-body": "30px",
+    "fs-number": "40px",
+    "fs-number-lg": "120px",
+    "fs-wm": "140px",
+    "fs-stamp": "20px",
+    "fs-cta": "26px",
+    "radius": "24px"
+  },
+  "fonts": {
+    "css": "https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Manrope:wght@400;600&display=swap",
+    "meta": "Poppins:600,700|Manrope:400,600"
+  },
+  "variables": { "primary": "#1E4E79" }
+}

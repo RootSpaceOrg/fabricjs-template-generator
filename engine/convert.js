@@ -337,12 +337,17 @@ const rgb2hex = (c) => {
       } else if (n.kind === "shape") {
         const rr = (n.radiiPx || [n.radiusPx, n.radiusPx, n.radiusPx, n.radiusPx]).map((v) => pct(v, n.w, n.h));
         const shapeFill = n.bgImg ? gradientFromCss(n.bgImg, n.w, n.h) : (rgb2hex(n.bg) || "transparent");
+        const gradVar = n.attrs["data-overlay-gradient"];
         objects.push({ type: "roundedRect", name: "Forma", ...common,
           width: Math.round(n.w), height: Math.round(n.h),
           fill: shapeFill,
           ...(n.borderColor ? { stroke: rgb2hex(n.borderColor), strokeWidth: n.borderW } : {}),
           topLeft: rr[0], topRight: rr[1], bottomRight: rr[2], bottomLeft: rr[3],
-          ...("data-variable" in n.attrs ? { fillVariableConfig: { type: "solid", variable: n.attrs["data-variable"], alpha: 1 } } : {}) });
+          ...(gradVar && shapeFill && shapeFill.colorStops ? {
+            fillVariableConfig: { type: "gradient",
+              colorStops: shapeFill.colorStops.map((cs) => ({ variable: gradVar,
+                alpha: (cs.color.match(/rgba\([^)]+,\s*([\d.]+)\)/) || [0, "1"])[1] * 1 })) },
+          } : ("data-variable" in n.attrs ? { fillVariableConfig: { type: "solid", variable: n.attrs["data-variable"], alpha: 1 } } : {})) });
       } else if (n.kind === "chip") {
         const rp = pct(n.radiusPx, n.w, n.h);
         const hasFill = rgb2hex(n.bg);

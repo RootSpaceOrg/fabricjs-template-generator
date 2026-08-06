@@ -38,7 +38,8 @@ editar JSON (doutrina do conversor, herdada como lei).
   convert/assemble a partir do `pack.json` (`data-pack` resolve o pack). O HTML
   nunca contém cores nem links de CSS.
 - `data-role` é obrigatório em toda seção: 1ª `abertura`, última `fechamento`,
-  demais `item` (gate do runner).
+  demais `item` (gate do runner). **Peça única** (fita de 1 slide, ex. data
+  comemorativa): a seção usa `data-role="unica"`.
 - Slide invertido (respiro/CTA): `<section class="slide" data-role="..."
   data-invert data-variable="primary" data-variable-target="background">`.
 - **Ordem no DOM = ordem de empilhamento no canvas** (watermark primeiro;
@@ -69,7 +70,7 @@ Sobreposição entre componentes é violação, EXCETO componentes de camada:
 | `ds-watermark` | texto | `textbox` | camada (pode sobrepor); `data-static` implícito NÃO — marque `data-static`; `data-vertical` = rotacionada -90° |
 | `ds-stamp` | texto | `roundedRect` (stroke) + `textbox` | chip outline 1→2, mesmo `elId`; rotação via `transform: rotate()` |
 | `ds-cta` | texto | `roundedRect` (fill) + `textbox` | pill preenchida 1→2 |
-| `ds-block` | container | `roundedRect` + filhos | bg do acento (`data-tone="ink"` = preto); filhos são componentes do catálogo; `data-overlay` (+`data-layer`) = véu escurecedor sobre foto full-bleed (opacity 0.38) |
+| `ds-block` | container | `roundedRect` + filhos | bg do acento (`data-tone="ink"` = preto); filhos são componentes do catálogo; `data-overlay` (+`data-layer`) = véu escurecedor sobre foto full-bleed (opacity 0.38); `data-overlay-gradient="primary|secondary"` (+`data-layer`) = véu em GRADIENTE transparente→cor VARIÁVEL do usuário (recolorido por stop na plataforma) |
 | `ds-card` | container | `roundedRect` + filhos | cartão no papel, cantos `--radius` |
 | `ds-shape` | vazio | `roundedRect` (cantos por lado; anel = stroke) | forma de composição: `data-shape="circle\|ring\|pill"`; cor via `data-tone`; `data-half="left\|right"` na BORDA do slide cria transição — o par complementar no slide vizinho completa a forma na fita |
 | `ds-photo` | `<img>` | `ClippableImage` | imagem gerada/evidência; `data-image-type` obrigatório |

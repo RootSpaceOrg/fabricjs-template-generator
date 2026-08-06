@@ -94,7 +94,10 @@ def missing_for(slug: str, state: dict) -> list[str]:
                 if not (lo <= n_sec <= hi):
                     miss.append(f"fita com {n_sec} slides — pack pede {lo}..{hi}")
                 if len(roles) != n_sec:
-                    miss.append("toda <section class=\"slide\"> precisa de data-role (abertura|item|fechamento)")
+                    miss.append("toda <section class=\"slide\"> precisa de data-role (abertura|item|fechamento; peça única = unica)")
+                elif n_sec == 1:
+                    if roles[0] != "unica":
+                        miss.append("peça única: a seção deve ter data-role=\"unica\"")
                 else:
                     if roles[0] != "abertura":
                         miss.append("1ª seção deve ter data-role=\"abertura\"")

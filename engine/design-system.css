@@ -183,3 +183,11 @@ img[data-overhang="br"]     { transform: translate(28%, 30%) rotate(-12deg); }
 
 /* overlay: escurece foto full-bleed para texto/card por cima (usar com data-layer) */
 .ds-block[data-overlay] { opacity: 0.38; border-radius: 0; }
+
+/* overlay em GRADIENTE da cor variável: transparente no topo -> primary no rodapé.
+   A cor aqui é placeholder (--accent); o convert emite fillVariableConfig gradient
+   e a plataforma recolore cada stop com a primary do usuário. */
+.ds-block[data-overlay-gradient] {
+  background: linear-gradient(180deg, rgba(0,0,0,0) 0%, var(--accent) 58%, var(--accent) 100%);
+  border-radius: 0; opacity: 1;
+}
