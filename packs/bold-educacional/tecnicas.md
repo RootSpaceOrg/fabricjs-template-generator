@@ -11,9 +11,10 @@ dominante é a PRIMARY do usuário (fundos chapados e tarjas).
    banheira, cachorro de óculos com taça no barco). Gerada por run, ligada ao
    TEMA por um objeto (livro, notebook, jaleco…). Realista, nunca cartoon.
 2. Byline pequena no topo centro (`ds-eyebrow` static): nome/handle.
-3. Headline sans-BOLD branca empilhada (`ds-headline` com `<br>`, rows ~2–5,
-   central): frase de curiosidade, 3 linhas, quebras pensadas.
-4. Sub-headline em TARJA (`ds-cta` — radius baixo do pack vira tarja):
+3. Headline sans-BOLD branca empilhada (`ds-headline` com `<br>` e
+   `data-case="sentence"` — este pack NUNCA usa uppercase em headline, rows
+   ~2–5, central): frase de curiosidade, 3 linhas, quebras pensadas.
+4. Sub-headline em TARJA (`ds-cta data-square` — cantos retos):
    1–2 linhas de promessa concreta, fundo accent (recolorido pela primary).
 5. O assunto da foto ocupa o meio-baixo SEM texto por cima.
 
