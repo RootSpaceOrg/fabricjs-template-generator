@@ -21,9 +21,9 @@ Estilo de PEÇA ÚNICA (data comemorativa; `data-role="unica"`), pode estender a
 5. **Data pequena** (`ds-eyebrow` static): "09 AGOSTO".
 6. **Copy curta** (`ds-body` editável, tone ink, centralizada, rows ~10–11):
    2–3 linhas de homenagem — dentro do compliance, sem promessa.
-7. **Rodapé institucional** (row 12): `ds-slot` logo + `ds-body` com
-   `data-text-type="phone"` e `data-text-type="instagramHandle"` — compacto,
-   branco, discreto.
+7. **Rodapé institucional** (veredito 2026-08-06): data + copy + linha
+   telefone/instagram sobem (rows ~9–11) e o **logo fica sozinho, CENTRALIZADO
+   na base** (row 12, cols 6–8) com respiro próprio — nunca espremido no canto.
 
 ## Leis do estilo
 
