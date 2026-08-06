@@ -1,0 +1,60 @@
+{
+  "ok": true,
+  "pk": "TENANT#kultivai#VERTICAL#health",
+  "tenantId": "kultivai",
+  "verticalId": "health",
+  "domain": "d2nh2qckzosbem.cloudfront.net",
+  "adminLink": "https://d2nh2qckzosbem.cloudfront.net/admin/plataforma/kultivai/health",
+  "businessTypes": [
+    {
+      "label": "Laserterapia",
+      "value": "laserterapy",
+      "emoji": "🧑‍⚕️"
+    },
+    {
+      "label": "Clínica Médica",
+      "value": "medical-clinic",
+      "emoji": "🏥"
+    },
+    {
+      "label": "Laboratório",
+      "value": "laboratory",
+      "emoji": "🔬"
+    },
+    {
+      "label": "Farmácia",
+      "value": "pharmacy",
+      "emoji": "💊"
+    },
+    {
+      "label": "Nutricionista",
+      "value": "nutrition",
+      "emoji": "🥗"
+    },
+    {
+      "label": "Fisioterapia",
+      "value": "physiotherapy",
+      "emoji": "🧘"
+    },
+    {
+      "label": "Psicologia",
+      "value": "psychology",
+      "emoji": "🧠"
+    },
+    {
+      "label": "Odontologia",
+      "value": "dentistry",
+      "emoji": "🦷"
+    },
+    {
+      "label": "Estética e Bem-Estar",
+      "value": "aesthetics",
+      "emoji": "💆"
+    }
+  ],
+  "matchedBusinessType": {
+    "label": "Laserterapia",
+    "value": "laserterapy",
+    "emoji": "🧑‍⚕️"
+  }
+}

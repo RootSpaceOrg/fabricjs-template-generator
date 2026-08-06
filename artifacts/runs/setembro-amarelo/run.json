@@ -1,0 +1,43 @@
+{
+  "slug": "setembro-amarelo",
+  "env": "dev",
+  "pack": "emotive-fullbleed-lettering",
+  "n": 1,
+  "stage": "done",
+  "created": "2026-08-06 14:10:46",
+  "history": [
+    {
+      "stage": "resolve",
+      "at": "2026-08-06 14:10:46"
+    },
+    {
+      "stage": "context",
+      "at": "2026-08-06 14:10:46"
+    },
+    {
+      "stage": "compose",
+      "at": "2026-08-06 14:10:46"
+    },
+    {
+      "stage": "render",
+      "at": "2026-08-06 14:10:48"
+    },
+    {
+      "stage": "convert",
+      "at": "2026-08-06 14:10:50"
+    },
+    {
+      "stage": "judge",
+      "at": "2026-08-06 14:14:54"
+    },
+    {
+      "stage": "finalize",
+      "at": "2026-08-06 14:15:31"
+    },
+    {
+      "stage": "upload",
+      "at": "2026-08-06 14:17:11"
+    }
+  ],
+  "template_id": "UcKvSkZ9WfIWTsWjxBMS-"
+}
