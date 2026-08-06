@@ -191,6 +191,7 @@ const rgb2hex = (c) => {
           return;
         }
         nodes.push({ kind: "shape", ...base, bg: s.backgroundColor, bgImg,
+          shadow: s.boxShadow && s.boxShadow !== "none" ? s.boxShadow : null,
           radiusPx: parseFloat(s.borderTopLeftRadius) || 0,
           radiiPx: [s.borderTopLeftRadius, s.borderTopRightRadius, s.borderBottomRightRadius, s.borderBottomLeftRadius].map((v) => parseFloat(v) || 0),
           borderW: Math.max(parseFloat(s.borderTopWidth) || 0, parseFloat(s.borderRightWidth) || 0, parseFloat(s.borderLeftWidth) || 0),
@@ -338,9 +339,12 @@ const rgb2hex = (c) => {
         const rr = (n.radiiPx || [n.radiusPx, n.radiusPx, n.radiusPx, n.radiusPx]).map((v) => pct(v, n.w, n.h));
         const shapeFill = n.bgImg ? gradientFromCss(n.bgImg, n.w, n.h) : (rgb2hex(n.bg) || "transparent");
         const gradVar = n.attrs["data-overlay-gradient"];
+        const sh = n.shadow && n.shadow.match(/rgba?\([^)]+\)\s+([-\d.]+)px\s+([-\d.]+)px\s+([-\d.]+)px/);
         objects.push({ type: "roundedRect", name: "Forma", ...common,
           width: Math.round(n.w), height: Math.round(n.h),
           fill: shapeFill,
+          ...(sh ? { shadow: { color: (n.shadow.match(/rgba?\([^)]+\)/) || ["rgba(0,0,0,0.28)"])[0],
+            blur: parseFloat(sh[3]), offsetX: parseFloat(sh[1]), offsetY: parseFloat(sh[2]) } } : {}),
           ...(n.borderColor ? { stroke: rgb2hex(n.borderColor), strokeWidth: n.borderW } : {}),
           topLeft: rr[0], topRight: rr[1], bottomRight: rr[2], bottomLeft: rr[3],
           ...(gradVar && shapeFill && shapeFill.colorStops ? {
