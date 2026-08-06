@@ -4,7 +4,7 @@
 
 | Slot | Formula |
 |------|---------|
-| decor (assets/decor-*.png) | OBJETO DO TEMA desfocado com FUNDO TRANSPARENTE (ex.: aparelho de laser genérico em bokeh) — nunca fundo chapado ("bolha"); gerar por vertical/tema |
+| decor | OBJETO DO TEMA desfocado com FUNDO TRANSPARENTE (ex.: aparelho de laser genérico em bokeh) — nunca fundo chapado ("bolha"); gerar por vertical/tema |
 | decor legado (decor-blur-N) | "objeto cirurgico (touca/mascara/gaze) COMPLETAMENTE desfocado, bokeh de primeiro plano, sobre fundo liso verde-menta #E9F3F1, luz suave, sem texto, 800x800" — regenerar so quando o pack pedir variacao |
 | item_foto (A/B) | "detalhe de ambiente clinico premium - {conceito} - tons verde-petroleo, luz direcional suave, editorial, sem pessoas identificaveis, sem texto" |
 | item_foto (C) | "ambiente clinico amplo em penumbra premium, tons teal, luz pontual suave, sem texto" |
@@ -18,4 +18,4 @@
 
 **Blur do decor nasce na GERAÇÃO** (prompt: 'extremely out of focus, dreamy bokeh, barely recognizable') — PROIBIDO aplicar blur em pós-processo (PIL/convert degrada e mata o realce natural do modelo). Decor NUNCA sobrepõe o professionalPhoto nem elementos de ação.
 
-**Assets do pack são EXEMPLARES, não estoque:** os `assets/decor-*.png` existem só para certificação/validação do pack. Em produção (posts definitivos), o agente SEMPRE gera decors novos, específicos do tema/segmento do post, seguindo as regras deste arquivo (objeto do tema, inteiro com margem, dreamy bokeh na geração, fundo transparente). Reusar os exemplares do pack em post final = reprovado.
+**Decors não têm estoque:** o pack não guarda assets — TODA run gera seus decors/fotos na hora, específicos do tema do post, seguindo as regras deste arquivo (objeto do tema, inteiro com margem nas 4 bordas, dreamy bokeh na geração, fundo transparente). Os arquivos vivem em `artifacts/runs/<slug>/assets/`.

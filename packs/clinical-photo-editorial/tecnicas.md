@@ -44,7 +44,7 @@ partida, nunca fôrma).
   paleta; sem rostos identificáveis em fotos geradas.
 - Decors: objeto do tema (aparelho, óculos, instrumento), transparente,
   desfoque profundo nascido na geração, inteiro com margem nas 4 bordas,
-  gerado POR POST (exemplares de `assets/` são só da certificação).
+  gerado POR POST (o pack não guarda assets — cada run gera os seus).
 
 ## O que já foi reprovado (não repetir)
 

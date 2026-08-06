@@ -9,7 +9,7 @@
       "layer": true,
       "static": true,
       "imageType": "userAsset",
-      "asset": "decor-laser-2.png",
+      "asset": "<decor-do-tema-gerado-na-run>.png",
       "slot": "decor",
       "overhang": "br",
       "cutout": true
