@@ -195,3 +195,8 @@ img[data-overhang="br"]     { transform: translate(28%, 30%) rotate(-12deg); }
 /* respiro da borda: afasta o elemento da margem sem mudar a celula do grid */
 [data-inset="bottom"] { transform: translateY(-36px); }
 [data-inset="top"]    { transform: translateY(36px); }
+
+/* sentence case: desliga o uppercase default (packs de tipografia editorial) */
+[data-case="sentence"] { text-transform: none; }
+/* tarja quadrada: ds-cta com cantos do token em vez de pill */
+.ds-cta[data-square] { border-radius: var(--radius); }
