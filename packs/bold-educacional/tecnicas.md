@@ -53,6 +53,13 @@ capa repetido 2×.
 
 ## Leis do estilo
 
+- **Hierarquia de tamanho**: display 72–104px e corpo 40px — o salto máximo é
+  ~2,5×. Corpo abaixo de 40px neste pack é defeito (texto de explicação vira
+  legenda e quebra a leitura). Eyebrow 26px, tarja 32px.
+- **Contraste dentro de caixas**: cartão claro → texto ink/muted; bloco de
+  acento → texto paper. Texto claro sobre cartão claro (ou muted sobre acento)
+  é defeito — o `data-tone` acompanha o FUNDO DA CAIXA, não o do slide.
+
 - Tipografia é a estrela: máximo 2 pesos (800 display, 500 texto), nunca
   itálico decorativo, quebras de linha SEMPRE intencionais.
 - 1 tarja por slide no máximo; tarja nunca com mais de 2 linhas; tarja e

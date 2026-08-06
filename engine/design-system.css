@@ -207,3 +207,7 @@ img[data-overhang="br"]     { transform: translate(28%, 30%) rotate(-12deg); }
 
 /* cartão elevado: sombra do "app de notas" (cartão empilhado sobre a peça) */
 .ds-card[data-elevated] { box-shadow: 0 24px 60px rgba(0,0,0,.28); }
+
+/* texto dentro de bloco de acento: usa a cor de contraste do bloco, nunca paper puro
+   sobre fundo claro nem tom muted herdado */
+.ds-block .ds-body, .ds-block .ds-headline { color: inherit; }

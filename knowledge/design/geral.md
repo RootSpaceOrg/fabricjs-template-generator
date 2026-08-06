@@ -69,3 +69,10 @@ Régua prática por tamanho de fita:
 - **7+ slides**: alterne no mínimo 3 tratamentos diferentes ao longo do miolo
   (ex.: cartão empilhado → statement chapado → citação em caixa → lista em
   bloco), e repita o recurso-assinatura da capa pelo menos 2 vezes.
+
+## Hierarquia de corpo vs display
+
+O corpo de texto acompanha a escala do display: salto maior que ~2,5× entre
+headline e body faz a explicação parecer legenda. Se a headline é 100px, o
+corpo vive em 36–44px. Vale dentro de cartões e blocos também — texto em caixa
+segue a mesma régua, não encolhe por estar "dentro de algo".

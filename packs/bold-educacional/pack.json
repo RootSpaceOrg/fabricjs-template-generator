@@ -1,6 +1,6 @@
 {
   "pack": "bold-educacional",
-  "version": 2,
+  "version": 3,
   "status": "draft",
   "familia": "educacional bold: meme scroll-stop + statement chapado na cor da marca",
   "fit": {
@@ -33,15 +33,15 @@
     "wm": "#E6DFD2",
     "font-display": "'Inter', sans-serif",
     "font-body": "'Inter', sans-serif",
-    "fs-eyebrow": "24px",
+    "fs-eyebrow": "26px",
     "fs-headline": "72px",
     "fs-headline-lg": "104px",
-    "fs-body": "31px",
+    "fs-body": "40px",
     "fs-number": "44px",
     "fs-number-lg": "130px",
     "fs-wm": "150px",
     "fs-stamp": "24px",
-    "fs-cta": "30px",
+    "fs-cta": "32px",
     "radius": "6px"
   },
   "fonts": {
