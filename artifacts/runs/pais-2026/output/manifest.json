@@ -1,0 +1,21 @@
+{
+  "templateName": "Dia dos Pais — homenagem",
+  "slug": "pais-2026",
+  "segment": "dia-dos-pais",
+  "fonts": "Poppins:600,700|Manrope:400,600",
+  "pack": "emotive-fullbleed-lettering",
+  "packVersion": 1,
+  "slides": [
+    {
+      "file": "slide-1.json",
+      "width": 1080,
+      "height": 1350,
+      "role": "unica"
+    }
+  ],
+  "detectedColors": {
+    "primary": "#1E4E79",
+    "secondary": null
+  },
+  "generatedBy": "engine/convert.js"
+}

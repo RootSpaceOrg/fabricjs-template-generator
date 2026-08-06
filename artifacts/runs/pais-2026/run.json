@@ -1,0 +1,43 @@
+{
+  "slug": "pais-2026",
+  "env": "dev",
+  "pack": "emotive-fullbleed-lettering",
+  "n": 1,
+  "stage": "done",
+  "created": "2026-08-06 13:44:28",
+  "history": [
+    {
+      "stage": "resolve",
+      "at": "2026-08-06 13:44:28"
+    },
+    {
+      "stage": "context",
+      "at": "2026-08-06 13:44:28"
+    },
+    {
+      "stage": "compose",
+      "at": "2026-08-06 13:44:28"
+    },
+    {
+      "stage": "render",
+      "at": "2026-08-06 13:44:30"
+    },
+    {
+      "stage": "convert",
+      "at": "2026-08-06 13:44:32"
+    },
+    {
+      "stage": "judge",
+      "at": "2026-08-06 13:48:34"
+    },
+    {
+      "stage": "finalize",
+      "at": "2026-08-06 13:49:07"
+    },
+    {
+      "stage": "upload",
+      "at": "2026-08-06 13:49:54"
+    }
+  ],
+  "template_id": "wbOJlMz0bSsz1TPfOEBeS"
+}
