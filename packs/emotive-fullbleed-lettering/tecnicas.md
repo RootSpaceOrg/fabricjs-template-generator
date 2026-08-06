@@ -14,8 +14,9 @@ Estilo de PEÇA ÚNICA (data comemorativa; `data-role="unica"`), pode estender a
    É o que funde foto e marca — a plataforma recolore por stop.
 3. **Lettering-arte** (`ds-photo` static+layer, RGBA gerada por run): a palavra
    da data em display gigante cream + versão script sobreposta + 1–2 OBJETOS 3D
-   do tema entrelaçados nas letras. Ocupa a faixa central-inferior (rows ~5–10),
-   grande, pode sangrar levemente nas laterais. NUNCA texto editável — é arte.
+   do tema entrelaçados nas letras. Ocupa a faixa central (rows 4–11, quase
+   largura total — veredito 2026-08-06: lettering GRANDE domina a peça),
+   pode sangrar levemente nas laterais. NUNCA texto editável — é arte.
 4. **Sparkles/ornamentos**: RGBA gerada (estrelas 4 pontas cream, brilhos),
    1–3 pontos discretos em volta do lettering; nunca sobre rostos.
 5. **Data pequena** (`ds-eyebrow` static): "09 AGOSTO".
