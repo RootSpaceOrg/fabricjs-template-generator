@@ -188,6 +188,6 @@ img[data-overhang="br"]     { transform: translate(28%, 30%) rotate(-12deg); }
    A cor aqui é placeholder (--accent); o convert emite fillVariableConfig gradient
    e a plataforma recolore cada stop com a primary do usuário. */
 .ds-block[data-overlay-gradient] {
-  background: linear-gradient(180deg, rgba(0,0,0,0) 0%, var(--accent) 58%, var(--accent) 100%);
+  background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 30%, var(--accent) 62%, var(--accent) 100%);
   border-radius: 0; opacity: 1;
 }
