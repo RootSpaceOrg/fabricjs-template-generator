@@ -69,7 +69,7 @@ Sobreposição entre componentes é violação, EXCETO componentes de camada:
 | `ds-watermark` | texto | `textbox` | camada (pode sobrepor); `data-static` implícito NÃO — marque `data-static`; `data-vertical` = rotacionada -90° |
 | `ds-stamp` | texto | `roundedRect` (stroke) + `textbox` | chip outline 1→2, mesmo `elId`; rotação via `transform: rotate()` |
 | `ds-cta` | texto | `roundedRect` (fill) + `textbox` | pill preenchida 1→2 |
-| `ds-block` | container | `roundedRect` + filhos | bg do acento (`data-tone="ink"` = preto); filhos são componentes do catálogo |
+| `ds-block` | container | `roundedRect` + filhos | bg do acento (`data-tone="ink"` = preto); filhos são componentes do catálogo; `data-overlay` (+`data-layer`) = véu escurecedor sobre foto full-bleed (opacity 0.38) |
 | `ds-card` | container | `roundedRect` + filhos | cartão no papel, cantos `--radius` |
 | `ds-shape` | vazio | `roundedRect` (cantos por lado; anel = stroke) | forma de composição: `data-shape="circle\|ring\|pill"`; cor via `data-tone`; `data-half="left\|right"` na BORDA do slide cria transição — o par complementar no slide vizinho completa a forma na fita |
 | `ds-photo` | `<img>` | `ClippableImage` | imagem gerada/evidência; `data-image-type` obrigatório |

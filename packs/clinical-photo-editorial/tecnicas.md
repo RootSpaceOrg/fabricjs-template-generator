@@ -20,15 +20,23 @@ partida, nunca fôrma).
 - **Par de fotos contínuas**: UMA foto paisagem (sujeito perto do centro)
   posicionada na `.fita-layer` sobre a fronteira de dois slides de miolo — a
   emenda corta a foto, cada slide fica com uma janela e a leitura flui.
-  Os dois slides cedem a mesma borda (foto à direita do A, à esquerda do B).
+  REGRAS DE EXECUÇÃO (veredito 2026-08-05): a divisão entre os slides é
+  EQUILIBRADA (40/60 no mínimo — "pedacinho" de imagem num lado é defeito);
+  a foto é GRANDE (faixa de rodapé ou meia-altura atravessando a emenda,
+  nunca um selo pequeno em posição aleatória); o sujeito fica perto da emenda;
+  os dois lados da fronteira têm background limpo.
 - **Decor voando**: decor com `data-overhang` (ou na fita-layer), grande,
   cortado pela borda, rotação leve (10–20°). Capa 1–2 decors; miolo 0–1;
   nunca sobre texto/CTA/logo/professionalPhoto; só em background limpo.
-- **Card sobre foto imersiva**: slide de miolo com foto full-bleed e `ds-card`
-  respirando (flex+gap do motor) — número, headline e body dentro do card.
+- **Full-bleed + overlay + card "alert"**: slide com foto full-bleed, véu
+  `ds-block data-overlay data-layer` (área 1/1/13/13) escurecendo, e um
+  `ds-card` como caixa de destaque (quote/aviso/bullets) respirando por cima —
+  o slide de maior impacto da fita; usar 1× por fita.
 - **Fundos alternando**: papel menta na maioria, 1 slide invertido (accent)
   como respiro/CTA — nunca fita monocromática.
 - **Stamps/pills**: eyebrow em `ds-stamp` outline; CTA em `ds-cta` pill cheia.
+- **Fechamento espelha a abertura**: o slide de CTA leva o `professionalPhoto`
+  (cutout) como a capa — a fita abre e fecha com o profissional presente.
 
 ## Regras de imagem (ver images.md para fórmulas de prompt)
 
