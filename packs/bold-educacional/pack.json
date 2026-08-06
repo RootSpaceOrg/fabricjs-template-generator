@@ -1,0 +1,42 @@
+{
+  "pack": "bold-educacional",
+  "version": 1,
+  "status": "draft",
+  "familia": "educacional bold: meme scroll-stop + statement chapado na cor da marca",
+  "fit": {
+    "funil": ["topo"],
+    "verticais": ["health"]
+  },
+  "slides": { "min": 1, "max": 8 },
+  "format": { "width": 1080, "height": 1350 },
+  "assinaturas": [
+    "capa scroll-stop: foto full-bleed INUSITADA (animal/cena meme com adereços humanos) + headline sans-bold branca empilhada no topo com quebras precisas + sub-headline em TARJA solida",
+    "statement chapado: fundo inteiro na PRIMARY do usuario, frase-tese GIGANTE em cream com quebras dramaticas + mini-paragrafo com negritos",
+    "objeto de colagem 3D realista (cracha, polaroid, clip) como ancora visual + byline/handle discreto no topo e rodape"
+  ],
+  "tokens": {
+    "paper": "#F2EDE4",
+    "ink": "#141414",
+    "muted": "#6E6A63",
+    "accent": "#C62B2B",
+    "accent-ink": "#FFFFFF",
+    "wm": "#E6DFD2",
+    "font-display": "'Inter', sans-serif",
+    "font-body": "'Inter', sans-serif",
+    "fs-eyebrow": "24px",
+    "fs-headline": "72px",
+    "fs-headline-lg": "104px",
+    "fs-body": "31px",
+    "fs-number": "44px",
+    "fs-number-lg": "130px",
+    "fs-wm": "150px",
+    "fs-stamp": "24px",
+    "fs-cta": "30px",
+    "radius": "6px"
+  },
+  "fonts": {
+    "css": "https://fonts.googleapis.com/css2?family=Inter:wght@500;700;800&display=swap",
+    "meta": "Inter:500,700,800"
+  },
+  "variables": { "primary": "#C62B2B" }
+}
