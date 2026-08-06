@@ -3,7 +3,7 @@
   "env": "dev",
   "pack": "clinical-photo-editorial",
   "n": 6,
-  "stage": "render",
+  "stage": "judge",
   "created": "2026-08-06 12:46:33",
   "history": [
     {
@@ -17,6 +17,14 @@
     {
       "stage": "compose",
       "at": "2026-08-06 12:52:18"
+    },
+    {
+      "stage": "render",
+      "at": "2026-08-06 12:54:10"
+    },
+    {
+      "stage": "convert",
+      "at": "2026-08-06 12:54:29"
     }
   ]
 }

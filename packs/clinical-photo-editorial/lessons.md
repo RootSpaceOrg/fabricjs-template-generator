@@ -19,3 +19,5 @@
 - 2026-08-05 (veredito fita-v2, var-teste-1/2): FIDELIDADE PROVADA — JSON renderizado na plataforma identico ao strip.png; variancia entre geracoes aprovada. REPROVADO: storytelling fraco nas duas fitas (copy generica, sem arco forte) e detalhes de design a lapidar — proxima fase e feedback loop por fita com o Gustavo antes da certificacao.
 - 2026-08-06 (gram-teste-1 v4 APROVADA): gramatica de copy do acervo validada pelo Gustavo + 3 tecnicas novas de design (travessia equilibrada 50/50, full-bleed+overlay+card alert, fechamento com professionalPhoto). Erros de composer que viraram lei/motor: 
  literal (convert normaliza), acentos obrigatorios, clone desatualizado rende CSS velho (sempre git pull antes de assemble).
+
+- 2026-08-06 (cert-fibro-1 QA): fecho com headline+corpo não pode deixar mais de 35% de área morta — ancorar o terço inferior com foto, objeto editorial ou uma composição deliberada. Decors removidos por chroma precisam ser validados no render: halo magenta residual sai da paleta e não passa como bokeh clínico.
