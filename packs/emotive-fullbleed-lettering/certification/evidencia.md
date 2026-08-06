@@ -28,4 +28,4 @@ nas 3 peças — re-render + re-upload registrados nos strips desta pasta.
 
 ## Carimbo
 
-- [ ] Aprovação do Gustavo → `pack.json` `status: draft → certificado`
+- [x] Aprovado pelo Gustavo em 2026-08-06 ("certinho, tudo funcional") → `status: certificado`
