@@ -139,6 +139,8 @@ section.slide[data-invert] .ds-cta { background: var(--paper); color: var(--acce
 /* cartão claro sobre slide invertido não herda a cor clara da section */
 section.slide[data-invert] .ds-card { color: var(--ink); }
 section.slide[data-invert] .ds-card .ds-cta { background: var(--accent); color: var(--accent-ink); }
+/* pill/tarja SEMPRE com a cor de contraste do próprio fundo, nunca herda do pai */
+.ds-cta, .ds-card .ds-cta, .ds-block .ds-cta { color: var(--accent-ink); }
 
 /* ── formas/containers ─────────────────────────────────────────────────── */
 .ds-block { background: var(--accent); color: var(--accent-ink); padding: 36px; }
