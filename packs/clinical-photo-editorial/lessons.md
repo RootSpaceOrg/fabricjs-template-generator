@@ -21,3 +21,4 @@
  literal (convert normaliza), acentos obrigatorios, clone desatualizado rende CSS velho (sempre git pull antes de assemble).
 
 - 2026-08-06 (cert-fibro-1 QA): fecho com headline+corpo não pode deixar mais de 35% de área morta — ancorar o terço inferior com foto, objeto editorial ou uma composição deliberada. Decors removidos por chroma precisam ser validados no render: halo magenta residual sai da paleta e não passa como bokeh clínico. O re-render aprovado confirmou: bokeh inferior + selo editorial podem resolver a distribuição, desde que permaneçam fora da área de leitura.
+- 2026-08-06: PACK CERTIFICADO (v6, fita-v2) — 3 fitas do protocolo aprovadas pelo Gustavo. Fabrica ligada para este estilo.

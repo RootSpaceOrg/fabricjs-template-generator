@@ -27,4 +27,4 @@ Fidelidade plataforma == strip verificada pelo Gustavo (var-teste e gram-teste-1
 
 ## Carimbo
 
-- [ ] Aprovação do Gustavo → `pack.json` `status: draft → certificado`
+- [x] Aprovado pelo Gustavo em 2026-08-06 ("vamos aprovar por hora") → `status: certificado`
