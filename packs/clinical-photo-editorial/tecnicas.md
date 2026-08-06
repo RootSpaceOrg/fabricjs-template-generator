@@ -45,3 +45,5 @@ partida, nunca fôrma).
 - Blur aplicado em pós-processo (PIL) — degrada; blur nasce na geração.
 - Texto grudado em card sem respiro; bokeh sobre outras imagens.
 - Duas gerações com o mesmo esqueleto (variância é dever).
+
+- **Número/watermark gigante atrás de texto**: é CAMADA — sempre `data-layer` no elemento de trás (erro recorrente 2×: convert rejeita sobreposição não declarada).
