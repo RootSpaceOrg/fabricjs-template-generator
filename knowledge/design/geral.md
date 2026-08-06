@@ -54,3 +54,18 @@ Todo elemento de CAIXA CHEIA em cor de acento (tarja, pill de CTA, bloco,
 overlay) leva `data-variable="primary"` — o conversor emite `fillVariableConfig`
 e a caixa se recolore com a marca do usuário, como os fundos chapados. Acento
 cravado sem variável é defeito: a peça inteira deve se vestir da primary.
+
+## Miolo não é versão pobre da capa
+
+Fita longa (5+ slides) tende a virar "capa caprichada + miolos de texto solto"
+— defeito. O miolo REPETE A LINGUAGEM da capa em outra chave: os mesmos
+recursos visuais (caixas, cartões, tarjas, colagens, sobreposição) reaparecem
+carregando o conteúdo, variando qual deles domina cada slide.
+
+Régua prática por tamanho de fita:
+- **3 slides**: capa + 1 miolo + fechamento — o miolo pode ser mais direto.
+- **5 slides**: pelo menos 2 miolos com "objeto de conteúdo" (cartão/caixa/
+  destaque), nunca 3 slides seguidos só com texto no grid nu.
+- **7+ slides**: alterne no mínimo 3 tratamentos diferentes ao longo do miolo
+  (ex.: cartão empilhado → statement chapado → citação em caixa → lista em
+  bloco), e repita o recurso-assinatura da capa pelo menos 2 vezes.
