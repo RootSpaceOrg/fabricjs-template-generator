@@ -10,7 +10,7 @@ dominante é a PRIMARY do usuário (fundos chapados e tarjas).
    adereço humano numa cena absurda-mas-fotográfica (gato de óculos lendo na
    banheira, cachorro de óculos com taça no barco). Gerada por run, ligada ao
    TEMA por um objeto (livro, notebook, jaleco…). Realista, nunca cartoon.
-2. Byline pequena no topo centro (`ds-eyebrow` static): nome/handle.
+2. Byline no topo centro (`ds-eyebrow` com `data-text-type="instagramHandle"`): a plataforma preenche com o handle do usuário.
 3. Headline sans-BOLD branca empilhada (`ds-headline` com `<br>` e
    `data-case="sentence"` — este pack NUNCA usa uppercase em headline, rows
    ~2–5, central): frase de curiosidade, 3 linhas, quebras pensadas.

@@ -357,7 +357,10 @@ const rgb2hex = (c) => {
           ...(n.borderColor ? { stroke: rgb2hex(n.borderColor), strokeWidth: n.borderW } : {}),
           topLeft: rp, topRight: rp, bottomRight: rp, bottomLeft: rp,
           ...("data-variable" in n.attrs ? { [hasFill ? "fillVariableConfig" : "strokeVariableConfig"]: { type: "solid", variable: n.attrs["data-variable"], alpha: 1 } } : {}) });
-        objects.push(textboxOf({ ...n, w: n.w - n.borderW * 2 - 8, align: "center",
+        // o data-variable pertence ao RECT do chip; o texto nunca herda
+        const chipAttrs = { ...n.attrs };
+        delete chipAttrs["data-variable"];
+        objects.push(textboxOf({ ...n, attrs: chipAttrs, w: n.w - n.borderW * 2 - 8, align: "center",
           runs: [{ t: n.text, color: n.color }] }, { ...common }));
       } else {
         objects.push(textboxOf(n, common));
