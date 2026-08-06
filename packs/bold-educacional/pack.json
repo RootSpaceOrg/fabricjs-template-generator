@@ -1,14 +1,24 @@
 {
   "pack": "bold-educacional",
-  "version": 1,
+  "version": 2,
   "status": "draft",
   "familia": "educacional bold: meme scroll-stop + statement chapado na cor da marca",
   "fit": {
-    "funil": ["topo"],
-    "verticais": ["health"]
+    "funil": [
+      "topo"
+    ],
+    "verticais": [
+      "health"
+    ]
   },
-  "slides": { "min": 1, "max": 8 },
-  "format": { "width": 1080, "height": 1350 },
+  "slides": {
+    "min": 1,
+    "max": 8
+  },
+  "format": {
+    "width": 1080,
+    "height": 1350
+  },
   "assinaturas": [
     "capa scroll-stop: foto full-bleed INUSITADA (animal/cena meme com adereços humanos) + headline sans-bold branca empilhada no topo com quebras precisas + sub-headline em TARJA solida",
     "statement chapado: fundo inteiro na PRIMARY do usuario, frase-tese GIGANTE em cream com quebras dramaticas + mini-paragrafo com negritos",
@@ -38,5 +48,7 @@
     "css": "https://fonts.googleapis.com/css2?family=Inter:wght@500;700;800&display=swap",
     "meta": "Inter:500,700,800"
   },
-  "variables": { "primary": "#C62B2B" }
+  "variables": {
+    "primary": "#C62B2B"
+  }
 }

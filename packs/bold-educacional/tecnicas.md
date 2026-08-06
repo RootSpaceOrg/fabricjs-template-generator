@@ -33,6 +33,24 @@ dominante é a PRIMARY do usuário (fundos chapados e tarjas).
    possível, senão objeto do tema.
 5. Handles discretos nos cantos (`ds-body` pequeno, textType instagramHandle).
 
+## Miolo com objeto de conteúdo (fitas longas)
+
+O miolo repete a linguagem da capa em outra chave — nunca vira texto solto no
+grid. Tratamentos do pack, para alternar:
+
+- **Cartão-lembrete empilhado** (`ds-card data-elevated` sobre a foto ou sobre
+  fundo chapado): eyebrow do tema + frase em sentence case com a palavra-chave
+  em `<b>` + uma tarja de "ação" (`ds-cta data-square data-variable="primary"`,
+  texto tipo "definir um lembrete" / "salvar isso"). É a assinatura de miolo
+  do pack — usar 1–2× por fita.
+- **Statement chapado** (`data-invert data-variable="primary"`).
+- **Citação em caixa** (`ds-card` claro sobre fundo chapado, texto grande).
+- **Lista em bloco** (`ds-block` com 2–3 filhos curtos).
+
+Régua (ver knowledge/design/geral.md): 3 slides = 1 miolo direto · 5 slides =
+2+ miolos com objeto de conteúdo · 7+ = 3 tratamentos diferentes e o recurso da
+capa repetido 2×.
+
 ## Leis do estilo
 
 - Tipografia é a estrela: máximo 2 pesos (800 display, 500 texto), nunca

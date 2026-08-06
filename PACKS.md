@@ -30,7 +30,7 @@ Técnica que exigir componente fora do catálogo → §6 (mudança de motor, com
 
 ## 4. Certificação (a run que prova o pack)
 
-1. **Três runs completas** (`run.py new cert-<slug>-N --env dev --pack <slug>`): duas do MESMO tema e uma de tema diferente — certificação v2 prova além da fidelidade a **variância** (as duas do mesmo tema não podem sair com o mesmo esqueleto) e a robustez das técnicas (par contínuo/travessias emendando na fita).
+1. **Três runs completas** (`run.py new cert-<slug>-N --env dev --pack <slug>`) em **TAMANHOS DIFERENTES de fita — 3, 5 e 7 slides** (packs de peça única: 1 peça + variações): duas do MESMO tema e uma de tema diferente — certificação v2 prova, além da fidelidade, a **variância**, o **fôlego do miolo em fita longa** (7 slides sem cair em texto solto) (as duas do mesmo tema não podem sair com o mesmo esqueleto) e a robustez das técnicas (par contínuo/travessias emendando na fita).
 2. Corredor inteiro até fidelidade no editor + upload de teste (fluxo do README §Fluxo).
 3. Preencher `certification/`: strip.png final, screenshots do editor, template_id de teste, sha dos arquivos do pack, data.
 4. **Aprovação do Gustavo** comparando plataforma × reference.png. Só ele muda `status: draft → certificado`.
