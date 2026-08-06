@@ -186,7 +186,10 @@ img[data-overhang="bl"]     { transform: translate(-28%, 30%) rotate(18deg); }
 img[data-overhang="br"]     { transform: translate(28%, 30%) rotate(-12deg); }
 
 /* overlay: escurece foto full-bleed para texto/card por cima (usar com data-layer) */
-.ds-block[data-overlay] { opacity: 0.38; border-radius: 0; }
+/* overlay: véu ESCURECEDOR (ink), não tinta de acento — o acento colore caixas,
+   nunca o véu (senão a foto vira lavada e o texto por cima perde contraste).
+   Para véu na cor da marca use data-overlay-gradient. */
+.ds-block[data-overlay] { background: var(--ink); opacity: 0.42; border-radius: 0; }
 
 /* overlay em GRADIENTE da cor variável: transparente no topo -> primary no rodapé.
    A cor aqui é placeholder (--accent); o convert emite fillVariableConfig gradient
