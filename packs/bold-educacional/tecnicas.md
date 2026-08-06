@@ -17,6 +17,8 @@ dominante é a PRIMARY do usuário (fundos chapados e tarjas).
 4. Sub-headline em TARJA (`ds-cta data-square` — cantos retos):
    1–2 linhas de promessa concreta, fundo accent (recolorido pela primary).
 5. O assunto da foto ocupa o meio-baixo SEM texto por cima.
+6. **Contraste da headline segue a parede**: fundo claro da foto → texto ink;
+   fundo escuro/saturado → texto paper. Nunca cream sobre parede clara.
 
 ## Statement chapado (miolo/tese)
 
