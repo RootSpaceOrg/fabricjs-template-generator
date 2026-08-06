@@ -112,5 +112,5 @@ Regra de precedência: geral < pack < lessons (mais específico vence).
 | Travessia de fronteira | só camadas estáticas (imagem/forma/watermark) |
 | Posicionamento na fita-layer | grid 12·N × 12 (mesma linguagem declarativa) |
 | Esqueleto narrativo como gate | sim (`data-role` por seção) |
-| clean-numbered-editorial | arquivar até certificar o pack 1 na v2 |
+| clean-numbered-editorial | removido (2026-08-06) |
 | Fotos/assets pesados | continua data-URI na v2; S3 fica pro roadmap |
