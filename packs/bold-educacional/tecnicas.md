@@ -41,7 +41,9 @@ grid. Tratamentos do pack, para alternar:
 - **Cartão-lembrete COMPACTO** (`ds-card data-elevated` sobre a foto): eyebrow
   do tema + frase em sentence case com a palavra-chave em `<b>` + body curto.
   REGRA DE OURO (veredito 2026-08-07): **o cartão se ajusta ao texto, o texto
-  nunca flutua no cartão** — dimensione a área pelo conteúdo (tipicamente 4–6
+  nunca flutua no cartão** — e "ajustar" inclui CABER: o padding de 40px tem
+  que sobrar embaixo. Body de 5+ linhas pede 7 linhas de grid; se o texto
+  encosta na base, aumente a área ou corte o texto, nunca deixe justo — dimensione a área pelo conteúdo (tipicamente 4–6
   linhas de grid, ~7–9 colunas), NUNCA um retângulo grande com vazio embaixo.
   Posicione ASSIMÉTRICO (encostado num terço, sangrando ou não), deixando a
   foto respirar em pelo menos 40% do slide — o cartão é um objeto sobre a

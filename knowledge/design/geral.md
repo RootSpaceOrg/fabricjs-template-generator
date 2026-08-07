@@ -86,7 +86,9 @@ da peça. Rótulo de seção dentro de cartão = eyebrow/stamp.
 
 ## Caixa se ajusta ao conteúdo
 
-Cartão/bloco de texto tem a altura do que carrega. Caixa grande com texto no
+Cartão/bloco de texto tem a altura do que carrega — nem sobrando (vazio
+interno) nem faltando (texto encostando na borda). O padding do container é
+inegociável nos QUATRO lados: se o conteúdo o consome, a caixa cresce. Caixa grande com texto no
 topo e vazio embaixo é defeito (o vazio dentro de uma borda lê como erro, não
 como respiro). Se sobra espaço: encolha a caixa, não espalhe o texto. Respiro
 pertence ao slide (em volta da caixa), não ao interior dela.
