@@ -6,8 +6,8 @@ Dois modos: **julgar candidatos** (dentro da pipeline) e **eval de regressão** 
 
 - `screenshots/` + `strip.png` de cada candidato, anonimizados (A/B/C — sem design-notes, sem saber a família de cada um). O `strip.png` é a fita panorâmica: julgue continuidade nele; julgue cada slide isolado nos screenshots (o Instagram mostra um por vez).
 - A storyline do brief (para checar aderência narrativa)
-- [`references/rubric.md`](./references/rubric.md)
-- Exemplares de `reference.png do pack/` (âncora do que é "10"). **Pasta vazia?** Julgue mesmo assim, mas: seja deliberadamente mais duro (sem âncora o score infla) e abra o judge-report com `⚠ golden set ausente — scores não calibrados`.
+- Rubrica: os 5 eixos do passo 3 (scroll-stop, craft, narrativa, especificidade, continuidade)
+- `packs/<pack>/reference.png` + `packs/<pack>/exemplos/` (âncora do que é "10"). **Pasta vazia?** Julgue mesmo assim, mas: seja deliberadamente mais duro (sem âncora o score infla) e abra o judge-report com `⚠ golden set ausente — scores não calibrados`.
 
 ## Modo 1 — Julgar candidatos
 
@@ -72,9 +72,9 @@ Pairwise: A vs B → <?> (ordem 1), <?> (ordem 2) · <vencedor> vs C → ...
 
 Quando qualquer arquivo da fábrica muda, antes do próximo batch de produção:
 
-1. Rode a pipeline (até o passo 5, sem publicar) nos **5 prompts fixos** de [`evals/README.md`](./evals/README.md).
+1. Rode 3 runs de regressão (sem publicar) em packs certificados, variando tamanho de fita.
 2. Pontue cada vencedor na rubrica (modo 1, passo 3).
-3. Anexe uma linha por resultado em `evals/scores.jsonl`:
+3. Anexe uma linha por resultado em `evals/scores.jsonl` (crie se não existir):
 
 ```json
 {"date":"YYYY-MM-DD","prompt_id":"P1","score_total":38,"scores":{"scroll_stop":8,"craft":7,"narrativa":8,"especificidade":8,"continuidade":7},"change":"<o que mudou>","template":"artifacts/runs/<slug>"}

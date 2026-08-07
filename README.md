@@ -37,9 +37,11 @@ python engine/run.py new <slug> --env dev --pack <pack> --n 6
 # convert  → node engine/convert.js artifacts/runs/<slug> artifacts/runs/<slug>/output --slug <slug>
 # judge    → judge-report.md (JUDGE.md; strip.png é o objeto julgado)
 # finalize → fidelity.md (VEREDITO: FIEL)
-# upload   → engine/tools/upload.py → set <slug> template_id <id>
+# upload   → engine/tools/upload.py (wrapper do import-template.py) → set <slug> template_id <id>
 python engine/run.py advance <slug>   # entre cada estágio; gates negam avanço incompleto
 ```
+
+Lições globais: `evals/lessons.md` (por pack: `packs/<slug>/lessons.md`).
 
 Leis (ver ARCHITECTURE §5): doutrina do conversor (JSON nunca se edita), lei de
 conservação `data-el-id`↔`elId` (conferida no convert E no runner), env
