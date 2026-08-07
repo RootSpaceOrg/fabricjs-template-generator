@@ -46,4 +46,4 @@ ink (nunca acento) · cartão elevado acima do véu · `data-tone="ink"` ·
 
 ## Carimbo
 
-- [ ] Aprovação do Gustavo → `pack.json` `status: draft → certificado`
+- [x] Aprovado pelo Gustavo em 2026-08-07 ("certificado") → `status: certificado`
