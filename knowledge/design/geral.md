@@ -100,3 +100,18 @@ própria célula e invade a vizinha passa batido e só aparece no render. Régua
 headline display (100px+) cabe ~1 linha por linha de grid (112px); com 3 linhas
 reserve 4 linhas de grid. Se o texto encavalar no render, aumente a área ou
 corte a copy — nunca confie no gate para isso.
+
+## Formato de copy pede tratamento visual
+
+O framework escolhido (`knowledge/copy/frameworks.md`) tem consequência de
+design — o designer lê o dossiê e responde a ele:
+
+- **Listicle / passo-a-passo**: hierarquia visual IGUAL entre os itens (o
+  leitor compara); numeração consistente.
+- **Mito × verdade / erro → correção**: pares precisam de marcação simétrica
+  (badge, cor, posição) — é o ritmo de revelação que segura o swipe.
+- **Cheat-sheet**: densidade alta é o produto, mas exige hierarquia forte
+  (agrupamento, pesos, respiro) para não virar muralha ilegível.
+- **Antes/depois**: comparação lado a lado é lida instantaneamente — evite
+  separar em slides distantes.
+- **Case-study / vulnerável**: a peça pede foto/atmosfera, não infográfico.

@@ -38,7 +38,11 @@ Classifique a etapa (ou aceite a declarada). Conflito ideia×etapa → aponte em
 | `meio` | educar, construir confiança | "Comente <palavra>", "Chama no direct" | tutorial / como-funciona (gera save) |
 | `fundo` | converter quem considera | "Agende sua avaliação", "Chame no WhatsApp" | case / prova / FAQ de objeções (gera share) |
 
-Frameworks narrativos detalhados: `references-frameworks.md` (reuse; o framework dá o sabor, a espinha dá a ordem).
+**Frameworks narrativos: `knowledge/copy/frameworks.md`** — 14 formatos com arco
+slide-a-slide, 6 objetivos e réguas de contagem. OBRIGATÓRIO no dossiê: declare
+o **objetivo**, o **framework** (formato) e o **arco** (sabor emocional, ver
+dossiê do negócio). Framework diz quantos slides e o que entra em cada um; arco
+diz como a peça soa.
 
 ## 3. Storyline — espinha obrigatória
 
