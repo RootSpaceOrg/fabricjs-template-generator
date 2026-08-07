@@ -8,6 +8,11 @@ O pack não guarda assets — TODA run gera os seus em `artifacts/runs/<slug>/as
 | colagem 3D (statement) | "photorealistic 3D object sticker, transparent background PNG: {crachá de identificação pendurado num clip metálico / polaroid presa com clipe}, com área de foto vazia ou genérica, leve rotação, sombra suave embutida, tudo INTEIRO com margem nas 4 bordas" |
 | foto_profissional / logo | slots da plataforma (placeholder canônico) |
 
+**Foto de miolo (para receber cartão):** gere JÁ com a composição do slide em
+mente — assunto (mãos, gesto, objeto) ocupando um terço e área calma no outro,
+para o cartão pousar sem cobrir o que importa. Foto de parede vazia atrás do
+cartão reprova.
+
 **Regras:** foto meme sempre com terço superior calmo (o texto mora lá);
 animal digno e fotográfico (nunca cartoon/deformado); colagem sempre RGBA
 transparente inteira com margem; a cor dominante da foto deve conviver com a
