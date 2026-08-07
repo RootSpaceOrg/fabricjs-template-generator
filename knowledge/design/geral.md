@@ -92,3 +92,11 @@ inegociável nos QUATRO lados: se o conteúdo o consome, a caixa cresce. Caixa g
 topo e vazio embaixo é defeito (o vazio dentro de uma borda lê como erro, não
 como respiro). Se sobra espaço: encolha a caixa, não espalhe o texto. Respiro
 pertence ao slide (em volta da caixa), não ao interior dela.
+
+## Texto transborda a célula (o gate não pega)
+
+O conversor só rejeita sobreposição de ÁREAS declaradas — texto que estoura a
+própria célula e invade a vizinha passa batido e só aparece no render. Régua:
+headline display (100px+) cabe ~1 linha por linha de grid (112px); com 3 linhas
+reserve 4 linhas de grid. Se o texto encavalar no render, aumente a área ou
+corte a copy — nunca confie no gate para isso.
