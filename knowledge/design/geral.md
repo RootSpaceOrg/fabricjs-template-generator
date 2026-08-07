@@ -76,3 +76,10 @@ O corpo de texto acompanha a escala do display: salto maior que ~2,5× entre
 headline e body faz a explicação parecer legenda. Se a headline é 100px, o
 corpo vive em 36–44px. Vale dentro de cartões e blocos também — texto em caixa
 segue a mesma régua, não encolhe por estar "dentro de algo".
+
+## CTA é ação, não enfeite
+
+Pill/tarja de CTA só existe onde há ação real do leitor: capa (arrasta),
+fechamento (salvar, comentar, compartilhar). Cartão de miolo com "botão" que
+não leva a nada vira UI decorativa (o judge reprova em R5) e rouba autoridade
+da peça. Rótulo de seção dentro de cartão = eyebrow/stamp.

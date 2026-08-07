@@ -126,6 +126,7 @@ section.slide[data-invert] { background: var(--accent); color: var(--accent-ink)
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 0 28px;   /* respiro lateral: texto nunca encosta na borda da pill/tarja */
   background: var(--accent);
   border-radius: 999px;
   color: var(--accent-ink);
@@ -145,8 +146,11 @@ section.slide[data-invert] .ds-card .ds-cta { background: var(--accent); color: 
 /* ── formas/containers ─────────────────────────────────────────────────── */
 .ds-block { background: var(--accent); color: var(--accent-ink); padding: 36px; }
 .ds-block[data-tone="ink"] { background: var(--ink); color: var(--paper); }
+/* cartão: conteúdo ancorado no topo (eyebrow → headline → body lidos em
+   sequência). justify-content:center espalhava os filhos e soltava o eyebrow. */
 .ds-card  { background: var(--paper); border-radius: var(--radius); padding: 40px;
-  display: flex; flex-direction: column; gap: 18px; justify-content: center; }
+  display: flex; flex-direction: column; gap: 18px; justify-content: flex-start; }
+.ds-card[data-align-v="center"] { justify-content: center; }
 
 /* ── imagens ───────────────────────────────────────────────────────────── */
 img.ds-photo, img.ds-slot {
