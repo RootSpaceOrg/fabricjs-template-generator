@@ -98,6 +98,43 @@ def packs() -> list[dict]:
     return out
 
 
+def pack_detalhe(slug: str) -> dict | None:
+    """Pack + certificação completa (fitas com strip, judge e dossiê)."""
+    import json
+    d = FACTORY / "packs" / slug
+    f = d / "pack.json"
+    if not f.is_file():
+        return None
+    meta = json.loads(f.read_text(encoding="utf-8"))
+    cert = d / "certification"
+    fitas = []
+    if cert.exists():
+        for strip in sorted(cert.glob("*-strip.png")):
+            base = strip.name[:-len("-strip.png")]
+            fitas.append({
+                "nome": base, "strip": strip.name,
+                "judge": (cert / f"{base}-judge-report.md").read_text(encoding="utf-8", errors="replace")
+                if (cert / f"{base}-judge-report.md").exists() else "",
+                "dossie": (cert / f"{base}-dossie.md").read_text(encoding="utf-8", errors="replace")
+                if (cert / f"{base}-dossie.md").exists() else "",
+            })
+    ev = cert / "evidencia.md"
+    return {
+        "slug": slug, "meta": meta, "status": meta.get("status", "?"),
+        "familia": meta.get("familia", ""), "versao": meta.get("version"),
+        "certificado_em": meta.get("certificado_em"),
+        "assinaturas": meta.get("assinaturas", []),
+        "tokens": meta.get("tokens", {}), "fit": meta.get("fit", {}),
+        "slides": meta.get("slides", {}),
+        "tem_reference": (d / "reference.png").exists(),
+        "arquivos": [{"rel": str(x.relative_to(FACTORY)).replace("\\", "/"), "nome": x.name}
+                     for x in sorted(d.glob("*.md"))],
+        "exemplos": sorted(x.name for x in (d / "exemplos").glob("*")) if (d / "exemplos").exists() else [],
+        "evidencia": ev.read_text(encoding="utf-8", errors="replace") if ev.exists() else "",
+        "fitas": fitas,
+    }
+
+
 def queue() -> list[dict]:
     d = FACTORY / "pack-queue"
     if not d.exists():

@@ -209,18 +209,15 @@ def packs_view(ok: str = ""):
     cards = []
     for p in ps:
         cls = "s-done" if p["status"] == "certificado" else "s-draft"
-        files = "".join(f'<a class="btn sm" href="/conhecimento/editar?rel={f["rel"]}">{f["nome"]}</a> '
-                        for f in p["arquivos"])
         certs = (f'<div class="meta"><span class="sub">certificação: {len(p["certs"])} fitas</span></div>'
                  if p["certs"] else "")
         ref = f'<img class="thumb" src="/packs/{p["slug"]}/reference.png" loading="lazy">' if p["tem_reference"] else ""
-        cards.append(f'''<div class="card">{ref}<div class="body">
+        cards.append(f'''<a class="card" href="/packs/{p['slug']}">{ref}<div class="body">
 <h3>{p['slug']}</h3><div class="sub">{_esc(p['familia'])}</div>
 <div class="meta"><span class="pill {cls}">{p['status']}</span><span>v{p['versao']}</span>
 <span>{p['funil'] or '—'}</span><span>{p['slides']} slides</span>
 {f"<span>desde {p['certificado_em']}</span>" if p['certificado_em'] else ""}</div>
-{certs}<div class="meta" style="margin-top:11px">{files}
-<a class="btn sm" href="/conhecimento/editar?rel={p['pack_json']}">pack.json</a></div></div></div>''')
+{certs}</div></a>''')
     q = kb.queue()
     qrows = "".join(f'''<div class="row"><img src="/queue/{i["nome"]}" style="width:74px;height:52px;object-fit:cover;border-radius:6px;background:#0b0d11">
 <div><div class="name">{i["nome"]}</div><div class="path">pack-queue/ · {i["tamanho"]}</div></div>
@@ -231,6 +228,64 @@ def packs_view(ok: str = ""):
 <p class="h2" style="margin-top:26px">Pack-queue — referências aguardando virar pack</p>
 <div class="list">{qrows or '<p class="empty">Fila vazia.</p>'}</div>'''
     return _page("Packs", "packs", head, body)
+
+
+@app.get("/packs/{slug}", response_class=HTMLResponse)
+def pack_view(slug: str):
+    p = kb.pack_detalhe(slug)
+    if not p:
+        raise HTTPException(404)
+    cls = "s-done" if p["status"] == "certificado" else "s-draft"
+    ref = (f'<div class="strip" style="max-width:420px"><img src="/packs/{slug}/reference.png"></div>'
+           if p["tem_reference"] else "")
+    ass = "".join(f"<li>{_esc(a)}</li>" for a in p["assinaturas"])
+    toks = "".join(
+        f'<span class="pill s-draft" style="font-family:ui-monospace">{k}: {v}</span> '
+        for k, v in list(p["tokens"].items())[:10] if k in
+        ("paper", "ink", "muted", "accent", "accent-ink", "font-display", "font-body"))
+    files = "".join(f'<a class="btn sm" href="/conhecimento/editar?rel={f["rel"]}">{f["nome"]}</a> '
+                    for f in p["arquivos"])
+    fitas = "".join(f'''<div style="margin-bottom:22px">
+<div class="meta" style="margin-bottom:8px"><strong style="font-size:14.5px">{f["nome"]}</strong>
+{f'<span class="pill s-done">QA PASS</span>' if "QA: PASS" in f["judge"] else ('<span class="pill s-old">QA FAIL</span>' if "QA: FAIL" in f["judge"] else "")}</div>
+<div class="strip"><img src="/packs/{slug}/cert/{f["strip"]}" loading="lazy"></div>
+<div class="cols" style="margin-top:10px">
+<div><details><summary>dossiê</summary><pre>{_esc(f["dossie"]) or "—"}</pre></details></div>
+<div><details><summary>judge</summary><pre>{_esc(f["judge"]) or "—"}</pre></details></div></div></div>'''
+        for f in p["fitas"])
+    ev = (f'<p class="h2" style="margin-top:24px">Evidência</p><pre>{_esc(p["evidencia"])}</pre>'
+          if p["evidencia"] else "")
+    exemplos = ("".join(f'<span class="pill s-draft">{e}</span> ' for e in p["exemplos"])
+                or '<span class="sub">nenhum</span>')
+    head = (f'<h1>{slug}</h1><span class="pill {cls}">{p["status"]}</span>'
+            f'<span class="sub">v{p["versao"]}'
+            f'{" · certificado em " + p["certificado_em"] if p["certificado_em"] else ""}</span>'
+            f'<a class="sub" href="/packs">← packs</a>')
+    body = f'''<div class="cols" style="align-items:start">
+<div>{ref}</div>
+<div><p class="h2">Família</p><p style="margin-top:0">{_esc(p["familia"])}</p>
+<p class="h2" style="margin-top:16px">Assinaturas</p><ul style="margin:0;padding-left:18px;font-size:14px">{ass}</ul>
+<p class="h2" style="margin-top:16px">Fit</p>
+<div class="meta"><span>funil: {", ".join(p["fit"].get("funil", [])) or "—"}</span>
+<span>verticais: {", ".join(p["fit"].get("verticais", [])) or "—"}</span>
+<span>slides: {p["slides"].get("min", "?")}–{p["slides"].get("max", "?")}</span></div>
+<p class="h2" style="margin-top:16px">Tokens</p><div class="meta">{toks}</div>
+<p class="h2" style="margin-top:16px">Exemplos</p><div class="meta">{exemplos}</div>
+<p class="h2" style="margin-top:16px">Conhecimento do pack</p>
+<div class="meta">{files}<a class="btn sm" href="/conhecimento/editar?rel=packs/{slug}/pack.json">pack.json</a></div>
+</div></div>
+<p class="h2" style="margin-top:26px">Certificação — {len(p["fitas"])} fitas de prova</p>
+{fitas or '<p class="empty">Este pack ainda não tem certificação.</p>'}
+{ev}'''
+    return _page(slug, "packs", head, body)
+
+
+@app.get("/packs/{slug}/cert/{nome}")
+def pack_cert_img(slug: str, nome: str):
+    p = (FACTORY / "packs" / slug / "certification" / nome).resolve()
+    if not str(p).startswith(str((FACTORY / "packs").resolve())) or not p.exists():
+        raise HTTPException(404)
+    return FileResponse(p)
 
 
 @app.get("/packs/{slug}/reference.png")
