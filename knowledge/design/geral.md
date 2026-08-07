@@ -83,3 +83,10 @@ Pill/tarja de CTA só existe onde há ação real do leitor: capa (arrasta),
 fechamento (salvar, comentar, compartilhar). Cartão de miolo com "botão" que
 não leva a nada vira UI decorativa (o judge reprova em R5) e rouba autoridade
 da peça. Rótulo de seção dentro de cartão = eyebrow/stamp.
+
+## Caixa se ajusta ao conteúdo
+
+Cartão/bloco de texto tem a altura do que carrega. Caixa grande com texto no
+topo e vazio embaixo é defeito (o vazio dentro de uma borda lê como erro, não
+como respiro). Se sobra espaço: encolha a caixa, não espalhe o texto. Respiro
+pertence ao slide (em volta da caixa), não ao interior dela.

@@ -38,11 +38,14 @@ dominante é a PRIMARY do usuário (fundos chapados e tarjas).
 O miolo repete a linguagem da capa em outra chave — nunca vira texto solto no
 grid. Tratamentos do pack, para alternar:
 
-- **Cartão-lembrete empilhado** (`ds-card data-elevated` sobre a foto ou sobre
-  fundo chapado): eyebrow do tema + frase em sentence case com a palavra-chave
-  em `<b>` + uma tarja de "ação" (`ds-cta data-square data-variable="primary"`,
-  texto tipo "definir um lembrete" / "salvar isso"). É a assinatura de miolo
-  do pack — usar 1–2× por fita.
+- **Cartão-lembrete COMPACTO** (`ds-card data-elevated` sobre a foto): eyebrow
+  do tema + frase em sentence case com a palavra-chave em `<b>` + body curto.
+  REGRA DE OURO (veredito 2026-08-07): **o cartão se ajusta ao texto, o texto
+  nunca flutua no cartão** — dimensione a área pelo conteúdo (tipicamente 4–6
+  linhas de grid, ~7–9 colunas), NUNCA um retângulo grande com vazio embaixo.
+  Posicione ASSIMÉTRICO (encostado num terço, sangrando ou não), deixando a
+  foto respirar em pelo menos 40% do slide — o cartão é um objeto sobre a
+  cena, não um painel que cobre o slide. Sem CTA dentro (CTA é ação).
 - **Statement chapado** (`data-invert data-variable="primary"`).
 - **Citação em caixa** (`ds-card` claro sobre fundo chapado, texto grande).
 - **Lista em bloco** (`ds-block` com 2–3 filhos curtos).
