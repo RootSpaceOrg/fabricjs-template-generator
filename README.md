@@ -51,9 +51,18 @@ entre gerações do mesmo pack é dever do designer.
 [SETUP.md](SETUP.md). Credenciais AWS para upload: `.env` apontado por
 `SECRETS_DIR`.
 
-## Estado
+## Estado (2026-08-07)
 
-- Motor fita-v2 funcional (smoke: `artifacts/runs/_fita-smoke/` — travessias
-  emitidas nos 2 vizinhos com offset exato, validadas).
-- Pack 1 `clinical-photo-editorial` v5 em `status: draft` — baseline visual
-  aprovado (fita v26); aguarda certificação v2 (prova real com variância).
+- Motor fita-v2 estável (smoke: `artifacts/runs/_fita-smoke/`).
+- **3 packs certificados**: `clinical-photo-editorial` (meio/fundo),
+  `emotive-fullbleed-lettering` (datas comemorativas, peça única),
+  `bold-educacional` (topo). Berçário de referências: `pack-queue/`.
+
+## Roadmap (adicionar quando doer)
+
+- Fotos/assets pesados viajam como **data-URI** no JSON (~1MB/slide); hospedar
+  em S3 e referenciar por URL é o próximo ganho.
+- Checklist espelhado designer ↔ judge (as leis de `knowledge/design/geral.md`
+  em formato de conferência dos dois lados).
+- Watchdog (`openclaw cron`) para retomar runs paradas sem reacender turno.
+- Fidelidade por SSIM (comparar strip aprovado × render atual).
