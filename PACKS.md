@@ -1,5 +1,9 @@
 # Criar e certificar packs — protocolo operacional
 
+> Runbook do dia a dia (como disparar o agente, corredor, revisão prévia) em
+> [OPERACAO.md](OPERACAO.md). **Criar pack é andaime: não altera em nada o
+> fluxo de produção com packs já certificados.**
+
 Um pack nasce de uma referência aprovada e vira dados que o motor carrega. Este é o processo completo; nada de pack entra na fábrica fora dele.
 
 ## 1. Origem

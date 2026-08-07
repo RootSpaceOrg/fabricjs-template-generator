@@ -2,7 +2,8 @@
 
 Fábrica de templates da plataforma (mkt-platform): motor sem estética (design
 system fechado + conversor determinístico + runner com gates) + packs de design
-como **conhecimento de estilo**. Arquitetura: [ARCHITECTURE.md](ARCHITECTURE.md).
+como **conhecimento de estilo**. Arquitetura: [ARCHITECTURE.md](ARCHITECTURE.md). Runbook (quem dispara o
+quê, produção × criação de pack): [OPERACAO.md](OPERACAO.md).
 Criar packs: [PACKS.md](PACKS.md). Gatilho de agente:
 [skills/template-factory/SKILL.md](skills/template-factory/SKILL.md).
 O que não está nos documentos não existe.
