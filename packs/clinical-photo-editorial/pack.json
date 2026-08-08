@@ -6,11 +6,13 @@
   "fit": {
     "funil": [
       "meio",
-      "fundo"
+      "fundo",
+      "topo"
     ],
     "verticais": [
       "health"
-    ]
+    ],
+    "melhor_em": "explicação e prova com foto real; capa também segura topo quando o tema é sério"
   },
   "slides": {
     "min": 5,

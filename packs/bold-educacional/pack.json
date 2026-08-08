@@ -5,11 +5,13 @@
   "familia": "educacional bold: meme scroll-stop + statement chapado na cor da marca",
   "fit": {
     "funil": [
-      "topo"
+      "topo",
+      "meio"
     ],
     "verticais": [
       "health"
-    ]
+    ],
+    "melhor_em": "mito, curiosidade e ensino direto com humor; scroll-stop forte"
   },
   "slides": {
     "min": 1,

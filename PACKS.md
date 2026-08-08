@@ -40,6 +40,17 @@ Técnica que exigir componente fora do catálogo → §6 (mudança de motor, com
 4. **Aprovação do Gustavo** comparando plataforma × reference.png. Só ele muda `status: draft → certificado`.
 5. Commit + push do pack completo (o pack é código-fonte da fábrica).
 
+## 4b. O que a certificação prova (e o que não prova)
+
+Certificar prova que o pack **gera peça boa e variada** (3 fitas, tamanhos
+diferentes, judge PASS, carimbo do Gustavo). **Não** certifica por nicho nem
+por etapa de funil.
+
+O campo `fit` do `pack.json` (funil, verticais, `melhor_em`) é **conselho, não
+regra**: diz onde o estilo brilha. Usar fora do fit é permitido — o dossiê só
+precisa declarar por que aquele estilo serve ao pedido, e a revisão julga.
+Bloquear uma run só porque o funil pedido não está no `fit` é rigidez indevida.
+
 ## 5. Vida do pack
 
 - Lessons por pack; 2× recorrente → vira técnica/lei em tecnicas.md → **re-certificar** (versão +1, nova entrada em certification/).
