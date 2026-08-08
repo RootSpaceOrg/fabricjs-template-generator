@@ -133,3 +133,20 @@ code.tid { user-select: all }
   outline: none; border-color: var(--accent) }
 .formgrid textarea { min-height: 110px; font-family: inherit; font-size: 14px }
 .pagehead { width: 100% }
+
+/* seleção visual de pack (radio escondido, card como alvo) */
+.packgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 13px }
+.packpick input { position: absolute; opacity: 0; pointer-events: none }
+.packpick .pcard { background: var(--card); border: 2px solid var(--line); border-radius: 12px;
+  overflow: hidden; cursor: pointer; transition: border-color .15s, transform .15s; height: 100% }
+.packpick:hover .pcard { border-color: var(--line2); transform: translateY(-1px) }
+.packpick input:checked + .pcard { border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(124,140,255,.15) }
+.packpick .pcard img { display: block; width: 100%; height: 190px; object-fit: cover;
+  object-position: top center; background: #0b0d11 }
+.packpick .semimg { height: 190px; display: flex; align-items: center; justify-content: center;
+  color: var(--dim2); font-size: 13px; background: #0b0d11 }
+.packpick .pinfo { padding: 11px 13px }
+.packpick .pname { font-weight: 650; font-size: 14px; margin-bottom: 2px }
+.packpick .meta { margin-top: 6px }
+.packpick .sub { margin-top: 7px; font-size: 12.5px; line-height: 1.45 }

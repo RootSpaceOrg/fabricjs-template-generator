@@ -210,29 +210,39 @@ def veredito(slug: str, veredito: str = Form(...), texto: str = Form("")):
 @app.get("/nova", response_class=HTMLResponse)
 def nova_form(erro: str = ""):
     packs = kb.packs()
-    cert = [p for p in packs if p["status"] == "certificado"]
-    opts = "".join(
-        f'<option value="{p["slug"]}">{p["slug"]} — {p["familia"][:52]} '
-        f'({p["slides"]} slides)</option>' for p in cert)
-    draft = "".join(f'<option value="{p["slug"]}">{p["slug"]} (draft — só teste)</option>'
-                    for p in packs if p["status"] != "certificado")
-    aviso = f'<div class="flash" style="background:rgba(248,81,73,.12);border-color:rgba(248,81,73,.3);color:var(--bad)">{_esc(erro)}</div>' if erro else ""
-    head = '<h1>Nova execução</h1><span class="sub">o agente escreve o dossiê e compõe a fita</span><a class="sub" href="/">← runs</a>'
-    body = f'''{aviso}<form method="post" action="/nova" class="formgrid">
-<label>Pack
-<select name="pack" required>{opts}{f'<optgroup label="não certificados">{draft}</optgroup>' if draft else ''}</select></label>
+    ordenados = sorted(packs, key=lambda p: (p["status"] != "certificado", p["slug"]))
+    escolhas = []
+    for i, p in enumerate(ordenados):
+        cert = p["status"] == "certificado"
+        img = (f'<img src="/packs/{p["slug"]}/reference.png" loading="lazy">'
+               if p["tem_reference"] else '<div class="semimg">sem referência</div>')
+        escolhas.append(f'''<label class="packpick">
+<input type="radio" name="pack" value="{p['slug']}" {'checked' if i == 0 else ''} required>
+<div class="pcard">{img}<div class="pinfo">
+<div class="pname">{p['slug']}</div>
+<div class="meta"><span class="pill {'s-done' if cert else 's-draft'}">{p['status']}</span>
+<span>{p['funil'] or '—'}</span><span>{p['slides']} slides</span></div>
+<div class="sub">{_esc(p['familia'][:90])}</div></div></div></label>''')
+    aviso = (f'<div class="flash" style="background:rgba(248,81,73,.12);'
+             f'border-color:rgba(248,81,73,.3);color:var(--bad)">{_esc(erro)}</div>' if erro else "")
+    head = ('<h1>Nova execução</h1><span class="sub">o agente escreve o dossiê e compõe a fita</span>'
+            '<a class="sub" href="/">← runs</a>')
+    body = f'''{aviso}<form method="post" action="/nova">
+<p class="h2">Estilo (pack)</p>
+<div class="packgrid">{"".join(escolhas)}</div>
+<div class="formgrid" style="margin-top:18px">
 <label>Ambiente
 <select name="env"><option value="dev">dev (padrão)</option><option value="prod">prod</option></select></label>
 <label>Tenant<input type="text" name="tenant" value="kultivai" required></label>
 <label>Vertical<input type="text" name="vertical" value="health" required></label>
-<label>Business type <span class="sub">(opcional — casa com o cadastro do tenant)</span>
+<label>Business type <span class="sub">(opcional)</span>
 <input type="text" name="business" placeholder="ex.: laserterapy"></label>
-<label>Slides <span class="sub">(vazio = o agente decide pelo tema)</span>
+<label>Slides <span class="sub">(vazio = o agente decide)</span>
 <input type="text" name="n" placeholder="ex.: 5"></label>
 <label class="full">Ideia / tema
 <textarea name="tema" required placeholder="Ex.: mitos sobre laserterapia que travam a primeira sessão — topo de funil, para quem tem medo de dor"></textarea></label>
 <div class="full acts"><button class="primary">Criar run e enfileirar</button>
-<a class="btn" href="/">Cancelar</a></div></form>'''
+<a class="btn" href="/">Cancelar</a></div></div></form>'''
     return _page("Nova execução", "runs", head, body)
 
 
