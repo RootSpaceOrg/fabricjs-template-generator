@@ -12,11 +12,12 @@ import re
 from datetime import datetime
 from pathlib import Path
 
-from fastapi import FastAPI, Form, HTTPException
+from fastapi import FastAPI, Form, HTTPException, Request
 from fastapi.responses import FileResponse, HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 
 import knowledge as kb
+import telegram as tg
 from jobs import FACTORY, RUNS, db, enfileirar, registrar_veredito
 
 HERE = Path(__file__).parent
@@ -165,6 +166,7 @@ def run_detail(slug: str):
 <form class="inline" method="post" action="/run/{slug}/job/advance"><button>⏭ Avançar estágio</button></form>
 <form class="inline" method="post" action="/run/{slug}/job/upload"><button>⬆ Publicar em dev</button></form>
 <form class="inline" method="post" action="/run/{slug}/veredito"><input type="hidden" name="veredito" value="aprovado"><button class="ok">✓ Aprovar</button></form>
+{'<form class="inline" method="post" action="/run/' + slug + '/notificar"><button>✈ Enviar ao Telegram</button></form>' if tg.ativo() else ''}
 </div>
 <form method="post" action="/run/{slug}/veredito" style="margin-bottom:18px">
 <input type="hidden" name="veredito" value="reprovado">
@@ -382,6 +384,62 @@ def kb_save(rel: str = Form(...), conteudo: str = Form(...), msg: str = Form("")
         raise HTTPException(400, str(e))
     destino = "/packs" if rel.startswith("packs/") else "/conhecimento"
     return RedirectResponse(f"{destino}?ok=1" if ok else f"{destino}", status_code=303)
+
+
+# ── telegram ───────────────────────────────────────────────────────────────
+AGUARDANDO: dict[str, str] = {}  # chat_id -> slug esperando texto de reprovação
+
+
+@app.post("/tg/webhook")
+async def tg_webhook(request: Request):
+    c = tg.conf()
+    if request.headers.get("X-Telegram-Bot-Api-Secret-Token") != c.get("secret"):
+        raise HTTPException(403, "secret inválido")
+    upd = await request.json()
+
+    if cb := upd.get("callback_query"):
+        chat = str(cb.get("message", {}).get("chat", {}).get("id", ""))
+        if chat != str(c.get("chat_id")):
+            return {"ok": True}
+        acao, _, slug = (cb.get("data") or "").partition(":")
+        if acao == "ok":
+            registrar_veredito(slug, "aprovado", origem="telegram")
+            tg.responder(cb["id"], "Aprovado ✓")
+            tg.mandar(f"*{slug}* aprovado. Use o portal para publicar quando quiser.")
+        elif acao == "no":
+            AGUARDANDO[chat] = slug
+            tg.responder(cb["id"], "Responda com o que corrigir")
+            tg.mandar(f"O que corrigir em *{slug}*? Responda nesta conversa "
+                      f"— vira turno de revisão para o agente.")
+        return {"ok": True}
+
+    if msg := upd.get("message"):
+        chat = str(msg.get("chat", {}).get("id", ""))
+        texto = (msg.get("text") or "").strip()
+        if chat == str(c.get("chat_id")) and texto and chat in AGUARDANDO:
+            slug = AGUARDANDO.pop(chat)
+            registrar_veredito(slug, "reprovado", texto, origem="telegram")
+            enfileirar("agente", slug,
+                       f"REVISAO da run {slug} na fabrica (git pull --rebase antes; copy/dossie so "
+                       f"mudam se o feedback pedir). Feedback do Gustavo:\n\n{texto}\n\n"
+                       f"Corrija o fita.html de artifacts/runs/{slug}, rode "
+                       f"'node engine/assemble.js artifacts/runs/{slug}' e confirme. NAO avance estagio.")
+            tg.mandar(f"Feedback registrado. Turno de revisão de *{slug}* na fila.")
+    return {"ok": True}
+
+
+@app.post("/run/{slug}/notificar")
+def notificar(slug: str):
+    d = RUNS / slug
+    if not (d / "run.json").exists():
+        raise HTTPException(404)
+    st = json.loads((d / "run.json").read_text(encoding="utf-8"))
+    judge = _read(d / "judge-report.md")
+    qa = "QA PASS" if "QA: PASS" in judge else ("QA FAIL" if "QA: FAIL" in judge else "sem judge")
+    resumo = f"{st.get('pack')} · {st.get('n') or '?'} slides · estágio {st.get('stage')} · {qa}"
+    tg.notificar_fita(slug, d / "strip.png", resumo,
+                      _editor_url(slug, st.get("template_id")))
+    return RedirectResponse(f"/run/{slug}", status_code=303)
 
 
 @app.get("/health")
