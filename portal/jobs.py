@@ -111,7 +111,7 @@ def executar(job: sqlite3.Row) -> tuple[int, str]:
     return 1, f"tipo desconhecido: {tipo}"
 
 
-def _avisar(job: sqlite3.Row, rc: int) -> None:
+def _avisar(job: sqlite3.Row, rc: int, status: str = "done") -> None:
     """Avisa no Telegram quando o trabalho pesado termina (fita pronta ou falha)."""
     try:
         import telegram as tg
@@ -122,6 +122,14 @@ def _avisar(job: sqlite3.Row, rc: int) -> None:
         strip = d / "strip.png"
         if rc != 0:
             tg.mandar(f"⚠️ *{slug}*: job `{tipo}` falhou. Veja o log no portal.")
+            return
+        if status == "bloqueado":
+            # o agente parou e perguntou algo — mostra a pergunta, não o log inteiro
+            pergunta = (job["log"] or "").strip()
+            for corte in ("[plugins]", "plugins.allow"):
+                if corte in pergunta:
+                    pergunta = pergunta.split(corte)[0].strip()
+            tg.mandar(f"🟡 *{slug}*: o agente parou e perguntou:\n\n{pergunta[-900:]}")
             return
         if tipo in ("agente", "corredor") and strip.exists():
             st = json.loads((d / "run.json").read_text(encoding="utf-8")) if (d / "run.json").exists() else {}
@@ -153,12 +161,16 @@ def worker_loop(intervalo: int = 5) -> None:
             c.execute("UPDATE jobs SET status='running', iniciado_em=? WHERE id=?",
                       (datetime.now().isoformat(timespec="seconds"), job["id"]))
         rc, log = executar(job)
+        status = "done" if rc == 0 else "failed"
+        # turno de agente que era para criar a run mas não criou = bloqueado (ele perguntou algo)
+        if (rc == 0 and job["tipo"] == "agente" and "NOVA RUN" in (job["payload"] or "")
+                and not (RUNS / job["slug"] / "run.json").exists()):
+            status = "bloqueado"
         with db() as c:
             c.execute("UPDATE jobs SET status=?, log=?, terminado_em=? WHERE id=?",
-                      ("done" if rc == 0 else "failed", log,
-                       datetime.now().isoformat(timespec="seconds"), job["id"]))
+                      (status, log, datetime.now().isoformat(timespec="seconds"), job["id"]))
         LOCK.unlink(missing_ok=True)
-        _avisar(job, rc)
+        _avisar(job, rc, status)
 
 
 if __name__ == "__main__":

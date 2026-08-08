@@ -260,15 +260,20 @@ def nova_criar(pack: str = Form(...), tema: str = Form(...), env: str = Form("de
     enfileirar("agente", slug, comandos.prompt_nova(
         slug, pack, tema, pedido=tema, tenant=tenant.strip(), vertical=vertical.strip(),
         env=env, business=business.strip(), n=n))
-    return RedirectResponse(f"/run/{slug}", status_code=303)
+    return RedirectResponse("/fila?novo=" + slug, status_code=303)
 
 
 # ── fila ───────────────────────────────────────────────────────────────────
 @app.get("/fila", response_class=HTMLResponse)
-def fila():
+def fila(novo: str = ""):
     with db() as c:
         jobs = c.execute("SELECT * FROM jobs ORDER BY id DESC LIMIT 60").fetchall()
     tpls = {r["slug"]: r["template_id"] for r in _runs()}
+
+    def _run_cell(slug: str) -> str:
+        existe = (RUNS / slug / "run.json").exists()
+        return (f'<a href="/run/{slug}">{slug}</a>' if existe
+                else f'<span class="sub" title="run não criada">{slug}</span>')
 
     def _tpl_cell(slug: str) -> str:
         tid = tpls.get(slug)
@@ -278,15 +283,19 @@ def fila():
         return (f'<a class="tid" href="{u}" target="_blank" rel="noopener" title="{tid}">abrir &#8599;</a>'
                 if u else f'<span class="tid">{tid[:8]}…</span>')
 
-    rows = "".join(f'''<tr><td>#{j["id"]}</td><td>{j["tipo"]}</td><td><a href="/run/{j["slug"]}">{j["slug"]}</a></td>
+    rows = "".join(f'''<tr><td>#{j["id"]}</td><td>{j["tipo"]}</td><td>{_run_cell(j["slug"])}</td>
 <td>{_tpl_cell(j["slug"])}</td>
-<td><span class="pill s-{"done" if j["status"]=="done" else ("fail" if j["status"]=="failed" else ("run" if j["status"]=="running" else "wait"))}">{j["status"]}</span></td>
+<td><span class="pill s-{"done" if j["status"]=="done" else ("fail" if j["status"]=="failed" else ("wait" if j["status"]=="bloqueado" else ("run" if j["status"]=="running" else "wait")))}">{j["status"]}</span></td>
 <td class="sub">{(j["criado_em"] or "")[5:16]}</td>
 <td><details><summary>detalhes</summary><pre>{_esc((j["log"] or "—")[-3000:])}</pre>
 {f'<p class="h2" style="margin-top:10px">prompt</p><pre>{_esc(j["payload"][:1200])}</pre>' if j["payload"] else ""}</details></td>
 <td><form class="inline" method="post" action="/fila/{j["id"]}/reenfileirar"><button class="sm">↻</button></form></td></tr>''' for j in jobs)
     head = '<h1>Fila</h1><span class="sub">worker serial · um turno por vez · lock compartilhado com o SSH</span>'
-    body = f'<div class="list"><table><tr><th>id</th><th>tipo</th><th>run</th><th>template</th><th>status</th><th>criado</th><th>detalhes</th><th></th></tr>{rows or "<tr><td class=empty>fila vazia</td></tr>"}</table></div>'
+    aviso = (f'<div class="flash">Run <code class="tid">{_esc(novo)}</code> enfileirada — a página '
+             f'dela aparece assim que o agente criar a run.</div>') if novo else ""
+    body = (aviso + f'<div class="list"><table><tr><th>id</th><th>tipo</th><th>run</th><th>template</th>'
+            f'<th>status</th><th>criado</th><th>detalhes</th><th></th></tr>'
+            f'{rows or "<tr><td class=empty>fila vazia</td></tr>"}</table></div>')
     return _page("Fila", "fila", head, body)
 
 
