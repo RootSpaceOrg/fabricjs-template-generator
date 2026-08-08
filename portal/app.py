@@ -26,6 +26,18 @@ app.mount("/static", StaticFiles(directory=HERE / "static"), name="static")
 STAGES = ["resolve", "context", "compose", "render", "convert", "judge", "finalize", "upload", "done"]
 
 
+def _editor_url(slug: str, tid: str | None) -> str | None:
+    """URL do editor: o domínio vem do resolve.json da run (muda por vertical)."""
+    if not tid:
+        return None
+    try:
+        r = json.loads((RUNS / slug / "resolve.json").read_text(encoding="utf-8"))
+        dom = r.get("domain")
+    except Exception:
+        dom = None
+    return f"https://{dom}/preencher/{tid}" if dom else None
+
+
 # ── helpers ────────────────────────────────────────────────────────────────
 def _read(p: Path, limit: int | None = None) -> str:
     if not p.exists():
@@ -101,11 +113,12 @@ def index():
         bar = "".join(f'<div class="step {"fin" if r["stage"]=="done" else ("on" if i<=idx else "")}"></div>'
                       for i in range(len(STAGES) - 1))
         thumb = f'<img class="thumb" src="/run/{r["slug"]}/strip.png" loading="lazy">' if r["has_strip"] else ""
+        tpl = f'<span class="tid" title="template_id">{r["template_id"]}</span>' if r["template_id"] else ""
         qa = f'<span class="pill s-{"done" if r["qa"]=="PASS" else "old"}">QA {r["qa"]}</span>' if r["qa"] else ""
         cards.append(f'''<a class="card" href="/run/{r['slug']}">{thumb}<div class="body">
 <h3>{r['slug']}</h3><div class="sub">{_esc(r['title']) or '—'}</div>
 <div class="meta"><span class="pill {cls}">{label}</span>{qa}<span>{r['pack']}</span>
-<span>{r['n'] or '?'} slides</span><span>{r['age']}</span></div><div class="bar">{bar}</div></div></a>''')
+<span>{r['n'] or '?'} slides</span><span>{r['age']}</span>{tpl}</div><div class="bar">{bar}</div></div></a>''')
     head = f'<h1>Runs</h1><span class="sub">{len(rows)} execuções</span>'
     return _page("Runs", "runs", head, f'<div class="grid">{"".join(cards) or "<p class=empty>Sem runs.</p>"}</div>')
 
@@ -135,8 +148,17 @@ def run_detail(slug: str):
                  f'<td><span class="pill s-{"done" if v["veredito"]=="aprovado" else "old"}">{v["veredito"]}</span></td>'
                  f'<td>{_esc(v["texto"]) or "—"}</td><td class="sub">{v["origem"]}</td></tr>' for v in vers)
     tid = st.get("template_id")
-    head = (f'<h1>{slug}</h1><span class="sub">{st.get("pack")} · estágio {st.get("stage")} · env {st.get("env")}'
-            f'{f" · template {tid}" if tid else ""}</span><a class="sub" href="/">← runs</a>')
+    url = _editor_url(slug, tid)
+    if tid:
+        copiar = f"navigator.clipboard.writeText('{tid}');this.textContent='copiado'"
+        link = (f'<a class="btn sm" href="{url}" target="_blank" rel="noopener">abrir no editor &#8599;</a>'
+                if url else '<span class="sub">(domínio não resolvido)</span>')
+        tpl_html = (f'<code class="tid">{tid}</code>{link}'
+                    f'<button class="sm" onclick="{copiar}">copiar id</button>')
+    else:
+        tpl_html = '<span class="sub">sem template publicado</span>'
+    head = (f'<h1>{slug}</h1><span class="sub">{st.get("pack")} · estágio {st.get("stage")} · '
+            f'env {st.get("env")}</span>{tpl_html}<a class="sub" href="/">← runs</a>')
     body = f'''{strip_html}
 <div class="acts">
 <form class="inline" method="post" action="/run/{slug}/job/corredor"><button class="primary">▶ Rodar corredor</button></form>
@@ -182,14 +204,25 @@ def veredito(slug: str, veredito: str = Form(...), texto: str = Form("")):
 def fila():
     with db() as c:
         jobs = c.execute("SELECT * FROM jobs ORDER BY id DESC LIMIT 60").fetchall()
+    tpls = {r["slug"]: r["template_id"] for r in _runs()}
+
+    def _tpl_cell(slug: str) -> str:
+        tid = tpls.get(slug)
+        u = _editor_url(slug, tid)
+        if not tid:
+            return '<span class="sub">—</span>'
+        return (f'<a class="tid" href="{u}" target="_blank" rel="noopener" title="{tid}">abrir &#8599;</a>'
+                if u else f'<span class="tid">{tid[:8]}…</span>')
+
     rows = "".join(f'''<tr><td>#{j["id"]}</td><td>{j["tipo"]}</td><td><a href="/run/{j["slug"]}">{j["slug"]}</a></td>
+<td>{_tpl_cell(j["slug"])}</td>
 <td><span class="pill s-{"done" if j["status"]=="done" else ("fail" if j["status"]=="failed" else ("run" if j["status"]=="running" else "wait"))}">{j["status"]}</span></td>
 <td class="sub">{(j["criado_em"] or "")[5:16]}</td>
 <td><details><summary>detalhes</summary><pre>{_esc((j["log"] or "—")[-3000:])}</pre>
 {f'<p class="h2" style="margin-top:10px">prompt</p><pre>{_esc(j["payload"][:1200])}</pre>' if j["payload"] else ""}</details></td>
 <td><form class="inline" method="post" action="/fila/{j["id"]}/reenfileirar"><button class="sm">↻</button></form></td></tr>''' for j in jobs)
     head = '<h1>Fila</h1><span class="sub">worker serial · um turno por vez · lock compartilhado com o SSH</span>'
-    body = f'<div class="list"><table><tr><th>id</th><th>tipo</th><th>run</th><th>status</th><th>criado</th><th>detalhes</th><th></th></tr>{rows or "<tr><td class=empty>fila vazia</td></tr>"}</table></div>'
+    body = f'<div class="list"><table><tr><th>id</th><th>tipo</th><th>run</th><th>template</th><th>status</th><th>criado</th><th>detalhes</th><th></th></tr>{rows or "<tr><td class=empty>fila vazia</td></tr>"}</table></div>'
     return _page("Fila", "fila", head, body)
 
 
