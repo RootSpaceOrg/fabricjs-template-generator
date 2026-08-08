@@ -118,3 +118,18 @@ details[open] summary { margin-bottom: 8px }
   padding: 1px 7px; border-radius: 6px }
 a.tid:hover { color: var(--accent); border-color: var(--accent) }
 code.tid { user-select: all }
+
+/* formulário de nova execução */
+.formgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 14px; background: var(--card); border: 1px solid var(--line);
+  border-radius: 12px; padding: 20px }
+.formgrid label { display: flex; flex-direction: column; gap: 6px; font-size: 13px;
+  color: var(--dim); font-weight: 600 }
+.formgrid .full { grid-column: 1 / -1 }
+.formgrid select, .formgrid input[type=text] { background: #0b0d11; color: var(--ink);
+  border: 1px solid var(--line); border-radius: 9px; padding: 10px 12px;
+  font: 14px/1.5 inherit; font-family: inherit }
+.formgrid select:focus, .formgrid input:focus, .formgrid textarea:focus {
+  outline: none; border-color: var(--accent) }
+.formgrid textarea { min-height: 110px; font-family: inherit; font-size: 14px }
+.pagehead { width: 100% }

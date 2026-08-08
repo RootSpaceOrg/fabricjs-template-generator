@@ -30,7 +30,9 @@ def slug_novo(pack: str, tema: str) -> str:
     return cand
 
 
-def prompt_nova(slug: str, pack: str, tema: str, pedido: str = "") -> str:
+def prompt_nova(slug: str, pack: str, tema: str, pedido: str = "",
+                tenant: str = "kultivai", vertical: str = "health",
+                env: str = "dev", business: str = "", n: str = "") -> str:
     return (
         f"NOVA RUN pedida pelo Gustavo no Telegram (fabrica; git pull --rebase antes).\n"
         f'PEDIDO ORIGINAL (interprete): "{pedido or tema}"\n'
