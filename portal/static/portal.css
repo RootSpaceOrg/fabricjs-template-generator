@@ -55,12 +55,13 @@ code, pre { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace }
 .step.on { background: var(--run) } .step.fin { background: var(--ok) }
 
 /* ── run ────────────────────────────────────────────────── */
-/* fita: cabe na largura da tela por padrão (zoom só quando o usuário quiser) */
+/* fita: nunca passa de 1350px de ALTURA (tamanho nativo do slide);
+   larga demais rola na horizontal. Zoom desliga o teto. */
 .strip { width: 100%; background: #0b0d11; border: 1px solid var(--line);
-  border-radius: 12px; margin-bottom: 18px; overflow: hidden }
-.strip img { display: block; width: 100%; height: auto }
-.strip.zoom { overflow-x: auto }
-.strip.zoom img { width: auto; min-width: 100%; max-width: none }
+  border-radius: 12px; margin-bottom: 18px; overflow-x: auto }
+.strip img { display: block; width: 100%; height: auto; max-height: 1350px;
+  object-fit: contain; object-position: left center }
+.strip.zoom img { width: auto; max-width: none; max-height: none; min-width: 100% }
 /* referência do pack: retrato, preenche a coluna sem cortar */
 .ref { background: #0b0d11; border: 1px solid var(--line); border-radius: 12px; overflow: hidden }
 .ref img { display: block; width: 100%; height: auto }
