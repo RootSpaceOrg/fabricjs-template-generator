@@ -191,6 +191,9 @@ def criar_job(slug: str, tipo: str):
 
 @app.post("/run/{slug}/veredito")
 def veredito(slug: str, veredito: str = Form(...), texto: str = Form("")):
+    if veredito == "aprovado":
+        _aprovar(slug, "portal")
+        return RedirectResponse(f"/run/{slug}", status_code=303)
     registrar_veredito(slug, veredito, texto)
     if veredito == "reprovado" and texto.strip():
         enfileirar("agente", slug,
@@ -386,6 +389,29 @@ def kb_save(rel: str = Form(...), conteudo: str = Form(...), msg: str = Form("")
     return RedirectResponse(f"{destino}?ok=1" if ok else f"{destino}", status_code=303)
 
 
+def _aprovar(slug: str, origem: str) -> str:
+    """Registra o veredito e avança — com dois gates:
+    (1) só avança se o judge deu PASS; (2) nunca ultrapassa finalize
+    (publicar em dev é sempre decisão explícita e separada)."""
+    registrar_veredito(slug, "aprovado", origem=origem)
+    d = RUNS / slug
+    try:
+        st = json.loads((d / "run.json").read_text(encoding="utf-8"))
+    except Exception:
+        return "Aprovado — run sem estado legível, nada avançado."
+    estagio = st.get("stage")
+    judge = _read(d / "judge-report.md")
+    if estagio in ("upload", "done"):
+        return f"Aprovado ✓ (já está em {estagio})"
+    if estagio == "finalize":
+        return "Aprovado ✓ — parado antes do upload: publicar é decisão separada."
+    if "QA: PASS" not in judge:
+        motivo = "judge reprovou (QA: FAIL)" if "QA: FAIL" in judge else "ainda não há judge-report"
+        return f"Aprovado ✓ mas NÃO avancei: {motivo}."
+    enfileirar("advance", slug)
+    return f"Aprovado ✓ — avanço enfileirado (de {estagio}; paro antes do upload)."
+
+
 # ── telegram ───────────────────────────────────────────────────────────────
 AGUARDANDO: dict[str, str] = {}  # chat_id -> slug esperando texto de reprovação
 
@@ -403,9 +429,9 @@ async def tg_webhook(request: Request):
             return {"ok": True}
         acao, _, slug = (cb.get("data") or "").partition(":")
         if acao == "ok":
-            registrar_veredito(slug, "aprovado", origem="telegram")
+            msg = _aprovar(slug, "telegram")
             tg.responder(cb["id"], "Aprovado ✓")
-            tg.mandar(f"*{slug}* aprovado. Use o portal para publicar quando quiser.")
+            tg.mandar(f"*{slug}*: {msg}")
         elif acao == "no":
             AGUARDANDO[chat] = slug
             tg.responder(cb["id"], "Responda com o que corrigir")
