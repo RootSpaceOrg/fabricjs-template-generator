@@ -179,12 +179,18 @@ def worker_loop(intervalo: int = 5) -> None:
         rc, log = executar(job)
         status = "done" if rc == 0 else "failed"
         # turno de agente que era para criar a run mas não criou = bloqueado (ele perguntou algo)
-        if (rc == 0 and job["tipo"] == "agente" and "NOVA RUN" in (job["payload"] or "")
+        if (rc == 0 and job["tipo"] == "agente"
+                and ("NOVA RUN" in (job["payload"] or "") or "FATIA 1 de" in (job["payload"] or ""))
                 and not (RUNS / job["slug"] / "run.json").exists()):
             status = "bloqueado"
         with db() as c:
             c.execute("UPDATE jobs SET status=?, log=?, terminado_em=? WHERE id=?",
                       (status, log, datetime.now().isoformat(timespec="seconds"), job["id"]))
+            if status != "done":
+                # cadeia de fatias: fatia que não fechou aborta as filhas em vez de
+                # deixá-las rodar sobre um estado que não existe
+                c.execute("UPDATE jobs SET status='cancelado', log='fatia anterior nao concluiu' "
+                          "WHERE status='pending' AND slug=? AND pai IS NOT NULL", (job["slug"],))
         LOCK.unlink(missing_ok=True)
         _avisar(job, rc, status)
 

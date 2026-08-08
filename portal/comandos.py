@@ -31,73 +31,81 @@ def slug_novo(pack: str, tema: str) -> str:
     return cand
 
 
+def _cabeca(slug: str, pedido: str, tema: str, tenant: str, vertical: str,
+            env: str, business: str, n: str, pack: str | None) -> str:
+    """Contexto comum a todas as fatias."""
+    return (
+        f"Run {slug} da fabrica (git pull --rebase antes).\n"
+        f'PEDIDO DO GUSTAVO: "{pedido or tema}"\n'
+        f"CONTEXTO (ja definido - use, nao pergunte): tenant={tenant} - vertical={vertical} - "
+        f"env={env}"
+        f"{' - business_type=' + business if business else ' - business_type: infira do tema'}"
+        f"{' - slides=' + n if n else ''}"
+        f"{' - pack=' + pack if pack else ' - pack: ESCOLHA VOCE'}\n"
+        f"TEMA: {tema}\n\n"
+    )
+
+
+def fatias_nova(slug: str, pack: str | None, tema: str, pedido: str = "",
+                tenant: str = "kultivai", vertical: str = "health",
+                env: str = "dev", business: str = "", n: str = "") -> list[str]:
+    """A criacao vira 4 turnos curtos - a janela do agente nao aguenta tudo junto.
+
+    1. dossie / 2. imagens / 3. fita+render / 4. convert+judge ate PASS.
+    Cada fatia comeca relendo o estado do disco, entao e retomavel.
+    """
+    ctx = _cabeca(slug, pedido, tema, tenant, vertical, env, business, n, pack)
+    escolha = ("" if pack else
+               "Antes de tudo ESCOLHA o pack: compare packs/*/pack.json (certificados; olhe "
+               "fit.melhor_em e assinaturas) com o tema e justifique em 1 linha no dossie. "
+               "O fit e CONSELHO, nao regra - nao bloqueie a run por causa dele.\n")
+    pk = pack or "<o pack escolhido>"
+
+    f1 = (ctx + escolha +
+          f"FATIA 1 de 4 - SO O DOSSIE. Nao componha, nao gere imagem.\n"
+          f"1. python3 engine/run.py new {slug} --env {env} --pack {pk} "
+          f"--n {n or '<dentro do range do pack>'} (se a run ja existir, siga);\n"
+          f"2. resolve: python3 engine/tools/resolve_tenant.py --tenant {tenant} "
+          f"--vertical {vertical} --env {env}"
+          f"{' --subject ' + business if business else ' --subject <nicho do tema>'}"
+          f" > artifacts/runs/{slug}/resolve.json;\n"
+          f"3. escreva artifacts/runs/{slug}/dossie.md com OBJETIVO, FRAMEWORK "
+          f"(knowledge/copy/frameworks.md), ARCO (gramatica em knowledge/copy/negocios/), "
+          f"open loop por slide e a copy final de cada slide (CONTEXT.md 3b);\n"
+          f"4. advance ate 'compose' e PARE. Responda em 3 linhas.")
+
+    f2 = (ctx +
+          f"FATIA 2 de 4 - SO AS IMAGENS. O dossie ja existe (leia-o).\n"
+          f"Gere em artifacts/runs/{slug}/assets/ as fotos e colagens/decors que a fita vai usar, "
+          f"seguindo packs/{pk}/images.md (foto de miolo pensada para receber cartao; decor "
+          f"transparente com blur na geracao; NUNCA gere pessoa para o slot professionalPhoto - "
+          f"esse slot usa o placeholder canonico do motor). Liste os arquivos e PARE.")
+
+    f3 = (ctx +
+          f"FATIA 3 de 4 - SO A FITA. Dossie e assets ja existem (leia dossie.md, liste assets/).\n"
+          f"Escreva artifacts/runs/{slug}/fita.html seguindo engine/CATALOG.md, "
+          f"packs/{pk}/tecnicas.md (ANATOMIA POR TIPO DE SLIDE: nenhum slide e so texto - "
+          f"minimo 2 elementos com peso) e knowledge/design/geral.md. "
+          f"Depois rode 'node engine/assemble.js artifacts/runs/{slug}'. "
+          f"Responda so com o caminho do strip.png.")
+
+    f4 = (ctx +
+          f"FATIA 4 de 4 - CORREDOR E JUDGE ATE PASSAR.\n"
+          f"1. 'node engine/convert.js artifacts/runs/{slug} artifacts/runs/{slug}/output "
+          f"--slug {slug}' - rejeicao = corrija o HTML e repita (nunca edite JSON);\n"
+          f"2. avance ate judge e julgue (JUDGE.md modo QA + check narrativo);\n"
+          f"3. FAIL = corrija o fita.html, re-renderize, reconverta e RE-JULGUE (max 3 voltas);\n"
+          f"4. PARE no judge com PASS - nao escreva fidelity nem publique (isso e do Gustavo).\n"
+          f"Reporte o veredito e quantas voltas precisou.")
+
+    return [f1, f2, f3, f4]
+
+
 def prompt_nova(slug: str, pack: str | None, tema: str, pedido: str = "",
                 tenant: str = "kultivai", vertical: str = "health",
                 env: str = "dev", business: str = "", n: str = "") -> str:
-    """Prompt do turno de criação. `pack=None` = o agente escolhe o estilo."""
-    cabeca = (
-        f"NOVA RUN pedida pelo Gustavo (fabrica; git pull --rebase antes).\n"
-        f'PEDIDO ORIGINAL (interprete): "{pedido or tema}"\n'
-        f"Comece o relatorio dizendo o que voce entendeu: pack, tema, funil, slides e ambiente.\n"
-        f"Se faltar algo ESSENCIAL (nicho/tema indefinido), PARE e pergunte.\n"
-        f"O campo `fit` do pack.json e CONSELHO, nao regra: usar um pack fora do funil sugerido "
-        f"e permitido — so justifique no dossie em 1 linha. NAO bloqueie a run por causa do fit.\n"
-        f"Se o pedido mencionar producao/prod, monte em DEV assim mesmo e avise que publicar em "
-        f"prod exige confirmacao explicita.\n\n"
-    )
-
-    if pack:
-        leitura = (
-            f"PACK: {pack}. Leia packs/{pack}/tecnicas.md + images.md + lessons.md, alem de "
-            f"README.md, CONTEXT.md, engine/CATALOG.md, knowledge/copy/frameworks.md, "
-            f"knowledge/copy/negocios/ (dossie do negocio do tema) e knowledge/design/geral.md.\n\n"
-        )
-        comando = (f"Comando inicial: python3 engine/run.py new {slug} --env {env} --pack {pack} "
-                   f"--n {n or '<dentro do range do pack>'}\n")
-    else:
-        leitura = (
-            "PACK: o Gustavo NAO escolheu — ESCOLHA VOCE. Compare os packs em packs/*/pack.json "
-            "(use os certificados; olhe `fit.melhor_em` e as assinaturas) com o tema pedido e "
-            "justifique a escolha no dossie em 1 linha. Depois leia tecnicas.md + images.md + "
-            "lessons.md do pack escolhido, alem de README.md, CONTEXT.md, engine/CATALOG.md, "
-            "knowledge/copy/frameworks.md, knowledge/copy/negocios/ e knowledge/design/geral.md.\n\n"
-        )
-        comando = (f"Comando inicial: python3 engine/run.py new {slug} --env {env} "
-                   f"--pack <o pack que voce escolheu> --n {n or '<dentro do range do pack>'}\n")
-
-    contexto = (
-        f"CONTEXTO (definido pelo Gustavo — use, nao pergunte de novo): tenant={tenant} · "
-        f"vertical={vertical} · env={env}"
-        f"{' · business_type=' + business if business else ' · business_type: infira do tema'}"
-        f"{' · slides=' + n if n else ''}\n"
-        f"TEMA: {tema}\n\n"
-    )
-    resolve = (
-        f"Resolve: python3 engine/tools/resolve_tenant.py --tenant {tenant} --vertical {vertical} "
-        f"--env {env}"
-        f"{' --subject ' + business if business else ' --subject <o nicho do tema>'}"
-        f" > artifacts/runs/{slug}/resolve.json\n\n"
-    )
-    corpo = (
-        "VOCE e o copy specialist E o designer desta run:\n"
-        "1. resolve (comando acima) e context: dossie.md declarando OBJETIVO, FRAMEWORK "
-        "(knowledge/copy/frameworks.md), ARCO (gramatica do acervo) e o open loop de cada slide;\n"
-        "2. gere as imagens do tema (fotos e colagens/decors) seguindo images.md do pack;\n"
-        "3. compose: UM fita.html seguindo o CATALOG e as tecnicas do pack (miolo com objeto de "
-        "conteudo, hierarquia, contraste pelo fundo da caixa, CTA so onde ha acao);\n"
-        f"4. corredor: 'node engine/assemble.js artifacts/runs/{slug}' e depois "
-        f"'node engine/convert.js artifacts/runs/{slug} artifacts/runs/{slug}/output "
-        f"--slug {slug}' (rejeicao do convert = corrija o HTML e repita; nunca edite JSON);\n"
-        "5. JUDGE ATE PASSAR: avance ate o estagio judge e julgue (JUDGE.md modo QA + check "
-        "narrativo). Se der FAIL, VOCE MESMO corrige o fita.html, re-renderiza, reconverte e "
-        "RE-JULGA — repita ate QA: PASS (limite 3 voltas; se nao passar, PARE e explique o que "
-        "trava). A fita so vai para o Gustavo depois de passar no judge;\n"
-        "6. PARE no judge com PASS. NAO escreva fidelity nem publique — a aprovacao do Gustavo "
-        "e que libera a publicacao.\n\n"
-        "Reporte: o que voce entendeu, o pack escolhido (se a escolha foi sua), quantas voltas "
-        "de judge precisou e o caminho do strip.png."
-    )
-    return cabeca + leitura + contexto + comando + resolve + corpo
+    """Compat: primeira fatia (o encadeamento é feito por quem enfileira)."""
+    return fatias_nova(slug, pack, tema, pedido, tenant, vertical, env, business, n)[0]
 
 
 def executar(texto: str) -> str:
@@ -135,7 +143,9 @@ def executar(texto: str) -> str:
         if not tema:
             return f"Faltou o tema. Ex.: `/nova {pack} mitos sobre laser, laserterapia`"
         slug = slug_novo(pack or "run", tema)
-        enfileirar("agente", slug, prompt_nova(slug, pack, tema, pedido=resto))
+        pai = None
+        for fatia in fatias_nova(slug, pack, tema, pedido=resto, business="laserterapy"):
+            pai = enfileirar("agente", slug, fatia, pai=pai)
         aviso = ("\n\n⚠️ Você mencionou *prod*: a run vai para dev; publicar em produção "
                  "exige confirmação separada.") if re.search(r"\bprod", resto, re.I) else ""
         quem = f"pack `{pack}`" if pack else "_pack a escolher pelo agente_"

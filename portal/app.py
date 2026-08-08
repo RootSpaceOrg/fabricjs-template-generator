@@ -263,9 +263,12 @@ def nova_criar(pack: str = Form(""), tema: str = Form(...), env: str = Form("dev
         return RedirectResponse("/nova?erro=Pack+inexistente", status_code=303)
     n = n.strip() if n.strip().isdigit() else ""
     slug = comandos.slug_novo(pack or "run", tema)
-    enfileirar("agente", slug, comandos.prompt_nova(
-        slug, pack or None, tema, pedido=tema, tenant=tenant.strip(), vertical=vertical.strip(),
-        env=env, business=business.strip(), n=n))
+    # a criação vai fatiada: cada turno do agente é curto demais para tudo
+    pai = None
+    for fatia in comandos.fatias_nova(
+            slug, pack or None, tema, pedido=tema, tenant=tenant.strip(),
+            vertical=vertical.strip(), env=env, business=business.strip(), n=n):
+        pai = enfileirar("agente", slug, fatia, pai=pai)
     return RedirectResponse("/fila?novo=" + slug, status_code=303)
 
 
