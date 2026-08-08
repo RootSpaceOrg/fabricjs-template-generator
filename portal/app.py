@@ -121,7 +121,8 @@ def index():
 <h3>{r['slug']}</h3><div class="sub">{_esc(r['title']) or '—'}</div>
 <div class="meta"><span class="pill {cls}">{label}</span>{qa}<span>{r['pack']}</span>
 <span>{r['n'] or '?'} slides</span><span>{r['age']}</span>{tpl}</div><div class="bar">{bar}</div></div></a>''')
-    head = f'<h1>Runs</h1><span class="sub">{len(rows)} execuções</span>'
+    head = (f'<h1>Runs</h1><span class="sub">{len(rows)} execuções</span>'
+            f'<a class="btn primary" href="/nova" style="margin-left:auto">+ Nova execução</a>')
     return _page("Runs", "runs", head, f'<div class="grid">{"".join(cards) or "<p class=empty>Sem runs.</p>"}</div>')
 
 
