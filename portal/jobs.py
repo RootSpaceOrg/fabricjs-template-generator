@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS jobs (
   tipo TEXT NOT NULL, slug TEXT NOT NULL, payload TEXT DEFAULT '',
   status TEXT NOT NULL DEFAULT 'pending',
   log TEXT DEFAULT '', criado_em TEXT NOT NULL,
-  iniciado_em TEXT, terminado_em TEXT
+  iniciado_em TEXT, terminado_em TEXT, pai INTEGER
 );
 CREATE TABLE IF NOT EXISTS vereditos (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -45,17 +45,33 @@ def db() -> sqlite3.Connection:
     c = sqlite3.connect(DB, timeout=30)
     c.row_factory = sqlite3.Row
     c.executescript(SCHEMA)
+    cols = {r["name"] for r in c.execute("PRAGMA table_info(jobs)")}
+    if "pai" not in cols:
+        c.execute("ALTER TABLE jobs ADD COLUMN pai INTEGER")
     return c
 
 
-def enfileirar(tipo: str, slug: str, payload: str = "") -> int:
+def enfileirar(tipo: str, slug: str, payload: str = "", pai: int | None = None) -> int:
     if tipo not in TIPOS:
         raise ValueError(f"tipo inválido: {tipo}")
     with db() as c:
         cur = c.execute(
-            "INSERT INTO jobs (tipo, slug, payload, criado_em) VALUES (?,?,?,?)",
-            (tipo, slug, payload, datetime.now().isoformat(timespec="seconds")))
+            "INSERT INTO jobs (tipo, slug, payload, criado_em, pai) VALUES (?,?,?,?,?)",
+            (tipo, slug, payload, datetime.now().isoformat(timespec="seconds"), pai))
         return cur.lastrowid
+
+
+def historico(job_id: int, limite: int = 3) -> list[dict]:
+    """Fio da conversa: sobe pela cadeia de 'pai' até o job original."""
+    fio, atual = [], job_id
+    with db() as c:
+        while atual and len(fio) < limite:
+            j = c.execute("SELECT id, payload, log, pai FROM jobs WHERE id=?", (atual,)).fetchone()
+            if not j:
+                break
+            fio.append({"id": j["id"], "payload": j["payload"] or "", "log": j["log"] or ""})
+            atual = j["pai"]
+    return list(reversed(fio))
 
 
 def registrar_veredito(slug: str, veredito: str, texto: str = "", origem: str = "portal") -> None:

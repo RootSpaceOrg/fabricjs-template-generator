@@ -19,7 +19,7 @@ from fastapi.staticfiles import StaticFiles
 import comandos
 import knowledge as kb
 import telegram as tg
-from jobs import FACTORY, RUNS, db, enfileirar, registrar_veredito
+from jobs import FACTORY, RUNS, db, enfileirar, historico, registrar_veredito
 
 HERE = Path(__file__).parent
 app = FastAPI(title="Fábrica — backoffice")
@@ -263,12 +263,51 @@ def nova_criar(pack: str = Form(...), tema: str = Form(...), env: str = Form("de
     return RedirectResponse("/fila?novo=" + slug, status_code=303)
 
 
+@app.post("/fila/{job_id}/responder")
+def responder_agente(job_id: int, resposta: str = Form(...)):
+    resposta = resposta.strip()
+    if not resposta:
+        return RedirectResponse("/fila", status_code=303)
+    with db() as c:
+        j = c.execute("SELECT * FROM jobs WHERE id=?", (job_id,)).fetchone()
+    if not j:
+        raise HTTPException(404)
+    fio = historico(job_id)
+    partes = ["CONTINUACAO de uma conversa que ficou pendente (fabrica; git pull --rebase antes).",
+              "Historico do que ja aconteceu:"]
+    for h in fio:
+        pedido = h["payload"][:900].strip()
+        disse = (h["log"] or "").split("[plugins]")[0].strip()[-700:]
+        partes.append(f"\n— PEDIDO (job #{h['id']}):\n{pedido}")
+        if disse:
+            partes.append(f"\n— VOCE RESPONDEU:\n{disse}")
+    partes.append(f"\n— RESPOSTA DO GUSTAVO AGORA:\n{resposta}\n")
+    partes.append("Siga com esta resposta. Se ainda faltar algo essencial, PARE e pergunte de novo "
+                  "em vez de chutar. Se estiver claro, execute a tarefa ate o ponto pedido "
+                  "originalmente e reporte.")
+    enfileirar("agente", j["slug"], "\n".join(partes), pai=job_id)
+    return RedirectResponse("/fila", status_code=303)
+
+
 # ── fila ───────────────────────────────────────────────────────────────────
 @app.get("/fila", response_class=HTMLResponse)
 def fila(novo: str = ""):
     with db() as c:
         jobs = c.execute("SELECT * FROM jobs ORDER BY id DESC LIMIT 60").fetchall()
     tpls = {r["slug"]: r["template_id"] for r in _runs()}
+
+    def _linha_resposta(j) -> str:
+        """Job bloqueado (o agente perguntou algo) ganha campo de resposta."""
+        if j["status"] != "bloqueado":
+            return ""
+        pergunta = (j["log"] or "").split("[plugins]")[0].strip()[-700:]
+        return (f'<tr><td colspan="8" style="background:#0b0d11">'
+                f'<p class="h2">O agente perguntou</p><pre style="max-height:220px">{_esc(pergunta)}</pre>'
+                f'<form method="post" action="/fila/{j["id"]}/responder" style="margin-top:10px">'
+                f'<textarea name="resposta" placeholder="Responda aqui — o agente recebe o histórico '
+                f'da conversa junto (ex.: use o pack bold-educacional, nicho laserterapia)"></textarea>'
+                f'<div class="acts" style="margin-top:8px"><button class="primary">Responder e continuar</button>'
+                f'</div></form></td></tr>')
 
     def _run_cell(slug: str) -> str:
         existe = (RUNS / slug / "run.json").exists()
@@ -289,7 +328,8 @@ def fila(novo: str = ""):
 <td class="sub">{(j["criado_em"] or "")[5:16]}</td>
 <td><details><summary>detalhes</summary><pre>{_esc((j["log"] or "—")[-3000:])}</pre>
 {f'<p class="h2" style="margin-top:10px">prompt</p><pre>{_esc(j["payload"][:1200])}</pre>' if j["payload"] else ""}</details></td>
-<td><form class="inline" method="post" action="/fila/{j["id"]}/reenfileirar"><button class="sm">↻</button></form></td></tr>''' for j in jobs)
+<td><form class="inline" method="post" action="/fila/{j["id"]}/reenfileirar"><button class="sm" title="reenviar o mesmo pedido">↻</button></form></td></tr>
+{_linha_resposta(j)}''' for j in jobs)
     head = '<h1>Fila</h1><span class="sub">worker serial · um turno por vez · lock compartilhado com o SSH</span>'
     aviso = (f'<div class="flash">Run <code class="tid">{_esc(novo)}</code> enfileirada — a página '
              f'dela aparece assim que o agente criar a run.</div>') if novo else ""
