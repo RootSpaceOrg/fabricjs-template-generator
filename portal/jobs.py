@@ -111,6 +111,30 @@ def executar(job: sqlite3.Row) -> tuple[int, str]:
     return 1, f"tipo desconhecido: {tipo}"
 
 
+def _avisar(job: sqlite3.Row, rc: int) -> None:
+    """Avisa no Telegram quando o trabalho pesado termina (fita pronta ou falha)."""
+    try:
+        import telegram as tg
+        if not tg.ativo():
+            return
+        slug, tipo = job["slug"], job["tipo"]
+        d = RUNS / slug
+        strip = d / "strip.png"
+        if rc != 0:
+            tg.mandar(f"⚠️ *{slug}*: job `{tipo}` falhou. Veja o log no portal.")
+            return
+        if tipo in ("agente", "corredor") and strip.exists():
+            st = json.loads((d / "run.json").read_text(encoding="utf-8")) if (d / "run.json").exists() else {}
+            judge = (d / "judge-report.md").read_text(encoding="utf-8", errors="replace")                 if (d / "judge-report.md").exists() else ""
+            qa = "QA PASS" if "QA: PASS" in judge else ("QA FAIL" if "QA: FAIL" in judge else "sem judge")
+            resumo = f"{st.get('pack', '?')} · {st.get('n') or '?'} slides · {st.get('stage', '?')} · {qa}"
+            tg.notificar_fita(slug, strip, resumo)
+        elif tipo == "upload":
+            tg.mandar(f"✅ *{slug}* publicada em dev.")
+    except Exception:
+        pass
+
+
 def worker_loop(intervalo: int = 5) -> None:
     DB.parent.mkdir(parents=True, exist_ok=True)
     while True:
@@ -134,6 +158,7 @@ def worker_loop(intervalo: int = 5) -> None:
                       ("done" if rc == 0 else "failed", log,
                        datetime.now().isoformat(timespec="seconds"), job["id"]))
         LOCK.unlink(missing_ok=True)
+        _avisar(job, rc)
 
 
 if __name__ == "__main__":

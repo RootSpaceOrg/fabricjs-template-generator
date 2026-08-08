@@ -16,6 +16,7 @@ from fastapi import FastAPI, Form, HTTPException, Request
 from fastapi.responses import FileResponse, HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 
+import comandos
 import knowledge as kb
 import telegram as tg
 from jobs import FACTORY, RUNS, db, enfileirar, registrar_veredito
@@ -451,7 +452,12 @@ async def tg_webhook(request: Request):
     if msg := upd.get("message"):
         chat = str(msg.get("chat", {}).get("id", ""))
         texto = (msg.get("text") or "").strip()
-        if chat == str(c.get("chat_id")) and texto and chat in AGUARDANDO:
+        if chat != str(c.get("chat_id")):
+            return {"ok": True}
+        if texto.startswith("/") and chat not in AGUARDANDO:
+            tg.mandar(comandos.executar(texto))
+            return {"ok": True}
+        if texto and chat in AGUARDANDO:
             slug = AGUARDANDO.pop(chat)
             registrar_veredito(slug, "reprovado", texto, origem="telegram")
             enfileirar("agente", slug,
