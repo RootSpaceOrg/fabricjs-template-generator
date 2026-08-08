@@ -100,7 +100,9 @@ def _page(title: str, aba: str, head: str, body: str) -> str:
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <link rel="stylesheet" href="/static/portal.css"></head><body>
 <div class="top"><div class="top-in"><span class="brand"><span class="dot"></span>Fábrica</span>
-<nav class="tabs">{nav}</nav><span class="right">kultivai</span></div></div>
+<nav class="tabs">{nav}</nav><span class="right">
+{'<a class="reload" href="" title="Atualizar">↻ Atualizar</a>' if aba in ("runs", "fila") else ""}
+kultivai</span></div></div>
 <div class="wrap"><div class="pagehead">{head}</div>{body}</div></body></html>'''
 
 
