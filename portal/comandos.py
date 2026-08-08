@@ -30,9 +30,15 @@ def slug_novo(pack: str, tema: str) -> str:
     return cand
 
 
-def prompt_nova(slug: str, pack: str, tema: str) -> str:
+def prompt_nova(slug: str, pack: str, tema: str, pedido: str = "") -> str:
     return (
-        f"NOVA RUN pedida pelo Gustavo no Telegram (fabrica; git pull --rebase antes). "
+        f"NOVA RUN pedida pelo Gustavo no Telegram (fabrica; git pull --rebase antes).\n"
+        f'PEDIDO ORIGINAL (interprete): "{pedido or tema}"\n'
+        f"Antes de comecar, RESPONDA no relatorio o que voce entendeu: pack, tema, funil, "
+        f"numero de slides e ambiente. Se o pedido mencionar producao/prod, monte a run em DEV "
+        f"assim mesmo e avise que a publicacao em prod precisa de confirmacao explicita do Gustavo. "
+        f"Se o pedido for ambiguo ou o pack nao servir ao funil pedido (veja fit no pack.json), "
+        f"PARE e pergunte em vez de chutar.\n\n"
         f"Leia README.md, CONTEXT.md, engine/CATALOG.md, knowledge/copy/frameworks.md, "
         f"knowledge/copy/negocios/ (o dossie do negocio do tema), knowledge/design/geral.md e "
         f"packs/{pack}/tecnicas.md + images.md + lessons.md.\n\n"
@@ -75,17 +81,24 @@ def executar(texto: str) -> str:
         return "*Últimas runs*\n" + "\n".join(linhas) if linhas else "Nenhuma run."
 
     if cmd == "nova":
-        pack, _, tema = resto.partition(" ")
-        tema = tema.strip()
+        if not resto:
+            return ("Use `/nova <pedido>` — em linguagem natural, citando o pack.\n"
+                    "Ex.: `/nova emotive-fullbleed-lettering sobre laserterapia, topo de funil`")
         certificados = {p["slug"] for p in kb.packs() if p["status"] == "certificado"}
-        if not pack or not tema:
-            return "Use `/nova <pack> <tema>`\nEx.: `/nova bold-educacional laser dói? o mito`"
-        if pack not in certificados:
-            disp = ", ".join(f"`{s}`" for s in sorted(certificados)) or "nenhum"
-            return f"`{pack}` não é um pack certificado.\nDisponíveis: {disp}"
+        # o pack pode vir em qualquer posição do pedido; o resto o agente interpreta
+        pack = next((s for s in sorted(certificados, key=len, reverse=True) if s in resto), None)
+        if not pack:
+            disp = "\n".join(f"• `{s}`" for s in sorted(certificados)) or "nenhum"
+            return "Não identifiquei o pack no pedido. Cite um destes:\n" + disp
+        tema = resto.replace(pack, "", 1).strip(" ,-—:")
+        if not tema:
+            return f"Faltou o tema. Ex.: `/nova {pack} sobre laserterapia, topo de funil`"
         slug = slug_novo(pack, tema)
-        enfileirar("agente", slug, prompt_nova(slug, pack, tema))
-        return (f"Run `{slug}` enfileirada — pack `{pack}`.\n"
-                f"Tema: _{tema}_\n\nAviso aqui quando a fita estiver pronta.")
+        enfileirar("agente", slug, prompt_nova(slug, pack, tema, pedido=resto))
+        aviso = ("\n\n⚠️ Você mencionou *prod*: a run vai para dev; publicar em produção "
+                 "exige confirmação separada.") if re.search(r"\bprod", resto, re.I) else ""
+        return (f"Run `{slug}` enfileirada — pack `{pack}`, ambiente dev.\n"
+                f"Pedido: _{tema}_{aviso}\n\n"
+                f"O agente confirma o que entendeu e eu aviso quando a fita ficar pronta.")
 
     return f"Comando desconhecido.\n\n{AJUDA}"
