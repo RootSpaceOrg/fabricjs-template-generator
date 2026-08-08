@@ -149,7 +149,11 @@ section.slide[data-invert] .ds-card .ds-cta { background: var(--accent); color: 
 /* cartão: conteúdo ancorado no topo (eyebrow → headline → body lidos em
    sequência). justify-content:center espalhava os filhos e soltava o eyebrow. */
 .ds-card  { background: var(--paper); border-radius: var(--radius); padding: 40px;
-  display: flex; flex-direction: column; gap: 18px; justify-content: flex-start; }
+  display: flex; flex-direction: column; gap: 18px; justify-content: flex-start;
+  /* conteúdo do cartão alinha à ESQUERDA: eyebrow, headline e body compartilham
+     a mesma margem de leitura (centralizar dentro de caixa quebra a coluna) */
+  align-items: flex-start; text-align: left; }
+.ds-card > * { text-align: left; justify-self: start; align-self: flex-start; width: 100%; }
 .ds-card[data-align-v="center"] { justify-content: center; }
 
 /* ── imagens ───────────────────────────────────────────────────────────── */

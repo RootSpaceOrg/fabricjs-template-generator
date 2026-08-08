@@ -40,6 +40,8 @@ grid. Tratamentos do pack, para alternar:
 
 - **Cartão-lembrete COMPACTO** (`ds-card data-elevated` sobre a foto): eyebrow
   do tema + frase em sentence case com a palavra-chave em `<b>` + body curto.
+  **Tudo alinhado à ESQUERDA** (veredito 2026-08-08): eyebrow, headline e body
+  na mesma margem — nada centralizado dentro do cartão.
   REGRA DE OURO (veredito 2026-08-07): **o cartão se ajusta ao texto, o texto
   nunca flutua no cartão** — e "ajustar" inclui CABER: o padding de 40px tem
   que sobrar embaixo. Body de 5+ linhas pede 7 linhas de grid; se o texto

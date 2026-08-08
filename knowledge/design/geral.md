@@ -115,3 +115,10 @@ design — o designer lê o dossiê e responde a ele:
 - **Antes/depois**: comparação lado a lado é lida instantaneamente — evite
   separar em slides distantes.
 - **Case-study / vulnerável**: a peça pede foto/atmosfera, não infográfico.
+
+## Alinhamento dentro de caixas
+
+Cartão/bloco tem coluna de leitura própria: eyebrow, headline e corpo começam
+na MESMA margem esquerda. Centralizar texto dentro de caixa quebra a coluna e
+faz o olho procurar o início de cada linha. Centralização é recurso de slide
+inteiro (capa, fechamento), não de conteúdo dentro de container.
