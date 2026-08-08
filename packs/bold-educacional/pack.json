@@ -13,6 +13,28 @@
     ],
     "melhor_em": "mito, curiosidade e ensino direto com humor; scroll-stop forte"
   },
+  "comporta": {
+    "_nota": "orcamento, nao gate: estourar por pouco e escolha do copy, nao erro",
+    "papeis": {
+      "capa": "headline ate 8 palavras em 2-3 linhas + sub-headline de 1 linha na tarja",
+      "statement": "tese ate 8 palavras + mini-paragrafo ate 3 linhas",
+      "item_foto": "headline ate 8 palavras + apoio ate 2 linhas",
+      "card": "titulo curto + ate 4 linhas (alinhado a esquerda)",
+      "lista": "2 a 4 itens de uma linha",
+      "fechamento": "headline curta + 1-2 linhas + CTA"
+    },
+    "resolve_bem": [
+      "mito-vs-verdade",
+      "enumerado curto",
+      "tese chapada",
+      "erro+correcao"
+    ],
+    "resolve_mal": [
+      "narrativa longa",
+      "tabela",
+      "passo-a-passo com muitos detalhes por passo"
+    ]
+  },
   "slides": {
     "min": 1,
     "max": 8

@@ -5,7 +5,7 @@ Dois modos: **julgar candidatos** (dentro da pipeline) e **eval de regressão** 
 ## Insumos (só isso)
 
 - `screenshots/` + `strip.png` de cada candidato, anonimizados (A/B/C — sem design-notes, sem saber a família de cada um). O `strip.png` é a fita panorâmica: julgue continuidade nele; julgue cada slide isolado nos screenshots (o Instagram mostra um por vez).
-- A storyline do brief (para checar aderência narrativa)
+- A storyline do dossiê (para checar aderência narrativa)
 - Rubrica: os 5 eixos do passo 3 (scroll-stop, craft, narrativa, especificidade, continuidade)
 - `packs/<pack>/reference.png` + `packs/<pack>/exemplos/` (âncora do que é "10"). **Pasta vazia?** Julgue mesmo assim, mas: seja deliberadamente mais duro (sem âncora o score infla) e abra o judge-report com `⚠ golden set ausente — scores não calibrados`.
 
@@ -24,11 +24,13 @@ Responda LITERALMENTE cada item olhando os screenshots; violação → efeito in
 | R1 | Pessoa/avatar no slot de foto que NÃO é o placeholder canônico — decidido pela **flag de procedência** fornecida pelo orquestrador (grep no template.html por `professional-photo-1/2`), NUNCA pela aparência no screenshot. `procedência: canônico` → R1 ok mesmo que o placeholder pareça ilustração (é asset interno; o runtime troca pela foto real do usuário). `procedência: outro` → eliminado. | eliminado |
 | R2 | Texto de leitura cortado pela fronteira ou pelo canvas | eliminado |
 | R3 | Fita monocromática (menos de 2 mudanças de fundo ao longo dos slides) | craft máximo = 5 |
-| R4 | Algum slide com >35% de área visualmente morta | craft máximo = 6 |
+| R4 | Algum slide com >35% de área visualmente morta. **Meça, não estime**: divida o slide em terços horizontais e conte quantos não têm nenhum elemento com peso (texto de leitura, foto, caixa preenchida). Um terço inteiro vazio no meio já viola. Caixa/cartão cuja área é mais que o dobro do texto que carrega conta como área morta. | craft máximo = 6 |
 | R5 | Decoração que imita UI de app (pill, toggle, botão sem função) | craft máximo = 6 |
 | R6 | Contraste ilegível em qualquer copy | eliminado |
+| R7 | **Bloco de leitura partido**: apoio/body separado da sua tese por um vão vazio (tipicamente caído no rodapé). Tese e apoio do mesmo slide formam um bloco contínuo; o que fecha o slide por baixo é CTA, logo ou decor — não texto de leitura. | craft máximo = 6 |
+| R8 | Headline ou caixa tocando a borda do slide sem a margem que os demais slides respeitam | craft máximo = 7 |
 
-O resultado (R1–R6 por candidato) entra no judge-report ANTES dos scores. Regra dura violada não é "compensável" por outros méritos — o teto/eliminação se aplica mesmo que o resto seja excelente.
+O resultado (R1–R8 por candidato) entra no judge-report ANTES dos scores. Regra dura violada não é "compensável" por outros méritos — o teto/eliminação se aplica mesmo que o resto seja excelente.
 
 ### Passo 2: comparação pairwise (não dê notas absolutas primeiro)
 
@@ -47,10 +49,10 @@ Os 3 ajustes de maior impacto no vencedor (pontuais e executáveis em 1 passada 
 ```markdown
 # Judge — <slug>
 Golden set: <N exemplares usados | ⚠ ausente — scores não calibrados>
-## Regras duras (R1–R6)
-| Candidato | R1 avatar | R2 corte | R3 monocromia | R4 área morta | R5 UI-decor | R6 contraste |
-|-----------|-----------|----------|----------------|----------------|--------------|---------------|
-| A | ok/VIOLA | ... | ... | ... | ... | ... |
+## Regras duras (R1–R8)
+| Candidato | R1 avatar | R2 corte | R3 monocromia | R4 área morta | R5 UI-decor | R6 contraste | R7 bloco partido | R8 margem |
+|-----------|-----------|----------|----------------|----------------|--------------|---------------|------------------|-----------|
+| A | ok/VIOLA | ... | ... | ... | ... | ... | ... | ... |
 Eliminados: <X: motivo | nenhum>
 Pairwise: A vs B → <?> (ordem 1), <?> (ordem 2) · <vencedor> vs C → ...
 ## Vencedor: <X>
@@ -84,16 +86,16 @@ Quando qualquer arquivo da fábrica muda, antes do próximo batch de produção:
 
 ## Modo QA — geração por estilo certificado
 
-Para runs em modo pack (`packs/`): **sem pairwise, sem scores** — a estrutura já foi julgada na certificação. Verifique no candidato único: R1–R6 (checklist do passo 1b) + decor/travessia sobre texto, CTA, logo ou professionalPhoto (lei de legibilidade — FAIL) + **narrativa (CONTEXT.md §3b, lendo a copy dos screenshots)**: gancho com tensão/custo (não anúncio de pauta) · zero slides redundantes · todo imperativo com porquê/mecanismo · copy específica do nicho (se serve para outro segmento, FAIL) · CTA conectado ao valor + overflow de copy nos slots (min/max respeitados mas o RENDER cabe?) + imagens geradas coerentes com o registro do pack e com o slide + lessons.md do pack (erros recorrentes dele). Saída: `QA: PASS` ou lista de defeitos (copy do slot X estoura, imagem do slide Y fora do registro). Defeito de layout/estrutura = bug do pack → lessons.md do pack, não conserto na run.
+Para runs em modo pack (`packs/`): **sem pairwise, sem scores** — a estrutura já foi julgada na certificação. Verifique no candidato único: R1–R8 (checklist do passo 1b) + decor/travessia sobre texto, CTA, logo ou professionalPhoto (lei de legibilidade — FAIL) + **narrativa (CONTEXT.md §3b, lendo a copy dos screenshots)**: gancho com tensão/custo (não anúncio de pauta) · zero slides redundantes · todo imperativo com porquê/mecanismo · copy específica do nicho (se serve para outro segmento, FAIL) · CTA conectado ao valor + overflow de copy nos slots (min/max respeitados mas o RENDER cabe?) + imagens geradas coerentes com o registro do pack e com o slide + lessons.md do pack (erros recorrentes dele). Saída: `QA: PASS` ou lista de defeitos (copy do slot X estoura, imagem do slide Y fora do registro). Defeito de layout/estrutura = bug do pack → lessons.md do pack, não conserto na run.
 
 ## Modo 3 — Verificação de fidelidade (pós-swap de imagens ou pós-conversão)
 
-Entrada: strip/screenshots APROVADOS + strip/screenshots ATUAIS. Pergunta única: **é a mesma peça?** Cheque R1–R6 de novo + os 5 itens do gate de fidelidade do FINALIZE. Saída: `FIEL` ou lista de divergências (slide, o que mudou). Sem re-pontuar, sem re-julgar mérito — só fidelidade.
+Entrada: strip/screenshots APROVADOS + strip/screenshots ATUAIS. Pergunta única: **é a mesma peça?** Cheque R1–R8 de novo + os 5 itens do gate de fidelidade do FINALIZE. Saída: `FIEL` ou lista de divergências (slide, o que mudou). Sem re-pontuar, sem re-julgar mérito — só fidelidade.
 
 ## Integridade do relatório (obrigatório)
 
-- O judge-report descreve o estado **no momento do julgamento** — é imutável. Fixes aplicados depois entram no relatório do FINALIZE, nunca editados retroativamente na tabela R1–R6 (dizer "ok — corrigido depois" numa linha de verificação é falsificar a evidência; se violou, a tabela diz VIOLA e o fix é registrado adiante).
-- Toda afirmação da tabela R1–R6 deve ser verificável no screenshot correspondente — cite o slide.
+- O judge-report descreve o estado **no momento do julgamento** — é imutável. Fixes aplicados depois entram no relatório do FINALIZE, nunca editados retroativamente na tabela R1–R8 (dizer "ok — corrigido depois" numa linha de verificação é falsificar a evidência; se violou, a tabela diz VIOLA e o fix é registrado adiante).
+- Toda afirmação da tabela R1–R8 deve ser verificável no screenshot correspondente — cite o slide.
 
 ## Vieses a policiar em si mesmo
 

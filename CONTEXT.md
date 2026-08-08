@@ -3,7 +3,7 @@
 Conhecimento em camadas (o específico vence): **este arquivo (geral)** →
 `knowledge/copy/negocios/<business_type>.md` (por negócio) → pedido do usuário.
 
-Produz `artifacts/runs/<slug>/brief.md`. É aqui que a copy nasce — e onde o slop morre ou nasce. Nada de copy de cabeça.
+Produz `artifacts/runs/<slug>/dossie.md`. É aqui que a copy nasce — e onde o slop morre ou nasce. Nada de copy de cabeça.
 
 ## 1. Dossiê do business_type
 
@@ -82,30 +82,54 @@ Vereditos de 2026-08-05 (var-teste-1/2) destilados em lei geral:
 5. **Especificidade de nicho é obrigatória.** Se a copy serve igual para outro procedimento/segmento, ela reprova. Jargão e fatos do dossiê do negócio DEVEM aparecer — copy intercambiável é o sintoma nº 1 de slop.
 6. **CTA conectado ao valor entregue.** "Consulte sua clínica" é burocracia; o CTA nasce do que a peça acabou de dar ("Salve para consultar antes da 1ª sessão" só funciona se o guia mereceu save).
 
-## 4. Doutrina de design (entra no brief)
+## 4. Doutrina de design (entra no dossiê)
 
 - Jargão do nicho encorajado; CTA de serviço permitido; `professionalPhoto` permitido quando o negócio vende confiança pelo rosto; iconografia do setor permitida.
 - **Composição autoral**: o designer desenha os anchors a partir do conteúdo; catálogo A1–A14 é inspiração, não jaula.
 - **Editabilidade obrigatória**: outro profissional do MESMO nicho adapta a peça no editor (slots `data-*` normais).
 
-## Saída: brief.md
+## Saída: dossie.md
+
+O dossiê decide **o que a mensagem é**; o pack decide **como aquilo vira layout**
+(ver `PACKS.md` §5). A fronteira só funciona se o copy declarar o **formato** de
+cada slide e o **papel** de cada pedaço de texto — sem isso o designer recebe
+strings soltas, inventa uma hierarquia e o apoio acaba flutuando no rodapé.
+
+Antes de escrever, leia `comporta` no `pack.json`: ele diz o orçamento de texto
+por papel e os formatos que o estilo resolve bem ou mal. É **orçamento, não
+gate** — estourar por pouco é escolha do copy; escrever um enumerado de 6 itens
+para um pack que resolve 3 é erro de briefing.
 
 ```markdown
-# Brief — <título>
+# Dossiê — <título>
 ## Business
 business_type: <slug> · tenant: <t> · vertical: <v> · funil: <etapa> · objetivo: <obj> · framework: <fw>
-## Storyline
-S1 (gancho): <linha> → open loop: <pergunta que puxa S2>
-S2 (problema): ...
+## Arco
+<arco escolhido + sabor emocional (gramática do negócio)>
+## Slides
+S1 · formato: gancho
+   eyebrow: <curto ou nenhum>
+   tese: <a frase que domina o slide>
+   apoio: <1-3 linhas, ou nenhum>
+   → open loop: <pergunta que puxa S2>
+
+S2 · formato: enumerado (3 itens)
+   eyebrow: <...>
+   itens: <um> · <dois> · <três>
+   apoio: <nenhum — este pack não comporta apoio em lista>
+   → open loop: <...>
 ...
-## Copy por slide
-<copy real, densidade final, jargão do dossiê, dentro do compliance>
 ## Compliance aplicado
 <regras do arquivo curado que limitam esta peça — ou "arquivo ausente: regra conservadora">
 ## Formato
 1080×1350 · <N> slides · brand colors primary+secondary swappable
-## Referência visual / estilo
-<anexo ou regras textuais do usuário — ou "nenhum">
-## Doutrina de design
-<bloco da seção 4>
 ```
+
+**Formatos** (o vocabulário compartilhado com o pack): `gancho`,
+`tese+ressalva`, `enumerado`, `passo`, `comparacao`, `mito-verdade`,
+`pergunta-resposta`, `dado`, `citacao`, `cta`. Um formato novo é permitido —
+descreva-o em uma linha e o designer decide o tratamento.
+
+**Papéis**: `eyebrow` (rótulo curto), `tese` (a frase que domina), `apoio` (o
+que sustenta a tese), `itens` (elementos de enumerado), `cta`. Tese e apoio são
+**um bloco de leitura** — quem separa os dois na página está errando.

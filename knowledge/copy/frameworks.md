@@ -9,6 +9,15 @@ em cada um); o arco dá o **sabor emocional** (validação, mito→verdade,
 provocação — ver a gramática do acervo no dossiê do negócio). Declare os dois
 no `dossie.md`.
 
+**Formato por slide é obrigatório.** Além do framework da peça inteira, cada
+slide declara o seu formato (`gancho`, `tese+ressalva`, `enumerado`, `passo`,
+`comparacao`, `mito-verdade`, `pergunta-resposta`, `dado`, `citacao`, `cta`) e
+o papel de cada pedaço de texto — ver o modelo em `CONTEXT.md` → "Saída:
+dossie.md". É isso que o designer usa para escolher o tratamento; sem declarar,
+ele recebe strings soltas e inventa uma hierarquia. Antes de escrever, leia
+`comporta` no `pack.json`: escrever um enumerado de 6 itens para um pack que
+resolve 3 é erro de briefing, não do designer.
+
 ## Objetivos (escolha 1 por peça)
 
 | Objetivo | Serve para | Mede-se por | Frameworks fortes | Evite |

@@ -70,10 +70,15 @@ def fatias_nova(slug: str, pack: str | None, tema: str, pedido: str = "",
           f"--vertical {vertical} --env {env}"
           f"{' --subject ' + business if business else ' --subject <nicho do tema>'}"
           f" > artifacts/runs/{slug}/resolve.json;\n"
-          f"3. escreva artifacts/runs/{slug}/dossie.md com OBJETIVO, FRAMEWORK "
-          f"(knowledge/copy/frameworks.md), ARCO (gramatica em knowledge/copy/negocios/), "
-          f"open loop por slide e a copy final de cada slide (CONTEXT.md 3b);\n"
-          f"4. advance ate 'compose' e PARE. Responda em 3 linhas.")
+          f"3. LEIA o bloco 'comporta' de packs/{pk}/pack.json antes de escrever - ele diz o "
+          f"orcamento de texto por papel e o que o estilo resolve bem/mal (orcamento, nao gate);\n"
+          f"4. escreva artifacts/runs/{slug}/dossie.md no formato de 'Saida: dossie.md' do "
+          f"CONTEXT.md: OBJETIVO, FRAMEWORK (knowledge/copy/frameworks.md), ARCO (gramatica em "
+          f"knowledge/copy/negocios/) e, por slide, o FORMATO declarado (gancho, tese+ressalva, "
+          f"enumerado, passo...) com os PAPEIS separados (eyebrow / tese / apoio / itens) mais o "
+          f"open loop. Nao entregue paragrafo corrido: o designer precisa saber qual pedaco e "
+          f"tese e qual e apoio;\n"
+          f"5. advance ate 'compose' e PARE. Responda em 3 linhas.")
 
     f2 = (ctx +
           f"FATIA 2 de 6 - SO AS IMAGENS. O dossie ja existe (leia-o).\n"
@@ -82,10 +87,12 @@ def fatias_nova(slug: str, pack: str | None, tema: str, pedido: str = "",
           f"transparente com blur na geracao; NUNCA gere pessoa para o slot professionalPhoto - "
           f"esse slot usa o placeholder canonico do motor). Liste os arquivos e PARE.")
 
-    regras = (f"Siga engine/CATALOG.md, packs/{pk}/tecnicas.md (ANATOMIA POR TIPO DE SLIDE: "
-              f"nenhum slide e so texto - minimo 2 elementos com peso) e "
-              f"knowledge/design/geral.md. PROIBIDO copiar/adaptar fita.html de outra run - "
-              f"olhar exemplo do pack e permitido, copiar nao.\n")
+    regras = (f"Siga engine/CATALOG.md, packs/{pk}/tecnicas.md (tabela 'como este estilo resolve "
+              f"cada formato': o dossie diz o FORMATO e os PAPEIS, voce escolhe o tratamento) e "
+              f"knowledge/design/geral.md. Nenhum slide e so texto - minimo 2 elementos com peso. "
+              f"TESE E APOIO SAO UM BLOCO DE LEITURA: apoio solto no rodape, longe da tese, e "
+              f"defeito. PROIBIDO copiar/adaptar fita.html de outra run - olhar exemplo do pack "
+              f"e permitido, copiar nao.\n")
 
     f3a = (ctx + regras +
            f"FATIA 3 de 6 - SO A ABERTURA. Dossie e assets ja existem (leia dossie.md, "
@@ -98,8 +105,10 @@ def fatias_nova(slug: str, pack: str | None, tema: str, pedido: str = "",
            f"FATIA 4 de 6 - SO O MIOLO. O fita.html ja existe com a abertura (leia-o).\n"
            f"Acrescente as <section data-role=\"item\"> do miolo conforme o dossie "
            f"(a fita tem {n or 'o total definido em run.json'} slides no total, contando "
-           f"abertura e fechamento). VARIE o tratamento entre elas (foto, chapado, card sobre "
-           f"foto, lista) - nao repita o mesmo esqueleto. Nao rode assemble. Responda em 2 linhas.")
+           f"abertura e fechamento). Para CADA slide, use o formato declarado no dossie e o "
+           f"tratamento correspondente na tabela do tecnicas.md; o apoio acompanha a tese no "
+           f"mesmo bloco. VARIE o tratamento entre os slides - nao repita o mesmo esqueleto. "
+           f"Nao rode assemble. Responda em 2 linhas.")
 
     f3c = (ctx + regras +
            f"FATIA 5 de 6 - FECHAMENTO E RENDER. O fita.html ja tem abertura e miolo (leia-o).\n"

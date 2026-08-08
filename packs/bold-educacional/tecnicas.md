@@ -4,6 +4,24 @@ Estilo de TOPO de funil com duas caras que se alternam na mesma fita:
 **capa meme scroll-stop** e **slides statement chapados**. A cor saturada
 dominante é a PRIMARY do usuário (fundos chapados e tarjas).
 
+## Como este estilo resolve cada formato
+
+O dossiê declara o formato de cada slide e o papel de cada pedaço
+(`eyebrow` / `tese` / `apoio` / `itens`); aqui está o tratamento deste pack.
+Tese e apoio são **um bloco de leitura** — apoio solto no rodapé é defeito.
+
+| Formato que chega | Tratamento |
+|---|---|
+| `gancho` | capa meme (abaixo), tese na headline empilhada e apoio na tarja |
+| `tese+ressalva` | statement chapado: tese gigante + ressalva no mini-parágrafo |
+| `mito-verdade` | par de statements — mito em chapado, verdade no seguinte |
+| `enumerado` (2–4) | statement com os itens em lista curta, um por linha |
+| `dado` / `citacao` | statement chapado com o número em destaque + fonte no apoio |
+| `cta` | fechamento com headline curta + CTA em tarja |
+
+`resolve_mal` (ver `pack.json`): narrativa longa, tabela, passo-a-passo com
+muito detalhe por passo.
+
 ## Capa meme (scroll-stop)
 
 1. Foto full-bleed INUSITADA (`ds-photo` 1/1/13/13 static+layer): animal com

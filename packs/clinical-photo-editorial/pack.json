@@ -14,6 +14,28 @@
     ],
     "melhor_em": "explicação e prova com foto real; capa também segura topo quando o tema é sério"
   },
+  "comporta": {
+    "_nota": "orcamento, nao gate: estourar por pouco e escolha do copy, nao erro",
+    "papeis": {
+      "capa": "headline ate 6 palavras + 1 linha de apoio; sem lista",
+      "item_foto": "headline ate 8 palavras + apoio ate 3 linhas",
+      "item_chapado": "tese ate 10 palavras + apoio ate 3 linhas",
+      "card_sobre_foto": "titulo curto + ate 3 linhas (a caixa cresce com o texto)",
+      "lista": "2 a 3 itens de UMA linha; sem apoio extra",
+      "fechamento": "headline ate 6 palavras + 2 linhas + CTA"
+    },
+    "resolve_bem": [
+      "tese+ressalva",
+      "passo-a-passo",
+      "comparacao",
+      "explicacao com foto real"
+    ],
+    "resolve_mal": [
+      "enumerado longo (>3 itens)",
+      "tabela",
+      "numero gigante com muito texto"
+    ]
+  },
   "slides": {
     "min": 5,
     "max": 8

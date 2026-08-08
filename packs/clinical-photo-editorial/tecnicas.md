@@ -12,19 +12,34 @@ gerações. Exemplos em `exemplos/` (partida, nunca fôrma).
    assimétrica fundindo no papel menta.
 3. Composição assimétrica em camadas; pills outline; clean robusto.
 
-## Anatomia por tipo de slide (obrigatório — nenhum slide é só texto)
+## Como este estilo resolve cada formato
 
-**Todo slide tem no mínimo DOIS elementos com peso.** Headline sozinha com
-fundo liso é slide inacabado (ver `knowledge/design/geral.md`).
+O dossiê declara o **formato** de cada slide e o **papel** de cada pedaço
+(`eyebrow` / `tese` / `apoio` / `itens`). Aqui está como o clinical trata cada
+um. O tratamento é escolha sua — o que não é opcional é o conteúdo chegar
+inteiro na página, com tese e apoio no MESMO bloco de leitura.
 
-| Papel | O que o slide TEM que ter |
+**Todo slide tem no mínimo DOIS elementos com peso**; headline sozinha em fundo
+liso é slide inacabado (ver `knowledge/design/geral.md`).
+
+| Formato que chega | Como o clinical resolve |
 |---|---|
-| **Abertura** | `ds-slot professionalPhoto` (cutout, placeholder canônico do motor — NUNCA pessoa gerada por IA) + headline `size="lg"` em duo-tom entrelaçada com o cutout + eyebrow/stamp + 1–2 decors do tema com `data-overhang` |
-| **Item com foto** | foto do tema ocupando um terço/metade real do slide + número ou eyebrow + headline + body de 2–4 linhas. A foto é protagonista, não enfeite de canto |
-| **Item chapado** (`data-invert`) | frase-tese grande em paper + mini-parágrafo de apoio LOGO ABAIXO (bloco de leitura contínuo, sem vão) + 1 decor ou número gigante como âncora |
-| **Card sobre foto** | foto full-bleed + `ds-block data-overlay data-layer` + `ds-card data-elevated` COMPACTO (dimensionado pelo texto, alinhado à esquerda, assimétrico) |
-| **Lista/bullets** | `ds-block` de acento com 2–3 itens curtos (uma linha cada) + eyebrow + colagem ou decor |
-| **Fechamento** | `professionalPhoto` (espelha a abertura) + headline + body curto + `ds-cta` + logo |
+| `gancho` (capa) | `professionalPhoto` (placeholder canônico do motor) + tese `size="lg"` em duo-tom entrelaçada com o cutout + eyebrow/stamp + 1–2 decors com `data-overhang`. O apoio fica logo abaixo da tese, nunca no rodapé |
+| `tese+ressalva` | slide chapado (`data-invert`): tese grande em paper + ressalva LOGO ABAIXO, mesmo bloco. Âncora: número gigante em `data-layer` ou decor |
+| `enumerado` (2–3) | `ds-block` de acento com os itens, um por linha, + eyebrow. Se vier apoio junto, ele vai **acima** do bloco, colado ao eyebrow — nunca sobrando no rodapé |
+| `passo` | foto do tema ocupando um terço/metade real + número + tese + apoio de 2–4 linhas. A foto é protagonista, não enfeite de canto |
+| `comparacao` | dois blocos assimétricos no mesmo slide, o segundo em accent; ou par de fotos contínuas atravessando dois slides |
+| `dado` / `citacao` | full-bleed + `data-overlay` + `ds-card data-elevated` compacto, dimensionado pelo texto e alinhado à esquerda |
+| `cta` (fechamento) | `professionalPhoto` espelhando a capa + tese + apoio curto + `ds-cta` + logo |
+
+**Formato que o pack resolve mal** (ver `comporta.resolve_mal` no `pack.json`):
+enumerado com mais de 3 itens, tabela, número gigante acompanhado de texto
+longo. Se o dossiê pedir isso, resolva com o tratamento mais próximo e registre
+em `lessons.md` — não invente um layout que o estilo não tem.
+
+**Onde o miolo desanda** (2026-08-08): o apoio desce para o rodapé e abre um vão
+morto no meio do slide. Tese e apoio são um bloco só; o que fecha o slide por
+baixo é CTA, logo ou decor — não texto de leitura.
 
 ## Técnicas de composição
 

@@ -51,6 +51,23 @@ regra**: diz onde o estilo brilha. Usar fora do fit é permitido — o dossiê s
 precisa declarar por que aquele estilo serve ao pedido, e a revisão julga.
 Bloquear uma run só porque o funil pedido não está no `fit` é rigidez indevida.
 
+## 4c. Fronteira copy × design (quem decide o quê)
+
+| Camada | Decide | NÃO decide |
+|---|---|---|
+| **Dossiê** (`CONTEXT.md`) | a mensagem; o **formato** de cada slide (`gancho`, `tese+ressalva`, `enumerado`…); o **papel** de cada pedaço (`eyebrow`/`tese`/`apoio`/`itens`); quantos slides; onde o CTA faz sentido | como aquilo vira layout |
+| **Pack** (`tecnicas.md`) | brand (tokens) + como **este estilo** resolve cada formato + assinaturas de composição | o que a peça diz; quantos slides |
+
+O pack **não** é só brand: as assinaturas de composição (duo-tom entrelaçado,
+bokeh cortado pela borda, colagem 3D) são o que distingue um pack do outro —
+sem elas, três packs com a mesma paleta produzem a mesma peça.
+
+O campo `comporta` do `pack.json` é a ponte: diz ao copy o **orçamento de texto
+por papel** e os formatos que o estilo `resolve_bem`/`resolve_mal`, para ele não
+escrever o que o pack não consegue aplicar. É **orçamento, não gate** — nenhuma
+validação automática barra uma headline uma palavra mais longa. Entra ali só o
+que mudaria a copy se o autor soubesse; técnica de composição não entra.
+
 ## 5. Vida do pack
 
 - Lessons por pack; 2× recorrente → vira técnica/lei em tecnicas.md → **re-certificar** (versão +1, nova entrada em certification/).
