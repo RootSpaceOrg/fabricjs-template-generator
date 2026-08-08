@@ -35,7 +35,7 @@ def _editor_url(slug: str, tid: str | None) -> str | None:
         dom = r.get("domain")
     except Exception:
         dom = None
-    return f"https://{dom}/preencher/{tid}" if dom else None
+    return f"https://{dom}/editor/{tid}" if dom else None
 
 
 # ── helpers ────────────────────────────────────────────────────────────────
