@@ -185,7 +185,7 @@ def worker_loop(intervalo: int = 5) -> None:
             status = "bloqueado"
         # o agente sai com 0 mesmo quando ele proprio reprova a fita: o disco decide,
         # nao o exit code. Sem judge com PASS, a fatia final nao esta feita.
-        if (rc == 0 and job["tipo"] == "agente" and "FATIA 4 de" in (job["payload"] or "")):
+        if (rc == 0 and job["tipo"] == "agente" and "FATIA 6 de" in (job["payload"] or "")):
             rel = RUNS / job["slug"] / "judge-report.md"
             if "QA: PASS" not in (rel.read_text(encoding="utf-8", errors="replace")
                                   if rel.exists() else ""):

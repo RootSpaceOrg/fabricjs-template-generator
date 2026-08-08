@@ -49,9 +49,10 @@ def _cabeca(slug: str, pedido: str, tema: str, tenant: str, vertical: str,
 def fatias_nova(slug: str, pack: str | None, tema: str, pedido: str = "",
                 tenant: str = "kultivai", vertical: str = "health",
                 env: str = "dev", business: str = "", n: str = "") -> list[str]:
-    """A criacao vira 4 turnos curtos - a janela do agente nao aguenta tudo junto.
+    """A criacao vira 6 turnos curtos - a janela do agente nao aguenta tudo junto.
 
-    1. dossie / 2. imagens / 3. fita+render / 4. convert+judge ate PASS.
+    dossie / imagens / abertura / miolo / fechamento+render / judge ate PASS.
+    Compor a fita inteira nao cabia numa janela: por isso ela vem em 3 pedacos.
     Cada fatia comeca relendo o estado do disco, entao e retomavel.
     """
     ctx = _cabeca(slug, pedido, tema, tenant, vertical, env, business, n, pack)
@@ -62,7 +63,7 @@ def fatias_nova(slug: str, pack: str | None, tema: str, pedido: str = "",
     pk = pack or "<o pack escolhido>"
 
     f1 = (ctx + escolha +
-          f"FATIA 1 de 4 - SO O DOSSIE. Nao componha, nao gere imagem.\n"
+          f"FATIA 1 de 6 - SO O DOSSIE. Nao componha, nao gere imagem.\n"
           f"1. python3 engine/run.py new {slug} --env {env} --pack {pk} "
           f"--n {n or '<dentro do range do pack>'} (se a run ja existir, siga);\n"
           f"2. resolve: python3 engine/tools/resolve_tenant.py --tenant {tenant} "
@@ -75,23 +76,40 @@ def fatias_nova(slug: str, pack: str | None, tema: str, pedido: str = "",
           f"4. advance ate 'compose' e PARE. Responda em 3 linhas.")
 
     f2 = (ctx +
-          f"FATIA 2 de 4 - SO AS IMAGENS. O dossie ja existe (leia-o).\n"
+          f"FATIA 2 de 6 - SO AS IMAGENS. O dossie ja existe (leia-o).\n"
           f"Gere em artifacts/runs/{slug}/assets/ as fotos e colagens/decors que a fita vai usar, "
           f"seguindo packs/{pk}/images.md (foto de miolo pensada para receber cartao; decor "
           f"transparente com blur na geracao; NUNCA gere pessoa para o slot professionalPhoto - "
           f"esse slot usa o placeholder canonico do motor). Liste os arquivos e PARE.")
 
-    f3 = (ctx +
-          f"FATIA 3 de 4 - SO A FITA. Dossie e assets ja existem (leia dossie.md, liste assets/).\n"
-          f"PROIBIDO copiar/adaptar fita.html de outra run - cada run compoe do zero a partir "
-          f"do SEU dossie e dos SEUS assets. Olhar exemplos do pack e permitido; copiar nao.\n"
-          f"Escreva artifacts/runs/{slug}/fita.html seguindo engine/CATALOG.md, "
-          f"packs/{pk}/tecnicas.md (ANATOMIA POR TIPO DE SLIDE: nenhum slide e so texto - "
-          f"minimo 2 elementos com peso) e knowledge/design/geral.md. "
-          f"Depois rode 'node engine/assemble.js artifacts/runs/{slug}'. "
-          f"Responda so com o caminho do strip.png.")
+    regras = (f"Siga engine/CATALOG.md, packs/{pk}/tecnicas.md (ANATOMIA POR TIPO DE SLIDE: "
+              f"nenhum slide e so texto - minimo 2 elementos com peso) e "
+              f"knowledge/design/geral.md. PROIBIDO copiar/adaptar fita.html de outra run - "
+              f"olhar exemplo do pack e permitido, copiar nao.\n")
+
+    f3a = (ctx + regras +
+           f"FATIA 3 de 6 - SO A ABERTURA. Dossie e assets ja existem (leia dossie.md, "
+           f"liste assets/).\n"
+           f"Crie artifacts/runs/{slug}/fita.html com o esqueleto (head + main.fita) e "
+           f"APENAS a <section data-role=\"abertura\">. Nao escreva os outros slides ainda. "
+           f"Nao rode assemble. Responda em 2 linhas.")
+
+    f3b = (ctx + regras +
+           f"FATIA 4 de 6 - SO O MIOLO. O fita.html ja existe com a abertura (leia-o).\n"
+           f"Acrescente as <section data-role=\"item\"> do miolo conforme o dossie "
+           f"(a fita tem {n or 'o total definido em run.json'} slides no total, contando "
+           f"abertura e fechamento). VARIE o tratamento entre elas (foto, chapado, card sobre "
+           f"foto, lista) - nao repita o mesmo esqueleto. Nao rode assemble. Responda em 2 linhas.")
+
+    f3c = (ctx + regras +
+           f"FATIA 5 de 6 - FECHAMENTO E RENDER. O fita.html ja tem abertura e miolo (leia-o).\n"
+           f"1. acrescente a <section data-role=\"fechamento\"> (espelha a abertura: "
+           f"professionalPhoto + CTA + logo);\n"
+           f"2. rode 'node engine/assemble.js artifacts/runs/{slug}';\n"
+           f"3. responda so com o caminho do strip.png.")
 
     f4 = (ctx +
+          f"FATIA 6 de 6 - CORREDOR E JUDGE ATE PASSAR.\n"
           f"FATIA 4 de 4 - CORREDOR E JUDGE ATE PASSAR.\n"
           f"1. 'node engine/convert.js artifacts/runs/{slug} artifacts/runs/{slug}/output "
           f"--slug {slug}' - rejeicao = corrija o HTML e repita (nunca edite JSON);\n"
@@ -100,7 +118,7 @@ def fatias_nova(slug: str, pack: str | None, tema: str, pedido: str = "",
           f"4. PARE no judge com PASS - nao escreva fidelity nem publique (isso e do Gustavo).\n"
           f"Reporte o veredito e quantas voltas precisou.")
 
-    return [f1, f2, f3, f4]
+    return [f1, f2, f3a, f3b, f3c, f4]
 
 
 def prompt_nova(slug: str, pack: str | None, tema: str, pedido: str = "",
