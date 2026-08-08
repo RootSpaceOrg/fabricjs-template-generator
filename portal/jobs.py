@@ -183,6 +183,13 @@ def worker_loop(intervalo: int = 5) -> None:
                 and ("NOVA RUN" in (job["payload"] or "") or "FATIA 1 de" in (job["payload"] or ""))
                 and not (RUNS / job["slug"] / "run.json").exists()):
             status = "bloqueado"
+        # o agente sai com 0 mesmo quando ele proprio reprova a fita: o disco decide,
+        # nao o exit code. Sem judge com PASS, a fatia final nao esta feita.
+        if (rc == 0 and job["tipo"] == "agente" and "FATIA 4 de" in (job["payload"] or "")):
+            rel = RUNS / job["slug"] / "judge-report.md"
+            if "QA: PASS" not in (rel.read_text(encoding="utf-8", errors="replace")
+                                  if rel.exists() else ""):
+                status = "failed"
         with db() as c:
             c.execute("UPDATE jobs SET status=?, log=?, terminado_em=? WHERE id=?",
                       (status, log, datetime.now().isoformat(timespec="seconds"), job["id"]))

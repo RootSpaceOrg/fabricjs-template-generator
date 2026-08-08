@@ -83,6 +83,8 @@ def fatias_nova(slug: str, pack: str | None, tema: str, pedido: str = "",
 
     f3 = (ctx +
           f"FATIA 3 de 4 - SO A FITA. Dossie e assets ja existem (leia dossie.md, liste assets/).\n"
+          f"PROIBIDO copiar/adaptar fita.html de outra run - cada run compoe do zero a partir "
+          f"do SEU dossie e dos SEUS assets. Olhar exemplos do pack e permitido; copiar nao.\n"
           f"Escreva artifacts/runs/{slug}/fita.html seguindo engine/CATALOG.md, "
           f"packs/{pk}/tecnicas.md (ANATOMIA POR TIPO DE SLIDE: nenhum slide e so texto - "
           f"minimo 2 elementos com peso) e knowledge/design/geral.md. "
