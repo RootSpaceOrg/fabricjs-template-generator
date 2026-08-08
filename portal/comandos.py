@@ -85,8 +85,17 @@ def prompt_nova(slug: str, pack: str | None, tema: str, pedido: str = "",
         "2. gere as imagens do tema (fotos e colagens/decors) seguindo images.md do pack;\n"
         "3. compose: UM fita.html seguindo o CATALOG e as tecnicas do pack (miolo com objeto de "
         "conteudo, hierarquia, contraste pelo fundo da caixa, CTA so onde ha acao);\n"
-        f"4. rode 'node engine/assemble.js artifacts/runs/{slug}' e PARE ai.\n\n"
-        "O corredor (convert/judge) e a revisao vem depois. Reporte o caminho do strip.png."
+        f"4. corredor: 'node engine/assemble.js artifacts/runs/{slug}' e depois "
+        f"'node engine/convert.js artifacts/runs/{slug} artifacts/runs/{slug}/output "
+        f"--slug {slug}' (rejeicao do convert = corrija o HTML e repita; nunca edite JSON);\n"
+        "5. JUDGE ATE PASSAR: avance ate o estagio judge e julgue (JUDGE.md modo QA + check "
+        "narrativo). Se der FAIL, VOCE MESMO corrige o fita.html, re-renderiza, reconverte e "
+        "RE-JULGA — repita ate QA: PASS (limite 3 voltas; se nao passar, PARE e explique o que "
+        "trava). A fita so vai para o Gustavo depois de passar no judge;\n"
+        "6. PARE no judge com PASS. NAO escreva fidelity nem publique — a aprovacao do Gustavo "
+        "e que libera a publicacao.\n\n"
+        "Reporte: o que voce entendeu, o pack escolhido (se a escolha foi sua), quantas voltas "
+        "de judge precisou e o caminho do strip.png."
     )
     return cabeca + leitura + contexto + comando + resolve + corpo
 

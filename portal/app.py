@@ -504,12 +504,12 @@ def kb_save(rel: str = Form(...), conteudo: str = Form(...), msg: str = Form("")
 
 
 def _aprovar(slug: str, origem: str) -> str:
-    """Aprovar = fechar o ciclo: registra o veredito e enfileira UM turno do
-    agente para escrever a fidelidade, avançar e publicar em dev.
+    """Aprovar = seu veredito fecha o ciclo: um turno do agente escreve a
+    fidelidade, avança e publica em dev.
 
-    Gates preservados: só encadeia com QA PASS, e o runner ainda barra o
-    avanço se a fidelidade não fechar. Publicar manualmente continua existindo
-    como escape (botão 'Publicar em dev').
+    O judge NÃO é pré-requisito da sua aprovação (você já viu a fita) — mas
+    continua como rede de proteção: se ele achar defeito objetivo, o agente
+    para e avisa em vez de publicar.
     """
     registrar_veredito(slug, "aprovado", origem=origem)
     d = RUNS / slug
@@ -521,18 +521,24 @@ def _aprovar(slug: str, origem: str) -> str:
     if estagio in ("upload", "done"):
         return f"Aprovado ✓ (já publicada — estágio {estagio})"
     judge = _read(d / "judge-report.md")
-    if "QA: PASS" not in judge:
-        motivo = "judge reprovou (QA: FAIL)" if "QA: FAIL" in judge else "ainda não há judge-report"
-        return f"Aprovado ✓ mas NÃO segui: {motivo}. Rode o judge antes."
+    passou = "QA: PASS" in judge
     enfileirar("agente", slug,
                f"O Gustavo APROVOU a fita da run {slug} (fabrica; git pull --rebase antes). "
-               f"Feche o ciclo: (1) confira o estagio com python3 engine/run.py status {slug}; "
-               f"(2) se ainda estiver em judge, advance; (3) escreva fidelity.md comparando o JSON "
-               f"convertido com o strip aprovado (VEREDITO: FIEL, sem checklist em aberto); "
-               f"(4) advance; (5) faca o upload em dev (template-summary.md se faltar), "
-               f"set template_id e advance ate done; (6) commite conhecimento e reporte o template_id. "
-               f"Se algum gate reprovar, PARE e explique — nao invente evidencia.")
-    return f"Aprovado ✓ — turno enfileirado: fidelidade + publicação em dev (de {estagio})."
+               f"Feche o ciclo ate a publicacao em dev:\n"
+               f"1. python3 engine/run.py status {slug} para ver onde esta;\n"
+               + ("2. o judge ja passou (QA: PASS) — siga.\n" if passou else
+                  "2. ainda nao ha judge com PASS: julgue agora (JUDGE.md modo QA + check "
+                  "narrativo). Se achar defeito OBJETIVO (texto cortado, contraste ilegivel, "
+                  "sobreposicao, R1-R6), NAO publique: corrija o HTML, re-renderize, re-julgue; "
+                  "se nao resolver em 2 voltas, PARE e me avise o que trava.\n")
+               + "3. escreva fidelity.md comparando o JSON convertido com o strip aprovado "
+                 "(VEREDITO: FIEL, sem checklist em aberto);\n"
+                 "4. advance ate upload, publique em dev (template-summary.md se faltar), "
+                 "set template_id e advance ate done;\n"
+                 "5. commite conhecimento e reporte o template_id.\n"
+                 "O veredito do Gustavo ja esta dado: nao pergunte de novo se pode publicar.")
+    return (f"Aprovado ✓ — publicando em dev"
+            + ("." if passou else " (o agente roda o judge antes; se achar defeito, avisa).")) 
 
 
 # ── telegram ───────────────────────────────────────────────────────────────

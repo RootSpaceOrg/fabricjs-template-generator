@@ -21,10 +21,14 @@ certificado exigir Claude no meio para gerar um post, o pack não estava pronto.
 ## 1. Produção (o fluxo normal)
 
 ```
-Gustavo/usuário pede → agente roda a skill template-factory:
-resolve → context (dossiê) → compose (fita.html) → render → convert →
-judge → finalize → upload
+pedido (portal/Telegram) → agente: resolve → dossiê → fita.html → render →
+convert → JUDGE ATÉ PASSAR (o agente corrige e re-julga sozinho, até 3 voltas)
+→ Gustavo recebe a fita já limpa → aprova → agente: fidelidade → publica em dev
 ```
+
+O judge roda **antes** do Gustavo: ele é a peneira automática, não um porteiro
+depois do veredito humano. Aprovar significa "pode publicar" — o agente só
+interrompe se encontrar defeito objetivo que o strip não revelava.
 
 Claude não participa. Se a run travar por limitação do motor, aí sim vira
 tarefa de Claude — **consertar o motor**, não a peça.
