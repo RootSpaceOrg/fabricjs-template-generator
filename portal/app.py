@@ -164,8 +164,8 @@ def run_detail(slug: str):
 <div class="acts">
 <form class="inline" method="post" action="/run/{slug}/job/corredor"><button class="primary">▶ Rodar corredor</button></form>
 <form class="inline" method="post" action="/run/{slug}/job/advance"><button>⏭ Avançar estágio</button></form>
-<form class="inline" method="post" action="/run/{slug}/job/upload"><button>⬆ Publicar em dev</button></form>
-<form class="inline" method="post" action="/run/{slug}/veredito"><input type="hidden" name="veredito" value="aprovado"><button class="ok">✓ Aprovar</button></form>
+<form class="inline" method="post" action="/run/{slug}/job/upload"><button>⬆ Publicar (manual)</button></form>
+<form class="inline" method="post" action="/run/{slug}/veredito"><input type="hidden" name="veredito" value="aprovado"><button class="ok">✓ Aprovar e publicar</button></form>
 {'<form class="inline" method="post" action="/run/' + slug + '/notificar"><button>✈ Enviar ao Telegram</button></form>' if tg.ativo() else ''}
 </div>
 <form method="post" action="/run/{slug}/veredito" style="margin-bottom:18px">
@@ -390,26 +390,35 @@ def kb_save(rel: str = Form(...), conteudo: str = Form(...), msg: str = Form("")
 
 
 def _aprovar(slug: str, origem: str) -> str:
-    """Registra o veredito e avança — com dois gates:
-    (1) só avança se o judge deu PASS; (2) nunca ultrapassa finalize
-    (publicar em dev é sempre decisão explícita e separada)."""
+    """Aprovar = fechar o ciclo: registra o veredito e enfileira UM turno do
+    agente para escrever a fidelidade, avançar e publicar em dev.
+
+    Gates preservados: só encadeia com QA PASS, e o runner ainda barra o
+    avanço se a fidelidade não fechar. Publicar manualmente continua existindo
+    como escape (botão 'Publicar em dev').
+    """
     registrar_veredito(slug, "aprovado", origem=origem)
     d = RUNS / slug
     try:
         st = json.loads((d / "run.json").read_text(encoding="utf-8"))
     except Exception:
-        return "Aprovado — run sem estado legível, nada avançado."
+        return "Aprovado — run sem estado legível, nada enfileirado."
     estagio = st.get("stage")
-    judge = _read(d / "judge-report.md")
     if estagio in ("upload", "done"):
-        return f"Aprovado ✓ (já está em {estagio})"
-    if estagio == "finalize":
-        return "Aprovado ✓ — parado antes do upload: publicar é decisão separada."
+        return f"Aprovado ✓ (já publicada — estágio {estagio})"
+    judge = _read(d / "judge-report.md")
     if "QA: PASS" not in judge:
         motivo = "judge reprovou (QA: FAIL)" if "QA: FAIL" in judge else "ainda não há judge-report"
-        return f"Aprovado ✓ mas NÃO avancei: {motivo}."
-    enfileirar("advance", slug)
-    return f"Aprovado ✓ — avanço enfileirado (de {estagio}; paro antes do upload)."
+        return f"Aprovado ✓ mas NÃO segui: {motivo}. Rode o judge antes."
+    enfileirar("agente", slug,
+               f"O Gustavo APROVOU a fita da run {slug} (fabrica; git pull --rebase antes). "
+               f"Feche o ciclo: (1) confira o estagio com python3 engine/run.py status {slug}; "
+               f"(2) se ainda estiver em judge, advance; (3) escreva fidelity.md comparando o JSON "
+               f"convertido com o strip aprovado (VEREDITO: FIEL, sem checklist em aberto); "
+               f"(4) advance; (5) faca o upload em dev (template-summary.md se faltar), "
+               f"set template_id e advance ate done; (6) commite conhecimento e reporte o template_id. "
+               f"Se algum gate reprovar, PARE e explique — nao invente evidencia.")
+    return f"Aprovado ✓ — turno enfileirado: fidelidade + publicação em dev (de {estagio})."
 
 
 # ── telegram ───────────────────────────────────────────────────────────────

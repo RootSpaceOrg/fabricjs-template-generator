@@ -52,7 +52,7 @@ def notificar_fita(slug: str, strip: Path | None, resumo: str, template_url: str
     if not ativo():
         return False
     c = conf()
-    botoes = [[{"text": "✓ Aprovar", "callback_data": f"ok:{slug}"},
+    botoes = [[{"text": "✓ Aprovar e publicar", "callback_data": f"ok:{slug}"},
                {"text": "✕ Reprovar", "callback_data": f"no:{slug}"}],
               [{"text": "Abrir no portal", "url": f"{c.get('base','')}/run/{slug}"}]]
     if template_url:
