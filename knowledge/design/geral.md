@@ -122,3 +122,22 @@ Cartão/bloco tem coluna de leitura própria: eyebrow, headline e corpo começam
 na MESMA margem esquerda. Centralizar texto dentro de caixa quebra a coluna e
 faz o olho procurar o início de cada linha. Centralização é recurso de slide
 inteiro (capa, fechamento), não de conteúdo dentro de container.
+
+## Slide vazio é defeito (não é minimalismo)
+
+Headline no topo + uma linha de apoio + 60% de fundo liso não é respiro: é
+slide inacabado. Todo slide precisa de PELO MENOS DOIS elementos com peso —
+headline + (foto | cartão | bloco | colagem | número gigante | lista). Se o
+conteúdo daquele slide não sustenta dois elementos, ele não deveria existir:
+funda com o vizinho e faça uma fita mais curta.
+
+Fita longa com slides vazios é pior que fita curta densa. Antes de pedir 7
+slides, confira se há conteúdo para 7.
+
+## Avatar ilustrado nunca substitui o slot da plataforma
+
+Pessoa "genérica" gerada por IA (3D, cartoon, render) no lugar de
+`professionalPhoto` é violação R1 do judge: o runtime troca o slot pela foto
+real do usuário, então a peça precisa usar o placeholder canônico do motor
+(engine/assets/professional-photo-*.b64.txt). Ilustração de pessoa só entra se
+o pack pedir explicitamente como elemento decorativo — nunca como o profissional.
