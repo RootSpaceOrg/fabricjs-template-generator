@@ -236,7 +236,7 @@ def pack_view(slug: str):
     if not p:
         raise HTTPException(404)
     cls = "s-done" if p["status"] == "certificado" else "s-draft"
-    ref = (f'<div class="strip" style="max-width:420px"><img src="/packs/{slug}/reference.png"></div>'
+    ref = (f'<div class="ref"><img src="/packs/{slug}/reference.png"></div>'
            if p["tem_reference"] else "")
     ass = "".join(f"<li>{_esc(a)}</li>" for a in p["assinaturas"])
     toks = "".join(
@@ -245,9 +245,11 @@ def pack_view(slug: str):
         ("paper", "ink", "muted", "accent", "accent-ink", "font-display", "font-body"))
     files = "".join(f'<a class="btn sm" href="/conhecimento/editar?rel={f["rel"]}">{f["nome"]}</a> '
                     for f in p["arquivos"])
-    fitas = "".join(f'''<div style="margin-bottom:22px">
-<div class="meta" style="margin-bottom:8px"><strong style="font-size:14.5px">{f["nome"]}</strong>
-{f'<span class="pill s-done">QA PASS</span>' if "QA: PASS" in f["judge"] else ('<span class="pill s-old">QA FAIL</span>' if "QA: FAIL" in f["judge"] else "")}</div>
+    fitas = "".join(f'''<div class="fita-card">
+<div class="meta" style="margin-bottom:10px"><strong style="font-size:14.5px">{f["nome"]}</strong>
+{f'<span class="pill s-done">QA PASS</span>' if "QA: PASS" in f["judge"] else ('<span class="pill s-old">QA FAIL</span>' if "QA: FAIL" in f["judge"] else "")}
+<span class="spacer"></span>
+<button class="sm" onclick="this.closest('.fita-card').querySelector('.strip').classList.toggle('zoom')">⤢ zoom</button></div>
 <div class="strip"><img src="/packs/{slug}/cert/{f["strip"]}" loading="lazy"></div>
 <div class="cols" style="margin-top:10px">
 <div><details><summary>dossiê</summary><pre>{_esc(f["dossie"]) or "—"}</pre></details></div>
@@ -261,7 +263,7 @@ def pack_view(slug: str):
             f'<span class="sub">v{p["versao"]}'
             f'{" · certificado em " + p["certificado_em"] if p["certificado_em"] else ""}</span>'
             f'<a class="sub" href="/packs">← packs</a>')
-    body = f'''<div class="cols" style="align-items:start">
+    body = f'''<div class="cols ficha">
 <div>{ref}</div>
 <div><p class="h2">Família</p><p style="margin-top:0">{_esc(p["familia"])}</p>
 <p class="h2" style="margin-top:16px">Assinaturas</p><ul style="margin:0;padding-left:18px;font-size:14px">{ass}</ul>
