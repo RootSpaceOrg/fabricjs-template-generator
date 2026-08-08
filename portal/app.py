@@ -211,13 +211,19 @@ def veredito(slug: str, veredito: str = Form(...), texto: str = Form("")):
 def nova_form(erro: str = ""):
     packs = kb.packs()
     ordenados = sorted(packs, key=lambda p: (p["status"] != "certificado", p["slug"]))
-    escolhas = []
-    for i, p in enumerate(ordenados):
+    escolhas = ['''<label class="packpick">
+<input type="radio" name="pack" value="" checked>
+<div class="pcard"><div class="semimg" style="flex-direction:column;gap:8px">
+<span style="font-size:28px">🎲</span><span>o agente escolhe</span></div>
+<div class="pinfo"><div class="pname">Deixe comigo</div>
+<div class="sub" style="margin-top:6px">O agente compara os packs certificados com o tema
+e justifica a escolha no dossiê.</div></div></div></label>''']
+    for p in ordenados:
         cert = p["status"] == "certificado"
         img = (f'<img src="/packs/{p["slug"]}/reference.png" loading="lazy">'
                if p["tem_reference"] else '<div class="semimg">sem referência</div>')
         escolhas.append(f'''<label class="packpick">
-<input type="radio" name="pack" value="{p['slug']}" {'checked' if i == 0 else ''} required>
+<input type="radio" name="pack" value="{p['slug']}">
 <div class="pcard">{img}<div class="pinfo">
 <div class="pname">{p['slug']}</div>
 <div class="meta"><span class="pill {'s-done' if cert else 's-draft'}">{p['status']}</span>
@@ -247,18 +253,18 @@ def nova_form(erro: str = ""):
 
 
 @app.post("/nova")
-def nova_criar(pack: str = Form(...), tema: str = Form(...), env: str = Form("dev"),
+def nova_criar(pack: str = Form(""), tema: str = Form(...), env: str = Form("dev"),
                tenant: str = Form("kultivai"), vertical: str = Form("health"),
                business: str = Form(""), n: str = Form("")):
     tema = tema.strip()
     if not tema:
         return RedirectResponse("/nova?erro=Descreva+a+ideia", status_code=303)
-    if pack not in {p["slug"] for p in kb.packs()}:
+    if pack and pack not in {p["slug"] for p in kb.packs()}:
         return RedirectResponse("/nova?erro=Pack+inexistente", status_code=303)
     n = n.strip() if n.strip().isdigit() else ""
-    slug = comandos.slug_novo(pack, tema)
+    slug = comandos.slug_novo(pack or "run", tema)
     enfileirar("agente", slug, comandos.prompt_nova(
-        slug, pack, tema, pedido=tema, tenant=tenant.strip(), vertical=vertical.strip(),
+        slug, pack or None, tema, pedido=tema, tenant=tenant.strip(), vertical=vertical.strip(),
         env=env, business=business.strip(), n=n))
     return RedirectResponse("/fila?novo=" + slug, status_code=303)
 
