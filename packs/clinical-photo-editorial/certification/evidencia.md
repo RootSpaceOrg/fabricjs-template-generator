@@ -1,7 +1,8 @@
 # Certificação — clinical-photo-editorial v7
 
 Data: 2026-08-09 · Protocolo: PACKS.md §4 · Ambiente: dev
-**Status: aguardando aprovação do Gustavo** (o pack está em `draft`)
+**Aprovado pelo Gustavo em 2026-08-09.** Templates de teste em dev:
+`RMaBi35zy497fg4WcQ8X2` (5) · `Q-MeoRoSPdlw5hJjxyYLw` (6) · `pxNwZYXbSZEWe_uynro1s` (7)
 
 Substitui a certificação v6 (2026-08-06), cujos artefatos foram removidos: eles
 descreviam um pack de paleta fixa verde, que não existe mais.
@@ -58,6 +59,10 @@ primeira**. Três defeitos viraram verificação automática:
 ## Ressalvas registradas
 
 - **Fita de 5, slide 5**: a headline do fechamento encosta no CTA, sem respiro.
+- **Fotos sem personalidade**: ao tirar a cor do estilo das fórmulas de imagem,
+  o pêndulo passou do ponto — "neutro + dessaturado + penumbra" produziu
+  bancadas apagadas. Corrigido no `images.md` DEPOIS destas fitas: elas ainda
+  carregam os assets antigos. As próximas runs saem com luz dramática e gesto.
 - A `reference.png` do pack continua sendo **uma capa**. O miolo tem estrutura
   (os 8 padrões em `exemplos/`) mas a assinatura visual dele foi inventada, não
   extraída de referência. É a pendência aberta mais antiga do pack.
