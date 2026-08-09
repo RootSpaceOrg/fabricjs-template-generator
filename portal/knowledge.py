@@ -118,9 +118,16 @@ def _padroes(d) -> list[dict]:
         if m:
             legendas[m.group(1)] = (m.group(2).strip(), m.group(3).strip())
     # 2) secoes — "## Capa meme (scroll-stop)" casa com ref-capa-meme.png (bold)
+    import unicodedata
+
+    def slugify(s: str) -> str:
+        # sem acento: o nome do arquivo é ASCII, o título do .md não
+        s = unicodedata.normalize("NFKD", s).encode("ascii", "ignore").decode()
+        return re.sub(r"[^a-z0-9]+", "-", s.lower()).strip("-")
+
     secoes = {}
     for titulo in re.findall(r"^## (.+)$", tec, re.M):
-        chave = re.sub(r"[^a-z0-9]+", "-", titulo.lower().split("(")[0].strip())
+        chave = slugify(titulo.split("(")[0])
         primeira = ""
         bloco = tec.split(f"## {titulo}", 1)[-1].strip().splitlines()
         for ln in bloco:
@@ -130,7 +137,7 @@ def _padroes(d) -> list[dict]:
         secoes[chave] = (titulo.strip(), primeira[:180])
 
     def casa_secao(stem: str):
-        nome = re.sub(r"^(ref|ex)-|-\d+$", "", stem.lower())
+        nome = re.sub(r"^(ref|ex)-|-\d+$", "", slugify(stem))
         for chave, val in secoes.items():
             if nome and (nome in chave or chave.startswith(nome)):
                 return val

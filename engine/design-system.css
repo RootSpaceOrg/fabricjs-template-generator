@@ -229,6 +229,12 @@ img[data-overhang="br"]     { transform: translate(28%, 30%) rotate(-12deg); }
    (o conversor lê a ordem do DOM; o z-index só alinha o RENDER a ela) */
 .ds-card[data-elevated] { box-shadow: 0 24px 60px rgba(0,0,0,.28); position: relative; z-index: 2; }
 .ds-block[data-overlay], .ds-block[data-overlay-gradient] { position: relative; z-index: 1; }
+/* ...e quem vem DEPOIS do véu no DOM pinta por cima dele (lei do CATALOG:
+   "ordem no DOM = ordem de empilhamento"). Sem isto o z-index:1 do véu
+   engolia a copy e o logo que o pack manda posicionar sobre o gradiente. */
+.ds-block[data-overlay] ~ *, .ds-block[data-overlay-gradient] ~ * {
+  position: relative; z-index: 1;
+}
 
 /* texto dentro de bloco de acento: usa a cor de contraste do bloco, nunca paper puro
    sobre fundo claro nem tom muted herdado */

@@ -26,6 +26,17 @@ Estilo de PEÇA ÚNICA (data comemorativa; `data-role="unica"`), pode estender a
    telefone/instagram sobem (rows ~9–11) e o **logo fica sozinho, CENTRALIZADO
    na base** (row 12, cols 6–8, `data-inset="bottom"` para não grudar na borda) — nunca espremido no canto.
 
+## Extensao para 2-3 slides
+
+Quando a data pede historia, a peca vira 2-3 slides. O interno NAO repete o
+lettering (ele e a assinatura da capa): mantem a mesma foto e o mesmo
+gradiente da primary, e leva a mensagem em texto — headline em sentence case
+centralizada na faixa de cor, apoio curto abaixo, logo sozinho na base.
+A continuidade visual vem do gradiente, nao da repeticao do lettering.
+
+Exemplar: `exemplos/ref-extensao.jpg` (o interno) ao lado de
+`exemplos/ref-anatomia-da-peca.jpg` (a peca unica completa).
+
 ## Leis do estilo
 
 - Rostos NUNCA cobertos por lettering/overlay denso — a emoção é o scroll-stop.
