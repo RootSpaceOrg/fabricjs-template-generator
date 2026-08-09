@@ -6,10 +6,11 @@ gerações. Exemplos em `exemplos/` (partida, nunca fôrma).
 
 ## Assinaturas (o que faz a peça ser DESTE pack)
 
-1. Tipografia display teal GIGANTE em duo-tom (palavra-chave no accent),
-   entrelaçada com o cutout do profissional na capa.
+1. Tipografia display GIGANTE na COR DA MARCA em duo-tom (a palavra-chave
+   ganha o segundo peso via `data-variable-alpha`), entrelaçada com o cutout
+   do profissional na capa — o texto cruza o FUNDO da figura, nunca o corpo.
 2. Objetos do tema DESFOCADOS (bokeh de primeiro plano) como decoração
-   assimétrica fundindo no papel menta.
+   assimétrica fundindo no papel neutro.
 3. Composição assimétrica em camadas; pills outline; clean robusto.
 4. **Arcos de circunferência em traço fino** ao fundo, cortados pelas bordas —
    a "profundidade de papel" da referência. Vêm de um SVG ao lado da fita
@@ -47,7 +48,7 @@ mesmo esqueleto continuam sendo defeito.
 
 | Padrão | Composição | Bom para | Cuidado |
 |---|---|---|---|
-| **capa** | arcos de circunferência em traço fino (SVG) cortados pelas bordas + `professionalPhoto` na metade direita + display duo-tom entrelaçando a figura + pill outline e CTA | abertura da fita | a 2ª palavra do duo-tom INVADE a figura — é o entrelaçamento da referência, não um acidente |
+| **capa** | arcos de circunferência em traço fino (SVG) cortados pelas bordas + `professionalPhoto` na metade direita + display duo-tom entrelaçando a figura + pill outline e CTA | abertura da fita | o duo-tom cruza o FUNDO da figura (o espaço entre cabeça e ombro, o ar em volta) — nunca o corpo no ponto de maior contraste: texto sobre jaleco branco fica ilegível |
 | **cta** | espelha a capa: mesmos arcos, profissional à ESQUERDA e leitura à direita, com CTA e logo | fechamento da fita | a inversão é o que impede o último slide de parecer a capa repetida |
 | **foto-metade-sangrando** | figura toma a metade direita inteira, do topo ao rodapé; leitura à esquerda; número grande de âncora | tese+ressalva, passo, dado | foto vertical com o sujeito no terço direito |
 | **full-bleed-com-faixa** | slide todo é foto; texto numa faixa sólida no terço inferior, encostada em três bordas | tese+ressalva, citação, dado | com foto clara no rodapé a faixa precisa ser `data-tone="ink"` |
@@ -94,7 +95,7 @@ baixo é CTA, logo ou decor — não texto de leitura.
   professionalPhoto.
 - **Full-bleed + overlay + card**: foto full-bleed, véu `data-overlay` e card
   compacto por cima — o slide de maior impacto; 1× por fita.
-- **Fundos alternando**: papel menta na maioria, 1 slide invertido (accent)
+- **Fundos alternando**: papel neutro na maioria, 1 slide invertido (accent)
   como respiro — nunca fita monocromática.
 - **Fechamento espelha a abertura**: o CTA leva o `professionalPhoto` como a
   capa — a fita abre e fecha com o profissional presente.
@@ -111,8 +112,8 @@ houver conteúdo real:
 
 ## Regras de imagem (ver images.md para fórmulas)
 
-- Fotos: clínicas, cinematográficas, tons teal/verde profundo; sem rostos
-  identificáveis em fotos geradas.
+- Fotos: clínicas, cinematográficas, **paleta neutra dessaturada** (a cor vem
+  da marca, não da foto — ver images.md); sem rostos identificáveis.
 - **Pessoa = slot da plataforma.** O profissional é sempre
   `ds-slot data-slot="professionalPhoto"` com o placeholder canônico
   (`engine/assets/professional-photo-*.b64.txt`). Gerar avatar/ilustração de

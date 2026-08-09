@@ -22,7 +22,28 @@ Olhando SÓ a reference.png + o [`engine/CATALOG.md`](engine/CATALOG.md):
 2b. **`exemplos/`** — esqueletos/fitas aprovados como ponto de partida (nunca fôrma; duas gerações com o mesmo esqueleto são defeito).
 3. **`images.md`** — fórmulas de prompt por slot de imagem (estilo/luz/registro, nunca assunto) + o que é slot de plataforma vs gerada.
 4. **`lessons.md`** — inicia com as lições herdadas RELEVANTES (as que viraram estrutura, anote como estrutura; não copie história morta).
-5. `status: draft` no pack.json.
+5. **`adaptavel: true|false`** — a decisão que define a paleta (ver §2b).
+6. `status: draft` no pack.json.
+
+## 2b. Adaptável ou de paleta fixa (decida ANTES dos tokens)
+
+**Default: adaptável.** ~98% dos packs precisam vestir qualquer marca — o
+cliente que usa a fábrica tem a cor dele, não a da referência.
+
+| | Adaptável (padrão) | Paleta fixa |
+|---|---|---|
+| `paper`/`ink`/`muted`/`wm` | **neutros**, com desvio sutil de temperatura para não virar cinza morto | cores do estilo |
+| Cor da marca | entra por `data-variable` (primary/accent) em texto, caixas, números | decorativa apenas |
+| Fotos | paleta neutra dessaturada — personalidade vem de luz, matéria e enquadramento | podem carregar a cor |
+| `fit` | qualquer marca | declare a restrição (ex. "marcas de paleta fria") |
+
+**Adaptável não é sem graça.** A personalidade vem de composição, tipografia,
+luz e matéria — não de tingir tudo. Foto neutra não é foto branca ou bege: é
+luz direcional, sombra desenhada, foco raso, superfície real.
+
+**Prova obrigatória** (§3, prova de Marca): renderize com uma cor bem diferente
+da referência. Se algo brigar — fundo esverdeado contra marca roxa, foto na cor
+antiga, texto em `ink` colorido — o pack não é adaptável ainda.
 
 ## 3. Construção e validação — POR FITA, ponta a ponta
 

@@ -50,12 +50,12 @@
     "composicao assimetrica com sobreposicoes em camada; pills outline; clean robusto"
   ],
   "tokens": {
-    "paper": "#E9F3F1",
-    "ink": "#0E4F47",
-    "muted": "#5E7D77",
+    "paper": "#F2F4F3",
+    "ink": "#1C2422",
+    "muted": "#6B7573",
     "accent": "#2E8C7F",
     "accent-ink": "#FFFFFF",
-    "wm": "#D6E8E4",
+    "wm": "#E2E7E5",
     "font-display": "'Anton', sans-serif",
     "font-body": "'Manrope', sans-serif",
     "fs-eyebrow": "24px",
@@ -76,5 +76,6 @@
   "variables": {
     "primary": "#2E8C7F"
   },
-  "certificado_em": "2026-08-06"
+  "certificado_em": "2026-08-06",
+  "adaptavel": true
 }
