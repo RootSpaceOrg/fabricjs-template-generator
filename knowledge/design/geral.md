@@ -61,6 +61,12 @@ destacada do duo-tom** (`<span data-tone="accent" data-variable="primary">`, que
 vira `fillVariableConfig` por caractere). Acento cravado sem variável é defeito:
 a peça inteira deve se vestir da primary.
 
+**Duo-tom = uma cor, dois pesos.** Duas palavras em cores diferentes tendem a
+usar `primary` + `secondary`, mas na maioria dos tenants a secondary é uma cor
+bem diferente — o par sai desconexo. O caminho é a MESMA variável com
+`data-variable-alpha` no span (0.85 mantém presença; abaixo de 0.7 a segunda
+palavra perde peso contra o papel). Assim as duas palavras acompanham a marca.
+
 **O que NÃO se variabiliza**: `ink`, `paper`, `muted` e `wm` são a paleta
 estrutural do estilo (o papel menta do clinical, o cream do bold). Se
 recolorissem, o pack perderia identidade e viraria "qualquer pack na cor do

@@ -112,9 +112,11 @@ const rgb2hex = (c) => {
         if (n.nodeType === 3 && n.textContent) runs.push({ t: n.textContent.replace(/\\+n/g, "\n"), color: s.color });
         else if (n.nodeType === 1 && n.tagName === "BR") runs.push({ t: "\n", color: s.color });
         else if (n.nodeType === 1 && (n.tagName === "SPAN" || n.tagName === "B" || n.tagName === "EM")) {
-          // data-variable no span = palavra que se recolore com a marca (duo-tom)
+          // data-variable no span = palavra que se recolore com a marca (duo-tom);
+          // o alpha permite dois PESOS da mesma cor, em vez de duas cores
           runs.push({ t: (n.innerText || "").replace(/\\+n/g, "\n"), color: getComputedStyle(n).color,
-            variable: n.getAttribute("data-variable") || null });
+            variable: n.getAttribute("data-variable") || null,
+            alpha: parseFloat(n.getAttribute("data-variable-alpha") || "1") });
         } else if (n.nodeType === 1) {
           rejects.push({ id: el.getAttribute("data-el-id"), reason: `filho <${n.tagName.toLowerCase()}> dentro de componente de texto (só span/b/em/br)` });
         }
@@ -297,7 +299,8 @@ const rgb2hex = (c) => {
         if (runFill && runFill !== baseFill)
           (styles[line] ||= {})[col] = { fill: runFill,
             // span com data-variable: a palavra acompanha a marca do usuário
-            ...(run.variable ? { fillVariableConfig: { type: "solid", variable: run.variable, alpha: 1 } } : {}) };
+            ...(run.variable ? { fillVariableConfig: { type: "solid", variable: run.variable,
+              alpha: run.alpha == null ? 1 : run.alpha } } : {}) };
         text += ch; col++;
       }
     }

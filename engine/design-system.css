@@ -239,3 +239,13 @@ img[data-overhang="br"]     { transform: translate(28%, 30%) rotate(-12deg); }
 /* texto dentro de bloco de acento: usa a cor de contraste do bloco, nunca paper puro
    sobre fundo claro nem tom muted herdado */
 .ds-block .ds-body, .ds-block .ds-headline { color: inherit; }
+
+/* variação de PESO da mesma cor de marca: o render local precisa mostrar o que
+   a plataforma vai produzir (TinyColor(primary).setAlpha(a)). Sem isto o
+   duo-tom aparece chapado aqui e translúcido lá. */
+[data-variable-alpha="0.85"] { opacity: .85 }
+[data-variable-alpha="0.7"]  { opacity: .7 }
+[data-variable-alpha="0.55"] { opacity: .55 }
+[data-variable-alpha="0.4"]  { opacity: .4 }
+[data-variable-alpha="0.25"] { opacity: .25 }
+[data-variable-alpha="0.15"] { opacity: .15 }
