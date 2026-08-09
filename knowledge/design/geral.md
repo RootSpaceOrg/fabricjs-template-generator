@@ -141,3 +141,23 @@ Pessoa "genérica" gerada por IA (3D, cartoon, render) no lugar de
 real do usuário, então a peça precisa usar o placeholder canônico do motor
 (engine/assets/professional-photo-*.b64.txt). Ilustração de pessoa só entra se
 o pack pedir explicitamente como elemento decorativo — nunca como o profissional.
+
+## A célula do grid é espaço máximo, não altura
+
+`grid-area` reserva a área; ele NÃO é a forma da caixa. Cartão com três linhas
+numa célula de meia altura vira 60% de vão — o defeito mais recorrente do
+miolo. Use `data-fit="start|end"` em `ds-card`/`ds-block` sempre que o texto for
+curto para a área: a caixa encolhe até o conteúdo e ancora onde você escolher
+(`end` = encostada no rodapé da célula).
+
+Corolário: quando a composição INTEIRA é feita de caixas, `data-fit` sozinho
+não salva — encolher as duas abre buraco entre elas. Aí o conserto é
+aproximá-las no grid, não deixá-las esticadas.
+
+## Elemento da .fita-layer só ocupa coluna sem texto
+
+A camada de travessia pinta POR CIMA de todos os slides que cruza. Foto que
+atravessa a emenda precisa ficar nas colunas onde nenhum dos dois vizinhos tem
+texto de leitura — caso contrário cobre a headline do slide anterior ou do
+seguinte. Na prática: a leitura vai para as bordas externas do par e a imagem
+fica no miolo da emenda.

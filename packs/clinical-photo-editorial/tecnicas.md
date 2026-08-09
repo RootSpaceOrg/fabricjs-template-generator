@@ -32,6 +32,23 @@ liso é slide inacabado (ver `knowledge/design/geral.md`).
 | `dado` / `citacao` | full-bleed + `data-overlay` + `ds-card data-elevated` compacto, dimensionado pelo texto e alinhado à esquerda |
 | `cta` (fechamento) | `professionalPhoto` espelhando a capa + tese + apoio curto + `ds-cta` + logo |
 
+## Esqueletos de miolo (fallback, nunca fôrma)
+
+`exemplos/miolos/esqueletos.html` tem seis composições prontas, renderizáveis
+(`node engine/assemble.js .../esqueletos.html <outdir>`). **Componha livre**; use
+um esqueleto quando não souber resolver um formato ou quando a composição
+autoral não estiver funcionando. Duas fitas com o mesmo esqueleto continuam
+sendo defeito — varie, adapte, recombine.
+
+| Esqueleto | Composição | Bom para | Cuidado |
+|---|---|---|---|
+| **E1** foto-metade sangrando | figura toma a metade direita inteira, do topo ao rodapé; leitura à esquerda; número grande de âncora | tese+ressalva, passo, dado | foto vertical com o sujeito no terço direito |
+| **E2** full-bleed + faixa | slide todo é foto; texto numa faixa sólida no terço inferior, encostada em três bordas | tese+ressalva, citação, dado | com foto clara no rodapé a faixa precisa ser `data-tone="ink"` |
+| **E3** enumerado numerado | número grande + item, ritmo regular do topo ao rodapé — a lista É a composição | enumerado de 2–4 itens | é o tratamento certo de lista; não jogue bullets soltos numa caixa |
+| **E4** card ancorado sobre foto | foto nos dois terços de cima, cartão `data-fit="end"` encostado na margem inferior | dado, citação, tese+ressalva | o `data-fit` é o que impede o cartão de esticar e criar vão |
+| **E5** display + decor voando | tipografia gigante como protagonista, dois decors cortados pelas bordas | gancho, tese curta | exige tese de 3–5 palavras; com texto longo o efeito morre |
+| **E6** par espelhado | dois slides com a MESMA foto atravessando a emenda pela `.fita-layer`; leitura troca de lado | passo em 2 etapas, antes-depois, comparação | a foto só ocupa as colunas SEM texto (a `.fita-layer` pinta por cima); consome o miolo dos dois slides |
+
 **Formato que o pack resolve mal** (ver `comporta.resolve_mal` no `pack.json`):
 enumerado com mais de 3 itens, tabela, número gigante acompanhado de texto
 longo. Se o dossiê pedir isso, resolva com o tratamento mais próximo e registre

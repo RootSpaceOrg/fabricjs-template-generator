@@ -155,6 +155,12 @@ section.slide[data-invert] .ds-card .ds-cta { background: var(--accent); color: 
   align-items: flex-start; text-align: left; }
 .ds-card > * { text-align: left; justify-self: start; align-self: flex-start; width: 100%; }
 .ds-card[data-align-v="center"] { justify-content: center; }
+/* caixa que ENCOLHE até o conteúdo em vez de esticar na célula do grid: a
+   célula vira o espaço MÁXIMO, não a altura. Sem isso, cartão com texto curto
+   em célula grande vira 60% de vão (lei "a caixa se ajusta ao conteúdo").
+   O valor ancora a caixa na célula: end = encosta embaixo, start = em cima. */
+.ds-card[data-fit], .ds-block[data-fit] { align-self: start; }
+.ds-card[data-fit="end"], .ds-block[data-fit="end"] { align-self: end; }
 
 /* ── imagens ───────────────────────────────────────────────────────────── */
 img.ds-photo, img.ds-slot {

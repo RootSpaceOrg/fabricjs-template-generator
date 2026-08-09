@@ -78,7 +78,7 @@ Sobreposição entre componentes é violação, EXCETO componentes de camada:
 
 Modificadores globais: `data-tone` (ink/muted/accent/paper/accent-ink) ·
 `data-align` (center/right) · `data-round`/`data-circle` (imagens) ·
-`data-overhang="top|bottom|tl|tr|bl|br"` (decor: imagem inteira sem crop, deslocada parcialmente para fora do slide — cortada pela borda, rotação embutida; usar junto com data-cutout) · `data-case="sentence"` (desliga uppercase) · `data-square` (ds-cta vira tarja de cantos retos) · `data-inset="bottom|top"` (respiro de 36px da borda sem mudar a célula) · `data-size="lg"` (ds-number e ds-headline) · `data-face="serif"` (voz serif do pack via `--font-serif`, sentence case).
+`data-overhang="top|bottom|tl|tr|bl|br"` (decor: imagem inteira sem crop, deslocada parcialmente para fora do slide — cortada pela borda, rotação embutida; usar junto com data-cutout) · `data-case="sentence"` (desliga uppercase) · `data-square` (ds-cta vira tarja de cantos retos) · `data-inset="bottom|top"` (respiro de 36px da borda sem mudar a célula) · `data-fit="start|end"` (**ds-card/ds-block**: a caixa encolhe até o conteúdo em vez de esticar na célula — a célula vira o espaço máximo; `end` ancora no rodapé da célula, `start` no topo. Use sempre que o texto for curto para a área: é o que impede cartão com 60% de vão) · `data-size="lg"` (ds-number e ds-headline) · `data-face="serif"` (voz serif do pack via `--font-serif`, sentence case).
 
 ## data-* de metadados
 
