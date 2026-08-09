@@ -15,6 +15,13 @@ curto é a assinatura, não limitação.
 3. **Capa com marcação manuscrita**: foto full-bleed escura, serifa em itálico
    misturada a romana, e uma elipse de caneta (SVG) envolvendo a palavra-chave.
 
+## Estrutura cartões (o exemplar de referência)
+
+`exemplos/ref-estrutura-cartoes.html` é a fita de 5 slides que demonstra o pack
+inteiro: capa com marcação, três cartões atravessando as emendas sobre o palco
+escuro (o do meio vestindo a marca) e o cartão de fechamento que não sangra.
+Renderize com `node engine/tools/build-exemplos.js editorial-cards-continuos`.
+
 ## Como a travessia funciona (o que mais erra)
 
 Os cartões vivem na `.fita-layer`, não dentro das sections — é o único jeito de
