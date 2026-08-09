@@ -61,11 +61,22 @@ destacada do duo-tom** (`<span data-tone="accent" data-variable="primary">`, que
 vira `fillVariableConfig` por caractere). Acento cravado sem variável é defeito:
 a peça inteira deve se vestir da primary.
 
-**Duo-tom = uma cor, dois pesos.** Duas palavras em cores diferentes tendem a
-usar `primary` + `secondary`, mas na maioria dos tenants a secondary é uma cor
-bem diferente — o par sai desconexo. O caminho é a MESMA variável com
-`data-variable-alpha` no span (0.85 mantém presença; abaixo de 0.7 a segunda
-palavra perde peso contra o papel). Assim as duas palavras acompanham a marca.
+**Duo-tom = uma cor, dois pesos — as DUAS palavras no accent.** Duas palavras em
+cores diferentes tendem a usar `primary` + `secondary`, mas na maioria dos
+tenants a secondary é bem diferente e o par sai desconexo. O caminho é a MESMA
+variável, com `data-variable-alpha` no span dando o segundo peso (~0.6 quando as
+duas palavras são accent).
+
+O erro sutil: deixar a primeira palavra em `ink` e variabilizar só a segunda.
+Parece certo enquanto a marca lembra o ink do pack, e desmonta quando não lembra
+— verde-escuro + roxo não é duo-tom, são duas cores brigando.
+
+**Teste obrigatório de marca**: renderize com uma cor bem diferente da do pack e
+veja se a peça inteira acompanha.
+
+```
+node engine/assemble.js <fita.html> <outdir> --primary=#7B3FA0
+```
 
 **O que NÃO se variabiliza**: `ink`, `paper`, `muted` e `wm` são a paleta
 estrutural do estilo (o papel menta do clinical, o cream do bold). Se

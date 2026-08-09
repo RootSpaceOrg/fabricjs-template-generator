@@ -25,7 +25,12 @@ const REPO = path.resolve(__dirname, "..");
   const packSlug = (html.match(/data-pack="([^"]+)"/) || [])[1];
   if (!packSlug) { console.error("REJEITADO — fita sem data-pack"); process.exit(1); }
   const pack = JSON.parse(fs.readFileSync(path.join(REPO, "packs", packSlug, "pack.json"), "utf-8"));
-  const tokensCss = ":root{" + Object.entries(pack.tokens).map(([k, v]) => `--${k}:${v}`).join(";") + "}";
+  // --primary=#HEX simula OUTRA marca no render: os tokens do pack são só
+  // placeholder, e quem tem data-variable troca de cor na plataforma. Serve
+  // para provar que a peça funciona com marcas diferentes (PACKS.md §4).
+  const argPrimary = (process.argv.find((a) => a.startsWith("--primary=")) || "").split("=")[1];
+  const tokens = argPrimary ? { ...pack.tokens, accent: argPrimary } : pack.tokens;
+  const tokensCss = ":root{" + Object.entries(tokens).map(([k, v]) => `--${k}:${v}`).join(";") + "}";
   const dsHref = "file:///" + path.join(REPO, "engine", "design-system.css").replace(/\\/g, "/");
 
   const browser = await chromium.launch();

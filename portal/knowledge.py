@@ -192,9 +192,7 @@ def pack_detalhe(slug: str) -> dict | None:
                 "fidelity": (cert / f"{base}-fidelity.md").read_text(encoding="utf-8", errors="replace")
                 if (cert / f"{base}-fidelity.md").exists() else "",
             })
-    # a evidência mais recente (evidencia-v4.md antes de evidencia.md)
-    evs = sorted(cert.glob("evidencia*.md"), reverse=True) if cert.exists() else []
-    ev = evs[0] if evs else cert / "evidencia.md"
+    ev = cert / "evidencia.md"
     return {
         "slug": slug, "meta": meta, "status": meta.get("status", "?"),
         "familia": meta.get("familia", ""), "versao": meta.get("version"),

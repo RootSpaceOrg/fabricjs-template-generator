@@ -43,6 +43,7 @@ Todo pack precisa demonstrar que sabe resolver os **três papéis**. Não basta 
 | **Capa** | scroll-stop com a assinatura do estilo; o slide que segura o dedo |
 | **Miolo** | **4–5 tratamentos distintos** — como o estilo resolve `tese+ressalva`, `enumerado`, conteúdo com foto, citação/dado. É a prova que mais falha |
 | **CTA** | fechamento que pede ação e fecha o arco, sem virar capa repetida |
+| **Marca** | as 3 fitas renderizadas com primaries DIFERENTES (`--primary=#HEX` no assemble): a peça veste qualquer marca, não só a cor do placeholder do pack |
 
 **Por que o miolo é obrigatório e explícito:** o clinical-photo-editorial foi certificado com uma `reference.png` que é UMA CAPA. Ninguém percebeu que o pack não sabia fazer miolo até ele produzir slide após slide de caixa sobre fundo chapado. Referência de capa ensina capa — nada mais.
 
