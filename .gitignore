@@ -22,3 +22,8 @@ artifacts/
 .idea/
 .DS_Store
 Thumbs.db
+
+# npm de versoes diferentes (local x VPS) reescreve o lockfile a cada install,
+# e o diff sujo faz o agente parar no git pull. As dependencias sao 2 e estao
+# cravadas no package.json — o lock nao paga o atrito.
+package-lock.json
