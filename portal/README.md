@@ -15,7 +15,10 @@ Plano e decisões: [../PLAN-portal.md](../PLAN-portal.md).
 ## Deploy (VPS)
 
 ```bash
-rsync -a portal/ root@vps:/root/portal/        # ou sftp
+bash portal/deploy.sh    # NA VPS: pull + copia + restart + verifica
+
+# ATENCAO: git pull sozinho NAO atualiza o portal. Ele roda de /root/portal
+# (copia), nao do repositorio — prompt novo em comandos.py fica so no repo.
 systemctl restart factory-portal factory-worker
 ```
 
