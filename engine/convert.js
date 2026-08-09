@@ -164,12 +164,23 @@ const rgb2hex = (c) => {
         if (!id) { rejects.push({ id: cls + "?", reason: "componente sem data-el-id (lei de conservação)" }); return; }
         if (!styleOk(el)) { rejects.push({ id, reason: "inline style fora da whitelist (só grid-area e transform:rotate)" }); return; }
         if (inLayer) {
-          if (!el.hasAttribute("data-static") || !(el.hasAttribute("data-layer") || cls === "ds-watermark")) {
-            rejects.push({ id, reason: "fita-layer: só elementos data-static + data-layer (travessia nunca é editável)" });
+          // Travessia é duplicada nos slides vizinhos (centro deslocado), então
+          // um elemento EDITÁVEL vira dois campos independentes no editor: quem
+          // altera um deixa o outro velho, e a palavra fica cortada com metades
+          // diferentes. Por isso o default é estático.
+          // `data-split-ok` na .fita-layer libera: a peça assume que quem edita
+          // sabe que são duas metades (uso interno, não cliente final).
+          const splitOk = el.closest(".fita-layer").hasAttribute("data-split-ok");
+          if (!splitOk && (!el.hasAttribute("data-static")
+              || !(el.hasAttribute("data-layer") || cls === "ds-watermark"))) {
+            rejects.push({ id, reason: "fita-layer: só elementos data-static + data-layer "
+              + "(travessia é duplicada nos vizinhos; use data-split-ok na camada se a "
+              + "edição das duas metades for aceitável)" });
             return;
           }
-          if (el.hasAttribute("data-template-element")) {
-            rejects.push({ id, reason: "fita-layer: elemento editável não pode cruzar fronteira" });
+          if (!splitOk && el.hasAttribute("data-template-element")) {
+            rejects.push({ id, reason: "fita-layer: elemento editável não pode cruzar fronteira "
+              + "(vira dois campos no editor) — data-split-ok na camada libera" });
             return;
           }
         }

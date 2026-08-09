@@ -1,0 +1,78 @@
+{
+  "pack": "editorial-cards-continuos",
+  "version": 1,
+  "status": "draft",
+  "familia": "editorial minimalista: cartoes que atravessam a emenda sobre fundo escuro",
+  "adaptavel": true,
+  "fit": {
+    "funil": [
+      "meio",
+      "topo"
+    ],
+    "verticais": [
+      "health"
+    ],
+    "melhor_em": "tese em poucas palavras; sequencia numerada de argumentos com muito respiro"
+  },
+  "comporta": {
+    "_nota": "orcamento, nao gate: este pack e AREJADO — texto curto e a assinatura",
+    "papeis": {
+      "capa": "tese ate 8 palavras em 3 linhas (serifa) + assinatura discreta; a marcacao envolve 2-3 palavras",
+      "cartao": "numero + headline ate 5 palavras em 2-3 linhas + apoio ate 3 linhas curtas",
+      "fechamento": "tese ate 8 palavras + 2 acoes em pill + site"
+    },
+    "resolve_bem": [
+      "tese+ressalva",
+      "enumerado curto",
+      "manifesto",
+      "principios"
+    ],
+    "resolve_mal": [
+      "passo-a-passo detalhado",
+      "dado com muitos numeros",
+      "narrativa longa",
+      "tabela"
+    ]
+  },
+  "slides": {
+    "min": 4,
+    "max": 7
+  },
+  "format": {
+    "width": 1080,
+    "height": 1350
+  },
+  "assinaturas": [
+    "cartoes de cantos arredondados que ATRAVESSAM a emenda: cada um sangra uma faixa estreita para dentro do slide vizinho, e o fundo escuro aparece entre eles",
+    "numero em serifa fina no topo do cartao, ancorando a sequencia",
+    "capa com foto full-bleed escura, serifa em italico misturada a romana, e MARCACAO manuscrita (elipse SVG) envolvendo a palavra-chave"
+  ],
+  "tokens": {
+    "paper": "#ECEBE0",
+    "ink": "#161111",
+    "muted": "#6B655C",
+    "accent": "#E95F40",
+    "accent-ink": "#FFFFFF",
+    "wm": "#F2F2F2",
+    "font-display": "'Inter', sans-serif",
+    "font-body": "'Inter', sans-serif",
+    "font-serif": "'Instrument Serif', serif",
+    "fs-eyebrow": "22px",
+    "fs-headline": "76px",
+    "fs-headline-lg": "104px",
+    "fs-body": "30px",
+    "fs-number": "72px",
+    "fs-number-lg": "150px",
+    "fs-wm": "150px",
+    "fs-stamp": "22px",
+    "fs-cta": "26px",
+    "radius": "22px"
+  },
+  "fonts": {
+    "css": "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap",
+    "meta": "Inter:400,500,600|Instrument Serif:400,400i"
+  },
+  "variables": {
+    "primary": "#E95F40"
+  }
+}

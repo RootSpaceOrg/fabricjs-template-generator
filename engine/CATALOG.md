@@ -24,7 +24,11 @@ editar JSON (doutrina do conversor, herdada como lei).
   <div class="fita-layer">
     <!-- TRAVESSIAS: elementos que cruzam fronteiras de slide.
          Grid contínuo da fita: 12·N colunas × 12 linhas (célula 90×112.5).
-         Só data-static + data-layer (imagem/forma/watermark) — NUNCA editável.
+         Só data-static + data-layer (imagem/forma/watermark). Editável é
+         proibido por padrão: a travessia é DUPLICADA nos slides vizinhos, e
+         dois campos independentes no editor dessincronizam. `data-split-ok`
+         na camada libera — para packs cujo conteúdo É a travessia (cartões
+         contínuos), assumindo que quem edita sabe que são duas metades.
          Pintam POR CIMA dos slides: só sobre backgrounds limpos, nunca sob texto. -->
     <img class="ds-photo" data-el-id="f1" data-static data-layer
          data-image-type="userAsset" style="grid-area: 2 / 11 / 5 / 16">

@@ -51,6 +51,10 @@ section.slide {
 }
 /* respiro invertido / CTA: fundo do acento, texto claro */
 section.slide[data-invert] { background: var(--accent); color: var(--accent-ink); }
+/* fundo ESCURO do estilo (ink), não o acento: packs em que o slide é palco
+   escuro e o conteúdo vive em cartões claros por cima. Diferente de
+   data-invert, não veste a marca — é paleta estrutural. */
+section.slide[data-dark] { background: var(--ink); color: var(--paper); }
 
 /* ── componentes de texto ──────────────────────────────────────────────── */
 .ds-eyebrow {
@@ -161,6 +165,12 @@ section.slide[data-invert] .ds-card .ds-cta { background: var(--accent); color: 
    O valor ancora a caixa na célula: end = encosta embaixo, start = em cima. */
 .ds-card[data-fit], .ds-block[data-fit] { align-self: start; }
 .ds-card[data-fit="end"], .ds-block[data-fit="end"] { align-self: end; }
+/* cartão que veste a marca: sem isto o data-variable só marcava o JSON e o
+   cartão saía branco no render — o designer compunha sem ver o resultado.
+   (ds-block já é accent por padrão; ds-card é paper.) */
+.ds-card[data-variable] { background: var(--accent); color: var(--accent-ink); }
+.ds-card[data-variable] .ds-number, .ds-card[data-variable] .ds-headline,
+.ds-card[data-variable] .ds-body, .ds-card[data-variable] .ds-eyebrow { color: var(--accent-ink); }
 
 /* ── imagens ───────────────────────────────────────────────────────────── */
 img.ds-photo, img.ds-slot {

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 160" width="600" height="160" fill="none">
+  <!-- Marcação manuscrita: elipse de caneta em volta da palavra-chave da capa.
+       O traço não fecha certinho e passa do ponto de partida — é o que dá o
+       gesto de mão. currentColor não vale aqui (SVG vira grupo de vetores):
+       o stroke usa o accent do pack e recebe data-variable no <img>. -->
+  <path d="M 300 14
+           C 150 14, 26 44, 26 80
+           C 26 116, 150 146, 300 146
+           C 450 146, 574 116, 574 80
+           C 574 48, 470 20, 340 15
+           C 300 13, 250 16, 214 24"
+        stroke="#E95F40" stroke-width="5" stroke-linecap="round"/>
+</svg>
