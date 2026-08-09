@@ -559,7 +559,7 @@ def _aprovar(slug: str, origem: str) -> str:
                + ("2. o judge ja passou (QA: PASS) — siga.\n" if passou else
                   "2. ainda nao ha judge com PASS: julgue agora (JUDGE.md modo QA + check "
                   "narrativo). Se achar defeito OBJETIVO (texto cortado, contraste ilegivel, "
-                  "sobreposicao, R1-R8), NAO publique: corrija o HTML, re-renderize, re-julgue; "
+                  "sobreposicao, R1-R11), NAO publique: corrija o HTML, re-renderize, re-julgue; "
                   "se nao resolver em 2 voltas, PARE e me avise o que trava.\n")
                + "3. escreva fidelity.md comparando o JSON convertido com o strip aprovado "
                  "(VEREDITO: FIEL, sem checklist em aberto);\n"

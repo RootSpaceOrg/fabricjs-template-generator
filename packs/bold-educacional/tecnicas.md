@@ -49,6 +49,10 @@ muito detalhe por passo.
    pode sangrar pela borda/topo): crachá pendurado com foto, polaroid com
    clipe, etiqueta — sempre com a "foto da pessoa" = professionalPhoto quando
    possível, senão objeto do tema.
+   **Sangra para fora da FITA, não na emenda** (veredito 2026-08-09): overhang
+   `br`/`tr`/`r` num slide que tem vizinho à direita corta a colagem no meio da
+   fita e ela não continua do outro lado. No miolo, prefira `b` (base) ou o
+   lado externo; travessia real vai na `.fita-layer`.
 5. Handles discretos nos cantos (`ds-body` pequeno, textType instagramHandle).
 
 ## Miolo com objeto de conteúdo (fitas longas)
@@ -71,6 +75,11 @@ grid. Tratamentos do pack, para alternar:
 - **Statement chapado** (`data-invert data-variable="primary"`).
 - **Citação em caixa** (`ds-card` claro sobre fundo chapado, texto grande).
 - **Lista em bloco** (`ds-block` com 2–3 filhos curtos).
+
+**Foto de cena não é decor** (veredito 2026-08-09): asset gerado que não achou
+lugar não vira quadradinho no canto. Ou a foto ocupa um terço/metade do slide
+carregando conteúdo, ou fica de fora. Quem preenche canto neste pack é a
+colagem 3D (RGBA, recortada) — não uma fotografia.
 
 Régua (ver knowledge/design/geral.md): 3 slides = 1 miolo direto · 5 slides =
 2+ miolos com objeto de conteúdo · 7+ = 3 tratamentos diferentes e o recurso da

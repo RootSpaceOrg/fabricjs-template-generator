@@ -182,3 +182,32 @@ chapado, é imagem no lugar errado.
 Arcos e formas de fundo trabalham **em oposição** (um no canto superior de um
 lado, outro no inferior do lado oposto): dois no mesmo quadrante embaralham a
 leitura em vez de dar profundidade.
+
+## Overhang sangra para fora da fita, não na emenda
+
+`data-overhang` empurra a imagem para fora do SLIDE e a borda corta. No primeiro
+e no último slide isso sangra para fora da peça — efeito desejado. **No miolo, o
+lado que encosta no vizinho vira imagem decepada**: o leitor vê metade de uma
+polaroid no fim de um slide e nada no começo do próximo.
+
+Régua: overhang para a borda EXTERNA da fita (esquerda no primeiro slide,
+direita no último) ou para topo/base em qualquer um. Para atravessar a emenda de
+verdade, o elemento vai na `.fita-layer` — é o único jeito de continuar do
+outro lado.
+
+## Foto não é decor de canto
+
+Imagem sem função narrativa encaixada num canto porque "sobrou espaço" é
+defeito, mesmo sendo uma foto boa. Decor tem regra (objeto do tema, transparente,
+desfocado, grande, cortado pela borda); foto de cena **não é decor** — ela ocupa
+um terço/metade do slide e carrega conteúdo, ou não entra.
+
+Sintoma típico: asset gerado que não achou lugar e foi parar num quadrado de 3×3
+células no canto inferior. Se a foto não tem papel no slide, o slide não precisa
+dela — e se o slide ficou vazio sem ela, o problema é a copy, não a imagem.
+
+## Cutout ancora na base DA ÁREA
+
+`data-cutout` alinha a figura na base da célula do grid, não na do slide. Área
+que termina na linha 11 ou 12 deixa a pessoa flutuando com um vão embaixo. Para
+o profissional "pisar" no rodapé, a área precisa ir até a linha 13.
