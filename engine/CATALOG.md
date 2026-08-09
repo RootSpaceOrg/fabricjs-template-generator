@@ -122,6 +122,9 @@ geometria — é imagem, e está no lugar errado.
 
 ## REJEITADO (erro, nunca chute)
 
+Texto (filho direto do slide) cujo conteúdo é mais alto que a própria célula —
+o render invadiria o vizinho ·
+
 Classe fora do catálogo · elemento visível sem `data-el-id` · inline style além
 de `grid-area`/`transform:rotate` · sobreposição de componentes não-camada ·
 SVG **inline** (`<svg>` no HTML)/canvas/video/iframe · `background-image:url()` (imagem é `<img>`) ·

@@ -201,6 +201,19 @@ const rgb2hex = (c) => {
           return;
         }
         if (TEXT.has(cls)) {
+          // texto que ESTOURA a própria célula: o gate de sobreposição não pega
+          // (as áreas declaradas não se cruzam), mas no render o texto invade o
+          // vizinho — headline de 4 linhas em 4 linhas de grid, sem folga.
+          // 4px de tolerância cobre arredondamento de line-height.
+          // só para filho DIRETO do grid do slide: dentro de ds-card/ds-block
+          // (flex) a caixa cresce com o conteúdo, então transbordar é normal
+          const noGrid = el.parentElement && el.parentElement.classList.contains("slide");
+          if (noGrid && el.scrollHeight > el.clientHeight + 4) {
+            rejects.push({ id, reason: `texto transborda a própria célula `
+              + `(${el.scrollHeight}px de conteúdo em ${el.clientHeight}px de área) — `
+              + `aumente as linhas de grid ou corte a copy` });
+            return;
+          }
           nodes.push({ kind: "text", ...base, runs: runsOf(el, s), ...textMeta(el, s) });
           return;
         }

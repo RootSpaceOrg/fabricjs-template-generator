@@ -159,13 +159,16 @@ topo e vazio embaixo é defeito (o vazio dentro de uma borda lê como erro, não
 como respiro). Se sobra espaço: encolha a caixa, não espalhe o texto. Respiro
 pertence ao slide (em volta da caixa), não ao interior dela.
 
-## Texto transborda a célula (o gate não pega)
+## Texto transborda a célula (AGORA o gate pega)
 
-O conversor só rejeita sobreposição de ÁREAS declaradas — texto que estoura a
-própria célula e invade a vizinha passa batido e só aparece no render. Régua:
+O conversor rejeita texto cujo conteúdo é mais alto que a célula declarada
+(filho direto do grid do slide; dentro de cartão/bloco a caixa cresce e não
+conta). Antes isso passava batido e só aparecia no render — foi assim que uma
+capa saiu com a headline por cima do apoio. Régua para não esbarrar no gate:
 headline display (100px+) cabe ~1 linha por linha de grid (112px); com 3 linhas
-reserve 4 linhas de grid. Se o texto encavalar no render, aumente a área ou
-corte a copy — nunca confie no gate para isso.
+reserve 4 linhas de grid **e uma de folga** — 4 linhas de display em 4 linhas
+de grid não cabe, o arredondamento do line-height estoura. Se o convert
+rejeitar, aumente a área ou corte a copy; nunca empurre o texto para caber.
 
 ## Formato de copy pede tratamento visual
 
