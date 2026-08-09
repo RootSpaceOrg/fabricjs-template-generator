@@ -5,6 +5,9 @@ Dois modos: **julgar candidatos** (dentro da pipeline) e **eval de regressão** 
 ## Insumos (só isso)
 
 - `screenshots/` + `strip.png` de cada candidato, anonimizados (A/B/C — sem design-notes, sem saber a família de cada um). O `strip.png` é a fita panorâmica: julgue continuidade nele; julgue cada slide isolado nos screenshots (o Instagram mostra um por vez).
+  **Defeito visto no strip precisa ser confirmado no slide isolado**: no
+  panorâmico os slides se encostam, e a foto de um parece cortar o texto do
+  vizinho. Reportar sem conferir gera falso positivo (2026-08-09).
 - A storyline do dossiê (para checar aderência narrativa)
 - Rubrica: os 5 eixos do passo 3 (scroll-stop, craft, narrativa, especificidade, continuidade)
 - `packs/<pack>/reference.png` + `packs/<pack>/exemplos/` (âncora do que é "10"). **Pasta vazia?** Julgue mesmo assim, mas: seja deliberadamente mais duro (sem âncora o score infla) e abra o judge-report com `⚠ golden set ausente — scores não calibrados`.
