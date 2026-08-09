@@ -90,7 +90,7 @@ Modificadores globais: `data-tone` (ink/muted/accent/paper/accent-ink) ·
 | `data-static` | sem templateElement |
 | `data-text-type="instagramName\|instagramHandle\|phone\|address"` | `textType` (exclusivo com template-element) |
 | `data-image-type` | `imageType` (em `ds-slot` o default é o valor de `data-slot`) |
-| `data-variable="primary\|secondary"` (+ `data-variable-target="background"` na section) | `fillVariableConfig` / background variável. Vale em caixa, forma, texto E **em `<span>` dentro de texto** — o span vira `fillVariableConfig` por caractere no `styles`, que é como o duo-tom recolore com a marca. `data-variable-alpha="0.85"` (também no span) dá um SEGUNDO PESO da mesma cor — é como se faz duo-tom sem depender de `secondary`, que na maioria dos tenants é uma cor bem diferente da primary |
+| `data-variable="primary\|accent"` (+ `data-variable-target="background"` na section) | `fillVariableConfig` / background variável. Vale em caixa, forma, texto E **em `<span>` dentro de texto** — o span vira `fillVariableConfig` por caractere no `styles`, que é como o duo-tom recolore com a marca. **`accent` sai como `secondary` no JSON** — a fábrica fala pelo PAPEL (cor principal / cor de destaque), a plataforma guarda como primary/secondary. Variável fora dessas duas é rejeição. `data-variable-alpha="0.85"` (também no span) dá um SEGUNDO PESO da mesma cor — é como se faz duo-tom sem depender de `secondary`, que na maioria dos tenants é uma cor bem diferente da primary |
 
 ## SVG — só geometria de composição, NUNCA imagem
 

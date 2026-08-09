@@ -39,6 +39,20 @@ const inlineSrc = (src, id) => {
   return `data:${mime};base64,` + fs.readFileSync(p).toString("base64");
 };
 
+// A plataforma tem 'primary' | 'secondary'; a fabrica fala 'primary' | 'accent',
+// que descreve o PAPEL (cor principal e cor de destaque) em vez da ordem. O
+// mapeamento vive aqui: o HTML usa accent, o JSON sai com secondary.
+const VARIAVEIS = { primary: "primary", accent: "secondary", secondary: "secondary" };
+const varDaMarca = (v, id) => {
+  if (!v) return null;
+  const alvo = VARIAVEIS[v];
+  if (!alvo) {
+    console.error(`REJEITADO — ${id}: data-variable="${v}" desconhecido (use primary ou accent)`);
+    process.exit(1);
+  }
+  return alvo;
+};
+
 const rgb2hex = (c) => {
   const m = (c || "").match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/);
   if (!m) return c || null;
@@ -276,7 +290,8 @@ const rgb2hex = (c) => {
       o.templateElement = { description: attrs["data-te-description"] || "", minChars: min, maxChars: max };
     }
     if (attrs["data-variable"])
-      o.fillVariableConfig = { type: "solid", variable: attrs["data-variable"], alpha: parseFloat(attrs["data-variable-alpha"] || "1") };
+      o.fillVariableConfig = { type: "solid", variable: varDaMarca(attrs["data-variable"], id),
+        alpha: parseFloat(attrs["data-variable-alpha"] || "1") };
     return o;
   };
   const teImg = (attrs) => {
@@ -296,10 +311,13 @@ const rgb2hex = (c) => {
       let t = n.upper ? run.t.toUpperCase() : run.t;
       for (const ch of t) {
         if (ch === "\n") { line++; col = 0; text += ch; continue; }
-        if (runFill && runFill !== baseFill)
-          (styles[line] ||= {})[col] = { fill: runFill,
-            // span com data-variable: a palavra acompanha a marca do usuário
-            ...(run.variable ? { fillVariableConfig: { type: "solid", variable: run.variable,
+        // estilo por caractere sai quando a cor difere da base OU quando o span
+        // tem variável própria — no duo-tom primary/accent as duas palavras
+        // renderizam igual (mesmo token), mas trocam de cor na plataforma
+        if ((runFill && runFill !== baseFill) || run.variable)
+          (styles[line] ||= {})[col] = { fill: runFill || baseFill,
+            ...(run.variable ? { fillVariableConfig: { type: "solid",
+              variable: varDaMarca(run.variable, n.id),
               alpha: run.alpha == null ? 1 : run.alpha } } : {}) };
         text += ch; col++;
       }
@@ -404,7 +422,8 @@ const rgb2hex = (c) => {
             fillVariableConfig: { type: "gradient",
               colorStops: shapeFill.colorStops.map((cs) => ({ variable: gradVar,
                 alpha: (cs.color.match(/rgba\([^)]+,\s*([\d.]+)\)/) || [0, "1"])[1] * 1 })) },
-          } : ("data-variable" in n.attrs ? { fillVariableConfig: { type: "solid", variable: n.attrs["data-variable"], alpha: 1 } } : {})) });
+          } : ("data-variable" in n.attrs ? { fillVariableConfig: { type: "solid",
+            variable: varDaMarca(n.attrs["data-variable"], n.id), alpha: 1 } } : {})) });
       } else if (n.kind === "chip") {
         const rp = pct(n.radiusPx, n.w, n.h);
         const hasFill = rgb2hex(n.bg);
@@ -413,7 +432,8 @@ const rgb2hex = (c) => {
           fill: hasFill || "transparent",
           ...(n.borderColor ? { stroke: rgb2hex(n.borderColor), strokeWidth: n.borderW } : {}),
           topLeft: rp, topRight: rp, bottomRight: rp, bottomLeft: rp,
-          ...("data-variable" in n.attrs ? { [hasFill ? "fillVariableConfig" : "strokeVariableConfig"]: { type: "solid", variable: n.attrs["data-variable"], alpha: 1 } } : {}) });
+          ...("data-variable" in n.attrs ? { [hasFill ? "fillVariableConfig" : "strokeVariableConfig"]:
+            { type: "solid", variable: varDaMarca(n.attrs["data-variable"], n.id), alpha: 1 } } : {}) });
         // o data-variable pertence ao RECT do chip; o texto nunca herda
         const chipAttrs = { ...n.attrs };
         delete chipAttrs["data-variable"];

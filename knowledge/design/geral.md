@@ -85,11 +85,19 @@ tratamento).
 
 ## Cor da marca em caixas
 
-Todo elemento em cor de acento leva `data-variable="primary"` — caixa cheia
-(tarja, pill de CTA, bloco, overlay), forma, número gigante, **e a palavra
-destacada do duo-tom** (`<span data-tone="accent" data-variable="primary">`, que
-vira `fillVariableConfig` por caractere). Acento cravado sem variável é defeito:
-a peça inteira deve se vestir da primary.
+**Duas variáveis, nomeadas pelo papel**: `primary` (a cor principal da marca) e
+`accent` (a cor de destaque). O conversor traduz `accent` → `secondary` no JSON,
+que é como a plataforma guarda — no HTML você pensa em papel, não em ordem.
+
+Todo elemento colorido leva variável — caixa cheia (tarja, pill de CTA, bloco,
+overlay), forma, número gigante, headline e **a palavra destacada do duo-tom**
+(que vira `fillVariableConfig` por caractere). Cor cravada sem variável é
+defeito: a peça inteira deve se vestir da marca.
+
+Qual das duas usar: `primary` é o corpo da identidade (fundos chapados, a
+headline, o CTA principal); `accent` é o realce que pontua (o destaque do
+duo-tom, um número, uma tarja secundária). Na dúvida, `primary` — usar `accent`
+onde não há hierarquia de destaque só cria uma segunda cor sem motivo.
 
 **Duo-tom = uma cor, dois pesos — as DUAS palavras no accent.** Duas palavras em
 cores diferentes tendem a usar `primary` + `secondary`, mas na maioria dos
