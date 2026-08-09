@@ -73,7 +73,7 @@ Sobreposição entre componentes é violação, EXCETO componentes de camada:
 | `ds-block` | container | `roundedRect` + filhos | bg do acento (`data-tone="ink"` = preto); filhos são componentes do catálogo; `data-overlay` (+`data-layer`) = véu escurecedor (ink 42%) sobre foto full-bleed — nunca tinge de acento; `data-overlay-gradient="primary|secondary"` (+`data-layer`) = véu em GRADIENTE transparente→cor VARIÁVEL do usuário (recolorido por stop na plataforma) |
 | `ds-card` | container | `roundedRect` + filhos | cartão no papel, cantos `--radius`; `data-elevated` = sombra de cartão empilhado (shadow no Fabric) |
 | `ds-shape` | vazio | `roundedRect` (cantos por lado; anel = stroke) | forma de composição: `data-shape="circle\|ring\|pill"`; cor via `data-tone`; `data-half="left\|right"` na BORDA do slide cria transição — o par complementar no slide vizinho completa a forma na fita |
-| `ds-photo` | `<img>` | `ClippableImage` | imagem gerada/evidência; `data-image-type` obrigatório. **Aceita `.svg` como arquivo** (`src="arcos.svg"`) — vira `data:image/svg+xml` no JSON. É como se faz geometria que CSS não expressa: arco parcial, traço que entra e sai do quadro, curva em ângulo. Inline (`<svg>` no HTML) continua REJEITADO; o arquivo vive ao lado da fita |
+| `ds-photo` | `<img>` | `ClippableImage` | imagem gerada/evidência; `data-image-type` obrigatório. Aceita `.svg` como arquivo — **só para geometria, ver regra abaixo** |
 | `ds-slot` | `<img>` | `ClippableImage` | slot da plataforma: `data-slot="professionalPhoto\|instagramProfilePicture\|logo"` (vira `imageType`); `data-circle` para avatar, `data-cutout` para cutout ancorado na base |
 
 Modificadores globais: `data-tone` (ink/muted/accent/paper/accent-ink) ·
@@ -91,6 +91,23 @@ Modificadores globais: `data-tone` (ink/muted/accent/paper/accent-ink) ·
 | `data-text-type="instagramName\|instagramHandle\|phone\|address"` | `textType` (exclusivo com template-element) |
 | `data-image-type` | `imageType` (em `ds-slot` o default é o valor de `data-slot`) |
 | `data-variable="primary\|secondary"` (+ `data-variable-target="background"` na section) | `fillVariableConfig` / background variável |
+
+## SVG — só geometria de composição, NUNCA imagem
+
+SVG entra como **arquivo** num `<img class="ds-photo" src="arcos.svg">` (inline,
+`<svg>` no HTML, segue rejeitado). Vira `data:image/svg+xml` no JSON.
+
+**Use para** o que CSS não expressa: arco parcial, traço que entra e sai do
+quadro, curva em ângulo, moldura de formato irregular, cartão com recorte
+próprio, divisória diagonal. É geometria de composição — fundo, forma, moldura.
+
+**NUNCA use para imagem**: ilustração, figura, ícone desenhado, textura, cena,
+qualquer coisa que devesse ser foto ou asset gerado. Já houve problema com
+imagem em SVG na plataforma; imagem é `.png`/`.jpg` gerado, sem exceção.
+
+A régua na dúvida: se o arquivo tem mais que formas geométricas simples
+(`circle`, `rect`, `path`, `line`) com traço ou preenchimento chapado, não é
+geometria — é imagem, e está no lugar errado.
 
 ## REJEITADO (erro, nunca chute)
 

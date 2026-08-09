@@ -1,6 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1350" width="1080" height="1350" fill="none">
-  <!-- arcos de circunferência em traço fino, cortados pelas bordas do quadro -->
-  <circle cx="880" cy="180" r="430" stroke="#D6E8E4" stroke-width="3"/>
-  <circle cx="120" cy="1180" r="320" stroke="#D6E8E4" stroke-width="3"/>
-  <path d="M 1080 620 A 520 520 0 0 1 430 40" stroke="#2E8C7F" stroke-width="2" opacity=".45"/>
+  <!-- Dois arcos de circunferência em traço fino, OPOSTOS na diagonal: um
+       nasce fora do canto superior direito, o outro fora do inferior esquerdo.
+       Ambos cortados pelas bordas — é o que dá a profundidade de papel da
+       referência sem competir com a leitura. -->
+  <circle cx="960" cy="120" r="470" stroke="#D6E8E4" stroke-width="3"/>
+  <circle cx="120" cy="1230" r="470" stroke="#D6E8E4" stroke-width="3"/>
 </svg>

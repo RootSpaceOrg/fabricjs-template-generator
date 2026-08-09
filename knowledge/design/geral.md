@@ -166,3 +166,19 @@ atravessa a emenda precisa ficar nas colunas onde nenhum dos dois vizinhos tem
 texto de leitura — caso contrário cobre a headline do slide anterior ou do
 seguinte. Na prática: a leitura vai para as bordas externas do par e a imagem
 fica no miolo da emenda.
+
+## SVG é geometria, nunca imagem
+
+Forma que o CSS não expressa (arco parcial, curva que entra e sai do quadro,
+moldura de recorte irregular) vai num arquivo `.svg` carregado por
+`<img class="ds-photo">` — ver a regra completa no CATALOG. É o que permite a
+"profundidade de papel" de fundos com arcos finos.
+
+O que NÃO pode virar SVG: ilustração, figura, ícone desenhado, textura, cena.
+Já houve problema com imagem em SVG na plataforma — imagem é PNG/JPG gerado.
+Régua: se o arquivo tem mais que formas simples com traço/preenchimento
+chapado, é imagem no lugar errado.
+
+Arcos e formas de fundo trabalham **em oposição** (um no canto superior de um
+lado, outro no inferior do lado oposto): dois no mesmo quadrante embaralham a
+leitura em vez de dar profundidade.
