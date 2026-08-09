@@ -80,6 +80,25 @@ def _runs() -> list[dict]:
     return sorted(out, key=lambda r: r["mtime"], reverse=True)
 
 
+def _etapa(j) -> str:
+    """Qual das 6 fatias é este job — seis linhas 'agente' por run ficavam
+    indistinguíveis. Lido do próprio prompt: nada de coluna nova no banco."""
+    p = j["payload"] or ""
+    m = re.search(r"FATIA (\d) de (\d)", p)
+    if m:
+        nomes = {"1": "dossiê", "2": "imagens", "3": "abertura",
+                 "4": "miolo", "5": "fechamento", "6": "judge"}
+        n = m.group(1)
+        return f'<span class="etapa">{n}/{m.group(2)}</span> {nomes.get(n, "")}'
+    for marca, rotulo in (("REVISAO da run", "revisão"),
+                          ("APROVOU a fita", "publicação"),
+                          ("RESPOSTA DO GUSTAVO", "resposta"),
+                          ("fidelidade", "fidelidade")):
+        if marca in p:
+            return f'<span class="sub">{rotulo}</span>'
+    return '<span class="sub">—</span>'
+
+
 def _cls(r: dict) -> tuple[str, str]:
     if r["stage"] == "done":
         return "s-done", "done"
@@ -146,7 +165,7 @@ def run_detail(slug: str):
     with db() as c:
         jobs = c.execute("SELECT * FROM jobs WHERE slug=? ORDER BY id DESC LIMIT 5", (slug,)).fetchall()
         vers = c.execute("SELECT * FROM vereditos WHERE slug=? ORDER BY id DESC LIMIT 5", (slug,)).fetchall()
-    jl = "".join(f'<tr><td>#{j["id"]}</td><td>{j["tipo"]}</td>'
+    jl = "".join(f'<tr><td>#{j["id"]}</td><td>{_etapa(j)}</td>'
                  f'<td><span class="pill s-{"done" if j["status"]=="done" else ("fail" if j["status"]=="failed" else "run")}">{j["status"]}</span></td>'
                  f'<td><details><summary>log</summary><pre>{_esc((j["log"] or "—")[-3000:])}</pre></details></td></tr>' for j in jobs)
     vl = "".join(f'<tr><td class="sub">{v["criado_em"][5:16]}</td>'
@@ -312,7 +331,7 @@ def fila(novo: str = ""):
         if j["status"] != "bloqueado":
             return ""
         pergunta = (j["log"] or "").split("[plugins]")[0].strip()[-700:]
-        return (f'<tr><td colspan="8" style="background:#0b0d11">'
+        return (f'<tr><td colspan="9" style="background:#0b0d11">'
                 f'<p class="h2">O agente perguntou</p><pre style="max-height:220px">{_esc(pergunta)}</pre>'
                 f'<form method="post" action="/fila/{j["id"]}/responder" style="margin-top:10px">'
                 f'<textarea name="resposta" placeholder="Responda aqui — o agente recebe o histórico '
@@ -333,7 +352,8 @@ def fila(novo: str = ""):
         return (f'<a class="tid" href="{u}" target="_blank" rel="noopener" title="{tid}">abrir &#8599;</a>'
                 if u else f'<span class="tid">{tid[:8]}…</span>')
 
-    rows = "".join(f'''<tr><td>#{j["id"]}</td><td>{j["tipo"]}</td><td>{_run_cell(j["slug"])}</td>
+    rows = "".join(f'''<tr><td>#{j["id"]}</td><td>{j["tipo"]}</td><td>{_etapa(j)}</td>
+<td>{_run_cell(j["slug"])}</td>
 <td>{_tpl_cell(j["slug"])}</td>
 <td><span class="pill s-{"done" if j["status"]=="done" else ("fail" if j["status"]=="failed" else ("wait" if j["status"]=="bloqueado" else ("run" if j["status"]=="running" else "wait")))}">{j["status"]}</span></td>
 <td class="sub">{(j["criado_em"] or "")[5:16]}</td>
@@ -344,7 +364,7 @@ def fila(novo: str = ""):
     head = '<h1>Fila</h1><span class="sub">worker serial · um turno por vez · lock compartilhado com o SSH</span>'
     aviso = (f'<div class="flash">Run <code class="tid">{_esc(novo)}</code> enfileirada — a página '
              f'dela aparece assim que o agente criar a run.</div>') if novo else ""
-    body = (aviso + f'<div class="list"><table><tr><th>id</th><th>tipo</th><th>run</th><th>template</th>'
+    body = (aviso + f'<div class="list"><table><tr><th>id</th><th>tipo</th><th>etapa</th><th>run</th><th>template</th>'
             f'<th>status</th><th>criado</th><th>detalhes</th><th></th></tr>'
             f'{rows or "<tr><td class=empty>fila vazia</td></tr>"}</table></div>')
     return _page("Fila", "fila", head, body)
