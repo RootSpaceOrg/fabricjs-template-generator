@@ -107,7 +107,15 @@ def fatias_nova(slug: str, pack: str | None, tema: str, pedido: str = "",
            f"(a fita tem {n or 'o total definido em run.json'} slides no total, contando "
            f"abertura e fechamento). Para CADA slide, use o formato declarado no dossie e o "
            f"tratamento correspondente na tabela do tecnicas.md; o apoio acompanha a tese no "
-           f"mesmo bloco. VARIE o tratamento entre os slides - nao repita o mesmo esqueleto. "
+           f"mesmo bloco.\n"
+           f"A FITA E UMA PECA SO. Antes de escrever cada slide, responda em uma linha: "
+           f"SOU CONTINUACAO DO ANTERIOR OU MUDANCA DE PADRAO? Continuacao = repito a "
+           f"estrutura e mudo o conteudo (e considere virar PAR, com a mesma foto "
+           f"atravessando a emenda pela fita-layer); mudanca = inverto fundo, troco a "
+           f"familia do tratamento, mudo a ancora de canto. Nunca o meio-termo: dois "
+           f"slides parecidos-mas-nao-iguais na emenda (foto de metade a direita seguida "
+           f"de outra a esquerda) leem como par quebrado. Escreva essas respostas como "
+           f"comentario HTML antes de cada section.\n"
            f"Nao rode assemble. Responda em 2 linhas.")
 
     f3c = (ctx + regras +

@@ -36,6 +36,36 @@ em run, o tratamento vem do `tecnicas.md` do pack em uso.
 - Variância é dever: duas gerações do mesmo pack nunca saem com o mesmo
   esqueleto — varie ordem, lados, quantidade de slides, presença de decors.
 
+### Cada slide responde ao anterior (a pergunta obrigatória)
+
+Um carrossel é uma coisa só. Compor slide isolado — escolher o tratamento
+olhando só o formato daquele conteúdo — produz fita que parece pasta de imagens
+soltas, mesmo quando cada slide é bonito.
+
+Antes de compor QUALQUER slide de miolo, responda: **sou continuação do
+anterior ou mudança de padrão?** As duas são válidas; o defeito é não decidir.
+
+- **Continuação** — repito a estrutura do vizinho e mudo só o conteúdo (mesmo
+  lado da foto, mesma âncora, mesma família de tratamento). Serve para passos
+  de uma sequência, itens de uma lista longa, antes/depois. Se for continuação
+  de verdade, considere fazer disso um **par**: foto atravessando a emenda pela
+  `.fita-layer`, número dando o ritmo, leitura no mesmo lugar.
+- **Mudança de padrão** — quebro deliberadamente: fundo inverte, o tratamento
+  muda de família (foto → chapado → cartão), a âncora troca de canto. Serve
+  para virada de argumento, respiro depois de dois slides densos, entrada do
+  fechamento.
+
+**O defeito clássico** (veredito 2026-08-09, clinical): dois slides seguidos com
+foto vertical de metade, uma à direita e a seguinte à esquerda. Não é par (as
+fotos são diferentes, nada atravessa) nem mudança (é o mesmo tratamento
+espelhado). Lê como par espelhado quebrado. Quando duas fotos se encostam na
+emenda, ou elas são A MESMA atravessando, ou os tratamentos precisam ser de
+famílias diferentes.
+
+Régua rápida na emenda: olhe as duas metades que se tocam. Se forem parecidas
+mas não idênticas, está errado — aproxime (vire par) ou afaste (mude o
+tratamento).
+
 ## Fotos e decors
 
 - Foto editável vive inteira dentro de um slide; foto de continuidade

@@ -56,6 +56,22 @@ mesmo esqueleto continuam sendo defeito.
 | **display-com-decor** | tipografia gigante como protagonista, dois decors cortados pelas bordas | gancho, tese curta | exige tese de 3–5 palavras; com texto longo o efeito morre |
 | **par-espelhado** | dois slides com a MESMA foto atravessando a emenda pela `.fita-layer`; leitura troca de lado | passo em 2 etapas, antes-depois, comparação | a foto só ocupa as colunas SEM texto; as coordenadas da `.fita-layer` são da FITA inteira (12 colunas por slide), não do slide |
 
+### Como estes padrões se encaixam na fita
+
+A tabela acima descreve slides ISOLADOS. Na fita eles convivem, e a escolha de
+cada um depende do vizinho (ver `knowledge/design/geral.md` → "Cada slide
+responde ao anterior"):
+
+- **`foto-metade-sangrando` duas vezes seguidas é defeito** (veredito
+  2026-08-09): uma com a foto à direita e a outra à esquerda lê como par
+  espelhado quebrado. Se as duas metades se tocam na emenda, ou vira
+  `par-espelhado` (a MESMA foto atravessando), ou o segundo slide muda de
+  família — `enumerado-numerado`, `display-com-decor`, chapado.
+- **Alternância saudável do miolo**: foto → chapado → cartão → foto. Nunca dois
+  tratamentos com foto grande em sequência, a não ser como par declarado.
+- **O par espelhado é um bloco de 2**, não dois slides — planeje-o no dossiê
+  (duas etapas de uma mesma ideia), não improvise na composição.
+
 **Formato que o pack resolve mal** (ver `comporta.resolve_mal` no `pack.json`):
 enumerado com mais de 3 itens, tabela, número gigante acompanhado de texto
 longo. Se o dossiê pedir isso, resolva com o tratamento mais próximo e registre
