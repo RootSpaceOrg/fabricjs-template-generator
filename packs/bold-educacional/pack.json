@@ -1,6 +1,6 @@
 {
   "pack": "bold-educacional",
-  "version": 3,
+  "version": 4,
   "status": "certificado",
   "familia": "educacional bold: meme scroll-stop + statement chapado na cor da marca",
   "fit": {
@@ -75,5 +75,5 @@
   "variables": {
     "primary": "#C62B2B"
   },
-  "certificado_em": "2026-08-07"
+  "certificado_em": "2026-08-09"
 }
