@@ -236,3 +236,10 @@ colagem como assinatura, o watermark provavelmente não é necessário.
 
 Watermark que repete uma palavra já visível no slide é enfeite, não camada de
 profundidade: ou traz uma palavra nova (o número da etapa, o conceito), ou sai.
+
+## Repetir o mesmo elemento no mesmo canto é falta de variância
+
+Variância não é só entre fitas — é dentro da fita. Dois slides seguidos com o
+mesmo recurso (mesmo watermark, mesmo símbolo, mesma colagem) na mesma posição
+lê como template repetido, mesmo quando o texto muda. Se o recurso volta, muda
+de canto, de escala ou de papel.
