@@ -127,7 +127,6 @@ def fatias_nova(slug: str, pack: str | None, tema: str, pedido: str = "",
 
     f4 = (ctx +
           f"FATIA 6 de 6 - CORREDOR E JUDGE ATE PASSAR.\n"
-          f"FATIA 4 de 4 - CORREDOR E JUDGE ATE PASSAR.\n"
           f"1. 'node engine/convert.js artifacts/runs/{slug} artifacts/runs/{slug}/output "
           f"--slug {slug}' - rejeicao = corrija o HTML e repita (nunca edite JSON);\n"
           f"2. avance ate judge e julgue (JUDGE.md modo QA + check narrativo);\n"
