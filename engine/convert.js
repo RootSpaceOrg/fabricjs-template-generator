@@ -23,7 +23,8 @@ const { chromium } = require("playwright");
 const REPO = path.resolve(__dirname, "..");
 
 // src local (file://) vira data-URI — o template final não pode depender de disco
-const MIME = { ".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".webp": "image/webp", ".gif": "image/gif" };
+const MIME = { ".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".webp": "image/webp",
+  ".gif": "image/gif", ".svg": "image/svg+xml" };
 const inlineSrc = (src, id) => {
   if (!src || !src.startsWith("file://")) return src;
   const p = require("url").fileURLToPath(src);

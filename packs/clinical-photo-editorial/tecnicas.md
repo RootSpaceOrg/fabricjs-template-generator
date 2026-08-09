@@ -11,6 +11,11 @@ gerações. Exemplos em `exemplos/` (partida, nunca fôrma).
 2. Objetos do tema DESFOCADOS (bokeh de primeiro plano) como decoração
    assimétrica fundindo no papel menta.
 3. Composição assimétrica em camadas; pills outline; clean robusto.
+4. **Arcos de circunferência em traço fino** ao fundo, cortados pelas bordas —
+   a "profundidade de papel" da referência. Vêm de um SVG ao lado da fita
+   (`arcos.svg`), porque `border-radius` não faz arco parcial: veja
+   `exemplos/ref-capa.html`. Traço de 2–3px em `wm`/accent com opacidade baixa;
+   é fundo, nunca compete com a leitura.
 
 ## Como este estilo resolve cada formato
 
@@ -42,6 +47,8 @@ mesmo esqueleto continuam sendo defeito.
 
 | Padrão | Composição | Bom para | Cuidado |
 |---|---|---|---|
+| **capa** | arcos de circunferência em traço fino (SVG) cortados pelas bordas + `professionalPhoto` na metade direita + display duo-tom entrelaçando a figura + pill outline e CTA | abertura da fita | a 2ª palavra do duo-tom INVADE a figura — é o entrelaçamento da referência, não um acidente |
+| **cta** | espelha a capa: mesmos arcos, profissional à ESQUERDA e leitura à direita, com CTA e logo | fechamento da fita | a inversão é o que impede o último slide de parecer a capa repetida |
 | **foto-metade-sangrando** | figura toma a metade direita inteira, do topo ao rodapé; leitura à esquerda; número grande de âncora | tese+ressalva, passo, dado | foto vertical com o sujeito no terço direito |
 | **full-bleed-com-faixa** | slide todo é foto; texto numa faixa sólida no terço inferior, encostada em três bordas | tese+ressalva, citação, dado | com foto clara no rodapé a faixa precisa ser `data-tone="ink"` |
 | **enumerado-numerado** | número grande + item, ritmo regular do topo ao rodapé — a lista É a composição | enumerado de 2–4 itens | é o tratamento certo de lista; não jogue bullets soltos numa caixa |

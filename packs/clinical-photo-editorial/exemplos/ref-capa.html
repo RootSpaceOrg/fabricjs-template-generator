@@ -1,0 +1,47 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="hm-fonts" content="Anton:400|Manrope:400,600">
+</head>
+<body>
+<!-- CAPA — leitura da reference.png (Instituto Médico Bergamasco):
+     arcos de circunferência em traço fino cortados pelas bordas, eyebrow em
+     pill outline, display gigante em duo-tom (ink em cima, accent embaixo),
+     profissional ocupando a metade direita e CTA "leia a legenda" no rodapé. -->
+<main class="fita" data-pack="clinical-photo-editorial" data-template-name="capa" data-segment="exemplar">
+  <section class="slide" data-role="abertura">
+
+    <!-- arcos de fundo: anéis de traço fino, gigantes, cortados pelas bordas.
+         São o que dá a "profundidade de papel" da referência. -->
+    <img class="ds-photo" data-el-id="a1" data-static data-layer data-image-type="generated"
+         src="arcos.svg" style="grid-area: 1 / 1 / 13 / 13">
+
+    <!-- profissional: placeholder canônico do motor, cutout ancorado na base -->
+    <img class="ds-slot" data-el-id="a3" data-static data-slot="professionalPhoto" data-cutout
+         src="professional-photo-1.png" style="grid-area: 2 / 6 / 13 / 13">
+
+    <!-- logo do usuário, pequeno, no alto à esquerda (como na referência) -->
+    <img class="ds-slot" data-el-id="a4" data-static data-slot="logo"
+         src="logo-quadrada.png" data-inset="top" style="grid-area: 1 / 2 / 2 / 4">
+
+    <span class="ds-stamp" data-el-id="a5" data-template-element
+          data-te-description="rótulo do tema" data-te-min-chars="4" data-te-max-chars="22"
+          style="grid-area: 4 / 2 / 5 / 7">PÓS-SESSÃO:</span>
+
+    <!-- duo-tom: primeira palavra em ink, segunda em accent, uma sob a outra -->
+    <h1 class="ds-headline" data-el-id="a6" data-size="lg" data-layer data-template-element
+        data-te-description="tese da capa" data-te-min-chars="8" data-te-max-chars="34"
+        style="grid-area: 5 / 2 / 9 / 12">CUIDADOS<br><span data-tone="accent">ESSENCIAIS</span></h1>
+
+    <a class="ds-cta" data-el-id="a7" data-template-element
+       data-te-description="cta da capa" data-te-min-chars="6" data-te-max-chars="26"
+       style="grid-area: 10 / 2 / 11 / 6">LEIA A LEGENDA</a>
+
+    <!-- decor do tema, desfocado, cortado pela borda inferior -->
+    <img class="ds-photo" data-el-id="a8" data-static data-layer data-image-type="generated"
+         data-overhang="bl" src="decor.png" style="grid-area: 10 / 1 / 13 / 5">
+  </section>
+</main>
+</body>
+</html>

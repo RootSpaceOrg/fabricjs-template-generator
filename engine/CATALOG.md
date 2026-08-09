@@ -73,7 +73,7 @@ Sobreposição entre componentes é violação, EXCETO componentes de camada:
 | `ds-block` | container | `roundedRect` + filhos | bg do acento (`data-tone="ink"` = preto); filhos são componentes do catálogo; `data-overlay` (+`data-layer`) = véu escurecedor (ink 42%) sobre foto full-bleed — nunca tinge de acento; `data-overlay-gradient="primary|secondary"` (+`data-layer`) = véu em GRADIENTE transparente→cor VARIÁVEL do usuário (recolorido por stop na plataforma) |
 | `ds-card` | container | `roundedRect` + filhos | cartão no papel, cantos `--radius`; `data-elevated` = sombra de cartão empilhado (shadow no Fabric) |
 | `ds-shape` | vazio | `roundedRect` (cantos por lado; anel = stroke) | forma de composição: `data-shape="circle\|ring\|pill"`; cor via `data-tone`; `data-half="left\|right"` na BORDA do slide cria transição — o par complementar no slide vizinho completa a forma na fita |
-| `ds-photo` | `<img>` | `ClippableImage` | imagem gerada/evidência; `data-image-type` obrigatório |
+| `ds-photo` | `<img>` | `ClippableImage` | imagem gerada/evidência; `data-image-type` obrigatório. **Aceita `.svg` como arquivo** (`src="arcos.svg"`) — vira `data:image/svg+xml` no JSON. É como se faz geometria que CSS não expressa: arco parcial, traço que entra e sai do quadro, curva em ângulo. Inline (`<svg>` no HTML) continua REJEITADO; o arquivo vive ao lado da fita |
 | `ds-slot` | `<img>` | `ClippableImage` | slot da plataforma: `data-slot="professionalPhoto\|instagramProfilePicture\|logo"` (vira `imageType`); `data-circle` para avatar, `data-cutout` para cutout ancorado na base |
 
 Modificadores globais: `data-tone` (ink/muted/accent/paper/accent-ink) ·
@@ -96,7 +96,7 @@ Modificadores globais: `data-tone` (ink/muted/accent/paper/accent-ink) ·
 
 Classe fora do catálogo · elemento visível sem `data-el-id` · inline style além
 de `grid-area`/`transform:rotate` · sobreposição de componentes não-camada ·
-SVG/canvas/video/iframe · `background-image:url()` (imagem é `<img>`) ·
+SVG **inline** (`<svg>` no HTML)/canvas/video/iframe · `background-image:url()` (imagem é `<img>`) ·
 gradiente radial/conic · mix-blend-mode/backdrop-filter/mask · pseudo-elemento
 com conteúdo · texto editável sem `data-te-min-chars`/`max-chars` · `ds-photo`
 sem `data-image-type` · texto com `writing-mode` vertical.
