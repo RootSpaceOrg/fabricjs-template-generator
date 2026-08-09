@@ -5,6 +5,11 @@ vence): **este arquivo** → `packs/<slug>/` (tecnicas.md, exemplos/, tokens,
 lessons.md) → dossiê da run. O que é lei mecânica está no CATALOG e nos gates;
 aqui estão as leis de gosto que valem em todo estilo.
 
+`esqueletos/` ao lado deste arquivo é **catálogo de estudo para quem cria pack**
+(`PACKS.md` §3) — composições que já funcionaram, com as cores de um pack
+específico apenas porque nasceram lá. Não é biblioteca de layout para produção:
+em run, o tratamento vem do `tecnicas.md` do pack em uso.
+
 ## Legibilidade (inegociável)
 
 - Texto NUNCA sob decor, foto ou travessia — texto vive em background limpo.

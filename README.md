@@ -24,7 +24,8 @@ O que não está nos documentos não existe.
 | Conversor | `engine/convert.js` | fita.html → Fabric JSON por slide; travessia emitida nos 2 vizinhos (off-canvas clipado); violação rejeita apontando `data-el-id` |
 | Assembler | `engine/assemble.js` | fita.html → strip.png + slide-N.png |
 | Runner | `engine/run.py` | estados + gates que EXECUTAM validação; estado em `artifacts/runs/<slug>/run.json` |
-| Packs | `packs/<slug>/` | pack.json (tokens/fit) + tecnicas.md + exemplos/ + images.md + reference.png + lessons.md |
+| Packs | `packs/<slug>/` | pack.json (tokens/fit/comporta) + tecnicas.md + exemplos/ + images.md + reference.png + lessons.md |
+| Estudo de composição | `knowledge/design/esqueletos/` | catálogo de miolos que funcionaram — leitura de quem **cria** pack ([PACKS.md §3](PACKS.md)), não biblioteca de produção |
 
 ## Fluxo de uma run
 

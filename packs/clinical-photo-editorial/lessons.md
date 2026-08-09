@@ -22,3 +22,5 @@
 
 - 2026-08-06 (cert-fibro-1 QA): fecho com headline+corpo não pode deixar mais de 35% de área morta — ancorar o terço inferior com foto, objeto editorial ou uma composição deliberada. Decors removidos por chroma precisam ser validados no render: halo magenta residual sai da paleta e não passa como bokeh clínico. O re-render aprovado confirmou: bokeh inferior + selo editorial podem resolver a distribuição, desde que permaneçam fora da área de leitura.
 - 2026-08-06: PACK CERTIFICADO (v6, fita-v2) — 3 fitas do protocolo aprovadas pelo Gustavo. Fabrica ligada para este estilo.
+
+- 2026-08-08 (auditoria das tres provas, PACKS.md §3): **falha na prova de miolo**. A reference.png e uma CAPA unica — o pack nunca teve fonte para o miolo, e o unico exemplar de fita completa (fita-aprovada-gram-teste-1, removido) carregava os defeitos que a fabrica reproduzia. Correcao: seis esqueletos em exemplos/miolos/ + tabela formato -> tratamento no tecnicas.md. **Pendente**: referencias reais de miolo (Gustavo) para extrair a assinatura visual do estilo no miolo — os esqueletos resolvem estrutura, nao identidade.

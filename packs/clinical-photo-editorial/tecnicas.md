@@ -32,13 +32,13 @@ liso é slide inacabado (ver `knowledge/design/geral.md`).
 | `dado` / `citacao` | full-bleed + `data-overlay` + `ds-card data-elevated` compacto, dimensionado pelo texto e alinhado à esquerda |
 | `cta` (fechamento) | `professionalPhoto` espelhando a capa + tese + apoio curto + `ds-cta` + logo |
 
-## Esqueletos de miolo (fallback, nunca fôrma)
+## Esqueletos de miolo (exemplares, nunca fôrma)
 
-`exemplos/miolos/esqueletos.html` tem seis composições prontas, renderizáveis
-(`node engine/assemble.js .../esqueletos.html <outdir>`). **Componha livre**; use
-um esqueleto quando não souber resolver um formato ou quando a composição
-autoral não estiver funcionando. Duas fitas com o mesmo esqueleto continuam
-sendo defeito — varie, adapte, recombine.
+`exemplos/miolos/esqueletos.html` tem seis composições aprovadas nos tokens
+deste pack, renderizáveis (`node engine/assemble.js .../esqueletos.html <outdir>`).
+São o ponto de partida do miolo enquanto a `reference.png` — que é uma capa —
+não tiver companhia. **Componha livre**: varie, adapte, recombine. Duas fitas com
+o mesmo esqueleto continuam sendo defeito.
 
 | Esqueleto | Composição | Bom para | Cuidado |
 |---|---|---|---|

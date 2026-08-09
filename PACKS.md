@@ -26,9 +26,31 @@ Olhando SÓ a reference.png + o [`engine/CATALOG.md`](engine/CATALOG.md):
 
 ## 3. Construção e validação — POR FITA, ponta a ponta
 
-**Quem cria packs é o criador de packs** (Claude/Fable na sessão de trabalho com o Gustavo, com render validado via SSH) — não o agente de produção. O agente de produção só OPERA packs certificados (copy + imagens + sorteio).
+**Quem cria packs é o criador de packs** (Claude na sessão de trabalho com o Gustavo) — não o agente de produção. O agente de produção só OPERA packs certificados (copy + imagens + sorteio). A fronteira: **criar/consertar pack é trabalho de ferramenta** (local, ciclo de minutos); **gerar posts é produção** (agente, VPS, fila).
 
-O criador constrói o pack completo (tokens, tecnicas.md, images.md, exemplos) e produz a FITA de certificação de uma vez — exercitando as técnicas do estilo — iterando contra render real até estar fiel às referências. **A validação do Gustavo é sobre a fita renderizada** (composição geral, lado a lado com as referências): sem checkpoint de slides isolados. Renders por recipe são ferramenta interna de diagnóstico do criador, não gate.
+### Ciclo de trabalho
+
+Roda **local**, com o motor real — `node engine/assemble.js <fita.html> <outdir>` renderiza em segundos, contra os ~20 minutos de uma run na VPS. O criador compõe, olha, corrige e só leva ao Gustavo o que já passou pela própria crítica.
+
+A entrega para revisão é um **artifact** com os slides grandes, um embaixo do outro, cada um com o veredito do criador. Artifact é onde o Gustavo julga — **não é deploy**: o que vale é o commit, e o pack só muda de status pela mão dele (§4.4).
+
+### As três provas (nenhum pack nasce sem elas)
+
+Todo pack precisa demonstrar que sabe resolver os **três papéis**. Não basta ter uma referência bonita:
+
+| Prova | O que tem que ficar demonstrado |
+|---|---|
+| **Capa** | scroll-stop com a assinatura do estilo; o slide que segura o dedo |
+| **Miolo** | pelo menos **três tratamentos distintos** — como o estilo resolve `tese+ressalva`, `enumerado` e conteúdo com foto. É a prova que mais falha |
+| **CTA** | fechamento que pede ação e fecha o arco, sem virar capa repetida |
+
+**Por que o miolo é obrigatório e explícito:** o clinical-photo-editorial foi certificado com uma `reference.png` que é UMA CAPA. Ninguém percebeu que o pack não sabia fazer miolo até ele produzir slide após slide de caixa sobre fundo chapado. Referência de capa ensina capa — nada mais.
+
+**Exceção — pack de peça única** (`slides.max ≤ 3`, ex. emotive-fullbleed-lettering): a prova de miolo não se aplica; capa e CTA convivem na mesma peça. O que substitui a prova é demonstrar a **extensão** (como a peça vira 2–3 slides quando a data pede história) e o rodapé institucional. Declare a exceção no `tecnicas.md` do pack.
+
+Se a referência do cliente/inspiração for só de capa, o criador **inventa o miolo** e valida com o Gustavo contra a referência, iterando até encaixar no estilo. `knowledge/design/esqueletos/` é catálogo de estudo para essa hora: composições que já funcionaram, para ajudar a achar a resposta do estilo novo — as cores de lá são ilustrativas, e copiar estrutura pronta não é o objetivo.
+
+O criador constrói o pack completo (tokens, tecnicas.md, images.md, exemplos) e produz a FITA de certificação exercitando as técnicas do estilo, iterando contra render real até estar fiel às referências. **A validação do Gustavo é sobre a fita renderizada** (composição geral, lado a lado com as referências): sem checkpoint de slides isolados.
 
 Técnica que exigir componente fora do catálogo → §6 (mudança de motor, com aval do Gustavo).
 
@@ -37,7 +59,7 @@ Técnica que exigir componente fora do catálogo → §6 (mudança de motor, com
 1. **Três runs completas** (`run.py new cert-<slug>-N --env dev --pack <slug>`) em **TAMANHOS DIFERENTES de fita — 3, 5 e 7 slides** (packs de peça única: 1 peça + variações): duas do MESMO tema e uma de tema diferente — certificação v2 prova, além da fidelidade, a **variância**, o **fôlego do miolo em fita longa** (7 slides sem cair em texto solto) (as duas do mesmo tema não podem sair com o mesmo esqueleto) e a robustez das técnicas (par contínuo/travessias emendando na fita).
 2. Corredor inteiro até fidelidade no editor + upload de teste (fluxo do README §Fluxo).
 3. Preencher `certification/`: strip.png final, screenshots do editor, template_id de teste, sha dos arquivos do pack, data.
-4. **Aprovação do Gustavo** comparando plataforma × reference.png. Só ele muda `status: draft → certificado`.
+4. **Aprovação do Gustavo** comparando plataforma × reference.png — verificando as três provas do §3 (capa, miolo, CTA). Só ele muda `status: draft → certificado`.
 5. Commit + push do pack completo (o pack é código-fonte da fábrica).
 
 ## 4b. O que a certificação prova (e o que não prova)
@@ -82,7 +104,8 @@ Componente novo é mudança de MOTOR (CATALOG.md + design-system.css + convert.j
 
 - [ ] reference.png aprovada na origem
 - [ ] pack.json sem variáveis/tokens fantasma
-- [ ] tecnicas.md cobrindo as assinaturas; exemplos/ com pelo menos 1 fita aprovada
+- [ ] **as três provas (§3): capa, miolo com 3+ tratamentos distintos, CTA** — referência só de capa não dispensa a prova de miolo
+- [ ] tecnicas.md cobrindo as assinaturas E a tradução formato → tratamento (§4c); exemplos/ com pelo menos 1 fita aprovada
 - [ ] certificação: 3 fitas (2 mesmo tema c/ variância + 1 tema novo), fidelidade FIEL, template de teste no ar
 - [ ] aprovação explícita do Gustavo (status: certificado)
 - [ ] commit + push
