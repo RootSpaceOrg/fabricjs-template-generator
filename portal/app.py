@@ -410,7 +410,8 @@ def pack_view(slug: str):
 <div class="strip"><img src="/packs/{slug}/cert/{f["strip"]}" loading="lazy"></div>
 <div class="cols" style="margin-top:10px">
 <div><details><summary>dossiê</summary><pre>{_esc(f["dossie"]) or "—"}</pre></details></div>
-<div><details><summary>judge</summary><pre>{_esc(f["judge"]) or "—"}</pre></details></div></div></div>'''
+<div><details><summary>judge</summary><pre>{_esc(f["judge"]) or "—"}</pre></details></div></div>
+{f'<details style="margin-top:8px"><summary>fidelidade</summary><pre>{_esc(f["fidelity"])}</pre></details>' if f.get("fidelity") else ""}</div>'''
         for f in p["fitas"])
     ev = (f'<p class="h2" style="margin-top:24px">Evidência</p><pre>{_esc(p["evidencia"])}</pre>'
           if p["evidencia"] else "")

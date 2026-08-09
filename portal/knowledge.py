@@ -93,7 +93,7 @@ def packs() -> list[dict]:
             "certificado_em": meta.get("certificado_em"),
             "tem_reference": (d / "reference.png").exists(),
             "arquivos": arquivos, "pack_json": f"packs/{d.name}/pack.json",
-            "certs": sorted(p.name for p in cert.glob("*-strip.png")) if cert.exists() else [],
+            "certs": sorted(p.name for p in cert.glob("*-strip.*")) if cert.exists() else [],
         })
     return out
 
@@ -180,16 +180,21 @@ def pack_detalhe(slug: str) -> dict | None:
     cert = d / "certification"
     fitas = []
     if cert.exists():
-        for strip in sorted(cert.glob("*-strip.png")):
-            base = strip.name[:-len("-strip.png")]
+        # strip.png ou .jpg: a certificação guarda comprimido (16MB -> 1.4MB)
+        for strip in sorted(cert.glob("*-strip.*")):
+            base = strip.stem[:-len("-strip")]
             fitas.append({
                 "nome": base, "strip": strip.name,
                 "judge": (cert / f"{base}-judge-report.md").read_text(encoding="utf-8", errors="replace")
                 if (cert / f"{base}-judge-report.md").exists() else "",
                 "dossie": (cert / f"{base}-dossie.md").read_text(encoding="utf-8", errors="replace")
                 if (cert / f"{base}-dossie.md").exists() else "",
+                "fidelity": (cert / f"{base}-fidelity.md").read_text(encoding="utf-8", errors="replace")
+                if (cert / f"{base}-fidelity.md").exists() else "",
             })
-    ev = cert / "evidencia.md"
+    # a evidência mais recente (evidencia-v4.md antes de evidencia.md)
+    evs = sorted(cert.glob("evidencia*.md"), reverse=True) if cert.exists() else []
+    ev = evs[0] if evs else cert / "evidencia.md"
     return {
         "slug": slug, "meta": meta, "status": meta.get("status", "?"),
         "familia": meta.get("familia", ""), "versao": meta.get("version"),
