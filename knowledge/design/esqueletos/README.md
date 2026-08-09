@@ -14,22 +14,23 @@ próprio.
 A pergunta certa ao olhar não é "vou usar o E3?", e sim "como o meu estilo
 resolve um enumerado?".
 
+Os exemplares vivem em  (um HTML por
+padrão, imagem derivada pelo build). Aqui fica só a leitura do que cada um
+resolve — quem quiser ver renderizado abre a galeria do pack no portal.
+
 | | Composição | Problema que resolve |
 |---|---|---|
-| **E1** | figura toma a metade direita inteira do topo ao rodapé, sangrando pela borda; leitura na metade esquerda; número grande de âncora embaixo | slide que precisa de foto E texto sem que nenhum dos dois vire enfeite |
-| **E2** | slide todo é foto; texto numa faixa sólida no terço inferior, encostada em três bordas | foto que precisa respirar inteira, com leitura garantida por contraste |
-| **E3** | número grande + item, ritmo regular do topo ao rodapé — a lista É a composição | enumerado que senão vira bullet solto no meio do slide |
-| **E4** | foto nos dois terços de cima, cartão compacto encostado na margem inferior | dois blocos (imagem + leitura) sem nada flutuando no meio |
-| **E5** | tipografia gigante como protagonista, decors cortados pelas bordas | tese curta que precisa de peso sem foto |
-| **E6a+E6b** | par: a MESMA foto atravessa a emenda pela `.fita-layer`, a leitura troca de lado | duas etapas de uma ideia, com continuidade real entre slides |
+| **foto-metade-sangrando** | figura toma a metade direita inteira do topo ao rodapé, sangrando pela borda; leitura na metade esquerda; número grande de âncora embaixo | slide que precisa de foto E texto sem que nenhum dos dois vire enfeite |
+| **full-bleed-com-faixa** | slide todo é foto; texto numa faixa sólida no terço inferior, encostada em três bordas | foto que precisa respirar inteira, com leitura garantida por contraste |
+| **enumerado-numerado** | número grande + item, ritmo regular do topo ao rodapé — a lista É a composição | enumerado que senão vira bullet solto no meio do slide |
+| **card-ancorado** | foto nos dois terços de cima, cartão compacto encostado na margem inferior | dois blocos (imagem + leitura) sem nada flutuando no meio |
+| **display-com-decor** | tipografia gigante como protagonista, decors cortados pelas bordas | tese curta que precisa de peso sem foto |
+| **par-espelhado** | par: a MESMA foto atravessa a emenda pela `.fita-layer`, a leitura troca de lado | duas etapas de uma ideia, com continuidade real entre slides |
 
 ## Ver renderizado
 
-O HTML de origem vive na cópia do clinical (é o pack cujos tokens ela usa),
-junto dos assets de teste — aqui ficam só as imagens, que é o que se estuda:
-
 ```
-node engine/assemble.js packs/clinical-photo-editorial/exemplos/miolos/esqueletos.html <outdir>
+node engine/tools/build-exemplos.js clinical-photo-editorial
 ```
 
 ## Duas leis que saíram daqui

@@ -125,6 +125,14 @@ def _padroes(d) -> list[dict]:
         s = unicodedata.normalize("NFKD", s).encode("ascii", "ignore").decode()
         return re.sub(r"[^a-z0-9]+", "-", s.lower()).strip("-")
 
+    # 1b) tabela por NOME — "| **card-ancorado** | composicao | bom para | ... |"
+    #     o negrito casa direto com o arquivo ref-card-ancorado.html
+    por_nome = {}
+    for linha in tec.splitlines():
+        m = re.match(r"\|\s*\*\*([a-z][a-z0-9-]+)\*\*\s*\|([^|]*)\|", linha)
+        if m:
+            por_nome[m.group(1)] = (m.group(1).replace("-", " "), m.group(2).strip())
+
     secoes = {}
     for titulo in re.findall(r"^## (.+)$", tec, re.M):
         chave = slugify(titulo.split("(")[0])
@@ -149,7 +157,8 @@ def _padroes(d) -> list[dict]:
         cod = img.stem.split("-")[0].upper()
         titulo, desc = legendas.get(cod, ("", ""))
         if not titulo:
-            achou = casa_secao(img.stem)
+            nome = re.sub(r"^(ref|ex)-", "", slugify(img.stem))
+            achou = por_nome.get(nome) or casa_secao(img.stem)
             if not achou:
                 continue  # asset de teste (foto-larga, decor…) — não é padrão
             cod, (titulo, desc) = "", achou

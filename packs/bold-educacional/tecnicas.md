@@ -76,6 +76,26 @@ Régua (ver knowledge/design/geral.md): 3 slides = 1 miolo direto · 5 slides =
 2+ miolos com objeto de conteúdo · 7+ = 3 tratamentos diferentes e o recurso da
 capa repetido 2×.
 
+## Citacao em caixa (miolo)
+
+A fala do paciente vira o objeto do slide: cartao claro sobre o chapado da
+primary, com a fala em sentence case e a **resposta profissional logo abaixo,
+no mesmo bloco de leitura** — nunca separadas por vao. Numero grande em paper
+ancora o rodape; colagem 3D sangra pelo canto oposto.
+
+## Lista em bloco (miolo leve)
+
+2-3 itens de UMA linha num `ds-block` de acento, com eyebrow e tese acima.
+E o tratamento mais leve do pack — serve de respiro entre dois slides densos.
+Colagem no canto inferior fecha a composicao.
+
+## Numero-dado (miolo)
+
+Quando o conteudo e um numero, o dado E a composicao: `ds-number data-size="lg"`
+grande no acento, a leitura do que ele significa colada abaixo (numero e frase
+sao UM bloco: "6 a 12" + "sessoes e a faixa mais estudada") e a ressalva em
+seguida. Exige colagem de ancora no rodape — so numero e texto deixa vao.
+
 ## Leis do estilo
 
 - **Hierarquia de tamanho**: display 72–104px e corpo 40px — o salto máximo é

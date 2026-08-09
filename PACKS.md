@@ -41,12 +41,29 @@ Todo pack precisa demonstrar que sabe resolver os **três papéis**. Não basta 
 | Prova | O que tem que ficar demonstrado |
 |---|---|
 | **Capa** | scroll-stop com a assinatura do estilo; o slide que segura o dedo |
-| **Miolo** | pelo menos **três tratamentos distintos** — como o estilo resolve `tese+ressalva`, `enumerado` e conteúdo com foto. É a prova que mais falha |
+| **Miolo** | **4–5 tratamentos distintos** — como o estilo resolve `tese+ressalva`, `enumerado`, conteúdo com foto, citação/dado. É a prova que mais falha |
 | **CTA** | fechamento que pede ação e fecha o arco, sem virar capa repetida |
 
 **Por que o miolo é obrigatório e explícito:** o clinical-photo-editorial foi certificado com uma `reference.png` que é UMA CAPA. Ninguém percebeu que o pack não sabia fazer miolo até ele produzir slide após slide de caixa sobre fundo chapado. Referência de capa ensina capa — nada mais.
 
 **Exceção — pack de peça única** (`slides.max ≤ 3`, ex. emotive-fullbleed-lettering): a prova de miolo não se aplica; capa e CTA convivem na mesma peça. O que substitui a prova é demonstrar a **extensão** (como a peça vira 2–3 slides quando a data pede história) e o rodapé institucional. Declare a exceção no `tecnicas.md` do pack.
+
+### Exemplar é HTML, imagem é derivada
+
+Cada padrão vive em `packs/<slug>/exemplos/<nome>.html` — **um arquivo por
+padrão**, que é a FONTE. Os JPGs ao lado saem de
+`node engine/tools/build-exemplos.js [slug]` e existem só para o portal não
+renderizar a cada request.
+
+Por quê: imagem congela o pixel. Quando o motor muda (`data-fit`, empilhamento
+sobre véus), todo JPG salvo antes passa a mostrar um estado que o motor não
+produz mais — e o agente copia como se fosse aprovado. Foi o defeito do
+`fita-aprovada-gram-teste-1`. Com HTML, o exemplar é executável: rode o build
+depois de mexer no motor e o que regrediu aparece na hora.
+
+**Exemplar sem HTML não conta como prova.** O nome do arquivo casa com a
+entrada correspondente do `tecnicas.md` (linha de tabela em negrito ou título
+de seção) — é assim que a galeria do portal monta a legenda.
 
 Se a referência do cliente/inspiração for só de capa, o criador **inventa o miolo** e valida com o Gustavo contra a referência, iterando até encaixar no estilo. `knowledge/design/esqueletos/` é catálogo de estudo para essa hora: composições que já funcionaram, para ajudar a achar a resposta do estilo novo — as cores de lá são ilustrativas, e copiar estrutura pronta não é o objetivo.
 
