@@ -19,6 +19,10 @@ Olhando SÓ a reference.png + o [`engine/CATALOG.md`](engine/CATALOG.md):
 
 1. **`pack.json`** — tokens exatos (hexs, famílias/tamanhos, radius), `fit` (funil × verticais), range de slides, `variables` (**só as que algum componente vai usar** — nunca declare por preencher). **Paleta é FECHADA**: todo hex sampleado da referência; cor que não está nos tokens não existe no pack — recipes e slides não podem introduzir cor nova (candidato a verificação mecânica no convert: fill fora dos tokens = rejeição).
 2. **`tecnicas.md`** — as dinâmicas do estilo escritas como TÉCNICA (par contínuo, decor voando, duo-tom, alternância de fundos…): o que aplicar, quando e o que já foi reprovado. É o coração do pack.
+2a. **`assets/`** (se o estilo tiver geometria fixa) — SVG de arco, moldura,
+divisoria: o que nao depende do tema e toda run copia. Precisa estar listado no
+`images.md`, senao a run nao sabe que existe (veredito 2026-08-09: os arcos do
+clinical ficaram so em `exemplos/` e nenhuma fita de certificacao os usou).
 2b. **`exemplos/`** — esqueletos/fitas aprovados como ponto de partida (nunca fôrma; duas gerações com o mesmo esqueleto são defeito).
 3. **`images.md`** — fórmulas de prompt por slot de imagem (estilo/luz/registro, nunca assunto) + o que é slot de plataforma vs gerada.
 4. **`lessons.md`** — inicia com as lições herdadas RELEVANTES (as que viraram estrutura, anote como estrutura; não copie história morta).

@@ -98,7 +98,11 @@ def fatias_nova(slug: str, pack: str | None, tema: str, pedido: str = "",
            f"FATIA 3 de 6 - SO A ABERTURA. Dossie e assets ja existem (leia dossie.md, "
            f"liste assets/).\n"
            f"Crie artifacts/runs/{slug}/fita.html com o esqueleto (head + main.fita) e "
-           f"APENAS a <section data-role=\"abertura\">. Nao escreva os outros slides ainda. "
+           f"APENAS a <section data-role=\"abertura\">. Nao escreva os outros slides ainda.\n"
+           f"A CAPA CARREGA AS ASSINATURAS do pack - leia a secao 'Assinaturas' do "
+           f"packs/{pk}/tecnicas.md e aplique TODAS. Se alguma exigir asset fixo (o "
+           f"images.md diz quais), copie de packs/{pk}/assets/ para "
+           f"artifacts/runs/{slug}/assets/ antes de referenciar.\n"
            f"Nao rode assemble. Responda em 2 linhas.")
 
     f3b = (ctx + regras +

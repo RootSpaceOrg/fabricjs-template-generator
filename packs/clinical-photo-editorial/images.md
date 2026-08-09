@@ -32,6 +32,7 @@ quente **na direção oposta**, para a cor da marca ressaltar em vez de brigar.
 | foto imersiva (full-bleed) | "ambiente clínico amplo em penumbra premium, **tons neutros escuros**, luz pontual suave criando contraste, sem texto" |
 | foto do par contínuo | paisagem larga (>=1792x1024), sujeito perto do CENTRO — vai INTEIRA na `.fita-layer` sobre a fronteira; a emenda corta a foto |
 | foto_profissional | slot da plataforma (placeholder canônico no render) |
+| **arcos (assinatura)** | NÃO se gera: `cp packs/clinical-photo-editorial/assets/arcos.svg artifacts/runs/<slug>/assets/`. Geometria fixa do estilo — dois arcos de traço fino em oposição diagonal, cortados pelas bordas. Vai na capa e no fechamento |
 
 **Composição do decor:** grande, colado numa borda (cortado por ela — "voando"),
 rotação leve (10–20°); nunca pequeno/solto no meio do canvas; nunca sobre
