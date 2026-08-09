@@ -38,12 +38,15 @@ cliente que usa a fábrica tem a cor dele, não a da referência.
 |---|---|---|
 | `paper`/`ink`/`muted`/`wm` | **neutros**, com desvio sutil de temperatura para não virar cinza morto | cores do estilo |
 | Cor da marca | entra por `data-variable` (primary/accent) em texto, caixas, números | decorativa apenas |
-| Fotos | paleta neutra dessaturada — personalidade vem de luz, matéria e enquadramento | podem carregar a cor |
+| Fotos | sem cor DOMINANTE (a marca é o elemento mais colorido da peça) — mas com luz dramática, gesto e ângulo autoral | podem carregar a cor do estilo |
 | `fit` | qualquer marca | declare a restrição (ex. "marcas de paleta fria") |
 
-**Adaptável não é sem graça.** A personalidade vem de composição, tipografia,
-luz e matéria — não de tingir tudo. Foto neutra não é foto branca ou bege: é
-luz direcional, sombra desenhada, foco raso, superfície real.
+**Adaptável não é sem graça — e "cor neutra" não é "imagem neutra".** Empilhar
+"neutro + dessaturado + penumbra + sombra" nas fórmulas de imagem produz foto
+séria e apagada (veredito 2026-08-09, clinical): o pêndulo passou do ponto ao
+tirar a cor do estilo. O que a adaptabilidade exige é que **nenhuma cor da foto
+domine** — não que a foto seja cinza. Luz dramática, gesto em ação, textura,
+ângulo autoral e um acento de cor da própria cena continuam valendo.
 
 **Prova obrigatória** (§3, prova de Marca): renderize com uma cor bem diferente
 da referência. Se algo brigar — fundo esverdeado contra marca roxa, foto na cor
