@@ -98,6 +98,61 @@ def packs() -> list[dict]:
     return out
 
 
+def _padroes(d) -> list[dict]:
+    """Padrões de composição do pack: as imagens de exemplos/, com a legenda que
+    o tecnicas.md já dá para cada uma (a tabela 'como este estilo resolve').
+
+    A prova das três provas (capa/miolo/CTA) mora aqui — PACKS.md §3.
+    """
+    import re
+    ex = d / "exemplos"
+    if not ex.exists():
+        return []
+    tec = (d / "tecnicas.md").read_text(encoding="utf-8", errors="replace") \
+        if (d / "tecnicas.md").is_file() else ""
+    # Cada pack documenta como quer; aceitamos as duas formas em uso:
+    # 1) tabela com codigo — "| **E1** titulo | descricao |" (clinical)
+    legendas = {}
+    for linha in tec.splitlines():
+        m = re.match(r"\|\s*\*\*([A-Z]\d+[a-z]?)\*\*\s*([^|]*)\|([^|]*)\|", linha)
+        if m:
+            legendas[m.group(1)] = (m.group(2).strip(), m.group(3).strip())
+    # 2) secoes — "## Capa meme (scroll-stop)" casa com ref-capa-meme.png (bold)
+    secoes = {}
+    for titulo in re.findall(r"^## (.+)$", tec, re.M):
+        chave = re.sub(r"[^a-z0-9]+", "-", titulo.lower().split("(")[0].strip())
+        primeira = ""
+        bloco = tec.split(f"## {titulo}", 1)[-1].strip().splitlines()
+        for ln in bloco:
+            if ln.strip() and not ln.startswith("#"):
+                primeira = re.sub(r"[*`]|\d+\.\s*", "", ln).strip()
+                break
+        secoes[chave] = (titulo.strip(), primeira[:180])
+
+    def casa_secao(stem: str):
+        nome = re.sub(r"^(ref|ex)-|-\d+$", "", stem.lower())
+        for chave, val in secoes.items():
+            if nome and (nome in chave or chave.startswith(nome)):
+                return val
+        return None
+    out = []
+    for img in sorted(ex.rglob("*")):
+        if img.suffix.lower() not in (".jpg", ".jpeg", ".png"):
+            continue
+        cod = img.stem.split("-")[0].upper()
+        titulo, desc = legendas.get(cod, ("", ""))
+        if not titulo:
+            achou = casa_secao(img.stem)
+            if not achou:
+                continue  # asset de teste (foto-larga, decor…) — não é padrão
+            cod, (titulo, desc) = "", achou
+        elif img.stem.upper() in (cod + "A", cod + "B"):
+            continue  # metades de um par: a vista conjunta já representa
+        out.append({"rel": str(img.relative_to(ex)).replace("\\", "/"),
+                    "cod": cod, "titulo": titulo, "desc": desc})
+    return out
+
+
 def pack_detalhe(slug: str) -> dict | None:
     """Pack + certificação completa (fitas com strip, judge e dossiê)."""
     import json
@@ -130,6 +185,7 @@ def pack_detalhe(slug: str) -> dict | None:
         "arquivos": [{"rel": str(x.relative_to(FACTORY)).replace("\\", "/"), "nome": x.name}
                      for x in sorted(d.glob("*.md"))],
         "exemplos": sorted(x.name for x in (d / "exemplos").glob("*")) if (d / "exemplos").exists() else [],
+        "padroes": _padroes(d),
         "evidencia": ev.read_text(encoding="utf-8", errors="replace") if ev.exists() else "",
         "fitas": fitas,
     }

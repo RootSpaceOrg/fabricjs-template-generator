@@ -416,6 +416,20 @@ def pack_view(slug: str):
           if p["evidencia"] else "")
     exemplos = ("".join(f'<span class="pill s-draft">{e}</span> ' for e in p["exemplos"])
                 or '<span class="sub">nenhum</span>')
+    # padrões de composição: a prova de que o pack sabe capa, miolo e CTA (PACKS.md §3)
+    pads = "".join(
+        f'''<figure class="pad">
+<a href="/packs/{slug}/exemplo/{d["rel"]}" target="_blank" rel="noopener">
+<img src="/packs/{slug}/exemplo/{d["rel"]}" loading="lazy" alt="{_esc(d["titulo"])}"></a>
+<figcaption>{f'<span class="cod">{d["cod"]}</span>' if d["cod"] else ""}
+<strong>{_esc(d["titulo"])}</strong><span>{_esc(d["desc"])}</span></figcaption></figure>'''
+        for d in p["padroes"])
+    padroes = (f'<p class="h2" style="margin-top:26px">Padrões de composição '
+               f'<span class="sub">— {len(p["padroes"])} · como este estilo resolve cada formato</span></p>'
+               f'<div class="pads">{pads}</div>' if p["padroes"] else
+               '<p class="h2" style="margin-top:26px">Padrões de composição</p>'
+               '<p class="empty">Sem padrões documentados. Todo pack precisa provar capa, '
+               'miolo e CTA (PACKS.md §3) — exceto peça única, que não tem miolo.</p>')
     head = (f'<h1>{slug}</h1><span class="pill {cls}">{p["status"]}</span>'
             f'<span class="sub">v{p["versao"]}'
             f'{" · certificado em " + p["certificado_em"] if p["certificado_em"] else ""}</span>'
@@ -433,6 +447,7 @@ def pack_view(slug: str):
 <p class="h2" style="margin-top:16px">Conhecimento do pack</p>
 <div class="meta">{files}<a class="btn sm" href="/conhecimento/editar?rel=packs/{slug}/pack.json">pack.json</a></div>
 </div></div>
+{padroes}
 <p class="h2" style="margin-top:26px">Certificação — {len(p["fitas"])} fitas de prova</p>
 {fitas or '<p class="empty">Este pack ainda não tem certificação.</p>'}
 {ev}'''
@@ -451,6 +466,16 @@ def pack_cert_img(slug: str, nome: str):
 def pack_ref(slug: str):
     p = FACTORY / "packs" / slug / "reference.png"
     if not p.exists():
+        raise HTTPException(404)
+    return FileResponse(p)
+
+
+@app.get("/packs/{slug}/exemplo/{caminho:path}")
+def pack_exemplo(slug: str, caminho: str):
+    """Imagem de exemplos/ do pack (padrões de composição)."""
+    base = (FACTORY / "packs" / slug / "exemplos").resolve()
+    p = (base / caminho).resolve()
+    if not str(p).startswith(str(base)) or not p.is_file():
         raise HTTPException(404)
     return FileResponse(p)
 
