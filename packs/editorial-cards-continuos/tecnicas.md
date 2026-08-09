@@ -39,9 +39,10 @@ DENTRO dele (filhos do `ds-card`), então acompanha.
 **O último cartão (CTA) não sangra**: ele fecha a fita, então fica inteiro
 dentro do próprio slide. É a parada do padrão.
 
-**Cuidado:** elemento da `.fita-layer` pinta por cima dos slides. Nenhuma
-section pode ter texto onde um cartão passa — na prática, os slides de miolo
-ficam vazios e o conteúdo todo vive nos cartões.
+**Consequência prática:** as sections de miolo ficam **vazias** (só o fundo
+escuro) e todo o conteúdo — cartão, número, headline, apoio — vive na camada.
+A camada pinta por cima dos slides, então texto na section sumiria por baixo
+dos cartões.
 
 ## Como este estilo resolve cada formato
 
