@@ -1,7 +1,7 @@
 {
   "pack": "clinical-photo-editorial",
   "version": 6,
-  "status": "certificado",
+  "status": "draft",
   "familia": "editorial clinico premium, fotografico e organico",
   "fit": {
     "funil": [
@@ -76,6 +76,5 @@
   "variables": {
     "primary": "#2E8C7F"
   },
-  "certificado_em": "2026-08-06",
   "adaptavel": true
 }
