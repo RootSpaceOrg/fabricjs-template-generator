@@ -8,6 +8,7 @@
     "check-playwright": "node -e \"const { chromium } = require('playwright'); chromium.launch().then(b => b.close()).then(() => console.log('playwright OK')).catch(e => { console.error('FAIL:', e.message); process.exit(1); })\""
   },
   "dependencies": {
+    "fabric": "5.5.2",
     "playwright": "^1.40.0"
   },
   "engines": {

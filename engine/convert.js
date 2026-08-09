@@ -17,6 +17,9 @@
 
 const fs = require("fs");
 const path = require("path");
+// fabric 5.5.2 — a MESMA versão do frontend (lá é o build -browser). Serve só
+// para converter SVG em grupo de vetores do jeito que o editor faz.
+const { fabric } = require("fabric");
 const { execFileSync } = require("child_process");
 const { chromium } = require("playwright");
 
@@ -316,6 +319,41 @@ const rgb2hex = (c) => {
       }) };
   }
 
+  // SVG → grupo de vetores, o mesmo caminho da plataforma (fabric 5.5.2, a
+  // versão do frontend). Síncrono: o callback resolve no mesmo tick quando o
+  // SVG não referencia imagem externa — que é a regra (SVG é geometria).
+  const svgGroup = (n, common, i) => {
+    const p = require("url").fileURLToPath(n.src);
+    if (!fs.existsSync(p)) {
+      console.error(`REJEITADO — slide-${i + 1} · ${n.id}: svg inexistente: ${p}`);
+      process.exit(1);
+    }
+    if (!("data-static" in n.attrs)) {   // atributo vazio é falsy: teste presença
+      console.error(`REJEITADO — slide-${i + 1} · ${n.id}: svg é geometria estática, `
+        + `marque data-static (editável = imagem, use .png/.jpg)`);
+      process.exit(1);
+    }
+    const bruto = fs.readFileSync(p, "utf-8");
+    if (/<image\b|xlink:href|<text\b/i.test(bruto)) {
+      console.error(`REJEITADO — slide-${i + 1} · ${n.id}: svg com imagem ou texto embutido. `
+        + `SVG é só geometria (circle/rect/path/line) — ver CATALOG`);
+      process.exit(1);
+    }
+    let grupo = null;
+    fabric.loadSVGFromString(bruto, (objs, opts) => {
+      grupo = fabric.util.groupSVGElements(objs, opts);
+    });
+    if (!grupo) {
+      console.error(`REJEITADO — slide-${i + 1} · ${n.id}: svg não pôde ser lido (imagem embutida?)`);
+      process.exit(1);
+    }
+    // o grupo nasce no tamanho do viewBox; escala para a área declarada no grid
+    grupo.scaleX = n.w / (grupo.width || n.w);
+    grupo.scaleY = n.h / (grupo.height || n.h);
+    return { ...grupo.toObject(), ...common, name: "SVG",
+      scaleX: grupo.scaleX, scaleY: grupo.scaleY };
+  };
+
   data.slides.forEach((sl, i) => {
     const objects = [];
     for (const n of sl.nodes) {
@@ -323,7 +361,13 @@ const rgb2hex = (c) => {
       const common = { left: Math.round(n.cx * 100) / 100, top: Math.round(n.cy * 100) / 100,
         originX: "center", originY: "center", elId: n.id,
         ...(n.angle ? { angle: n.angle } : {}), ...(n.opacity < 1 ? { opacity: n.opacity } : {}) };
-      if (n.kind === "img") {
+      if (n.kind === "img" && /\.svg(\?|$)/i.test(n.src || "")) {
+        // SVG vira GRUPO de vetores, como a plataforma faz ao inserir um
+        // (images-tab: loadSVGFromURL + groupSVGElements). Emitir ClippableImage
+        // aqui produziria algo que o editor nunca geraria — e o traço perderia
+        // a nitidez em qualquer escala.
+        objects.push(svgGroup(n, common, i));
+      } else if (n.kind === "img") {
         const rp = n.circle ? 50 : pct(n.radiusPx, n.w, n.h);
         objects.push({ type: "ClippableImage", name: "Imagem", ...common, src: inlineSrc(n.src, n.id),
           width: Math.round(n.w * 100) / 100, height: Math.round(n.h * 100) / 100,

@@ -94,8 +94,19 @@ Modificadores globais: `data-tone` (ink/muted/accent/paper/accent-ink) ·
 
 ## SVG — só geometria de composição, NUNCA imagem
 
-SVG entra como **arquivo** num `<img class="ds-photo" src="arcos.svg">` (inline,
-`<svg>` no HTML, segue rejeitado). Vira `data:image/svg+xml` no JSON.
+SVG entra como **arquivo** num `<img class="ds-photo" data-static src="arcos.svg">`
+(inline, `<svg>` no HTML, segue rejeitado).
+
+Vira **`group` de vetores** no JSON — `circle`/`path`/`line` de verdade, cada um
+com seu `stroke`, com `name: "SVG"`. É o mesmo objeto que o editor produz quando
+o usuário insere um SVG (`loadSVGFromURL` + `groupSVGElements`), então o motor
+usa o **fabric 5.5.2**, a mesma versão do frontend. Traço permanece nítido em
+qualquer escala; como imagem ele rasterizaria.
+
+`group` é o ÚNICO caso em que o validador aceita grupo — qualquer outro continua
+proibido (grupo vira objeto que o usuário não edita por slot). Dois gates no
+convert: SVG **precisa** de `data-static` (editável = imagem, use png/jpg) e não
+pode conter `<image>`, `xlink:href` ou `<text>`.
 
 **Use para** o que CSS não expressa: arco parcial, traço que entra e sai do
 quadro, curva em ângulo, moldura de formato irregular, cartão com recorte

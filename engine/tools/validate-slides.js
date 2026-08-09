@@ -18,6 +18,7 @@ import { resolve, extname, basename, join } from 'path';
 const VALID_TYPES = new Set([
   'roundedRect', 'circle', 'ellipse', 'path',
   'line', 'textbox', 'image', 'ClippableImage',
+  'group', // SVG de geometria: o editor gera o mesmo (loadSVGFromURL + groupSVGElements)
 ]);
 
 const FORBIDDEN_TYPES = new Set(['rect']);
@@ -268,9 +269,17 @@ function validateObject(obj, file, index) {
     }
   }
 
-  // no Fabric groups
-  if (obj.type === 'group')
-    err(file, p, 'Fabric groups are not allowed — flatten to individual objects');
+  // Fabric group: permitido SÓ para SVG de geometria (name "SVG"), que é o que
+  // o editor gera ao inserir um (loadSVGFromURL + groupSVGElements). Qualquer
+  // outro grupo continua proibido — vira objeto que o usuário não consegue
+  // editar por slot.
+  if (obj.type === 'group') {
+    if (obj.name !== 'SVG')
+      err(file, p, 'Fabric groups are not allowed — flatten to individual objects '
+        + '(exceção: SVG de geometria, que sai com name "SVG")');
+    else if (obj.templateElement)
+      err(file, p, 'SVG group não pode ser templateElement — é geometria estática');
+  }
 }
 
 // ─── per-slide validator ─────────────────────────────────────────────────────
