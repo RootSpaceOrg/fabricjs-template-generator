@@ -121,6 +121,9 @@ seguida. Exige colagem de ancora no rodape — so numero e texto deixa vao.
 - Meme = absurdo fotográfico com dignidade (luz real, film look) — nunca
   clipart, nunca cartoon, nunca rosto humano deformado.
 - Statement nunca divide atenção: ou colagem OU iconografia de margem, não os
-  dois grandes.
+  dois grandes. **Vale para watermark também** (veredito 2026-08-09): watermark
+  gigante e colagem são âncoras de canto e brigam pelo mesmo papel — uma por
+  canto. Watermark que repete palavra já visível no slide é enfeite; ou traz
+  palavra nova, ou sai.
 - Fita típica: capa meme → 2–4 statements/explicações alternando chapado e
   paper → fechamento com CTA em tarja. Fundos DEVEM alternar (R3 vale aqui).

@@ -31,9 +31,10 @@ Responda LITERALMENTE cada item olhando os screenshots; violação → efeito in
 | R8 | Headline ou caixa tocando a borda do slide sem a margem que os demais slides respeitam | craft máximo = 7 |
 | R9 | **Elemento decepado na emenda**: imagem cortada pela borda de um slide de miolo que NÃO continua no slide vizinho (overhang usado onde deveria ser travessia da `.fita-layer`) | craft máximo = 6 |
 | R10 | **Imagem sem função**: foto de cena ocupando um canto pequeno (≤4×4 células) sem carregar conteúdo — asset que sobrou virou enfeite. Decor tem regra própria (transparente, desfocado, grande); foto de cena não é decor | craft máximo = 6 |
+| R12 | **Camadas colidindo**: watermark e colagem/decor ocupando o mesmo canto, um cortando o outro. O gate de sobreposição não pega (camada×camada é permitido) — é defeito de composição, só o olho vê. Inclui watermark que repete palavra já visível no slide | craft máximo = 6 |
 | R11 | **Cutout flutuando**: `professionalPhoto` com `data-cutout` cuja área termina antes da linha 13 — a figura fica com vão embaixo em vez de pisar no rodapé | craft máximo = 7 |
 
-O resultado (R1–R11 por candidato) entra no judge-report ANTES dos scores. Regra dura violada não é "compensável" por outros méritos — o teto/eliminação se aplica mesmo que o resto seja excelente.
+O resultado (R1–R12 por candidato) entra no judge-report ANTES dos scores. Regra dura violada não é "compensável" por outros méritos — o teto/eliminação se aplica mesmo que o resto seja excelente.
 
 ### Passo 2: comparação pairwise (não dê notas absolutas primeiro)
 
@@ -52,10 +53,10 @@ Os 3 ajustes de maior impacto no vencedor (pontuais e executáveis em 1 passada 
 ```markdown
 # Judge — <slug>
 Golden set: <N exemplares usados | ⚠ ausente — scores não calibrados>
-## Regras duras (R1–R11)
-| Candidato | R1 avatar | R2 corte | R3 monocromia | R4 área morta | R5 UI-decor | R6 contraste | R7 bloco partido | R8 margem | R9 emenda | R10 img sem função | R11 cutout |
-|-----------|-----------|----------|----------------|----------------|--------------|---------------|------------------|-----------|-----------|-----------------|------------|
-| A | ok/VIOLA | ... | ... | ... | ... | ... | ... | ... | ... | ... | ... |
+## Regras duras (R1–R12)
+| Candidato | R1 avatar | R2 corte | R3 monocromia | R4 área morta | R5 UI-decor | R6 contraste | R7 bloco partido | R8 margem | R9 emenda | R10 img sem função | R11 cutout | R12 camadas |
+|-----------|-----------|----------|----------------|----------------|--------------|---------------|------------------|-----------|-----------|-----------------|------------|------------|
+| A | ok/VIOLA | ... | ... | ... | ... | ... | ... | ... | ... | ... | ... | ... |
 Eliminados: <X: motivo | nenhum>
 Pairwise: A vs B → <?> (ordem 1), <?> (ordem 2) · <vencedor> vs C → ...
 ## Vencedor: <X>
@@ -89,16 +90,16 @@ Quando qualquer arquivo da fábrica muda, antes do próximo batch de produção:
 
 ## Modo QA — geração por estilo certificado
 
-Para runs em modo pack (`packs/`): **sem pairwise, sem scores** — a estrutura já foi julgada na certificação. Verifique no candidato único: R1–R11 (checklist do passo 1b) + decor/travessia sobre texto, CTA, logo ou professionalPhoto (lei de legibilidade — FAIL) + **narrativa (CONTEXT.md §3b, lendo a copy dos screenshots)**: gancho com tensão/custo (não anúncio de pauta) · zero slides redundantes · todo imperativo com porquê/mecanismo · copy específica do nicho (se serve para outro segmento, FAIL) · CTA conectado ao valor + overflow de copy nos slots (min/max respeitados mas o RENDER cabe?) + imagens geradas coerentes com o registro do pack e com o slide + lessons.md do pack (erros recorrentes dele). Saída: `QA: PASS` ou lista de defeitos (copy do slot X estoura, imagem do slide Y fora do registro). Defeito de layout/estrutura = bug do pack → lessons.md do pack, não conserto na run.
+Para runs em modo pack (`packs/`): **sem pairwise, sem scores** — a estrutura já foi julgada na certificação. Verifique no candidato único: R1–R12 (checklist do passo 1b) + decor/travessia sobre texto, CTA, logo ou professionalPhoto (lei de legibilidade — FAIL) + **narrativa (CONTEXT.md §3b, lendo a copy dos screenshots)**: gancho com tensão/custo (não anúncio de pauta) · zero slides redundantes · todo imperativo com porquê/mecanismo · copy específica do nicho (se serve para outro segmento, FAIL) · CTA conectado ao valor + overflow de copy nos slots (min/max respeitados mas o RENDER cabe?) + imagens geradas coerentes com o registro do pack e com o slide + lessons.md do pack (erros recorrentes dele). Saída: `QA: PASS` ou lista de defeitos (copy do slot X estoura, imagem do slide Y fora do registro). Defeito de layout/estrutura = bug do pack → lessons.md do pack, não conserto na run.
 
 ## Modo 3 — Verificação de fidelidade (pós-swap de imagens ou pós-conversão)
 
-Entrada: strip/screenshots APROVADOS + strip/screenshots ATUAIS. Pergunta única: **é a mesma peça?** Cheque R1–R11 de novo + os 5 itens do gate de fidelidade do FINALIZE. Saída: `FIEL` ou lista de divergências (slide, o que mudou). Sem re-pontuar, sem re-julgar mérito — só fidelidade.
+Entrada: strip/screenshots APROVADOS + strip/screenshots ATUAIS. Pergunta única: **é a mesma peça?** Cheque R1–R12 de novo + os 5 itens do gate de fidelidade do FINALIZE. Saída: `FIEL` ou lista de divergências (slide, o que mudou). Sem re-pontuar, sem re-julgar mérito — só fidelidade.
 
 ## Integridade do relatório (obrigatório)
 
-- O judge-report descreve o estado **no momento do julgamento** — é imutável. Fixes aplicados depois entram no relatório do FINALIZE, nunca editados retroativamente na tabela R1–R11 (dizer "ok — corrigido depois" numa linha de verificação é falsificar a evidência; se violou, a tabela diz VIOLA e o fix é registrado adiante).
-- Toda afirmação da tabela R1–R11 deve ser verificável no screenshot correspondente — cite o slide.
+- O judge-report descreve o estado **no momento do julgamento** — é imutável. Fixes aplicados depois entram no relatório do FINALIZE, nunca editados retroativamente na tabela R1–R12 (dizer "ok — corrigido depois" numa linha de verificação é falsificar a evidência; se violou, a tabela diz VIOLA e o fix é registrado adiante).
+- Toda afirmação da tabela R1–R12 deve ser verificável no screenshot correspondente — cite o slide.
 
 ## Vieses a policiar em si mesmo
 

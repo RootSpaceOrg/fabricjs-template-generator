@@ -223,3 +223,16 @@ dela — e se o slide ficou vazio sem ela, o problema é a copy, não a imagem.
 `data-cutout` alinha a figura na base da célula do grid, não na do slide. Área
 que termina na linha 11 ou 12 deixa a pessoa flutuando com um vão embaixo. Para
 o profissional "pisar" no rodapé, a área precisa ir até a linha 13.
+
+## Duas camadas não disputam o mesmo canto
+
+O gate de sobreposição libera `data-layer` sobrepor qualquer coisa — inclusive
+outra camada. Isso é necessário (texto sobre véu sobre foto), mas abre espaço
+para watermark e colagem caírem no mesmo canto, um cortando o outro.
+
+Camada ainda tem lugar: watermark gigante e colagem/decor são âncoras de canto
+e **brigam pelo mesmo papel**. Escolha uma por canto — e se a fita já tem a
+colagem como assinatura, o watermark provavelmente não é necessário.
+
+Watermark que repete uma palavra já visível no slide é enfeite, não camada de
+profundidade: ou traz uma palavra nova (o número da etapa, o conceito), ou sai.
