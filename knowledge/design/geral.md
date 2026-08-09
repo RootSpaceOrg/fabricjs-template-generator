@@ -55,10 +55,16 @@ em run, o tratamento vem do `tecnicas.md` do pack em uso.
 
 ## Cor da marca em caixas
 
-Todo elemento de CAIXA CHEIA em cor de acento (tarja, pill de CTA, bloco,
-overlay) leva `data-variable="primary"` — o conversor emite `fillVariableConfig`
-e a caixa se recolore com a marca do usuário, como os fundos chapados. Acento
-cravado sem variável é defeito: a peça inteira deve se vestir da primary.
+Todo elemento em cor de acento leva `data-variable="primary"` — caixa cheia
+(tarja, pill de CTA, bloco, overlay), forma, número gigante, **e a palavra
+destacada do duo-tom** (`<span data-tone="accent" data-variable="primary">`, que
+vira `fillVariableConfig` por caractere). Acento cravado sem variável é defeito:
+a peça inteira deve se vestir da primary.
+
+**O que NÃO se variabiliza**: `ink`, `paper`, `muted` e `wm` são a paleta
+estrutural do estilo (o papel menta do clinical, o cream do bold). Se
+recolorissem, o pack perderia identidade e viraria "qualquer pack na cor do
+cliente" — o que se veste da marca é o ACENTO, não o fundo do estilo.
 
 ## Miolo não é versão pobre da capa
 

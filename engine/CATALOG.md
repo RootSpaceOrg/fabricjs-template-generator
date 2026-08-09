@@ -90,7 +90,7 @@ Modificadores globais: `data-tone` (ink/muted/accent/paper/accent-ink) ·
 | `data-static` | sem templateElement |
 | `data-text-type="instagramName\|instagramHandle\|phone\|address"` | `textType` (exclusivo com template-element) |
 | `data-image-type` | `imageType` (em `ds-slot` o default é o valor de `data-slot`) |
-| `data-variable="primary\|secondary"` (+ `data-variable-target="background"` na section) | `fillVariableConfig` / background variável |
+| `data-variable="primary\|secondary"` (+ `data-variable-target="background"` na section) | `fillVariableConfig` / background variável. Vale em caixa, forma, texto E **em `<span>` dentro de texto** — o span vira `fillVariableConfig` por caractere no `styles`, que é como o duo-tom recolore com a marca |
 
 ## SVG — só geometria de composição, NUNCA imagem
 

@@ -112,7 +112,9 @@ const rgb2hex = (c) => {
         if (n.nodeType === 3 && n.textContent) runs.push({ t: n.textContent.replace(/\\+n/g, "\n"), color: s.color });
         else if (n.nodeType === 1 && n.tagName === "BR") runs.push({ t: "\n", color: s.color });
         else if (n.nodeType === 1 && (n.tagName === "SPAN" || n.tagName === "B" || n.tagName === "EM")) {
-          runs.push({ t: (n.innerText || "").replace(/\\+n/g, "\n"), color: getComputedStyle(n).color });
+          // data-variable no span = palavra que se recolore com a marca (duo-tom)
+          runs.push({ t: (n.innerText || "").replace(/\\+n/g, "\n"), color: getComputedStyle(n).color,
+            variable: n.getAttribute("data-variable") || null });
         } else if (n.nodeType === 1) {
           rejects.push({ id: el.getAttribute("data-el-id"), reason: `filho <${n.tagName.toLowerCase()}> dentro de componente de texto (só span/b/em/br)` });
         }
@@ -292,7 +294,10 @@ const rgb2hex = (c) => {
       let t = n.upper ? run.t.toUpperCase() : run.t;
       for (const ch of t) {
         if (ch === "\n") { line++; col = 0; text += ch; continue; }
-        if (runFill && runFill !== baseFill) (styles[line] ||= {})[col] = { fill: runFill };
+        if (runFill && runFill !== baseFill)
+          (styles[line] ||= {})[col] = { fill: runFill,
+            // span com data-variable: a palavra acompanha a marca do usuário
+            ...(run.variable ? { fillVariableConfig: { type: "solid", variable: run.variable, alpha: 1 } } : {}) };
         text += ch; col++;
       }
     }
