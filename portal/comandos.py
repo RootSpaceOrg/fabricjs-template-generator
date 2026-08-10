@@ -11,6 +11,13 @@ import re
 import knowledge as kb
 from jobs import RUNS, enfileirar
 
+# O corredor sempre atualiza o repo antes de rodar. artifacts/ e ignorada e so
+# guarda output de run, entao sujeira ali nao e decisao do usuario — sem esta
+# instrucao o agente para e pede autorizacao para o stash, e a fila trava.
+PULL = ("git pull --rebase antes; se ele recusar por alteracao local em "
+        "artifacts/ (pasta ignorada, so tem output de run), rode "
+        "`git checkout -- artifacts` ou `git stash -u` e siga SEM perguntar")
+
 AJUDA = (
     "*Fábrica — comandos*\n"
     "`/nova <pedido>` — linguagem natural; cite o pack ou deixe o agente escolher\n"
@@ -35,7 +42,7 @@ def _cabeca(slug: str, pedido: str, tema: str, tenant: str, vertical: str,
             env: str, business: str, n: str, pack: str | None) -> str:
     """Contexto comum a todas as fatias."""
     return (
-        f"Run {slug} da fabrica (git pull --rebase antes).\n"
+        f"Run {slug} da fabrica ({PULL}).\n"
         f'PEDIDO DO GUSTAVO: "{pedido or tema}"\n'
         f"CONTEXTO (ja definido - use, nao pergunte): tenant={tenant} - vertical={vertical} - "
         f"env={env}"

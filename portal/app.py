@@ -220,7 +220,7 @@ def veredito(slug: str, veredito: str = Form(...), texto: str = Form("")):
     registrar_veredito(slug, veredito, texto)
     if veredito == "reprovado" and texto.strip():
         enfileirar("agente", slug,
-                   f"REVISAO da run {slug} na fabrica (git pull --rebase antes; copy/dossie so mudam se o "
+                   f"REVISAO da run {slug} na fabrica ({comandos.PULL}; copy/dossie so mudam se o "
                    f"feedback pedir). Feedback do Gustavo:\n\n{texto.strip()}\n\n"
                    f"Corrija o fita.html de artifacts/runs/{slug}, rode "
                    f"'node engine/assemble.js artifacts/runs/{slug}' e confirme. NAO avance estagio.")
@@ -303,7 +303,7 @@ def responder_agente(job_id: int, resposta: str = Form(...)):
     if not j:
         raise HTTPException(404)
     fio = historico(job_id)
-    partes = ["CONTINUACAO de uma conversa que ficou pendente (fabrica; git pull --rebase antes).",
+    partes = [f"CONTINUACAO de uma conversa que ficou pendente (fabrica; {comandos.PULL}).",
               "Historico do que ja aconteceu:"]
     for h in fio:
         pedido = h["payload"][:900].strip()
@@ -574,7 +574,7 @@ def _aprovar(slug: str, origem: str) -> str:
     judge = _read(d / "judge-report.md")
     passou = "QA: PASS" in judge
     enfileirar("agente", slug,
-               f"O Gustavo APROVOU a fita da run {slug} (fabrica; git pull --rebase antes). "
+               f"O Gustavo APROVOU a fita da run {slug} (fabrica; {comandos.PULL}). "
                f"Feche o ciclo ate a publicacao em dev:\n"
                f"1. python3 engine/run.py status {slug} para ver onde esta;\n"
                + ("2. o judge ja passou (QA: PASS) — siga.\n" if passou else
@@ -631,7 +631,7 @@ async def tg_webhook(request: Request):
             slug = AGUARDANDO.pop(chat)
             registrar_veredito(slug, "reprovado", texto, origem="telegram")
             enfileirar("agente", slug,
-                       f"REVISAO da run {slug} na fabrica (git pull --rebase antes; copy/dossie so "
+                       f"REVISAO da run {slug} na fabrica ({comandos.PULL}; copy/dossie so "
                        f"mudam se o feedback pedir). Feedback do Gustavo:\n\n{texto}\n\n"
                        f"Corrija o fita.html de artifacts/runs/{slug}, rode "
                        f"'node engine/assemble.js artifacts/runs/{slug}' e confirme. NAO avance estagio.")
