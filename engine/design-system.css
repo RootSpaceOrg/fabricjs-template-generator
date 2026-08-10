@@ -158,6 +158,11 @@ section.slide[data-invert] .ds-card { color: var(--ink); }
 section.slide[data-invert] .ds-card .ds-cta { background: var(--accent); color: var(--accent-ink); }
 /* pill/tarja SEMPRE com a cor de contraste do próprio fundo, nunca herda do pai */
 .ds-cta, .ds-card .ds-cta, .ds-block .ds-cta { color: var(--accent-ink); }
+/* borda do chip: sobre o cartão que veste a marca, a borda em accent fica
+   invisível (accent sobre accent). data-tone pinta só o texto. */
+[data-border="paper"] { border-color: var(--paper); }
+.ds-stamp[data-tone="paper"] { color: var(--paper); }
+[data-border="ink"]   { border-color: var(--ink); }
 
 /* ── formas/containers ─────────────────────────────────────────────────── */
 .ds-block { background: var(--accent); color: var(--accent-ink); padding: 36px; }
@@ -183,9 +188,22 @@ section.slide[data-invert] .ds-card .ds-cta { background: var(--accent); color: 
 /* cartão em outro tom do PAPEL (não do acento): packs que alternam creme e
    branco na sequência. data-tone sozinho pinta o texto, não o fundo. */
 .ds-card[data-surface="wm"] { background: var(--wm); }
+/* deslocamento de MEIA coluna. Numa fita com passo de 12 colunas, gap e
+   sangria disputam a mesma sobra: gap + sangria = largura − 12, então largura
+   13 dá 1 col para dividir entre os dois e qualquer escolha inteira zera um
+   deles. A referência resolve começando o cartão a 1,5 col da emenda — meia
+   coluna. Este modificador tira o cartão da grade só nesse eixo: ele mantém a
+   largura em colunas e desliza metade de uma para a esquerda, de modo que
+   sobre gap de um lado e sangria do outro. */
+[data-half-left]  { margin-left: -45px; }    /* desliza meia coluna (90px) */
+[data-half-right] { margin-right: 45px; }    /* encolhe meia coluna pela direita */
 .ds-card[data-variable] { background: var(--accent); color: var(--accent-ink); }
 .ds-card[data-variable] .ds-number, .ds-card[data-variable] .ds-headline,
 .ds-card[data-variable] .ds-body, .ds-card[data-variable] .ds-eyebrow { color: var(--accent-ink); }
+/* chip dentro do cartao de marca: borda e glifo em accent sobre fundo accent
+   somem. Herdam a cor de contraste do proprio cartao. */
+.ds-card[data-variable] .ds-stamp,
+[data-variable] > .ds-stamp { border-color: var(--accent-ink); color: var(--accent-ink); }
 
 /* ── imagens ───────────────────────────────────────────────────────────── */
 img.ds-photo, img.ds-slot {

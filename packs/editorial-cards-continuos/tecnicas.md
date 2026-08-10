@@ -40,6 +40,11 @@ Regra prática, para uma fita de N slides com cartões do slide 2 ao N-1:
 cartão do slide K:  grid-area: 2 / (12·(K-1) − 1) / 12 / (12·K + 1)
 ```
 
+Os cartões levam `data-half-left`: mesma largura em colunas, deslizados meia
+coluna (45px) para a esquerda. Gap e sangria disputam a mesma sobra — em passo
+de 12 colunas, gap + sangria = largura − 12, então qualquer largura INTEIRA zera
+um dos dois. A meia coluna é o que a referência faz e o que resolve.
+
 Ou seja: começa **1 coluna antes** da fronteira do próprio slide e termina
 **1 coluna depois** — é essa sobra que cria a sangria. O texto do cartão vai
 DENTRO dele (filhos do `ds-card`), então acompanha.
@@ -99,7 +104,7 @@ tente fazê-la "seguir" o texto.
   Ocupa ~68% da largura do cartão em 2–3 linhas.
 - **Serifa (Playfair Display)** no apoio, no número e na capa: didone, contraste
   alto, serifas finas e retas. Em **peso 500** — a serifa fina some no cartão.
-- **Corpo em 38px**: o texto vive dentro do CARTÃO (990px), não do slide, então
+- **Corpo em 38px, peso 400**: o texto vive dentro do CARTÃO (990px), não do slide, então
   pede corpo maior do que a intuição sugere.
 - Capa: primeira linha em **itálico**, demais em romana.
 
