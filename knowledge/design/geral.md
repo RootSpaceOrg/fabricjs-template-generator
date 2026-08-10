@@ -337,3 +337,13 @@ por área, não por altura, senão a regra serve à foto larga e trai a vertical
 
 Consequência prática: quando a foto cresce, a copy encurta. A caixa não cresce
 junto (ver a lei acima).
+
+## Cada imagem da fita é de um lugar só
+
+Reaproveitar a foto da capa no miolo, ou repetir a mesma entre dois slides,
+denuncia a montagem: quem passa o dedo vê a mesma cena de novo e a fita perde a
+progressão. Assets de assinatura (SVG do pack) são a exceção — eles existem
+para repetir.
+
+Se o tema não rende imagens distintas o bastante, use MENOS slides com foto.
+Repetir para preencher é pior do que não ter.

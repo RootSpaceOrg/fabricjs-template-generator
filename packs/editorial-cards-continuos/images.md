@@ -23,8 +23,20 @@ matéria são o que fazem a capa segurar o scroll.
 |------|---------|
 | foto da capa | "{conceito} — pessoa em gesto natural em ambiente com madeira e tecido, luz de janela lateral forte com sombra longa, penumbra quente, editorial cinematográfico, ÁREA CALMA E ESCURA no terço inferior para texto claro, sem rosto identificável, sem texto" — retrato 1024x1536 |
 | marcação (assinatura) | NÃO se gera: `cp packs/editorial-cards-continuos/assets/marcacao-elipse.svg artifacts/runs/<slug>/assets/`. Elipse manuscrita sobre a palavra-chave da capa |
-| foto em cartão (opcional) | só quando o conteúdo pedir prova visual: "{conceito}, detalhe fechado, luz direcional, textura visível, editorial, sem texto" — ocupa o topo do cartão, nunca o cartão inteiro |
+| foto de cartão (uma POR cartão que a use) | "{conceito do item}, detalhe fechado, luz direcional, textura visível, editorial, sem texto" — **paisagem** 1536x1024 para os registros topo/rodapé |
+| foto de cartão em retrato | mesma fórmula, **retrato** 1024x1536 — só para o registro `foto-retrato` |
 | logo / foto_profissional | **este pack NÃO usa** — ver abaixo |
+
+## Cada foto é de UM cartão — nunca reaproveite
+
+A foto da capa **não** volta no miolo, e dois cartões não dividem a mesma
+imagem. Cada cartão que usa foto gera a sua, do conceito daquele item.
+
+Repetir denuncia a montagem: quem passa o dedo vê a mesma cena duas vezes e a
+fita perde a progressão. O conversor rejeita `src` repetido.
+
+Se o tema não rende imagens distintas o bastante, **use menos cartões com
+foto** — o registro de texto é o padrão do pack, não o plano B.
 
 **Dois testes antes de aprovar a capa:**
 1. O texto claro do terço inferior fica legível? Se a foto tem alto contraste

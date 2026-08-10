@@ -81,6 +81,28 @@ const rgb2hex = (c) => {
   const pack = JSON.parse(fs.readFileSync(path.join(packDir, "pack.json"), "utf-8"));
   const tokensCss = ":root{" + Object.entries(pack.tokens).map(([k, v]) => `--${k}:${v}`).join(";") + "}";
 
+  // MESMA FOTO EM DOIS LUGARES DA FITA. Sem isto o agente reaproveita a imagem
+  // da capa no miolo quando nao gerou uma propria — a fita repete a cena e
+  // perde a progressao. Checado sobre o HTML porque no JSON o src ja virou
+  // data-URI. Assets de assinatura (SVG do pack) sao a excecao legitima: eles
+  // SAO para repetir quando o estilo pedir.
+  {
+    const srcs = [...html.matchAll(/<img[^>]*src="([^"]+)"/g)]
+      .map((m) => m[1])
+      .filter((s) => !s.startsWith("data:") && !/\.svg$/i.test(s));
+    const conta = {};
+    for (const s of srcs) conta[s] = (conta[s] || 0) + 1;
+    const repetidos = Object.entries(conta).filter(([, n]) => n > 1);
+    if (repetidos.length) {
+      console.error("REJEITADO — mesma imagem usada em mais de um lugar da fita:");
+      for (const [s, n] of repetidos) {
+        console.error(`  ${s.replace(/^.*\//, "")} aparece ${n}x — cada cartao com foto `
+          + `gera a sua; se o tema nao rende imagens distintas, use menos cartoes com foto`);
+      }
+      process.exit(1);
+    }
+  }
+
   const browser = await chromium.launch();
   const page = await browser.newPage({ viewport: { width: 1200, height: 1500 } });
   await page.goto("file://" + fitaPath, { waitUntil: "networkidle" });
