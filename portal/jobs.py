@@ -121,7 +121,10 @@ def executar(job: sqlite3.Row) -> tuple[int, str]:
     if tipo == "advance":
         return _sh(["python3", "engine/run.py", "advance", slug], 300)
     if tipo == "upload":
-        return _sh(["python3", "engine/tools/upload.py", slug], 600)
+        # --execute grava de verdade: o botão do portal diz "Publicar", e sem
+        # isto ele só imprimia o payload (dry-run) e reportava sucesso.
+        # O nome sai do H1 do template-summary.md — não há onde digitá-lo aqui.
+        return _sh(["python3", "engine/tools/upload.py", slug, "--execute"], 600)
     if tipo == "agente":
         return _agente(slug, payload)
     return 1, f"tipo desconhecido: {tipo}"
