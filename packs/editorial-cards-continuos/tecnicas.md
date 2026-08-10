@@ -10,11 +10,32 @@ curto é a assinatura, não limitação.
    slide e sangra uma faixa estreita para dentro do vizinho à esquerda; entre
    um e outro o fundo escuro aparece como uma barra. Quem passa o dedo vê o
    cartão anterior sair de cena enquanto o próximo já está entrando.
-2. **Número em serifa** no topo do cartão, ancorando a sequência (01, 02, 03).
-   **Discreto** — na referência ocupa 12% da largura do cartão; número gigante
-   descaracteriza o estilo.
+2. **Número em serifa no canto superior DIREITO** do cartão, ancorando a
+   sequência (01, 02, 03). **Discreto** — na referência ocupa 12% da largura;
+   número gigante descaracteriza o estilo. Leva `data-align="right"` e
+   `data-inset="top"` (o inset é o respiro do topo — sem ele o número gruda
+   na borda). **O número ocupa uma faixa só dele**: se a headline dividir a
+   linha com ele, as duas colidem — é o erro mais fácil de cometer aqui.
 3. **Capa com marcação manuscrita**: foto full-bleed escura, serifa em itálico
    misturada a romana, e uma elipse de caneta (SVG) envolvendo a palavra-chave.
+
+## Variações de miolo (os exemplares)
+
+O pack tem três exemplares e a fita real **mistura** os registros — repetir o
+mesmo cartão N vezes é a falha mais comum:
+
+| Exemplar | Quando usar |
+|---|---|
+| `ref-estrutura-cartoes.html` | o padrão: cartão só texto. É a maioria da fita |
+| `ref-miolo-cartao-com-foto.html` | item que pede prova visual (o aparelho, o detalhe, o antes/depois). Foto no TOPO do cartão, com `data-round` para casar com o raio dele; o texto fica na metade de baixo |
+| `ref-miolo-foto-de-palco.html` | respiro no meio da fita: em vez do fundo escuro chapado, o slide é uma foto escura e o cartão pousa sobre ela. A cada 3–4 cartões, nunca dois seguidos |
+
+Nas duas variações com foto o cartão é **mais alto** (linhas 2–13 em vez de
+2–12) ou **mais curto** (3–11 sobre palco), mas a travessia e o gap não mudam:
+a largura em colunas e o `data-half-left` são os mesmos.
+
+**Foto de palco tem que ser escura e calma.** Ela é fundo; o cartão claro por
+cima é que carrega a leitura. Foto clara ali apaga o cartão.
 
 ## Estrutura cartões (o exemplar de referência)
 
@@ -107,6 +128,13 @@ tente fazê-la "seguir" o texto.
 - **Corpo em 38px, peso 400**: o texto vive dentro do CARTÃO (990px), não do slide, então
   pede corpo maior do que a intuição sugere.
 - Capa: primeira linha em **itálico**, demais em romana.
+
+## A borda de leitura ≠ a borda do cartão
+
+O cartão sangra 1 coluna além da emenda, então sua borda direita geométrica
+está **fora** do slide visível. Texto e número alinhados por ela saem cortados.
+A margem de leitura é a borda do cartão **menos a sangria**: para um cartão que
+começa em `ini`, o conteúdo vai no máximo até `ini + 8`.
 
 ## Leis do estilo
 

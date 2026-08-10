@@ -1,0 +1,62 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="hm-fonts" content="Inter:400,500,600,700|Playfair Display:400,500,400i,500i">
+</head>
+<body>
+<!-- VARIAÇÃO DE MIOLO: a foto é o PALCO, não conteúdo do cartão.
+     Em vez do fundo escuro chapado, o slide inteiro é uma foto escura e o
+     cartão pousa sobre ela — mesma travessia, mesma anatomia interna.
+     Uso: um respiro no meio da fita (a cada 3-4 cartões), ou o slide que
+     apresenta o ambiente/contexto antes de voltar aos itens.
+     A foto precisa ser ESCURA e calma: ela é fundo, e o cartão claro por
+     cima é que carrega a leitura. Foto clara aqui apaga o cartão. -->
+<main class="fita" data-pack="editorial-cards-continuos" data-template-name="Miolo com foto de palco" data-segment="exemplar">
+
+  <section class="slide" data-role="item" data-dark>
+    <img class="ds-photo" data-el-id="p1a" data-static data-image-type="generated"
+         src="foto-ambiente.jpg" style="grid-area: 1 / 1 / 13 / 13">
+  </section>
+  <section class="slide" data-role="item" data-dark>
+    <img class="ds-photo" data-el-id="p2a" data-static data-image-type="generated"
+         src="foto-ambiente.jpg" style="grid-area: 1 / 1 / 13 / 13">
+  </section>
+
+  <div class="fita-layer" data-split-ok>
+    <!-- cartão menor que o normal: sobre foto ele não precisa cobrir tudo,
+         e a margem maior deixa o palco aparecer. -->
+    <div class="ds-card" data-el-id="p1" data-half-left data-layer style="grid-area: 3 / 3 / 11 / 14"></div>
+    <span class="ds-number" data-el-id="p1n" data-half-left data-static data-layer data-face="serif"
+          data-size="lg" data-align="right" data-inset="top"
+          style="grid-area: 3 / 8 / 4 / 12">03</span>
+    <h2 class="ds-headline" data-weight="medium" data-el-id="p1h" data-half-left data-layer data-template-element
+        data-te-description="tese do cartão" data-te-min-chars="12" data-te-max-chars="34"
+        style="grid-area: 5 / 4 / 8 / 12">O ambiente também trata</h2>
+    <p class="ds-body" data-el-id="p1b" data-half-left data-layer data-face="serif"
+       data-template-element data-te-description="apoio"
+       data-te-min-chars="30" data-te-max-chars="120"
+       style="grid-area: 8 / 4 / 10 / 12">Silêncio, luz e tempo de sessão mudam a resposta tanto quanto o parâmetro.</p>
+    <a class="ds-stamp" data-el-id="p1s" data-half-left data-static data-layer data-glyph
+       style="grid-area: 9 / 9 / 11 / 12">&#8594;</a>
+
+    <!-- o cartão seguinte volta ao padrão sobre palco escuro: a foto é
+         exceção pontual, não vira o novo fundo da fita. -->
+    <div class="ds-card" data-el-id="p2" data-half-left data-layer style="grid-area: 2 / 15 / 12 / 26"></div>
+    <span class="ds-number" data-el-id="p2n" data-half-left data-static data-layer data-face="serif"
+          data-size="lg" data-align="right" data-inset="top"
+          style="grid-area: 2 / 20 / 3 / 24">04</span>
+    <h2 class="ds-headline" data-weight="medium" data-el-id="p2h" data-half-left data-layer data-template-element
+        data-te-description="tese do cartão" data-te-min-chars="12" data-te-max-chars="34"
+        style="grid-area: 4 / 16 / 7 / 24">Constância se constrói fora dali</h2>
+    <p class="ds-body" data-el-id="p2b" data-half-left data-layer data-face="serif"
+       data-template-element data-te-description="apoio"
+       data-te-min-chars="30" data-te-max-chars="120"
+       style="grid-area: 7 / 16 / 9 / 24">O que acontece entre as sessões decide o resultado tanto quanto a aplicação.</p>
+    <a class="ds-stamp" data-el-id="p2s" data-half-left data-static data-layer data-glyph
+       style="grid-area: 10 / 21 / 12 / 24">&#8594;</a>
+  </div>
+
+</main>
+</body>
+</html>

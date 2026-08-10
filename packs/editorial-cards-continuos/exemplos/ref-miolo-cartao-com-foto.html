@@ -1,0 +1,58 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="hm-fonts" content="Inter:400,500,600,700|Playfair Display:400,500,400i,500i">
+</head>
+<body>
+<!-- VARIAÇÃO DE MIOLO: foto DENTRO do cartão, ocupando o topo.
+     Continua sendo o mesmo pack — cartão atravessa a emenda, número no canto
+     superior direito, seta no rodapé. O que muda é que a metade de cima do
+     cartão é imagem, e o texto ocupa a de baixo.
+     Uso: quando o item pede prova visual (o que é o aparelho, como é o
+     ambiente, o antes/depois de um detalhe). A foto tem o mesmo raio do
+     cartão (data-round) para ler como parte dele, não como recorte colado. -->
+<main class="fita" data-pack="editorial-cards-continuos" data-template-name="Miolo com foto no cartão" data-segment="exemplar">
+
+  <section class="slide" data-role="item" data-dark></section>
+  <section class="slide" data-role="item" data-dark></section>
+
+  <div class="fita-layer" data-split-ok>
+    <!-- CARTÃO com foto no topo: imagem linhas 2-6, texto 7-10, seta 11. -->
+    <div class="ds-card" data-el-id="f1" data-half-left data-layer style="grid-area: 2 / 3 / 13 / 14"></div>
+    <img class="ds-photo" data-el-id="f1p" data-half-left data-static data-layer data-round
+         data-image-type="generated" src="foto-detalhe.jpg" style="grid-area: 3 / 4 / 8 / 13">
+    <span class="ds-number" data-el-id="f1n" data-half-left data-static data-layer data-face="serif"
+          data-size="lg" data-align="right" data-inset="top"
+          style="grid-area: 2 / 9 / 3 / 13">01</span>
+    <h2 class="ds-headline" data-weight="medium" data-el-id="f1h" data-half-left data-layer data-template-element
+        data-te-description="tese do cartão" data-te-min-chars="12" data-te-max-chars="30"
+        style="grid-area: 8 / 4 / 10 / 13">A dose se lê na pele</h2>
+    <p class="ds-body" data-el-id="f1b" data-half-left data-layer data-face="serif"
+       data-template-element data-te-description="apoio"
+       data-te-min-chars="30" data-te-max-chars="110"
+       style="grid-area: 10 / 4 / 12 / 13">O que a área responde na sessão orienta o ajuste da seguinte.</p>
+    <a class="ds-stamp" data-el-id="f1s" data-half-left data-static data-layer data-glyph
+       style="grid-area: 12 / 10 / 13 / 13">&#8594;</a>
+
+    <!-- CARTÃO seguinte, só texto: a variação alterna, não se repete. -->
+    <div class="ds-card" data-el-id="f2" data-half-left data-layer data-variable="primary"
+         style="grid-area: 2 / 15 / 12 / 26"></div>
+    <span class="ds-number" data-el-id="f2n" data-half-left data-static data-layer data-face="serif"
+          data-size="lg" data-tone="paper" data-align="right" data-inset="top"
+          style="grid-area: 2 / 20 / 3 / 24">02</span>
+    <h2 class="ds-headline" data-weight="medium" data-el-id="f2h" data-half-left data-layer data-tone="paper"
+        data-template-element data-te-description="tese do cartão"
+        data-te-min-chars="12" data-te-max-chars="34"
+        style="grid-area: 4 / 16 / 7 / 24">Sem leitura não há ajuste</h2>
+    <p class="ds-body" data-el-id="f2b" data-half-left data-layer data-face="serif" data-tone="paper"
+       data-template-element data-te-description="apoio"
+       data-te-min-chars="30" data-te-max-chars="120"
+       style="grid-area: 7 / 16 / 9 / 24">Registrar a resposta de cada sessão é o que transforma aplicação em plano.</p>
+    <a class="ds-stamp" data-el-id="f2s" data-half-left data-static data-layer data-glyph data-tone="paper"
+       data-border="paper" style="grid-area: 10 / 21 / 12 / 24">&#8594;</a>
+  </div>
+
+</main>
+</body>
+</html>
