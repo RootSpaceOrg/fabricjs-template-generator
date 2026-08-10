@@ -204,12 +204,17 @@ const rgb2hex = (c) => {
 
         const base = { id, cls, ...box, angle: angleOf(s), opacity: parseFloat(s.opacity), attrs: attrs(el) };
 
-        if (IMG.has(cls)) {
-          if (el.tagName !== "IMG") { rejects.push({ id, reason: `${cls} deve ser <img>` }); return; }
-          nodes.push({ kind: "img", ...base, src: el.currentSrc || el.src,
-            radiusPx: parseFloat(s.borderTopLeftRadius) || 0, circle: el.hasAttribute("data-circle"),
-            cutout: el.hasAttribute("data-cutout") });
-          return;
+        // GRID-AREA ALÉM DA ÚLTIMA LINHA. O grid tem 12 linhas; declarar
+        // row-end 14 não estica o slide, apenas joga o elemento para fora e ele
+        // some no render. Errei isso duas vezes ao remanejar cartão com foto.
+        {
+          const ga = (el.getAttribute("style") || "").match(
+            /grid-area:\s*(\d+)\s*\/\s*(\d+)\s*\/\s*(\d+)\s*\/\s*(\d+)/);
+          if (ga && +ga[3] > 13) {
+            rejects.push({ id, reason: `grid-area termina na linha ${ga[3]}, mas o `
+              + `grid tem 12 linhas (row-end máximo é 13) — o elemento sai do slide` });
+            return;
+          }
         }
         // ENCOSTOU NA BORDA DO CARTÃO. Conteúdo que toca a borda do cartão que
         // o contém lê como erro de montagem — e num pack com travessia é pior:
@@ -222,9 +227,12 @@ const rgb2hex = (c) => {
           const r = el.getBoundingClientRect();
           for (const card of document.querySelectorAll(".ds-card")) {
             const c = card.getBoundingClientRect();
-            const dentro = r.left >= c.left - 2 && r.right <= c.right + 2
-                        && r.top >= c.top - 2 && r.bottom <= c.bottom + 2;
-            if (!dentro) continue;
+            // o critério é SOBREPOSIÇÃO, não containment: se fosse "contido",
+            // o elemento que transborda o cartão — a violação mais grave —
+            // seria o único a escapar do gate.
+            const sobrepoe = r.left < c.right && r.right > c.left
+                          && r.top < c.bottom && r.bottom > c.top;
+            if (!sobrepoe) continue;
             const MIN = 24;   // margem mínima de leitura, em px
             const folga = { esquerda: r.left - c.left, direita: c.right - r.right,
                             topo: r.top - c.top, base: c.bottom - r.bottom };
@@ -236,6 +244,13 @@ const rgb2hex = (c) => {
               return;
             }
           }
+        }
+        if (IMG.has(cls)) {
+          if (el.tagName !== "IMG") { rejects.push({ id, reason: `${cls} deve ser <img>` }); return; }
+          nodes.push({ kind: "img", ...base, src: el.currentSrc || el.src,
+            radiusPx: parseFloat(s.borderTopLeftRadius) || 0, circle: el.hasAttribute("data-circle"),
+            cutout: el.hasAttribute("data-cutout") });
+          return;
         }
         if (TEXT.has(cls)) {
           // texto que ESTOURA a própria célula: o gate de sobreposição não pega

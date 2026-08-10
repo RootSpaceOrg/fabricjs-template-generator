@@ -308,3 +308,14 @@ tocam; texto e foto vizinhos pedem uma linha inteira de intervalo.
 
 Gate mecânico em `convert.js` (24px mínimo) — foi preciso um humano apontar duas
 vezes antes de existir.
+
+## O gate tem que ser testado com uma violação de verdade
+
+Gate que nunca foi visto rejeitando é decoração. Três exemplos só desta sessão:
+um usava `doc` em vez de `document` e morria em silêncio; outro ficava DEPOIS
+do `return` do bloco de imagens, então nunca via foto alguma; o terceiro
+checava "está contido no cartão" e por isso deixava passar justamente o
+elemento que TRANSBORDAVA — a violação mais grave era a única que escapava.
+
+Escreva o gate, quebre um exemplar de propósito, veja a rejeição sair com o
+`data-el-id` certo, só então conserte o exemplar.

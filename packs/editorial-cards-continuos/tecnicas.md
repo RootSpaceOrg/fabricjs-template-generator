@@ -149,6 +149,11 @@ A armadilha: o cartão sangra 1 coluna além da emenda, então sua borda direita
 margem de leitura é a borda do cartão **menos a sangria** — para um cartão que
 começa em `ini` e tem 11 colunas, o conteúdo vai de `ini+1` a `ini+9`.
 
+**O número tem faixa horizontal exclusiva** (`data-corner`). Ele nunca divide
+linha de grid com foto ou headline — dividindo, pousa por cima, e número sobre
+outro elemento é erro estético. A exceção é a variação em retrato, onde o
+número tem a coluna de texto só para ele.
+
 **Elementos não se tocam entre si.** Headline e apoio não compartilham linha de
 grid (`4-6` e `7-9`, nunca `4-7` e `7-9` — a linha 7 comum os cola). Texto não
 encosta em foto e vice-versa: deixe uma linha inteira de intervalo.

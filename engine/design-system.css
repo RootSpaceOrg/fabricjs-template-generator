@@ -261,6 +261,14 @@ img[data-overhang="br"]     { transform: translate(28%, 30%) rotate(-12deg); }
 /* respiro da borda: afasta o elemento da margem sem mudar a celula do grid */
 [data-inset="bottom"] { transform: translateY(-36px); }
 [data-inset="top"]    { transform: translateY(36px); }
+/* numero no canto do cartao: encosta no topo e na esquerda da PROPRIA celula,
+   sem esticar. Na fita-layer o numero e IRMAO do cartao (nao filho), entao
+   position:absolute ancoraria na camada, nao no cartao — a ancoragem tem que
+   ser pelo grid. O que este modificador garante e que ele nao ocupe a celula
+   inteira e va parar no meio dela. */
+.ds-number[data-corner] {
+  place-self: start start; width: auto; line-height: 1;
+}
 
 /* sentence case: desliga o uppercase default (packs de tipografia editorial) */
 [data-case="sentence"] { text-transform: none; }
