@@ -157,9 +157,19 @@ tente fazê-la "seguir" o texto.
 
 ## Margens e respiro (regra dura, com gate)
 
-**Todo cartão tem o mesmo tamanho.** A única exceção é o de fechamento, que não
-sangra. Encolher um cartão para resolver vazamento é conserto preguiçoso e
-visível — recalcule as coordenadas.
+**Todo cartão tem o mesmo tamanho — linhas 2 a 12, sempre.** Vale para os
+cartões com foto também: eles NÃO ganham uma linha extra para o conteúdo caber.
+Quem cede é o conteúdo (foto menor, copy mais curta, seta removida), nunca a
+caixa. A única exceção é o de fechamento, que não sangra.
+
+Duas variações abrem mão da seta por isso: `foto-embaixo` (a imagem ocupa o
+rodapé) e `foto-retrato` (a coluna de leitura é estreita demais para headline +
+apoio + pill em 10 linhas).
+
+**Foto dentro de cartão leva `data-gap`.** A imagem estica até preencher a
+célula do grid, então encosta em quem estiver na linha vizinha. O modificador
+dá 26px de margem vertical — folga de leitura sem gastar uma linha inteira
+(cada linha vale 113px, caro demais para respiro).
 
 **Nada encosta na borda do cartão.** Nem texto, nem número, nem seta. O
 conversor rejeita conteúdo com menos de **24px** de folga para qualquer borda

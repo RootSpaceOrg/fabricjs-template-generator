@@ -214,6 +214,10 @@ img.ds-photo, img.ds-slot {
   justify-self: stretch;
 }
 img[data-round]  { border-radius: var(--radius); }
+/* foto DENTRO de cartão: a imagem estica até preencher a célula do grid, então
+   encosta em quem estiver na linha vizinha. A margem dá a folga de leitura sem
+   custar uma linha inteira do grid (que é 113px — caro demais para respiro). */
+img[data-gap] { margin: 26px 0; height: calc(100% - 52px); }
 img[data-circle] { border-radius: 50%; }
 /* cutout (professionalPhoto): ancora na base da área, sem crop de moldura */
 img[data-cutout] { object-fit: contain; object-position: bottom center; }

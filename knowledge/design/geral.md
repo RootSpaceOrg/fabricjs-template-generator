@@ -319,3 +319,12 @@ elemento que TRANSBORDAVA — a violação mais grave era a única que escapava.
 
 Escreva o gate, quebre um exemplar de propósito, veja a rejeição sair com o
 `data-el-id` certo, só então conserte o exemplar.
+
+## A caixa não cresce para o conteúdo caber
+
+Cartão que ganha uma linha a mais porque tem foto denuncia a montagem: a régua
+muda de slide para slide e a fita perde o ritmo. Quem cede é o conteúdo — foto
+menor, copy mais curta, elemento removido —, nunca a caixa.
+
+Corolário: se um registro não cabe na caixa padrão nem cortando conteúdo, ele
+não é uma variação daquele pack.

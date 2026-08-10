@@ -14,7 +14,10 @@
      O texto ocupa uma coluna estreita, então headline e apoio ficam mais
      curtos que nas outras variações (ver os te-max-chars).
      Margens: cartão [3,14) sangra 1 col; borda VISÍVEL é 13, conteúdo até 12.
-     Entre a foto e a coluna de texto fica 1 coluna inteira de respiro. -->
+     Entre a foto e a coluna de texto fica 1 coluna inteira de respiro.
+     SEM SETA, como a variação de foto embaixo: a coluna de leitura é estreita e
+     headline + apoio + pill não cabem nas 10 linhas sem se tocarem. O cartão
+     tem o mesmo tamanho dos irmãos — quem cede é o conteúdo, não a caixa. -->
 <main class="fita" data-pack="editorial-cards-continuos" data-template-name="Miolo com foto retrato" data-segment="exemplar">
 
   <section class="slide" data-role="item" data-dark></section>
@@ -22,20 +25,18 @@
 
   <div class="fita-layer" data-split-ok>
     <!-- CARTÃO: foto à esquerda (col 4-7), texto à direita (col 8-12). -->
-    <div class="ds-card" data-el-id="r1" data-half-left data-layer style="grid-area: 2 / 3 / 13 / 14"></div>
-    <img class="ds-photo" data-el-id="r1p" data-half-left data-static data-layer data-round
-         data-image-type="generated" src="asset-vertical.jpg" style="grid-area: 3 / 4 / 12 / 8">
+    <div class="ds-card" data-el-id="r1" data-half-left data-layer style="grid-area: 2 / 3 / 12 / 14"></div>
+    <img class="ds-photo" data-el-id="r1p" data-gap data-half-left data-static data-layer data-round
+         data-image-type="generated" src="asset-vertical.jpg" style="grid-area: 3 / 4 / 11 / 8">
     <span class="ds-number" data-el-id="r1n" data-half-left data-static data-layer data-face="serif"
           data-size="lg" data-inset="top" style="grid-area: 3 / 9 / 4 / 12">01</span>
     <h2 class="ds-headline" data-weight="medium" data-el-id="r1h" data-half-left data-layer data-template-element
         data-te-description="tese do cartão" data-te-min-chars="10" data-te-max-chars="24"
-        style="grid-area: 5 / 9 / 8 / 12">Cada área tem seu tempo</h2>
+        style="grid-area: 5 / 9 / 8 / 12">Cada área no seu tempo</h2>
     <p class="ds-body" data-el-id="r1b" data-half-left data-layer data-face="serif"
        data-template-element data-te-description="apoio"
        data-te-min-chars="24" data-te-max-chars="80"
-       style="grid-area: 9 / 9 / 11 / 12">Joelho e ombro não respondem no mesmo ritmo.</p>
-    <a class="ds-stamp" data-el-id="r1s" data-half-left data-static data-layer data-glyph
-       style="grid-area: 11 / 9 / 13 / 12">&#8594;</a>
+       style="grid-area: 9 / 9 / 11 / 12">Joelho e ombro têm ritmos distintos.</p>
 
     <!-- CARTÃO seguinte volta ao registro de texto. -->
     <div class="ds-card" data-el-id="r2" data-half-left data-layer data-variable="primary"

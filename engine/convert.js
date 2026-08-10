@@ -324,6 +324,69 @@ const rgb2hex = (c) => {
       }
     }
 
+    // ELEMENTOS DO CARTÃO QUE SE SOBREPÕEM. Aconteceu quatro vezes nesta
+    // sessão — número sobre foto, número sobre headline, headline sobre apoio —
+    // sempre ao remanejar linhas para caber o conteúdo. O gate de borda não
+    // pega: ele olha a borda do cartão, não a colisão entre irmãos.
+    {
+      // SÓ dentro de cartão: sobre foto de capa, texto por cima da imagem é o
+      // desenho correto (full-bleed), não colisão.
+      const cards = [...document.querySelectorAll(".ds-card")].map(
+        (c) => c.getBoundingClientRect());
+      const dentroDeCartao = (r) => cards.some((c) =>
+        r.left >= c.left - 2 && r.right <= c.right + 2
+        && r.top >= c.top - 2 && r.bottom <= c.bottom + 2);
+      const conteudo = [...document.querySelectorAll(
+        ".ds-number, .ds-headline, .ds-body, .ds-photo, .ds-slot, .ds-stamp, .ds-cta")]
+        .filter((el) => dentroDeCartao(el.getBoundingClientRect()));
+      for (let i = 0; i < conteudo.length; i++) {
+        const n = conteudo[i];
+        const a = n.getBoundingClientRect();
+        for (const o of conteudo.slice(i + 1)) {
+          const b = o.getBoundingClientRect();
+          // ENCOSTAR também é defeito: exige folga real entre irmãos. Sem
+          // isso, headline e apoio que dividem uma linha de grid passam — foi
+          // assim que a colagem chegou ao render mais de uma vez.
+          const FOLGA = 12;
+          const inter = Math.max(0, Math.min(a.right, b.right) - Math.max(a.left, b.left) + FOLGA)
+                      * Math.max(0, Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top) + FOLGA);
+          const cruzaX = a.left < b.right + FOLGA && a.right + FOLGA > b.left;
+          const cruzaY = a.top < b.bottom + FOLGA && a.bottom + FOLGA > b.top;
+          if (cruzaX && cruzaY) {
+            rejects.push({ id: n.getAttribute("data-el-id"),
+              reason: `sobrepõe ${o.getAttribute("data-el-id") || o.className} `
+                + `— elementos do cartão não se tocam (mínimo ${FOLGA}px de folga)` });
+            break;
+          }
+        }
+      }
+    }
+
+    // CARTÕES DE TAMANHOS DIFERENTES na mesma fita. Um cartão que cresce para
+    // caber o conteúdo denuncia a montagem: a régua muda de slide para slide e
+    // a fita perde o ritmo. O conteúdo é que se ajusta à caixa, não o contrário.
+    // Gate de conjunto — nenhuma checagem por elemento pegaria isto.
+    // O de fechamento é a exceção legítima (não sangra, é a parada do padrão),
+    // então a comparação é por ALTURA, que ele compartilha com os demais.
+    {
+      const cards = [...document.querySelectorAll(".ds-card")].map((c) => ({
+        id: c.getAttribute("data-el-id"), h: Math.round(c.getBoundingClientRect().height) }));
+      const alturas = [...new Set(cards.map((c) => c.h))];
+      if (alturas.length > 1) {
+        // referência = MENOR altura, não a moda: com dois cartões a moda é
+        // ambígua e o gate acusa o inocente. O cartão que cresceu é sempre o
+        // que passou do tamanho, então o menor é a régua.
+        const base = Math.min(...cards.map((c) => c.h));
+        for (const c of cards) {
+          if (c.h - base > 2) {
+            rejects.push({ id: c.id, reason: `cartão com altura diferente dos irmãos `
+              + `(${c.h}px contra ${base}px) — todo cartão tem o mesmo tamanho; `
+              + `ajuste o conteúdo à caixa, não a caixa ao conteúdo` });
+          }
+        }
+      }
+    }
+
     return { slides, rejects,
       templateName: fita.getAttribute("data-template-name") || document.documentElement.getAttribute("data-template-name") || "",
       segment: fita.getAttribute("data-segment") || document.documentElement.getAttribute("data-segment") || "",
