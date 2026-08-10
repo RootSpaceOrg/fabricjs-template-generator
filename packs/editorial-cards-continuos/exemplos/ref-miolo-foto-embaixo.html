@@ -1,0 +1,55 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="hm-fonts" content="Inter:400,500,600,700|Playfair Display:400,500,400i,500i">
+</head>
+<body>
+<!-- VARIAÇÃO: foto na parte de BAIXO do cartão.
+     Espelho de ref-miolo-cartao-com-foto: o texto abre o cartão e a imagem
+     fecha. Serve quando a foto é conclusão (o resultado, o depois) em vez de
+     contexto (o que é, como funciona).
+     A seta sai: com a foto ocupando o rodapé não sobra âncora para ela sem
+     pousar sobre a imagem — e número/seta sobre foto é proibido no pack.
+     Margens: cartão [ini, ini+11) sangra 1 col, então a borda VISÍVEL é
+     ini+10 e o conteúdo vai no máximo até ini+9. -->
+<main class="fita" data-pack="editorial-cards-continuos" data-template-name="Miolo com foto embaixo" data-segment="exemplar">
+
+  <section class="slide" data-role="item" data-dark></section>
+  <section class="slide" data-role="item" data-dark></section>
+
+  <div class="fita-layer" data-split-ok>
+    <!-- CARTÃO: número (2), headline (3-5), apoio (6-7), foto fecha (8-12). -->
+    <div class="ds-card" data-el-id="b1" data-half-left data-layer style="grid-area: 2 / 3 / 13 / 14"></div>
+    <span class="ds-number" data-el-id="b1n" data-half-left data-static data-layer data-face="serif"
+          data-size="lg" data-inset="top" style="grid-area: 2 / 4 / 3 / 8">01</span>
+    <h2 class="ds-headline" data-weight="medium" data-el-id="b1h" data-half-left data-layer data-template-element
+        data-te-description="tese do cartão" data-te-min-chars="12" data-te-max-chars="30"
+        style="grid-area: 3 / 4 / 5 / 12">O resultado aparece no tecido</h2>
+    <p class="ds-body" data-el-id="b1b" data-half-left data-layer data-face="serif"
+       data-template-element data-te-description="apoio"
+       data-te-min-chars="30" data-te-max-chars="110"
+       style="grid-area: 6 / 4 / 8 / 12">O que muda entre a primeira e a última sessão não é a sensação — é a resposta.</p>
+    <img class="ds-photo" data-el-id="b1p" data-half-left data-static data-layer data-round
+         data-image-type="generated" src="foto-detalhe.jpg" style="grid-area: 9 / 4 / 13 / 12">
+
+    <!-- CARTÃO seguinte volta ao registro de texto: variação alterna. -->
+    <div class="ds-card" data-el-id="b2" data-half-left data-layer data-variable="primary"
+         style="grid-area: 2 / 15 / 12 / 26"></div>
+    <span class="ds-number" data-el-id="b2n" data-half-left data-static data-layer data-face="serif"
+          data-size="lg" data-tone="paper" data-inset="top" style="grid-area: 2 / 16 / 3 / 20">02</span>
+    <h2 class="ds-headline" data-weight="medium" data-el-id="b2h" data-half-left data-layer data-tone="paper"
+        data-template-element data-te-description="tese do cartão"
+        data-te-min-chars="12" data-te-max-chars="34"
+        style="grid-area: 4 / 16 / 6 / 24">Comparar exige registro</h2>
+    <p class="ds-body" data-el-id="b2b" data-half-left data-layer data-face="serif" data-tone="paper"
+       data-template-element data-te-description="apoio"
+       data-te-min-chars="30" data-te-max-chars="120"
+       style="grid-area: 7 / 16 / 9 / 24">Sem foto e anotação de cada etapa, a evolução vira impressão.</p>
+    <a class="ds-stamp" data-el-id="b2s" data-half-left data-static data-layer data-glyph data-tone="paper"
+       data-border="paper" style="grid-area: 10 / 20 / 12 / 23">&#8594;</a>
+  </div>
+
+</main>
+</body>
+</html>

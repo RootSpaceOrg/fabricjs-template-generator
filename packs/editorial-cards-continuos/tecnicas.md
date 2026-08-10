@@ -27,7 +27,9 @@ mesmo cartão N vezes é a falha mais comum:
 | Exemplar | Quando usar |
 |---|---|
 | `ref-estrutura-cartoes.html` | o padrão: cartão só texto. É a maioria da fita |
-| `ref-miolo-cartao-com-foto.html` | item que pede prova visual (o aparelho, o detalhe, o antes/depois). Foto DENTRO do cartão, abaixo da faixa do número, com `data-round` para casar com o raio dele; o texto fica na metade de baixo |
+| `ref-miolo-cartao-com-foto.html` | foto no TOPO do cartão: a imagem é contexto (o que é, como funciona) e o texto conclui |
+| `ref-miolo-foto-embaixo.html` | foto no RODAPÉ: a imagem é conclusão (o resultado, o depois) e o texto abre. Sem seta — a foto ocupa o rodapé e número/seta sobre foto é proibido |
+| `ref-miolo-foto-retrato.html` | foto VERTICAL ao lado de uma coluna de texto. Para imagem de assunto vertical (pessoa, membro, aparelho em pé), que faixa horizontal decapitaria. Texto mais curto: a coluna é estreita |
 
 Na variação com foto o cartão é **mais alto** (linhas 2–13 em vez de 2–12),
 mas a travessia e o gap não mudam: a largura em colunas e o `data-half-left`
@@ -132,12 +134,24 @@ tente fazê-la "seguir" o texto.
   pede corpo maior do que a intuição sugere.
 - Capa: primeira linha em **itálico**, demais em romana.
 
-## A borda de leitura ≠ a borda do cartão
+## Margens e respiro (regra dura, com gate)
 
-O cartão sangra 1 coluna além da emenda, então sua borda direita geométrica
-está **fora** do slide visível. Texto e número alinhados por ela saem cortados.
-A margem de leitura é a borda do cartão **menos a sangria**: para um cartão que
-começa em `ini`, o conteúdo vai no máximo até `ini + 8`.
+**Todo cartão tem o mesmo tamanho.** A única exceção é o de fechamento, que não
+sangra. Encolher um cartão para resolver vazamento é conserto preguiçoso e
+visível — recalcule as coordenadas.
+
+**Nada encosta na borda do cartão.** Nem texto, nem número, nem seta. O
+conversor rejeita conteúdo com menos de **24px** de folga para qualquer borda
+do cartão que o contém.
+
+A armadilha: o cartão sangra 1 coluna além da emenda, então sua borda direita
+**geométrica está fora do slide visível**. Alinhar por ela significa cortar. A
+margem de leitura é a borda do cartão **menos a sangria** — para um cartão que
+começa em `ini` e tem 11 colunas, o conteúdo vai de `ini+1` a `ini+9`.
+
+**Elementos não se tocam entre si.** Headline e apoio não compartilham linha de
+grid (`4-6` e `7-9`, nunca `4-7` e `7-9` — a linha 7 comum os cola). Texto não
+encosta em foto e vice-versa: deixe uma linha inteira de intervalo.
 
 ## Leis do estilo
 

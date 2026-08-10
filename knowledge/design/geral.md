@@ -295,3 +295,16 @@ Variância não é só entre fitas — é dentro da fita. Dois slides seguidos c
 mesmo recurso (mesmo watermark, mesmo símbolo, mesma colagem) na mesma posição
 lê como template repetido, mesmo quando o texto muda. Se o recurso volta, muda
 de canto, de escala ou de papel.
+
+## Conteúdo não encosta na borda da caixa que o contém
+
+Texto, número ou chip colado na borda do cartão lê como erro de montagem — a
+caixa existe para dar margem, e sem margem ela vira moldura. Num pack com
+travessia é pior: a borda geométrica do cartão fica FORA do slide visível, então
+"alinhado com a borda" significa **cortado**.
+
+Vale igual entre irmãos: headline e apoio que compartilham uma linha de grid se
+tocam; texto e foto vizinhos pedem uma linha inteira de intervalo.
+
+Gate mecânico em `convert.js` (24px mínimo) — foi preciso um humano apontar duas
+vezes antes de existir.

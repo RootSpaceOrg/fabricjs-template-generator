@@ -211,6 +211,32 @@ const rgb2hex = (c) => {
             cutout: el.hasAttribute("data-cutout") });
           return;
         }
+        // ENCOSTOU NA BORDA DO CARTÃO. Conteúdo que toca a borda do cartão que
+        // o contém lê como erro de montagem — e num pack com travessia é pior:
+        // a borda direita geométrica do cartão fica FORA do slide visível, então
+        // "alinhado com a borda" significa cortado. Foi preciso um humano
+        // apontar duas vezes; agora é mecânico.
+        // Os cartões da .fita-layer são IRMÃOS do conteúdo, não pais — por isso
+        // a checagem é por retângulo, não por parentesco.
+        if (cls !== "ds-card" && !el.classList.contains("ds-card")) {
+          const r = el.getBoundingClientRect();
+          for (const card of document.querySelectorAll(".ds-card")) {
+            const c = card.getBoundingClientRect();
+            const dentro = r.left >= c.left - 2 && r.right <= c.right + 2
+                        && r.top >= c.top - 2 && r.bottom <= c.bottom + 2;
+            if (!dentro) continue;
+            const MIN = 24;   // margem mínima de leitura, em px
+            const folga = { esquerda: r.left - c.left, direita: c.right - r.right,
+                            topo: r.top - c.top, base: c.bottom - r.bottom };
+            const apertado = Object.entries(folga).filter(([, v]) => v < MIN);
+            if (apertado.length) {
+              rejects.push({ id, reason: `encosta na borda do cartão `
+                + `(${apertado.map(([k, v]) => `${k}: ${Math.round(v)}px`).join(", ")}; `
+                + `mínimo ${MIN}px) — recue as colunas do elemento` });
+              return;
+            }
+          }
+        }
         if (TEXT.has(cls)) {
           // texto que ESTOURA a própria célula: o gate de sobreposição não pega
           // (as áreas declaradas não se cruzam), mas no render o texto invade o

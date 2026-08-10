@@ -1,0 +1,59 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="hm-fonts" content="Inter:400,500,600,700|Playfair Display:400,500,400i,500i">
+</head>
+<body>
+<!-- VARIAÇÃO: foto em RETRATO ao lado do texto.
+     Nas outras variações a imagem é uma faixa horizontal e o texto vem antes
+     ou depois. Aqui o cartão se divide em duas colunas: foto vertical de um
+     lado, coluna de leitura do outro. É o registro para quando a imagem tem
+     assunto vertical (pessoa, membro, aparelho em pé) — cortá-la em faixa
+     horizontal decapitaria o assunto.
+     O texto ocupa uma coluna estreita, então headline e apoio ficam mais
+     curtos que nas outras variações (ver os te-max-chars).
+     Margens: cartão [3,14) sangra 1 col; borda VISÍVEL é 13, conteúdo até 12.
+     Entre a foto e a coluna de texto fica 1 coluna inteira de respiro. -->
+<main class="fita" data-pack="editorial-cards-continuos" data-template-name="Miolo com foto retrato" data-segment="exemplar">
+
+  <section class="slide" data-role="item" data-dark></section>
+  <section class="slide" data-role="item" data-dark></section>
+
+  <div class="fita-layer" data-split-ok>
+    <!-- CARTÃO: foto à esquerda (col 4-7), texto à direita (col 8-12). -->
+    <div class="ds-card" data-el-id="r1" data-half-left data-layer style="grid-area: 2 / 3 / 13 / 14"></div>
+    <img class="ds-photo" data-el-id="r1p" data-half-left data-static data-layer data-round
+         data-image-type="generated" src="foto-retrato.jpg" style="grid-area: 3 / 4 / 12 / 8">
+    <span class="ds-number" data-el-id="r1n" data-half-left data-static data-layer data-face="serif"
+          data-size="lg" data-inset="top" style="grid-area: 3 / 9 / 4 / 12">01</span>
+    <h2 class="ds-headline" data-weight="medium" data-el-id="r1h" data-half-left data-layer data-template-element
+        data-te-description="tese do cartão" data-te-min-chars="10" data-te-max-chars="24"
+        style="grid-area: 5 / 9 / 8 / 12">Cada área tem seu tempo</h2>
+    <p class="ds-body" data-el-id="r1b" data-half-left data-layer data-face="serif"
+       data-template-element data-te-description="apoio"
+       data-te-min-chars="24" data-te-max-chars="80"
+       style="grid-area: 9 / 9 / 11 / 12">Joelho e ombro não respondem no mesmo ritmo.</p>
+    <a class="ds-stamp" data-el-id="r1s" data-half-left data-static data-layer data-glyph
+       style="grid-area: 11 / 9 / 13 / 12">&#8594;</a>
+
+    <!-- CARTÃO seguinte volta ao registro de texto. -->
+    <div class="ds-card" data-el-id="r2" data-half-left data-layer data-variable="primary"
+         style="grid-area: 2 / 15 / 12 / 26"></div>
+    <span class="ds-number" data-el-id="r2n" data-half-left data-static data-layer data-face="serif"
+          data-size="lg" data-tone="paper" data-inset="top" style="grid-area: 2 / 16 / 3 / 20">02</span>
+    <h2 class="ds-headline" data-weight="medium" data-el-id="r2h" data-half-left data-layer data-tone="paper"
+        data-template-element data-te-description="tese do cartão"
+        data-te-min-chars="12" data-te-max-chars="34"
+        style="grid-area: 4 / 16 / 6 / 24">O plano respeita a área</h2>
+    <p class="ds-body" data-el-id="r2b" data-half-left data-layer data-face="serif" data-tone="paper"
+       data-template-element data-te-description="apoio"
+       data-te-min-chars="30" data-te-max-chars="120"
+       style="grid-area: 7 / 16 / 9 / 24">Frequência e intervalo saem da região tratada, não do calendário.</p>
+    <a class="ds-stamp" data-el-id="r2s" data-half-left data-static data-layer data-glyph data-tone="paper"
+       data-border="paper" style="grid-area: 10 / 20 / 12 / 23">&#8594;</a>
+  </div>
+
+</main>
+</body>
+</html>
