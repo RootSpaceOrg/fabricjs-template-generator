@@ -21,19 +21,12 @@ curto é a assinatura, não limitação.
 
 ## Variações de miolo (os exemplares)
 
-O pack tem três exemplares e a fita real **mistura** os registros — repetir o
-mesmo cartão N vezes é a falha mais comum:
+O pack tem quatro exemplares e a fita real **mistura** os registros — repetir o
+mesmo cartão N vezes é a falha mais comum. Cada um abaixo tem seção própria com
+o quando-usar; o portal os exibe como padrões de composição.
 
-| Exemplar | Quando usar |
-|---|---|
-| `ref-estrutura-cartoes.html` | o padrão: cartão só texto. É a maioria da fita |
-| `ref-miolo-cartao-com-foto.html` | foto no TOPO do cartão: a imagem é contexto (o que é, como funciona) e o texto conclui |
-| `ref-miolo-foto-embaixo.html` | foto no RODAPÉ: a imagem é conclusão (o resultado, o depois) e o texto abre. Sem seta — a foto ocupa o rodapé e número/seta sobre foto é proibido |
-| `ref-miolo-foto-retrato.html` | foto VERTICAL ao lado de uma coluna de texto. Para imagem de assunto vertical (pessoa, membro, aparelho em pé), que faixa horizontal decapitaria. Texto mais curto: a coluna é estreita |
-
-Na variação com foto o cartão é **mais alto** (linhas 2–13 em vez de 2–12),
-mas a travessia e o gap não mudam: a largura em colunas e o `data-half-left`
-são os mesmos.
+Nas variações com foto o cartão é **mais alto** (linhas 2–13), mas a travessia e
+o gap não mudam: a largura em colunas e o `data-half-left` são os mesmos.
 
 **A foto vive DENTRO do cartão, nunca como fundo do slide.** O palco escuro
 chapado é a assinatura do pack — trocá-lo por fotografia dissolve o contraste
@@ -41,6 +34,34 @@ que faz os cartões existirem.
 
 **O número nunca sobre a foto.** Ele fica na faixa acima dela; a imagem começa
 na linha seguinte.
+
+## Miolo cartao com foto
+
+Foto no TOPO do cartão: a imagem é **contexto** — o que é, como funciona, o
+ambiente — e o texto conclui abaixo dela. A foto leva `data-round` para casar
+com o raio do cartão e ler como parte dele, não como recorte colado.
+
+Use quando o item pede prova visual. Alternado com cartões de texto, nunca dois
+seguidos.
+
+## Miolo foto embaixo
+
+Espelho do anterior: o texto abre o cartão e a **foto fecha**. A imagem aqui é
+**conclusão** — o resultado, o depois — em vez de contexto.
+
+Este é o único cartão sem seta: com a foto ocupando o rodapé não sobra âncora
+para a pill sem pousá-la sobre a imagem, e isso o pack proíbe.
+
+## Miolo foto retrato
+
+Foto **vertical** ao lado de uma coluna de texto, em vez de faixa horizontal.
+Para imagem de assunto vertical — pessoa, membro, aparelho em pé — que uma
+faixa horizontal decapitaria.
+
+A coluna de leitura fica estreita, então headline e apoio são mais curtos que
+nas outras variações (ver os `te-max-chars`). É a única variação em que o
+número divide faixa horizontal com a foto sem problema: ele tem a coluna de
+texto só para ele.
 
 ## Estrutura cartões (o exemplar de referência)
 
