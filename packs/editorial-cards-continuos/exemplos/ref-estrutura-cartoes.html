@@ -2,72 +2,91 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <meta name="hm-fonts" content="Inter:400,500,600|Instrument Serif:400,400i">
+  <meta name="hm-fonts" content="Inter:400,500,600,700|Playfair Display:400,500,400i,500i">
 </head>
 <body>
 <!-- ESTRUTURA DO PACK: a fita é UMA peça e os cartões são cortados por ela.
-     Cartão + texto vivem juntos na .fita-layer, atravessando a emenda; o
+     Cartão + conteúdo vivem juntos na .fita-layer, atravessando a emenda; o
      conversor duplica nos slides vizinhos com o centro deslocado.
-     `data-split-ok` assume as duas metades no editor (uso interno). -->
+     Anatomia do cartão (medida na referência): número serifado DISCRETO no
+     canto superior (12% da largura), headline em peso 500 ocupando ~68% da
+     largura, apoio em serifa encorpada logo abaixo, seta em pill no rodapé. -->
 <main class="fita" data-pack="editorial-cards-continuos" data-template-name="Estrutura de cartões" data-segment="exemplar">
 
-  <!-- S1 · CAPA: foto full-bleed escura, serifa mista, marcação na palavra-chave -->
   <section class="slide" data-role="abertura">
     <img class="ds-photo" data-el-id="s1a" data-static data-image-type="generated"
          src="foto-capa.jpg" style="grid-area: 1 / 1 / 13 / 13">
     <h1 class="ds-headline" data-el-id="s1b" data-face="serif" data-case="sentence"
         data-tone="paper" data-layer data-size="lg" data-template-element
         data-te-description="tese da capa" data-te-min-chars="20" data-te-max-chars="56"
-        style="grid-area: 6 / 2 / 11 / 12">Sessão isolada<br>não constrói<br>resultado.</h1>
+        style="grid-area: 6 / 2 / 11 / 12"><em>Sessão isolada</em><br>não constrói<br>resultado.</h1>
     <img class="ds-photo" data-el-id="s1c" data-static data-layer data-variable="primary"
          data-image-type="generated" src="marcacao-elipse.svg"
-         style="grid-area: 9 / 2 / 11 / 9">
+         data-inset="bottom" style="grid-area: 8 / 2 / 10 / 7">
     <span class="ds-eyebrow" data-el-id="s1d" data-static data-tone="paper" data-layer
           data-text-type="instagramHandle" style="grid-area: 12 / 2 / 13 / 7">@sua_clinica</span>
   </section>
 
-  <!-- S2–S5 · palco escuro: o conteúdo inteiro vem dos cartões da camada -->
   <section class="slide" data-role="item" data-dark></section>
   <section class="slide" data-role="item" data-dark></section>
   <section class="slide" data-role="item" data-dark></section>
   <section class="slide" data-role="fechamento" data-dark></section>
 
   <div class="fita-layer" data-split-ok>
-    <!-- Grid contínuo: 12 colunas por slide. Cada cartão começa dentro do seu
-         slide e termina depois da fronteira — a sangria é o que faz a fita ser
-         lida como peça única. O último NÃO sangra: ele fecha. -->
-    <div class="ds-card" data-el-id="k1" data-layer style="grid-area: 2 / 14 / 12 / 26">
-      <span class="ds-number" data-el-id="k1n" data-static data-face="serif" data-tone="accent">01</span>
-      <h2 class="ds-headline" data-el-id="k1h" data-case="sentence" data-template-element
-          data-te-description="tese do cartão" data-te-min-chars="12" data-te-max-chars="40">Constância vence intensidade.</h2>
-      <p class="ds-body" data-el-id="k1b" data-template-element
-         data-te-description="apoio" data-te-min-chars="30" data-te-max-chars="110">O tecido responde a estímulo repetido dentro de um plano, não a uma aplicação forte.</p>
-    </div>
+    <!-- CARTÃO 01 · creme. Número no topo, conteúdo recuado, seta no rodapé.
+         Colunas 14→26: começa dentro do slide 2 e termina no 3 (a sangria). -->
+    <div class="ds-card" data-el-id="k1" data-layer style="grid-area: 2 / 15 / 12 / 26"></div>
+    <span class="ds-number" data-el-id="k1n" data-static data-layer data-face="serif"
+          data-size="lg" style="grid-area: 3 / 16 / 4 / 20">01</span>
+    <h2 class="ds-headline" data-weight="medium" data-el-id="k1h" data-layer data-template-element
+        data-te-description="tese do cartão" data-te-min-chars="12" data-te-max-chars="34"
+        style="grid-area: 4 / 16 / 7 / 24">Constância vence intensidade</h2>
+    <p class="ds-body" data-weight="medium" data-el-id="k1b" data-layer data-face="serif"
+       data-template-element data-te-description="apoio"
+       data-te-min-chars="30" data-te-max-chars="120"
+       style="grid-area: 7 / 16 / 9 / 24">O tecido responde a estímulo repetido dentro de um plano — não a uma aplicação forte.</p>
+    <a class="ds-stamp" data-el-id="k1s" data-static data-layer data-glyph
+       style="grid-area: 10 / 21 / 12 / 24">&#8594;</a>
 
+    <!-- CARTÃO 02 · veste a marca -->
     <div class="ds-card" data-el-id="k2" data-layer data-variable="primary"
-         style="grid-area: 2 / 27 / 12 / 39">
-      <span class="ds-number" data-el-id="k2n" data-static data-face="serif">02</span>
-      <h2 class="ds-headline" data-el-id="k2h" data-case="sentence" data-template-element
-          data-te-description="tese do cartão" data-te-min-chars="12" data-te-max-chars="40">Parâmetro não é receita.</h2>
-      <p class="ds-body" data-el-id="k2b" data-template-element
-         data-te-description="apoio" data-te-min-chars="30" data-te-max-chars="110">Área, dose e frequência saem da avaliação — não de um protocolo igual para todos.</p>
-    </div>
+         style="grid-area: 2 / 27 / 12 / 38"></div>
+    <span class="ds-number" data-el-id="k2n" data-static data-layer data-face="serif"
+          data-size="lg" data-tone="paper" style="grid-area: 3 / 28 / 4 / 32">02</span>
+    <h2 class="ds-headline" data-weight="medium" data-el-id="k2h" data-layer data-tone="paper" data-template-element
+        data-te-description="tese do cartão" data-te-min-chars="12" data-te-max-chars="34"
+        style="grid-area: 4 / 28 / 7 / 36">Parâmetro não é receita</h2>
+    <p class="ds-body" data-weight="medium" data-el-id="k2b" data-layer data-face="serif" data-tone="paper"
+       data-template-element data-te-description="apoio"
+       data-te-min-chars="30" data-te-max-chars="120"
+       style="grid-area: 7 / 28 / 9 / 36">Área, dose e frequência saem da avaliação — não de um protocolo igual para todos.</p>
+    <a class="ds-stamp" data-el-id="k2s" data-static data-layer data-glyph data-tone="paper"
+       style="grid-area: 10 / 33 / 12 / 36">&#8594;</a>
 
-    <div class="ds-card" data-el-id="k3" data-layer style="grid-area: 2 / 40 / 12 / 52">
-      <span class="ds-number" data-el-id="k3n" data-static data-face="serif" data-tone="accent">03</span>
-      <h2 class="ds-headline" data-el-id="k3h" data-case="sentence" data-template-element
-          data-te-description="tese do cartão" data-te-min-chars="12" data-te-max-chars="40">O plano conversa com você.</h2>
-      <p class="ds-body" data-el-id="k3b" data-template-element
-         data-te-description="apoio" data-te-min-chars="30" data-te-max-chars="110">Sensações relatadas entre sessões orientam o que muda no acompanhamento.</p>
-    </div>
+    <!-- CARTÃO 03 · branco -->
+    <div class="ds-card" data-el-id="k3" data-layer style="grid-area: 2 / 39 / 12 / 50"></div>
+    <span class="ds-number" data-el-id="k3n" data-static data-layer data-face="serif"
+          data-size="lg" style="grid-area: 3 / 40 / 4 / 44">03</span>
+    <h2 class="ds-headline" data-weight="medium" data-el-id="k3h" data-layer data-template-element
+        data-te-description="tese do cartão" data-te-min-chars="12" data-te-max-chars="34"
+        style="grid-area: 4 / 40 / 7 / 48">O plano conversa com você</h2>
+    <p class="ds-body" data-weight="medium" data-el-id="k3b" data-layer data-face="serif"
+       data-template-element data-te-description="apoio"
+       data-te-min-chars="30" data-te-max-chars="120"
+       style="grid-area: 7 / 40 / 9 / 48">Sensações relatadas entre sessões orientam o que muda no acompanhamento.</p>
+    <a class="ds-stamp" data-el-id="k3s" data-static data-layer data-glyph
+       style="grid-area: 10 / 45 / 12 / 48">&#8594;</a>
 
-    <div class="ds-card" data-el-id="k4" data-layer style="grid-area: 2 / 53 / 12 / 60">
-      <h2 class="ds-headline" data-el-id="k4h" data-case="sentence" data-template-element
-          data-te-description="tese do fechamento" data-te-min-chars="15" data-te-max-chars="44">Pergunte pelo plano, não pela sessão.</h2>
-      <a class="ds-cta" data-el-id="k4a" data-square data-variable="primary" data-template-element
-         data-te-description="cta" data-te-min-chars="6" data-te-max-chars="26">SALVE ESTE POST</a>
-      <span class="ds-eyebrow" data-el-id="k4s" data-static data-tone="muted">suaclinica.com.br</span>
-    </div>
+    <!-- CARTÃO 04 · fechamento, NÃO sangra: centrado e sem número -->
+    <div class="ds-card" data-el-id="k4" data-layer style="grid-area: 2 / 51 / 12 / 60"></div>
+    <h2 class="ds-headline" data-weight="medium" data-el-id="k4h" data-layer data-align="center" data-template-element
+        data-te-description="tese do fechamento" data-te-min-chars="15" data-te-max-chars="44"
+        style="grid-area: 4 / 52 / 7 / 59">Pergunte pelo plano, não pela sessão</h2>
+    <a class="ds-cta" data-el-id="k4a" data-layer data-variable="primary" data-template-element
+       data-te-description="cta" data-te-min-chars="6" data-te-max-chars="24"
+       style="grid-area: 8 / 53 / 9 / 58">SALVE ESTE POST</a>
+    <span class="ds-eyebrow" data-el-id="k4s" data-static data-layer data-tone="muted"
+          data-align="center" style="grid-area: 10 / 52 / 11 / 59">suaclinica.com.br</span>
   </div>
 
 </main>

@@ -56,21 +56,21 @@
     "wm": "#F2F2F2",
     "font-display": "'Inter', sans-serif",
     "font-body": "'Inter', sans-serif",
-    "font-serif": "'Instrument Serif', serif",
+    "font-serif": "'Playfair Display', serif",
     "fs-eyebrow": "22px",
-    "fs-headline": "76px",
+    "fs-headline": "78px",
     "fs-headline-lg": "104px",
-    "fs-body": "30px",
+    "fs-body": "38px",
     "fs-number": "72px",
-    "fs-number-lg": "150px",
+    "fs-number-lg": "112px",
     "fs-wm": "150px",
-    "fs-stamp": "22px",
-    "fs-cta": "26px",
+    "fs-stamp": "34px",
+    "fs-cta": "30px",
     "radius": "22px"
   },
   "fonts": {
-    "css": "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap",
-    "meta": "Inter:400,500,600|Instrument Serif:400,400i"
+    "css": "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&display=swap",
+    "meta": "Inter:400,500,600,700|Playfair Display:400,500,400i,500i"
   },
   "variables": {
     "primary": "#E95F40"

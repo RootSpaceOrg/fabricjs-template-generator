@@ -10,8 +10,9 @@ curto é a assinatura, não limitação.
    slide e sangra uma faixa estreita para dentro do vizinho à esquerda; entre
    um e outro o fundo escuro aparece como uma barra. Quem passa o dedo vê o
    cartão anterior sair de cena enquanto o próximo já está entrando.
-2. **Número em serifa fina** no topo do cartão, ancorando a sequência (01, 02,
-   03). Discreto, não é o elemento dominante.
+2. **Número em serifa** no topo do cartão, ancorando a sequência (01, 02, 03).
+   **Discreto** — na referência ocupa 12% da largura do cartão; número gigante
+   descaracteriza o estilo.
 3. **Capa com marcação manuscrita**: foto full-bleed escura, serifa em itálico
    misturada a romana, e uma elipse de caneta (SVG) envolvendo a palavra-chave.
 
@@ -88,6 +89,19 @@ editar o texto na plataforma, ele redimensiona a marcação no editor — não
 tente fazê-la "seguir" o texto.
 
 **Uma marcação por fita, só na capa.** Repetir mata o gesto.
+
+## Tipografia (medida na referência, não estimada)
+
+- **Sans (Inter)** na headline e no CTA: terminais horizontais, R de perna reta.
+  Ampliar as letras da referência antes de escolher a fonte evita trocar por
+  "parecida" — Archivo passa de longe, mas tem terminais oblíquos.
+- **Headline em peso 500**, não 700: ela pesa pela ESCALA (78px), não pelo traço.
+  Ocupa ~68% da largura do cartão em 2–3 linhas.
+- **Serifa (Playfair Display)** no apoio, no número e na capa: didone, contraste
+  alto, serifas finas e retas. Em **peso 500** — a serifa fina some no cartão.
+- **Corpo em 38px**: o texto vive dentro do CARTÃO (990px), não do slide, então
+  pede corpo maior do que a intuição sugere.
+- Capa: primeira linha em **itálico**, demais em romana.
 
 ## Leis do estilo
 

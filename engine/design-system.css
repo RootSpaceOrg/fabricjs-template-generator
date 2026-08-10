@@ -86,7 +86,14 @@ section.slide[data-dark] { background: var(--ink); color: var(--paper); }
 }
 .ds-number[data-size="lg"] { font-size: var(--fs-number-lg); }
 .ds-headline[data-size="lg"] { font-size: var(--fs-headline-lg, 108px); line-height: 1.02; }
+/* peso do tipo por elemento: estilos editoriais pedem display mais leve e
+   corpo mais presente que o padrão (700/400). Não muda o default dos packs. */
+[data-weight="light"]  { font-weight: 400; }
+[data-weight="medium"] { font-weight: 500; }
+[data-weight="semi"]   { font-weight: 600; }
 [data-face="serif"] { font-family: var(--font-serif, var(--font-display)); text-transform: none; font-weight: 400; line-height: 1.15; }
+/* serifa com peso proprio: data-weight vence o 400 travado acima */
+[data-face="serif"][data-weight="medium"] { font-weight: 500; }
 .ds-watermark {
   font-family: var(--font-display);
   font-size: var(--fs-wm);
@@ -125,6 +132,11 @@ section.slide[data-dark] { background: var(--ink); color: var(--paper); }
   letter-spacing: 1px;
   padding: 10px 26px;
   place-self: center start;
+}
+/* seta de navegação: pill compacta com o glifo grande, não texto num chip largo */
+.ds-stamp[data-glyph] {
+  padding: 0; width: 96px; height: 56px; font-size: var(--fs-stamp);
+  letter-spacing: 0; place-self: center end;
 }
 .ds-cta {
   display: flex;
@@ -168,6 +180,9 @@ section.slide[data-invert] .ds-card .ds-cta { background: var(--accent); color: 
 /* cartão que veste a marca: sem isto o data-variable só marcava o JSON e o
    cartão saía branco no render — o designer compunha sem ver o resultado.
    (ds-block já é accent por padrão; ds-card é paper.) */
+/* cartão em outro tom do PAPEL (não do acento): packs que alternam creme e
+   branco na sequência. data-tone sozinho pinta o texto, não o fundo. */
+.ds-card[data-surface="wm"] { background: var(--wm); }
 .ds-card[data-variable] { background: var(--accent); color: var(--accent-ink); }
 .ds-card[data-variable] .ds-number, .ds-card[data-variable] .ds-headline,
 .ds-card[data-variable] .ds-body, .ds-card[data-variable] .ds-eyebrow { color: var(--accent-ink); }
