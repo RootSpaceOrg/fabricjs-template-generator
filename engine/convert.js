@@ -395,6 +395,24 @@ const rgb2hex = (c) => {
   await browser.close();
 
   if (data.fatal) { console.error(`REJEITADO — ${data.fatal}`); process.exit(1); }
+
+  // SLOT DA PLATAFORMA QUE O PACK NÃO DECLARA. `slots` no pack.json lista quais
+  // são aceitos; `[]` significa nenhum. Sem isto o agente insere logo e
+  // professionalPhoto por hábito — eles existem no motor, então nada barrava —
+  // e num pack cujo conteúdo vive todo em cartão o slot solto na section fica
+  // atrás dos cartões ou colado na borda, comendo o gap entre slides.
+  // Pack sem a chave declarada aceita qualquer slot (comportamento antigo).
+  if (Array.isArray(pack.slots)) {
+    const usados = [...html.matchAll(/data-slot="([^"]+)"/g)].map((m) => m[1]);
+    const proibidos = [...new Set(usados)].filter((s) => !pack.slots.includes(s));
+    if (proibidos.length) {
+      console.error(`REJEITADO — slot não declarado pelo pack ${packSlug}: `
+        + `${proibidos.join(", ")}. O pack.json declara slots: `
+        + `[${pack.slots.join(", ")}] — veja images.md para como este estilo assina.`);
+      process.exit(1);
+    }
+  }
+
   if (data.rejects.length) {
     console.error(`REJEITADO — ${data.rejects.length} violação(ões) do contrato (engine/CATALOG.md):`);
     for (const r of data.rejects) console.error(`  ${r.id}: ${r.reason}`);

@@ -100,6 +100,20 @@ O criador constrói o pack completo (tokens, tecnicas.md, images.md, exemplos) e
 
 Técnica que exigir componente fora do catálogo → §6 (mudança de motor, com aval do Gustavo).
 
+## 3c. Slots da plataforma: declare quais o pack aceita
+
+`slots` no `pack.json` lista os slots da plataforma que o estilo usa
+(`professionalPhoto`, `logo`, `instagramProfilePicture`). **`[]` significa
+nenhum**, e o conversor rejeita quem aparecer.
+
+Sem essa declaração o agente insere logo e foto do profissional por hábito —
+eles existem no motor, então nada barra. Num pack cujo conteúdo vive todo
+dentro de cartão, o slot solto na `<section>` fica atrás dos cartões ou colado
+na borda do slide, comendo o gap. Foi o que reprovou a primeira certificação do
+editorial-cards-continuos.
+
+Pack sem a chave aceita qualquer slot (compatibilidade com os packs antigos).
+
 ## 4. Certificação (a run que prova o pack)
 
 1. **Três runs completas** (`run.py new cert-<slug>-N --env dev --pack <slug>`) em **TAMANHOS DIFERENTES de fita — 3, 5 e 7 slides** (packs de peça única: 1 peça + variações): duas do MESMO tema e uma de tema diferente — certificação v2 prova, além da fidelidade, a **variância**, o **fôlego do miolo em fita longa** (7 slides sem cair em texto solto) (as duas do mesmo tema não podem sair com o mesmo esqueleto) e a robustez das técnicas (par contínuo/travessias emendando na fita).

@@ -166,6 +166,10 @@ Duas variações abrem mão da seta por isso: `foto-embaixo` (a imagem ocupa o
 rodapé) e `foto-retrato` (a coluna de leitura é estreita demais para headline +
 apoio + pill em 10 linhas).
 
+**Sem `professionalPhoto` e sem `logo`.** Ver `images.md` — o pack assina com
+texto (@ na capa, site no fechamento), não com imagem. Slot solto na section
+fica atrás dos cartões ou come o gap entre slides.
+
 **Foto dentro de cartão leva `data-gap`.** A imagem estica até preencher a
 célula do grid, então encosta em quem estiver na linha vizinha. O modificador
 dá 26px de margem vertical — folga de leitura sem gastar uma linha inteira
