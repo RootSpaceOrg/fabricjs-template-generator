@@ -362,6 +362,28 @@ const rgb2hex = (c) => {
       }
     }
 
+    // FOTO PEQUENA DEMAIS DENTRO DO CARTÃO. Uma imagem que ocupa uma faixa
+    // fina não é foto, é enfeite: não se lê o assunto e o cartão fica com cara
+    // de texto com decoração. O piso é por ÁREA, não por altura, para servir
+    // tanto à foto larga (topo/rodapé) quanto à vertical (retrato).
+    {
+      const cards = [...document.querySelectorAll(".ds-card")].map((c) => c.getBoundingClientRect());
+      const MIN_AREA = 0.30;
+      for (const f of document.querySelectorAll(".ds-photo, .ds-slot")) {
+        const r = f.getBoundingClientRect();
+        const card = cards.find((c) => r.left >= c.left - 60 && r.right <= c.right + 60
+                                    && r.top >= c.top - 60 && r.bottom <= c.bottom + 60);
+        if (!card) continue;   // foto de capa é full-bleed, não vive em cartão
+        const prop = (r.width * r.height) / (card.width * card.height);
+        if (prop < MIN_AREA - 0.01) {
+          rejects.push({ id: f.getAttribute("data-el-id"),
+            reason: `foto ocupa ${Math.round(prop * 100)}% da área do cartão `
+              + `(mínimo ${MIN_AREA * 100}%) — imagem em faixa fina vira enfeite; `
+              + `alargue as linhas ou colunas dela` });
+        }
+      }
+    }
+
     // CARTÕES DE TAMANHOS DIFERENTES na mesma fita. Um cartão que cresce para
     // caber o conteúdo denuncia a montagem: a régua muda de slide para slide e
     // a fita perde o ritmo. O conteúdo é que se ajusta à caixa, não o contrário.

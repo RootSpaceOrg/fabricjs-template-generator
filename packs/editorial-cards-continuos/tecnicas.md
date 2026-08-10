@@ -170,10 +170,32 @@ apoio + pill em 10 linhas).
 texto (@ na capa, site no fechamento), não com imagem. Slot solto na section
 fica atrás dos cartões ou come o gap entre slides.
 
+**Foto ocupa no mínimo 30% da área do cartão** (gate no conversor). Faixa fina
+não é foto, é enfeite: não se lê o assunto e o cartão fica com cara de texto
+com decoração. O piso é por ÁREA, não por altura, para servir tanto à foto
+larga (topo/rodapé) quanto à vertical (retrato).
+
+O orçamento do cartão com foto, medido — cartão 1125px, linha 113px:
+
+| | |
+|---|---|
+| foto a 30% de área × 78% de largura | 433px (≈4 linhas) |
+| sobra para texto | 692px |
+| número + headline (2 linhas) + apoio (2) + margens | 666px |
+
+Ou seja, **cabe, mas sem folga**. Quando a foto cresce, é a copy que encurta —
+o cartão nunca ganha uma linha a mais. Nas variações de foto grande o apoio
+costuma ser de 1 linha só.
+
 **Foto dentro de cartão leva `data-gap`.** A imagem estica até preencher a
 célula do grid, então encosta em quem estiver na linha vizinha. O modificador
 dá 26px de margem vertical — folga de leitura sem gastar uma linha inteira
-(cada linha vale 113px, caro demais para respiro).
+(cada linha vale 113px, caro demais para respiro). O valor é 26 e não menos
+porque o gate de borda exige 24px: os dois números têm que concordar.
+
+`data-gap` também vale para **texto** (`ds-headline`, `ds-body`, `ds-number`):
+células de grid adjacentes se encostam — uma termina exatamente onde a outra
+começa — e o gate de folga acusa.
 
 **Nada encosta na borda do cartão.** Nem texto, nem número, nem seta. O
 conversor rejeita conteúdo com menos de **24px** de folga para qualquer borda

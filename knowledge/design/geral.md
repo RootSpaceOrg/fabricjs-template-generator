@@ -328,3 +328,12 @@ menor, copy mais curta, elemento removido —, nunca a caixa.
 
 Corolário: se um registro não cabe na caixa padrão nem cortando conteúdo, ele
 não é uma variação daquele pack.
+
+## Imagem em faixa fina é enfeite, não foto
+
+Uma foto que ocupa uma tira estreita do cartão não deixa ler o assunto: o
+cartão fica com cara de texto com decoração. Piso de 30% da ÁREA do container —
+por área, não por altura, senão a regra serve à foto larga e trai a vertical.
+
+Consequência prática: quando a foto cresce, a copy encurta. A caixa não cresce
+junto (ver a lei acima).
