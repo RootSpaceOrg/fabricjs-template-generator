@@ -383,3 +383,19 @@ do que o post fala? Se não, volte e nomeie o assunto.
 dor íntima: a saída é o entorno específico (aparelho de laser na bancada da
 consulta, mão da profissional ajustando o equipamento, a caneta de aplicação),
 não a fuga para o genérico.
+
+## Slide de miolo com texto solto no vazio
+
+Um miolo em que o texto flutua num slide grande e nada mais o ancora lê como
+rascunho — mesmo quando a copy é suficiente. Medido em 2026-08-11: um slide com
+223 caracteres ocupava 24% da área e parecia vazio, enquanto outro com 62
+caracteres ocupava 80% e parecia resolvido.
+
+O defeito é de **composição**, não de conteúdo. E a regra antiga ("mínimo 2
+elementos com peso") não pega: aquele slide tinha 4.
+
+Piso de **30% da área** com conteúdo, gate no conversor, só para `data-role="item"`
+— capa e fechamento têm ritmo próprio (full-bleed, CTA isolado).
+
+Saídas quando o gate acusa: ancorar com foto, caixa ou tarja; aumentar a escala
+do texto; ou juntar dois slides magros em um. Encher de texto é a pior delas.

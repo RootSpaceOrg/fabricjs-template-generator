@@ -408,6 +408,49 @@ const rgb2hex = (c) => {
       }
     }
 
+    // SLIDE COM POUCA DENSIDADE. Um miolo com texto espalhado num slide grande
+    // e nada mais lê como rascunho, mesmo com copy suficiente — o defeito é de
+    // composição, não de conteúdo (2026-08-11: slide de 24% da área com 223
+    // caracteres). "Mínimo 2 elementos" não pega: aquele slide tinha 4.
+    // Amostragem em grade porque as caixas se sobrepõem e somar áreas contaria
+    // duas vezes. A capa e o fechamento ficam de fora: full-bleed e CTA têm
+    // ritmo próprio, e o gate mede o MIOLO, que é onde o vazio aparece.
+    {
+      const MIN = 0.30;
+      const CONT = ".ds-headline, .ds-body, .ds-eyebrow, .ds-number, .ds-photo, "
+                 + ".ds-slot, .ds-card, .ds-block, .ds-stamp, .ds-cta, .ds-watermark";
+      const naCamada = [...document.querySelectorAll(".fita-layer > *")];
+      secEls.forEach((sec, i) => {
+        const papel = sec.getAttribute("data-role") || "";
+        if (papel !== "item") return;
+        const s = sec.getBoundingClientRect();
+        const els = [...sec.querySelectorAll(CONT)];
+        for (const el of naCamada) {
+          const r = el.getBoundingClientRect();
+          if (r.left < s.right && r.right > s.left) els.push(el);
+        }
+        const COLS = 40, ROWS = 50;
+        let ocup = 0;
+        for (let cx = 0; cx < COLS; cx++) {
+          for (let cy = 0; cy < ROWS; cy++) {
+            const px = s.left + (cx + 0.5) * (s.width / COLS);
+            const py = s.top + (cy + 0.5) * (s.height / ROWS);
+            if (els.some((el) => {
+              const r = el.getBoundingClientRect();
+              return px >= r.left && px <= r.right && py >= r.top && py <= r.bottom;
+            })) ocup++;
+          }
+        }
+        const prop = ocup / (COLS * ROWS);
+        if (prop < MIN) {
+          rejects.push({ id: `slide-${i + 1}`,
+            reason: `só ${Math.round(prop * 100)}% da área tem conteúdo `
+              + `(mínimo ${MIN * 100}%) — slide de miolo com texto solto no vazio lê como `
+              + `rascunho; ancore com foto, caixa ou tarja, ou aumente a escala do texto` });
+        }
+      });
+    }
+
     // CARTÕES DE TAMANHOS DIFERENTES na mesma fita. Um cartão que cresce para
     // caber o conteúdo denuncia a montagem: a régua muda de slide para slide e
     // a fita perde o ritmo. O conteúdo é que se ajusta à caixa, não o contrário.
