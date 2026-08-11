@@ -95,6 +95,17 @@ Vereditos de 2026-08-05 (var-teste-1/2) destilados em lei geral:
 
 ## Saída: dossie.md
 
+Por slide, além do FORMATO e dos PAPÉIS, o dossiê declara:
+
+- **IMAGEM:** o objeto ou gesto CONCRETO do tema que aquele slide mostra (o
+  aparelho, o instrumento, a região em contexto) — ou "sem imagem". Nunca o
+  clima ("acolhimento", "cuidado"): isso vira foto genérica que serviria a
+  qualquer assunto. Ver `knowledge/imagem/negocios/<business_type>.md`.
+- **PESO:** o que ancora o slide além do texto (foto, cartão, tarja, número
+  grande). Miolo precisa de 30% da área com conteúdo — gate no conversor.
+
+Slide sem imagem nem âncora possível não deveria existir: junte com o vizinho.
+
 O dossiê decide **o que a mensagem é**; o pack decide **como aquilo vira layout**
 (ver `PACKS.md` §5). A fronteira só funciona se o copy declarar o **formato** de
 cada slide e o **papel** de cada pedaço de texto — sem isso o designer recebe

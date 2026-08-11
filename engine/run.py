@@ -72,8 +72,19 @@ def missing_for(slug: str, state: dict) -> list[str]:
             miss.append("resolve.json com ok=true (o atual tem ok=false)")
 
     elif stage == "context":
-        if not (d / "dossie.md").exists():
+        dossie = d / "dossie.md"
+        if not dossie.exists():
             miss.append("dossie.md (storyline/copy — CONTEXT.md continua válido)")
+        else:
+            # O dossiê decide a imagem e a âncora de cada slide, não só a copy.
+            # Sem isto ele entrega tese curta boiando no vazio (reprova no gate
+            # de densidade) e conceito abstrato para a foto (vira imagem
+            # genérica) — os dois defeitos nascem aqui, não na composição.
+            texto = dossie.read_text(encoding="utf-8", errors="replace")
+            for campo, porque in (("IMAGEM", "o objeto concreto do tema que cada slide mostra"),
+                                  ("PESO", "o que ancora o slide além do texto")):
+                if campo not in texto:
+                    miss.append(f"dossie.md sem `{campo}:` por slide — {porque}")
 
     elif stage == "compose":
         # A imagem decide se o post presta, e nenhum gate consegue olhar o
