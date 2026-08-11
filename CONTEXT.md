@@ -3,6 +3,11 @@
 Conhecimento em camadas (o específico vence): **este arquivo (geral)** →
 `knowledge/copy/negocios/<business_type>.md` (por negócio) → pedido do usuário.
 
+Imagem tem a mesma estrutura: `knowledge/design/geral.md` (leis de composição) →
+`knowledge/imagem/negocios/<business_type>.md` (o que pode APARECER neste
+negócio: equipamento certo e errado, enquadramentos, tema sensível) →
+`packs/<slug>/images.md` (o registro visual do estilo).
+
 Produz `artifacts/runs/<slug>/dossie.md`. É aqui que a copy nasce — e onde o slop morre ou nasce. Nada de copy de cabeça.
 
 ## 1. Dossiê do business_type

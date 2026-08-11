@@ -76,6 +76,23 @@ def missing_for(slug: str, state: dict) -> list[str]:
             miss.append("dossie.md (storyline/copy — CONTEXT.md continua válido)")
 
     elif stage == "compose":
+        # A imagem decide se o post presta, e nenhum gate consegue olhar o
+        # PIXEL. O que dá para exigir é a intenção declarada antes de gerar:
+        # o que a foto MOSTRA e qual PROBLEMA da peça ela torna visível.
+        # Sem isso o prompt vira o clima do post e sai foto bonita e muda
+        # (2026-08-11: quatro packs, mesmo tema, quatro capas de almofada).
+        img = d / "imagens.md"
+        if any((d / "assets").glob("*.png")) or any((d / "assets").glob("*.jpg")):
+            if not img.exists():
+                miss.append("imagens.md — declare por imagem: MOSTRA (objeto/gesto concreto) "
+                            "e PROBLEMA (o que da peça ela torna visível), antes de gerar")
+            else:
+                texto = img.read_text(encoding="utf-8", errors="replace")
+                for campo in ("MOSTRA", "PROBLEMA"):
+                    if campo not in texto:
+                        miss.append(f"imagens.md sem `{campo}:` — a foto precisa dizer o assunto, "
+                                    f"não o clima")
+
         fita = d / "fita.html"
         if not fita.exists():
             miss.append("fita.html (fita inteira: N sections + .fita-layer — CATALOG.md §Esqueleto)")
