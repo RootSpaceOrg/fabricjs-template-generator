@@ -347,3 +347,14 @@ para repetir.
 
 Se o tema não rende imagens distintas o bastante, use MENOS slides com foto.
 Repetir para preencher é pior do que não ter.
+
+## Cor do CSS não vira variável de marca sozinha
+
+`color: var(--accent)` pinta o elemento no render, mas na conversão vira cor
+LITERAL: no editor ele fica fixo enquanto os irmãos acompanham a marca. Quem
+gera `fillVariableConfig` é `data-variable`, e só ele.
+
+Regra prática: todo elemento que existe PARA ser o acento (número, marcação,
+regra, chip) declara `data-variable`. Se ele deve permanecer claro sobre um
+fundo de marca, aí sim é `data-tone` — a distinção é "veste a marca" contra
+"contrasta com ela".

@@ -566,8 +566,24 @@ const rgb2hex = (c) => {
     // o grupo nasce no tamanho do viewBox; escala para a área declarada no grid
     grupo.scaleX = n.w / (grupo.width || n.w);
     grupo.scaleY = n.h / (grupo.height || n.h);
-    return { ...grupo.toObject(), ...common, name: "SVG",
+    // data-variable no SVG: sem isto o traço saía com a cor literal do arquivo
+    // e a marcação da capa ficava laranja fixo, sem seguir a marca do usuário.
+    // Um SVG de assinatura é geometria de TRAÇO (o fill costuma ser none), por
+    // isso a config vai no stroke quando não há fill pintado.
+    const varSvg = "data-variable" in n.attrs
+      ? { type: "solid", variable: varDaMarca(n.attrs["data-variable"], n.id), alpha: 1 }
+      : null;
+    const obj = { ...grupo.toObject(), ...common, name: "SVG",
       scaleX: grupo.scaleX, scaleY: grupo.scaleY };
+    if (varSvg) {
+      const pinta = (o) => {
+        const temFill = o.fill && o.fill !== "none" && o.fill !== "transparent";
+        o[temFill ? "fillVariableConfig" : "strokeVariableConfig"] = varSvg;
+      };
+      pinta(obj);
+      for (const filho of obj.objects || []) pinta(filho);
+    }
+    return obj;
   };
 
   data.slides.forEach((sl, i) => {

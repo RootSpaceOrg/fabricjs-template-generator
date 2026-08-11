@@ -134,7 +134,8 @@ inteira fica coerente com a capa. Amostre a cor dominante da foto e escureça.
 `assets/marcacao-elipse.svg` — copie para a run
 (`cp packs/editorial-cards-continuos/assets/marcacao-elipse.svg artifacts/runs/<slug>/assets/`)
 e posicione sobre as 2–3 palavras que a copy destaca, com `data-layer` e
-`data-variable="primary"`.
+`data-variable="primary"` — é ele que faz a elipse vestir a marca do usuário
+em vez do laranja do pack.
 
 O SVG é elipse com traço aberto, deliberadamente irregular. Se o profissional
 editar o texto na plataforma, ele redimensiona a marcação no editor — não
@@ -205,6 +206,11 @@ A armadilha: o cartão sangra 1 coluna além da emenda, então sua borda direita
 **geométrica está fora do slide visível**. Alinhar por ela significa cortar. A
 margem de leitura é a borda do cartão **menos a sangria** — para um cartão que
 começa em `ini` e tem 11 colunas, o conteúdo vai de `ini+1` a `ini+9`.
+
+**O número leva `data-variable="primary"`** nos cartões claros: ele é o acento
+do cartão e tem que acompanhar a marca. A exceção é o número do cartão que
+VESTE a marca — ali ele é `data-tone="paper"` por contraste e fica claro,
+qualquer que seja a cor.
 
 **O número tem faixa horizontal exclusiva** (`data-corner`). Ele nunca divide
 linha de grid com foto ou headline — dividindo, pousa por cima, e número sobre

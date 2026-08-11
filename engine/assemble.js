@@ -44,6 +44,25 @@ const REPO = path.resolve(__dirname, "..");
   await page.addStyleTag({ url: dsHref });
   if (pack.fonts && pack.fonts.css) await page.addStyleTag({ url: pack.fonts.css });
   await page.addStyleTag({ content: tokensCss + " body{margin:0}" });
+  // SVG com data-variable: a cor vive DENTRO do arquivo (stroke="#..."), então
+  // o token CSS não a alcança e o preview saía sempre no acento do pack — o
+  // designer compunha sem ver a marca real. Reescreve o src como data-URI com
+  // a cor trocada, que é o que a plataforma fará via strokeVariableConfig.
+  const svgRecolorido = new Map();
+  for (const el of await page.locator('img[data-variable][src$=".svg"]').all()) {
+    const src = await el.getAttribute("src");
+    const abs = path.resolve(path.dirname(fitaPath), src);
+    if (!fs.existsSync(abs)) continue;
+    let svg = svgRecolorido.get(abs);
+    if (!svg) {
+      svg = fs.readFileSync(abs, "utf-8")
+        .replace(/(stroke|fill)="#[0-9a-fA-F]{3,8}"/g,
+                 (m, prop) => `${prop}="${tokens.accent}"`);
+      svgRecolorido.set(abs, svg);
+    }
+    await el.evaluate((n, d) => { n.src = d; },
+      "data:image/svg+xml;base64," + Buffer.from(svg).toString("base64"));
+  }
   await page.evaluate(() => document.fonts.ready);
 
   await page.locator("main.fita").screenshot({ path: path.join(outDir, "strip.png") });
