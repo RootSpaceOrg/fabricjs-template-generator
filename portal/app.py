@@ -19,7 +19,8 @@ from fastapi.staticfiles import StaticFiles
 import comandos
 import knowledge as kb
 import telegram as tg
-from jobs import FACTORY, RUNS, db, enfileirar, historico, registrar_veredito
+from jobs import (FACTORY, RUNS, db, enfileirar, executar_direto, historico,
+                  registrar_veredito)
 
 HERE = Path(__file__).parent
 app = FastAPI(title="Fábrica — backoffice")
@@ -204,10 +205,22 @@ def run_detail(slug: str):
     return _page(slug, "runs", head, body)
 
 
+# Ações que NÃO chamam o agente do OpenClaw: são subprocess curto e determinístico.
+# A fila existe para serializar turnos do agente (um por vez, lock compartilhado);
+# fazer o upload esperar atrás de uma fatia de composição é espera sem motivo.
+DIRETO = {"upload", "advance"}
+
+
 @app.post("/run/{slug}/job/{tipo}")
 def criar_job(slug: str, tipo: str):
     if not (RUNS / slug / "run.json").exists():
         raise HTTPException(404)
+    if tipo in DIRETO:
+        # executa na hora, fora da fila — o registro do job fica igual, para o
+        # histórico da run não ter buraco.
+        jid = enfileirar(tipo, slug)
+        executar_direto(jid)
+        return RedirectResponse(f"/run/{slug}", status_code=303)
     enfileirar(tipo, slug)
     return RedirectResponse(f"/run/{slug}", status_code=303)
 

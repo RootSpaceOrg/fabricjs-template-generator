@@ -61,6 +61,30 @@ def enfileirar(tipo: str, slug: str, payload: str = "", pai: int | None = None) 
         return cur.lastrowid
 
 
+def executar_direto(job_id: int) -> tuple[int, str]:
+    """Roda um job AGORA, fora da fila e sem tocar o lock do OpenClaw.
+
+    Só para tipos que não chamam o agente (upload, advance): são subprocess
+    curto e determinístico, e esperar atrás de uma fatia de composição é espera
+    sem motivo. O job continua registrado no banco, então o histórico da run
+    não fica com buraco.
+    """
+    with db() as c:
+        job = c.execute("SELECT * FROM jobs WHERE id=?", (job_id,)).fetchone()
+        if not job:
+            raise ValueError(f"job inexistente: {job_id}")
+        if job["tipo"] == "agente":
+            raise ValueError("job de agente não roda direto — precisa do lock serial")
+        c.execute("UPDATE jobs SET status='running', iniciado_em=? WHERE id=?",
+                  (datetime.now().isoformat(timespec="seconds"), job_id))
+    rc, log = executar(job)
+    with db() as c:
+        c.execute("UPDATE jobs SET status=?, log=?, terminado_em=? WHERE id=?",
+                  ("done" if rc == 0 else "failed", log,
+                   datetime.now().isoformat(timespec="seconds"), job_id))
+    return rc, log
+
+
 def historico(job_id: int, limite: int = 3) -> list[dict]:
     """Fio da conversa: sobe pela cadeia de 'pai' até o job original."""
     fio, atual = [], job_id
