@@ -191,7 +191,17 @@ def worker_loop(intervalo: int = 5) -> None:
     while True:
         with db() as c:
             job = c.execute(
-                "SELECT * FROM jobs WHERE status='pending' ORDER BY id LIMIT 1").fetchone()
+                # Ação do Gustavo passa na frente de trabalho em lote: aprovar uma
+                # fita e esperar 16 fatias de composição é espera que não devia
+                # existir. Prioridade lida do payload — nada de coluna nova, e
+                # jobs antigos continuam válidos. Dentro da mesma prioridade,
+                # FIFO: uma fatia nunca fura a fila da fatia anterior.
+                """SELECT * FROM jobs WHERE status='pending'
+                   ORDER BY CASE
+                     WHEN payload LIKE '%APROVOU a fita%' THEN 0
+                     WHEN payload LIKE '%REVISAO da run%' THEN 0
+                     WHEN payload LIKE '%RESPOSTA DO GUSTAVO%' THEN 0
+                     ELSE 1 END, id LIMIT 1""").fetchone()
         if not job:
             time.sleep(intervalo)
             continue
