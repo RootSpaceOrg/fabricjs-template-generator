@@ -355,9 +355,11 @@ const rgb2hex = (c) => {
       // desenho correto (full-bleed), não colisão.
       const cards = [...document.querySelectorAll(".ds-card")].map(
         (c) => c.getBoundingClientRect());
+      // SOBREPOSIÇÃO com o cartão, não containment — pelo mesmo motivo do gate
+      // de borda: exigir "contido" exclui justamente o elemento que transbordou.
+      // Um chip que cresce além da célula saía da checagem por ter crescido.
       const dentroDeCartao = (r) => cards.some((c) =>
-        r.left >= c.left - 2 && r.right <= c.right + 2
-        && r.top >= c.top - 2 && r.bottom <= c.bottom + 2);
+        r.left < c.right && r.right > c.left && r.top < c.bottom && r.bottom > c.top);
       const conteudo = [...document.querySelectorAll(
         ".ds-number, .ds-headline, .ds-body, .ds-photo, .ds-slot, .ds-stamp, .ds-cta")]
         .filter((el) => dentroDeCartao(el.getBoundingClientRect()));
