@@ -578,6 +578,10 @@ const rgb2hex = (c) => {
     const obj = { ...grupo.toObject(), ...common, name: "SVG",
       scaleX: grupo.scaleX, scaleY: grupo.scaleY };
     if (varSvg) {
+      // Vale para os filhos também: quando o SVG tem várias formas, o Fabric
+      // devolve um grupo, e o updateTemplateColors da plataforma recolore os
+      // objetos ANINHADOS, ignorando o pai. SVG de path único sai como `path`
+      // simples e é o próprio objeto que recebe a cor — os dois casos cobertos.
       const pinta = (o) => {
         const temFill = o.fill && o.fill !== "none" && o.fill !== "transparent";
         o[temFill ? "fillVariableConfig" : "strokeVariableConfig"] = varSvg;
