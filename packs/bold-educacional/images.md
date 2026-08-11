@@ -18,3 +18,10 @@ animal digno e fotográfico (nunca cartoon/deformado); colagem sempre RGBA
 transparente inteira com margem; a cor dominante da foto deve conviver com a
 primary do usuário (evitar guerra de saturação — foto mais dessaturada quando
 a primary for muito vibrante).
+
+## O conceito nomeia o assunto
+
+Ver `knowledge/design/geral.md` — o conceito da imagem é o objeto ou gesto DO
+TEMA, não o clima do post. Teste: leia o prompt sem o nome do tema; se ainda
+serve a qualquer assunto, ele está vago. Foto bonita e muda é a falha mais
+cara, porque passa em todos os gates.

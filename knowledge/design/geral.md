@@ -358,3 +358,28 @@ Regra prática: todo elemento que existe PARA ser o acento (número, marcação,
 regra, chip) declara `data-variable`. Se ele deve permanecer claro sobre um
 fundo de marca, aí sim é `data-tone` — a distinção é "veste a marca" contra
 "contrasta com ela".
+
+## `{conceito}` é o ASSUNTO, não o clima
+
+As fórmulas de imagem dos packs trazem `{conceito}` como placeholder, e todas as
+regras ao redor dele são de estilo — luz, textura, ângulo. Sem uma regra sobre o
+CONTEÚDO, o preenchimento vira o clima do post ("cuidado", "acolhimento",
+"constância") e a foto sai bonita e muda: serve a qualquer tema.
+
+Sintoma de 2026-08-11: quatro packs, mesmo tema (laserterapia em fissura
+mamária), quatro capas quase idênticas de almofada + toalha + copo d'água.
+Nenhuma mostrava laser, mamilo, atendimento — nem o assunto, nem o recurso.
+Uma delas trouxe uma capivara de roupão, clichê do gerador.
+
+**Regra:** `{conceito}` nomeia o objeto ou a cena do tema — o aparelho em uso, a
+região tratada em contexto respeitoso, o gesto específico daquele procedimento.
+Se a foto serviria para outro assunto sem trocar uma palavra, o conceito estava
+vago.
+
+**Teste antes de gerar:** leia o prompt sem o nome do tema. Ainda dá para dizer
+do que o post fala? Se não, volte e nomeie o assunto.
+
+**Tema sensível não é exceção, é cuidado de enquadramento.** Amamentação, corpo,
+dor íntima: a saída é o entorno específico (aparelho de laser na bancada da
+consulta, mão da profissional ajustando o equipamento, a caneta de aplicação),
+não a fuga para o genérico.

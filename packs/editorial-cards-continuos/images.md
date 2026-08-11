@@ -21,9 +21,9 @@ matéria são o que fazem a capa segurar o scroll.
 
 | Slot | Fórmula |
 |------|---------|
-| foto da capa | "{conceito} — pessoa em gesto natural em ambiente com madeira e tecido, luz de janela lateral forte com sombra longa, penumbra quente, editorial cinematográfico, ÁREA CALMA E ESCURA no terço inferior para texto claro, sem rosto identificável, sem texto" — retrato 1024x1536 |
+| foto da capa | "{conceito: o OBJETO/gesto do tema, nomeado — não o clima} — pessoa em gesto natural em ambiente com madeira e tecido, luz de janela lateral forte com sombra longa, penumbra quente, editorial cinematográfico, ÁREA CALMA E ESCURA no terço inferior para texto claro, sem rosto identificável, sem texto" — retrato 1024x1536 |
 | marcação (assinatura) | NÃO se gera: `cp packs/editorial-cards-continuos/assets/marcacao-elipse.svg artifacts/runs/<slug>/assets/`. Elipse manuscrita sobre a palavra-chave da capa |
-| foto de cartão (uma POR cartão que a use) | "{conceito do item}, detalhe fechado, luz direcional, textura visível, editorial, sem texto" — **paisagem** 1536x1024 para os registros topo/rodapé |
+| foto de cartão (uma POR cartão que a use) | "{conceito do item: o que ELE afirma, concreto}, detalhe fechado, luz direcional, textura visível, editorial, sem texto" — **paisagem** 1536x1024 para os registros topo/rodapé |
 | foto de cartão em retrato | mesma fórmula, **retrato** 1024x1536 — só para o registro `foto-retrato` |
 | logo / foto_profissional | **este pack NÃO usa** — ver abaixo |
 
@@ -57,3 +57,9 @@ editorial: a marca fala pela tipografia e pela cor do cartão de acento.
 
 Se um dia o pack precisar de logo, ele entra COMO CONTEÚDO DE CARTÃO, com
 `grid-area` dentro dos limites dele — nunca solto na section.
+
+## O conceito nomeia o assunto
+
+Ver `knowledge/design/geral.md` — `{conceito}` é o objeto ou gesto DO TEMA, não
+o clima do post. Teste: leia o prompt sem o nome do tema; se ainda serve a
+qualquer assunto, ele está vago.

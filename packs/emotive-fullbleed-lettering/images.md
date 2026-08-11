@@ -14,3 +14,10 @@ margem (verificar alpha bbox); foto sem rostos deformados (verificação visual
 obrigatória — rosto estranho reprova a foto); paleta da arte = cream + acentos
 quentes (cobre) + objetos do tema — a cor de marca entra pelo OVERLAY, nunca
 pela arte.
+
+## O conceito nomeia o assunto
+
+Ver `knowledge/design/geral.md` — o conceito da imagem é o objeto ou gesto DO
+TEMA, não o clima do post. Teste: leia o prompt sem o nome do tema; se ainda
+serve a qualquer assunto, ele está vago. Foto bonita e muda é a falha mais
+cara, porque passa em todos os gates.
