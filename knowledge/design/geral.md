@@ -399,3 +399,30 @@ Piso de **30% da área** com conteúdo, gate no conversor, só para `data-role="
 
 Saídas quando o gate acusa: ancorar com foto, caixa ou tarja; aumentar a escala
 do texto; ou juntar dois slides magros em um. Encher de texto é a pior delas.
+
+## A imagem mostra o PROBLEMA, não a ferramenta
+
+Corrigir "conceito abstrato" empurrando para "objeto concreto do tema" tem um
+efeito colateral: toda foto vira o equipamento. A peça fica sobre o que o
+profissional VENDE em vez de sobre o que a pessoa SENTE — e quem rola o feed
+não se reconhece num aparelho.
+
+Referência que o Gustavo trouxe (2026-08-12): capa de peça real sobre fissura
+mamária mostra a mãe amamentando e o desconforto no corpo. O aparelho aparece
+uma vez, pequeno, ao lado. Nossa rodada tinha 5 de 6 imagens de equipamento.
+
+**Regra por funil:**
+
+| Funil | O que a imagem mostra |
+|---|---|
+| topo / meio | o PROBLEMA e a vida de quem o vive — o gesto de dor, a rotina interrompida, a cena onde o sintoma aparece |
+| fundo | aí sim o recurso: o aparelho, o atendimento, o antes de começar |
+
+**Na prática, numa peça de topo/meio:** no máximo UMA imagem de equipamento, e
+não na capa. A capa mostra a pessoa ou a situação.
+
+**Como mostrar o problema sem expor ninguém:** o gesto (mão que protege a
+região, ombro tenso, postura de quem evita mover), o contexto (a cadeira do
+trabalho, a cama de madrugada, a cozinha às três da manhã), o objeto do
+cotidiano que denuncia a rotina. Tema sensível se resolve por enquadramento —
+recorte, fora de foco, de costas —, não trocando a pessoa por um aparelho.

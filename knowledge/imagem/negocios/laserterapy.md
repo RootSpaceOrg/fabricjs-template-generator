@@ -10,17 +10,25 @@ sendo do pack; isto aqui é o assunto.
 
 ## O aparelho certo
 
-Este negócio é **fotobiomodulação / LLLT / PBM** — luz de baixa intensidade que
-modula resposta biológica. O equipamento é discreto:
+**Referência fotográfica: `referencias/laserterapy-aparelho.png`** — olhe antes
+de escrever prompt de aparelho. O que estava descrito aqui ("caneta ligada por
+cabo a uma unidade de mesa") era deducao minha e estava ERRADO.
 
-- **Caneta ou ponteira de aplicação** ligada por cabo a uma unidade de mesa —
-  é a imagem mais reconhecível do nicho.
-- **Cluster / matriz de LEDs** apoiado sobre a região, luz vermelha ou
-  infravermelha visível como brilho suave.
-- **Unidade de mesa** compacta, com display de parâmetros (dose, tempo,
-  comprimento de onda).
-- **Óculos de proteção** — presentes na cena real de aplicação; dão veracidade.
-- **ILIB**: aplicação no punho, com o emissor preso como um bracelete.
+O aparelho de fotobiomodulacao clinica e:
+
+- **Portatil sem fio, formato de pistola curva**, corpo branco fosco.
+- **Base de recarga** propria, em forma de pedestal — o aparelho fica de pe nela.
+- **Haste metalica fina** saindo da ponta, com esfera na extremidade: e ela que
+  toca a regiao. NAO e uma caneta reta com cabo.
+- **Display digital pequeno** no corpo, marcando o tempo/dose, com seletor
+  R / IR (vermelho e infravermelho).
+- **Óculos de proteção** aparecem na cena de aplicação real e dão veracidade.
+- **Cluster / matriz de LEDs** e **ILIB** (emissor no punho) existem, mas sao
+  outros formatos do mesmo negocio — nao o padrao.
+
+Para o prompt: `handheld cordless photobiomodulation device, white matte curved
+body, thin metal probe with rounded tip, small digital display, charging
+stand`. Nao use `laser pen with cable` — foi o que gerou o aparelho errado.
 
 ## O aparelho ERRADO (reprova a imagem)
 
@@ -33,6 +41,22 @@ modula resposta biológica. O equipamento é discreto:
 - **Feixe verde ou azul dramático cortando a sala** — a luz de PBM é vermelha
   ou infravermelha (esta última é INVISÍVEL; o que se vê é a luz-piloto).
 - Ficção de laser: raio contínuo visível no ar, faísca, efeito sci-fi.
+
+## Primeiro o problema, depois o aparelho
+
+Ver `knowledge/design/geral.md` — a imagem mostra o que a pessoa SENTE, não o
+que o profissional usa. Numa peça de topo/meio: **no máximo uma imagem de
+equipamento, e nunca na capa**.
+
+Para este negócio, o problema aparece assim:
+
+| Tema | O que mostrar (problema) |
+|---|---|
+| fissura mamária | mãe amamentando com desconforto visível na postura, mão no seio, ombro tenso; a cena da madrugada |
+| dor lombar no trabalho | a pessoa se apoiando na mesa, mão nas costas ao levantar da cadeira |
+| dor no joelho | mão apoiada no joelho ao descer escada, tênis parado no meio do lance |
+| cicatrização | curativo no cotidiano, a rotina que continua apesar da lesão |
+| mucosite | dificuldade com o alimento, copo afastado, refeição intocada |
 
 ## Enquadramentos que dizem o assunto
 
