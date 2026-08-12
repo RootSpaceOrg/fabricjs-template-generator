@@ -31,6 +31,7 @@ registro não.
 | `L5sk0prJZLoFy9kK3o8-F` | cert-ecc-v7-recuperacao-5 | editorial-cards-continuos | dev | 5 |
 | `huBP-J1bRGApyrofT-Sra` | cert-ecc-v8-postura-7 | editorial-cards-continuos | dev | 7 |
 | `BCVYdJBxP71nZYzHImxJo` | cert-ecc-v8-recuperacao-5 | editorial-cards-continuos | dev | 5 |
+| `W4CPB4tJHic0x5jY3vMxc` | fissura4-cards | editorial-cards-continuos | dev | 5 |
 | `wbOJlMz0bSsz1TPfOEBeS` | pais-2026 | emotive-fullbleed-lettering | dev | 1 |
 | `-6sw4mOkeIFRHCz3LpLvM` | pais-2026-b | emotive-fullbleed-lettering | dev | 1 |
 | `UcKvSkZ9WfIWTsWjxBMS-` | setembro-amarelo | emotive-fullbleed-lettering | dev | 1 |
