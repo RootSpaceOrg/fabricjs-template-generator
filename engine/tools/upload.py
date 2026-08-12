@@ -18,6 +18,7 @@ import argparse
 import json
 import subprocess
 import sys
+import time
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
@@ -48,6 +49,22 @@ def main():
     if not bt_value:
         sys.exit("resolve.json sem matchedBusinessType.value — refaça o resolve com --subject")
     tenant, vertical = resolve["tenantId"], resolve["verticalId"]
+
+    # O upload publica o output/, não a fita.html. Depois de uma correção o
+    # agente costuma reescrever o HTML e re-renderizar o strip, mas esquecer o
+    # convert — e aí sobe o JSON velho: a plataforma mostra a versão anterior ao
+    # feedback enquanto o strip mostra a nova. Aconteceu duas vezes seguidas
+    # (fissura4-clinical e -bold, 2026-08-12), e não havia gate nenhum.
+    fita = d / "fita.html"
+    slide1 = d / "output" / "slide-1.json"
+    if fita.exists() and slide1.exists() and slide1.stat().st_mtime < fita.stat().st_mtime:
+        sys.exit(
+            f"output/ é ANTERIOR à fita.html — o JSON não tem as últimas correções.\n"
+            f"  fita.html:          {time.strftime('%H:%M:%S', time.localtime(fita.stat().st_mtime))}\n"
+            f"  output/slide-1.json:{time.strftime('%H:%M:%S', time.localtime(slide1.stat().st_mtime))}\n"
+            f"Rode: node engine/convert.js artifacts/runs/{a.slug} "
+            f"artifacts/runs/{a.slug}/output --slug {a.slug}"
+        )
 
     summary = d / "template-summary.md"
     if not summary.exists():

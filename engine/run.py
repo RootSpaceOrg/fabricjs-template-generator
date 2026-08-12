@@ -162,6 +162,15 @@ def missing_for(slug: str, state: dict) -> list[str]:
         if not (out / "slide-1.json").exists():
             miss.append("output/slide-1.json (node engine/convert.js <run-dir> output/)")
         else:
+            # JSON mais VELHO que a fita = correção que não foi convertida. A
+            # conservação de elId abaixo não pega: os ids continuam os mesmos
+            # quando só o texto ou a posição mudam. O `render` já cobrava isso
+            # do strip.png; o convert não cobrava nada, e o upload publicava o
+            # JSON velho enquanto o strip mostrava a versão nova.
+            fita = d / "fita.html"
+            if fita.exists() and (out / "slide-1.json").stat().st_mtime < fita.stat().st_mtime:
+                miss.append("output/ ANTERIOR à fita.html — reconverta (engine/convert.js); "
+                            "senão a plataforma recebe a versão pré-correção")
             html_ids: set = set(re.findall(r'data-el-id="([^"]+)"',
                 (d / "fita.html").read_text(encoding="utf-8", errors="replace")))
             json_ids: set = set()
