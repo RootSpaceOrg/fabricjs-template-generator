@@ -3,6 +3,11 @@
 Conhecimento em camadas (o específico vence): **este arquivo (geral)** →
 `knowledge/copy/negocios/<business_type>.md` (por negócio) → pedido do usuário.
 
+**Antes do dossiê vem a pesquisa** (`contexto.md`): o knowledge do negócio é
+geral — conhece o nicho, não o tema. Sem material específico o dossiê sai
+correto e genérico. A pesquisa levanta mecanismo, o que a pessoa já tentou,
+erro comum, dado com fonte, vocabulário do público e o limite do recurso.
+
 Imagem tem a mesma estrutura: `knowledge/design/geral.md` (leis de composição) →
 `knowledge/imagem/negocios/<business_type>.md` (o que pode APARECER neste
 negócio: equipamento certo e errado, enquadramentos, tema sensível) →

@@ -58,7 +58,7 @@ def fatias_nova(slug: str, pack: str | None, tema: str, pedido: str = "",
                 env: str = "dev", business: str = "", n: str = "") -> list[str]:
     """A criacao vira 6 turnos curtos - a janela do agente nao aguenta tudo junto.
 
-    dossie / imagens / abertura / miolo / fechamento+render / judge ate PASS.
+    pesquisa / dossie / imagens / abertura / miolo / fechamento+render / judge.
     Compor a fita inteira nao cabia numa janela: por isso ela vem em 3 pedacos.
     Cada fatia comeca relendo o estado do disco, entao e retomavel.
     """
@@ -69,8 +69,37 @@ def fatias_nova(slug: str, pack: str | None, tema: str, pedido: str = "",
                "O fit e CONSELHO, nao regra - nao bloqueie a run por causa dele.\n")
     pk = pack or "<o pack escolhido>"
 
+    f0 = (ctx +
+          f"FATIA 1 de 7 - SO A PESQUISA DO TEMA. Nao crie a run, nao escreva dossie.\n"
+          f"O conhecimento do negocio (knowledge/copy/negocios/) e GERAL: ele conhece o "
+          f"nicho, nao este tema. Sem material especifico o dossie sai correto e generico - "
+          f"serve a qualquer assunto do setor e nao ensina nada a quem ja conhece o basico.\n\n"
+          f"Pesquise o tema e escreva artifacts/runs/{slug}/contexto.md com:\n"
+          f"- MECANISMO: por que/como o recurso atua NESTE problema especifico. O detalhe "
+          f"que um leigo nao sabe e que muda a compreensao dele.\n"
+          f"- O QUE A PESSOA JA TENTOU: o que ela costuma fazer antes de procurar ajuda, e "
+          f"por que costuma nao bastar. E daqui que sai gancho que soa verdadeiro.\n"
+          f"- ERRO COMUM / MITO: a crenca errada mais frequente sobre o tema.\n"
+          f"- NUMERO OU FATO ANCORA: se houver dado solido, com a fonte. Sem fonte, nao "
+          f"invente - escreva 'sem dado confiavel' e siga.\n"
+          f"- VOCABULARIO: como o publico CHAMA isso (o termo popular, nao o tecnico).\n"
+          f"- LIMITE: o que o recurso NAO faz. E o que separa educacao de propaganda.\n\n"
+          f"Fontes, nesta ordem: (1) knowledge/copy/negocios/ do proprio repo; (2) "
+          f"sociedades e conselhos profissionais, consenso clinico, revisao publicada; "
+          f"(3) conteudo do setor.\n"
+          f"REGRAS DA PESQUISA:\n"
+          f"- CITE a origem de cada afirmacao. Sem origem, nao entra.\n"
+          f"- Nao copie texto: a copy da peca e sempre original.\n"
+          f"- Divergencia entre fontes e informacao valiosa - registre as duas.\n"
+          f"- Compliance vem antes: nada que vire promessa de cura, prazo ou resultado.\n"
+          f"Responda em 3 linhas e PARE.")
+
     f1 = (ctx + escolha +
-          f"FATIA 1 de 6 - SO O DOSSIE. Nao componha, nao gere imagem.\n"
+          f"FATIA 2 de 7 - SO O DOSSIE. Nao componha, nao gere imagem.\n"
+          f"0. LEIA artifacts/runs/{slug}/contexto.md (fatia anterior) e USE o material: o "
+          f"mecanismo, o que a pessoa ja tentou, o erro comum e o limite sao o que separa "
+          f"um post especifico de um generico. Se o contexto trouxe um detalhe que muda a "
+          f"compreensao, ele merece um slide.\n"
           f"1. python3 engine/run.py new {slug} --env {env} --pack {pk} "
           f"--n {n or '<dentro do range do pack>'} (se a run ja existir, siga);\n"
           f"2. resolve: python3 engine/tools/resolve_tenant.py --tenant {tenant} "
@@ -91,8 +120,15 @@ def fatias_nova(slug: str, pack: str | None, tema: str, pedido: str = "",
           f"   - IMAGEM: o objeto/gesto CONCRETO do tema que aquele slide mostra (o aparelho, "
           f"o instrumento, a regiao em contexto, a bancada do atendimento) - ou 'sem imagem', "
           f"assumido. Nunca o clima ('acolhimento', 'cuidado'): isso vira foto generica que "
-          f"serviria a qualquer assunto. Consulte knowledge/imagem/negocios/<business_type>.md "
-          f"se existir - ele diz o que pode e o que NAO pode aparecer neste negocio.\n"
+          f"serviria a qualquer assunto.\n"
+          f"     ANTES de escrever qualquer IMAGEM, leia packs/{pk}/images.md E a secao de "
+          f"assinaturas do packs/{pk}/tecnicas.md: cada pack tem SLOTS FIXOS, e a capa "
+          f"costuma ser o mais rigido deles (um pack pede foto meme de animal, outro "
+          f"full-bleed do ambiente, outro so o cutout do profissional). Pedir imagem que o "
+          f"slot nao aceita e trabalho jogado fora - o designer vai ignorar. Se o slot ja "
+          f"define o que aparece, escreva IMAGEM: conforme slot do pack (<qual>).\n"
+          f"     Consulte tambem knowledge/imagem/negocios/<business_type>.md se existir - "
+          f"ele diz o que pode e o que NAO pode aparecer neste negocio.\n"
           f"   - PESO: o que ANCORA o slide alem do texto (foto, cartao, tarja, numero grande). "
           f"Slide de miolo precisa de 30% da area com conteudo - e gate no conversor. Tese "
           f"curta sozinha num slide grande reprova, mesmo com copy suficiente.\n"
@@ -101,7 +137,7 @@ def fatias_nova(slug: str, pack: str | None, tema: str, pedido: str = "",
           f"6. advance ate 'compose' e PARE. Responda em 3 linhas.")
 
     f2 = (ctx +
-          f"FATIA 2 de 6 - SO AS IMAGENS. O dossie ja existe (leia-o).\n"
+          f"FATIA 3 de 7 - SO AS IMAGENS. O dossie ja existe (leia-o).\n"
           f"A imagem e o que faz o post ser bom ou ruim. O estilo vem do pack; o ASSUNTO "
           f"vem do tema, e e ele que costuma faltar.\n\n"
           f"O dossie ja declarou, por slide, o campo IMAGEM (o objeto concreto do tema) e o "
@@ -144,7 +180,7 @@ def fatias_nova(slug: str, pack: str | None, tema: str, pedido: str = "",
               f"e permitido, copiar nao.\n")
 
     f3a = (ctx + regras +
-           f"FATIA 3 de 6 - SO A ABERTURA. Dossie e assets ja existem (leia dossie.md, "
+           f"FATIA 4 de 7 - SO A ABERTURA. Dossie e assets ja existem (leia dossie.md, "
            f"liste assets/).\n"
            f"Crie artifacts/runs/{slug}/fita.html com o esqueleto (head + main.fita) e "
            f"APENAS a <section data-role=\"abertura\">. Nao escreva os outros slides ainda.\n"
@@ -155,7 +191,7 @@ def fatias_nova(slug: str, pack: str | None, tema: str, pedido: str = "",
            f"Nao rode assemble. Responda em 2 linhas.")
 
     f3b = (ctx + regras +
-           f"FATIA 4 de 6 - SO O MIOLO. O fita.html ja existe com a abertura (leia-o).\n"
+           f"FATIA 5 de 7 - SO O MIOLO. O fita.html ja existe com a abertura (leia-o).\n"
            f"Acrescente as <section data-role=\"item\"> do miolo conforme o dossie "
            f"(a fita tem {n or 'o total definido em run.json'} slides no total, contando "
            f"abertura e fechamento). Para CADA slide, use o formato declarado no dossie e o "
@@ -172,14 +208,14 @@ def fatias_nova(slug: str, pack: str | None, tema: str, pedido: str = "",
            f"Nao rode assemble. Responda em 2 linhas.")
 
     f3c = (ctx + regras +
-           f"FATIA 5 de 6 - FECHAMENTO E RENDER. O fita.html ja tem abertura e miolo (leia-o).\n"
+           f"FATIA 6 de 7 - FECHAMENTO E RENDER. O fita.html ja tem abertura e miolo (leia-o).\n"
            f"1. acrescente a <section data-role=\"fechamento\"> (espelha a abertura: "
            f"professionalPhoto + CTA + logo);\n"
            f"2. rode 'node engine/assemble.js artifacts/runs/{slug}';\n"
            f"3. responda so com o caminho do strip.png.")
 
     f4 = (ctx +
-          f"FATIA 6 de 6 - CORREDOR E JUDGE ATE PASSAR.\n"
+          f"FATIA 7 de 7 - CORREDOR E JUDGE ATE PASSAR.\n"
           f"1. 'node engine/convert.js artifacts/runs/{slug} artifacts/runs/{slug}/output "
           f"--slug {slug}' - rejeicao = corrija o HTML e repita (nunca edite JSON);\n"
           f"2. avance ate judge e julgue (JUDGE.md modo QA + check narrativo);\n"
@@ -187,7 +223,7 @@ def fatias_nova(slug: str, pack: str | None, tema: str, pedido: str = "",
           f"4. PARE no judge com PASS - nao escreva fidelity nem publique (isso e do Gustavo).\n"
           f"Reporte o veredito e quantas voltas precisou.")
 
-    return [f1, f2, f3a, f3b, f3c, f4]
+    return [f0, f1, f2, f3a, f3b, f3c, f4]
 
 
 def prompt_nova(slug: str, pack: str | None, tema: str, pedido: str = "",

@@ -72,6 +72,21 @@ def missing_for(slug: str, state: dict) -> list[str]:
             miss.append("resolve.json com ok=true (o atual tem ok=false)")
 
     elif stage == "context":
+        # Pesquisa do tema ANTES do dossiê. O knowledge do negócio é geral —
+        # conhece o nicho, não o assunto — e sem material específico o dossiê
+        # sai correto e genérico: serve a qualquer tema do setor e não ensina
+        # nada a quem já conhece o básico (veredito do Gustavo, 2026-08-11).
+        ctx = d / "contexto.md"
+        if not ctx.exists():
+            miss.append("contexto.md — pesquise o tema antes do dossiê (mecanismo, o que a "
+                        "pessoa já tentou, erro comum, limite), com origem de cada afirmação")
+        else:
+            texto = ctx.read_text(encoding="utf-8", errors="replace")
+            for campo in ("MECANISMO", "LIMITE"):
+                if campo not in texto:
+                    miss.append(f"contexto.md sem `{campo}:` — sem ele o dossiê não tem o que "
+                                f"o leitor ainda não sabe")
+
         dossie = d / "dossie.md"
         if not dossie.exists():
             miss.append("dossie.md (storyline/copy — CONTEXT.md continua válido)")
