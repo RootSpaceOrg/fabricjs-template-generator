@@ -426,3 +426,17 @@ região, ombro tenso, postura de quem evita mover), o contexto (a cadeira do
 trabalho, a cama de madrugada, a cozinha às três da manhã), o objeto do
 cotidiano que denuncia a rotina. Tema sensível se resolve por enquadramento —
 recorte, fora de foco, de costas —, não trocando a pessoa por um aparelho.
+
+## "Sem rosto" produz pessoa mutilada
+
+Pedir ao gerador que a pessoa não tenha rosto é pedir um defeito: ele apaga a
+cabeça ou corta no lugar errado. Em 2026-08-12 uma capa saiu com a mulher
+literalmente sem cabeça — sentada, mão no peito, e nada acima dos ombros.
+
+Se o rosto não deve aparecer, peça um **enquadramento** que naturalmente o
+exclua: close nas mãos, pessoa de costas, cortada pela borda do quadro, vista
+de cima. O enquadramento é decisão de fotografia; "sem rosto" é uma amputação.
+
+E antes disso, confira se o rosto é mesmo proibido — em saúde,
+`compliance/health.md` veda simular paciente ou resultado, não mostrar gente.
+Regra herdada sem checar a fonte custou clareza sem comprar segurança.

@@ -12,7 +12,7 @@ matéria são o que fazem a capa segurar o scroll.
 
 - **Luz natural com direção** — janela lateral, sol rasante, sombra longa.
 - **Pessoa em gesto real** — sentada, apoiada, em movimento parado; nunca pose
-  de catálogo. Sem rosto identificável.
+  de catálogo.
 - **Matéria quente** — madeira, tecido, couro, concreto. A superfície aparece.
 - **Penumbra com ponto de luz**, não escuridão chapada: a capa é escura porque
   o texto claro vive sobre ela, e precisa de área calma no terço inferior.
@@ -21,7 +21,7 @@ matéria são o que fazem a capa segurar o scroll.
 
 | Slot | Fórmula |
 |------|---------|
-| foto da capa | "{conceito: o OBJETO/gesto do tema, nomeado — não o clima} — pessoa em gesto natural em ambiente com madeira e tecido, luz de janela lateral forte com sombra longa, penumbra quente, editorial cinematográfico, ÁREA CALMA E ESCURA no terço inferior para texto claro, sem rosto identificável, sem texto" — retrato 1024x1536 |
+| foto da capa | "{conceito: o OBJETO/gesto do tema, nomeado — não o clima} — pessoa em gesto natural em ambiente com madeira e tecido, luz de janela lateral forte com sombra longa, penumbra quente, editorial cinematográfico, ÁREA CALMA E ESCURA no terço inferior para texto claro, sem texto" — retrato 1024x1536 |
 | marcação (assinatura) | NÃO se gera: `cp packs/editorial-cards-continuos/assets/marcacao-elipse.svg artifacts/runs/<slug>/assets/`. Elipse manuscrita sobre a palavra-chave da capa |
 | foto de cartão (uma POR cartão que a use) | "{conceito do item: o que ELE afirma, concreto}, detalhe fechado, luz direcional, textura visível, editorial, sem texto" — **paisagem** 1536x1024 para os registros topo/rodapé |
 | foto de cartão em retrato | mesma fórmula, **retrato** 1024x1536 — só para o registro `foto-retrato` |

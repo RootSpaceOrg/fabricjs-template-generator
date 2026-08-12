@@ -34,7 +34,7 @@ elemento mais colorido da peça.
 | Slot | Fórmula |
 |------|---------|
 | decor | OBJETO DO TEMA (aparelho, óculos, instrumento) JÁ GERADO extremamente fora de foco ("extremely out of focus, dreamy bokeh, barely recognizable"), fundo 100% transparente (RGBA), objeto INTEIRO com margem generosa nas 4 bordas. Blur em pós-processo (PIL) é PROIBIDO. Nitidez, objeto genérico ou fundo chapado = reprovado |
-| foto de miolo | "{conceito: o OBJETO/gesto do tema, nomeado — não o clima} em ambiente clínico premium — **mãos/gesto em ação**, luz direcional forte com recorte, textura visível, profundidade rasa, ângulo autoral (macro ou amplo), editorial cinematográfico; cor da cena livre desde que nenhuma domine; sem pessoas identificáveis, sem texto" |
+| foto de miolo | "{conceito: o OBJETO/gesto do tema, nomeado — não o clima} em ambiente clínico premium — **mãos/gesto em ação**, luz direcional forte com recorte, textura visível, profundidade rasa, ângulo autoral (macro ou amplo), editorial cinematográfico; cor da cena livre desde que nenhuma domine; sem texto" |
 | foto imersiva (full-bleed) | "ambiente clínico amplo, **luz dramática com fonte visível** (janela, luminária, reflexo), atmosfera, profundidade; editorial premium, sem texto" |
 | foto do par contínuo | paisagem larga (>=1792x1024), sujeito perto do CENTRO — vai INTEIRA na `.fita-layer` sobre a fronteira; a emenda corta a foto |
 | arcos (assinatura) | NÃO se gera: `cp packs/clinical-photo-editorial/assets/arcos.svg artifacts/runs/<slug>/assets/`. Geometria fixa do estilo — dois arcos de traço fino em oposição diagonal, cortados pelas bordas. Vai na capa e no fechamento |

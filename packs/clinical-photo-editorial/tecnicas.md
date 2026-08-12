@@ -113,7 +113,7 @@ houver conteúdo real:
 ## Regras de imagem (ver images.md para fórmulas)
 
 - Fotos: clínicas, cinematográficas, **paleta neutra dessaturada** (a cor vem
-  da marca, não da foto — ver images.md); sem rostos identificáveis.
+  da marca, não da foto — ver images.md).
 - **Pessoa = slot da plataforma.** O profissional é sempre
   `ds-slot data-slot="professionalPhoto"` com o placeholder canônico
   (`engine/assets/professional-photo-*.b64.txt`). Gerar avatar/ilustração de

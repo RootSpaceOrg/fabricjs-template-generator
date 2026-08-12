@@ -55,4 +55,23 @@ O `CONTEXT.md` aplica: a seção **Geral** + a seção do business_type da peça
 
 ## Regra transversal para imagens geradas (todas as sub-áreas)
 
-Imagem gerada por IA **nunca** pode parecer resultado clínico real (corpo/sorriso/pele "depois"). Uso permitido: conceitual, ambiente, equipamento, textura, metáfora visual.
+Imagem gerada por IA **nunca** pode parecer resultado clínico real (corpo/sorriso/pele "depois"). Uso permitido: conceitual, ambiente, equipamento, textura, metáfora visual — e **pessoas em situação cotidiana**, inclusive com rosto.
+
+### Rosto: o que é proibido é simular paciente, não mostrar gente
+
+Pessoa gerada por IA **pode ter rosto**. O que o compliance veda é a imagem
+sugerir que aquilo é um paciente real, um caso clínico ou um resultado — não a
+existência de um rosto.
+
+Proibido: expressão de alívio/satisfação que leia como depoimento, cena de
+"antes e depois", corpo exibido como resultado, qualquer coisa que passe por
+foto de paciente atendido.
+
+Permitido: a pessoa vivendo o problema (a mãe na madrugada, quem se apoia na
+mesa por dor lombar), com rosto e expressão coerentes com o incômodo.
+
+**Por que isto está escrito:** os packs herdaram um "sem rosto identificável"
+que o compliance nunca exigiu. O efeito foi imagem pior — o gerador, obrigado a
+esconder o rosto, produziu uma pessoa **sem cabeça** (fissura4-bold, 2026-08-12)
+e cenas que não dizem quem sente a dor. Cautela mal formulada custou clareza sem
+comprar segurança.

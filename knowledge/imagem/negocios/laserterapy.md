@@ -65,7 +65,7 @@ Para este negócio, o problema aparece assim:
 | aplicação em curso | mão da profissional posicionando a ponteira sobre a região, luz vermelha refletindo na pele |
 | preparo | ponteira, óculos de proteção e gaze sobre a bancada, unidade ao fundo com display aceso |
 | parâmetro / dose | close do display com números, dedo ajustando — serve a qualquer post sobre protocolo |
-| consulta | avaliação da região antes da aplicação, prancheta, conversa (sem rosto identificável) |
+| consulta | avaliação da região antes da aplicação, prancheta, conversa entre profissional e paciente |
 | pós | região coberta por curativo/compressa, aparelho já recolhido |
 
 ## Temas sensíveis: o entorno, nunca a fuga
@@ -83,9 +83,19 @@ São cenas de bem-estar que serviriam a qualquer post — e o post vira mudo.
 
 ## Pessoas
 
-Sem rosto identificável. Mãos, colo, região tratada em enquadramento
-respeitoso, profissional de costas ou cortada pelo quadro. Jaleco e luva quando
-a cena for de atendimento.
+**Rosto é permitido** — ver `compliance/health.md`. O que se evita é a imagem
+passar por paciente real ou por resultado, não a presença de gente.
+
+- **Quem vive o problema**: rosto e expressão coerentes com o incômodo. É o
+  que faz a leitora se reconhecer. Nada de alívio ou satisfação, que leem como
+  depoimento de resultado.
+- **Profissional em atendimento**: rosto ok; jaleco e luva quando a cena pedir.
+- **Região sensível** (mama, região íntima): aí sim o enquadramento protege —
+  recorte, de costas, coberto. Isso é sobre a REGIÃO, não sobre o rosto.
+
+Nunca peça "sem rosto" ao gerador: ele responde apagando ou cortando a cabeça,
+e a pessoa sai mutilada. Se o rosto não deve aparecer, escolha um ENQUADRAMENTO
+que naturalmente o exclua (close nas mãos, de costas, cortado pela borda).
 
 ## Vocabulário para o prompt
 
