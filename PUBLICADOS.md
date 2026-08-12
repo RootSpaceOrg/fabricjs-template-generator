@@ -21,6 +21,7 @@ registro não.
 | `RMaBi35zy497fg4WcQ8X2` | cert-clin-v4b-joelho-5 | clinical-photo-editorial | dev | 5 |
 | `oqdfMhjUU_IxhPfoFCYDt` | cert-fibro-1 | clinical-photo-editorial | dev | 6 |
 | `SkJslOi8MgHlUtDmG-7SQ` | fissura2-clinical | clinical-photo-editorial | dev | 6 |
+| `1IQlPc6UMLkv9EFXE_Hyz` | fissura4-clinical | clinical-photo-editorial | dev | 6 |
 | `JPVE8Z1UGbEneH7TVnIwg` | gram-teste-1 | clinical-photo-editorial | dev | 6 |
 | `Tp3B86MK1Ym7QB3ExkdJx` | var-teste-1 | clinical-photo-editorial | dev | 7 |
 | `9ffkleDcTFjZCqWe-sDso` | var-teste-2 | clinical-photo-editorial | dev | 6 |
