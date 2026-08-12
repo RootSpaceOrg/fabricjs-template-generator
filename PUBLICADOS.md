@@ -16,6 +16,7 @@ registro não.
 | `DfoukJka-RVCN3BIaKHa8` | cert-bold-v2-sessoes-7 | bold-educacional | dev | 7 |
 | `TyWivbiQNm3ByrPJ_IkCk` | cert-bold-v3-mito-5 | bold-educacional | dev | 5 |
 | `L2feAqqwyKVxKsvQGadLI` | run-escolha-um-tema-para-tod | bold-educacional | dev | 3 |
+| `LaONHzqkhHIpQtPl7io8s` | fissura4-bold | bold-educacional | dev | 5 |
 | `Q-MeoRoSPdlw5hJjxyYLw` | cert-clin-v4-joelho-6 | clinical-photo-editorial | dev | 6 |
 | `pxNwZYXbSZEWe_uynro1s` | cert-clin-v4-primeira-7 | clinical-photo-editorial | dev | 7 |
 | `RMaBi35zy497fg4WcQ8X2` | cert-clin-v4b-joelho-5 | clinical-photo-editorial | dev | 5 |
