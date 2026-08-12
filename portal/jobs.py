@@ -215,14 +215,23 @@ def worker_loop(intervalo: int = 5) -> None:
                       (datetime.now().isoformat(timespec="seconds"), job["id"]))
         rc, log = executar(job)
         status = "done" if rc == 0 else "failed"
-        # turno de agente que era para criar a run mas não criou = bloqueado (ele perguntou algo)
-        if (rc == 0 and job["tipo"] == "agente"
-                and ("NOVA RUN" in (job["payload"] or "") or "FATIA 1 de" in (job["payload"] or ""))
-                and not (RUNS / job["slug"] / "run.json").exists()):
-            status = "bloqueado"
+        # Turno que devia produzir um artefato e não produziu = o agente parou e
+        # perguntou. Cada fatia é cobrada pelo SEU artefato, não pelo run.json:
+        # a fatia 1 virou a pesquisa, que por design não cria a run, e o
+        # detector antigo marcava as três como bloqueadas tendo elas funcionado.
+        if rc == 0 and job["tipo"] == "agente":
+            p = job["payload"] or ""
+            esperado = None
+            if "FATIA 1 de" in p:
+                esperado = "contexto.md"      # pesquisa do tema
+            elif "NOVA RUN" in p or "FATIA 2 de" in p:
+                esperado = "run.json"         # dossiê cria a run
+            if esperado and not (RUNS / job["slug"] / esperado).exists():
+                status = "bloqueado"
         # o agente sai com 0 mesmo quando ele proprio reprova a fita: o disco decide,
         # nao o exit code. Sem judge com PASS, a fatia final nao esta feita.
-        if (rc == 0 and job["tipo"] == "agente" and "FATIA 6 de" in (job["payload"] or "")):
+        if (rc == 0 and job["tipo"] == "agente"
+                and re.search(r"FATIA (\d) de \1\b", p if rc == 0 else "")):
             rel = RUNS / job["slug"] / "judge-report.md"
             if "QA: PASS" not in (rel.read_text(encoding="utf-8", errors="replace")
                                   if rel.exists() else ""):
