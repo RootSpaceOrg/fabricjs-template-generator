@@ -1,0 +1,92 @@
+{
+  "pack": "laserpro-continuo",
+  "version": 1,
+  "status": "draft",
+  "familia": "editorial-clinico",
+  "adaptavel": true,
+  "fit": {
+    "melhor_em": [
+      "explicacao de condicao clinica",
+      "sintomas e beneficios",
+      "educacao de meio de funil"
+    ],
+    "evita": [
+      "peca unica",
+      "dado com muitos numeros",
+      "narrativa longa"
+    ]
+  },
+  "comporta": {
+    "eyebrow": {
+      "min": 0,
+      "max": 28
+    },
+    "tese": {
+      "min": 10,
+      "max": 40,
+      "linhas": 2
+    },
+    "apoio": {
+      "min": 40,
+      "max": 260,
+      "linhas": 6
+    },
+    "itens": {
+      "min": 3,
+      "max": 5,
+      "chars_por_item": 46
+    },
+    "resolve_bem": [
+      "o que e a condicao",
+      "sintomas em lista",
+      "beneficios em lista",
+      "chamada para comentar"
+    ],
+    "resolve_mal": [
+      "passo a passo longo",
+      "tabela",
+      "comparacao lado a lado"
+    ]
+  },
+  "slides": {
+    "min": 4,
+    "max": 7
+  },
+  "format": "instagram-feed",
+  "assinaturas": [
+    "palavras do tema em corpo gigante ao fundo, atravessando emendas; VARIAM conforme a copy de cada slide, nunca a mesma repetida",
+    "foto do problema sangrando de um slide para o proximo",
+    "professionalPhoto na capa e no fechamento; logo so no fechamento"
+  ],
+  "tokens": {
+    "paper": "#FFFFFF",
+    "ink": "#2F2F2F",
+    "muted": "#6E6E6E",
+    "accent": "#1E4A45",
+    "accent-ink": "#FFFFFF",
+    "wm": "#F0F0F0",
+    "font-display": "Montserrat",
+    "font-body": "Montserrat",
+    "fs-eyebrow": "20px",
+    "fs-headline": "64px",
+    "fs-headline-lg": "92px",
+    "fs-body": "30px",
+    "fs-number": "44px",
+    "fs-wm": "300px",
+    "fs-stamp": "22px",
+    "fs-cta": "26px",
+    "radius": "8px",
+    "wm-invert": "#2E5752"
+  },
+  "fonts": {
+    "css": "https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap",
+    "meta": "Montserrat:300,400,500,600,700,800"
+  },
+  "slots": [
+    "professionalPhoto",
+    "logo"
+  ],
+  "variables": [
+    "primary"
+  ]
+}

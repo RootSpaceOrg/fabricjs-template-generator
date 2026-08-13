@@ -106,6 +106,13 @@ section.slide[data-dark] { background: var(--ink); color: var(--paper); }
   overflow: visible;
 }
 .ds-watermark[data-vertical] { transform: rotate(-90deg); }
+/* a palavra-fantasma vive ATRÁS do conteúdo: sem isto ela cobre a headline.
+   Medido na referência do laserpro — sobre fundo de acento ela é um tom mais
+   CLARO do próprio acento (#2E5752 sobre #1E4A45), não um cinza. */
+.ds-watermark { z-index: 0; }
+section.slide > *:not(.ds-watermark) { position: relative; z-index: 1; }
+section.slide[data-invert] .ds-watermark,
+.ds-watermark[data-on-accent] { color: var(--wm-invert, var(--wm)); }
 
 /* tons (qualquer componente de texto) */
 [data-tone="ink"]    { color: var(--ink); }
