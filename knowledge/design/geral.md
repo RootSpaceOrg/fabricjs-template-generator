@@ -470,3 +470,23 @@ travessia deixa de existir — o leitor vê duas imagens, não uma contínua.
 
 Teste antes de aceitar a imagem: tape a metade direita — o que sobra ainda diz
 alguma coisa? E a metade esquerda? Se uma delas vira vazio, gere de novo.
+
+## Antes de afrouxar um gate, quebre o exemplar que o criou
+
+Um gate reprovou o laserpro por algo que era a assinatura do pack: o aparelho
+cruzando o cartão de propósito. A leitura óbvia — "o gate está errado, isento
+quem está na `.fita-layer`" — passou nos testes e estava errada. No
+`editorial-cards-continuos` o cartão E o conteúdo dele vivem os dois na
+`.fita-layer`: aquele filtro desligava dois gates justamente no pack que os fez
+nascer, e o render continuava bonito, porque gate desligado não deixa rastro.
+
+O que revelou foi quebrar o exemplar de propósito e ver que o defeito passava.
+
+**A regra:** afrouxar gate exige duas provas, não uma. Que o caso legítimo
+passa, e que **a violação original ainda é rejeitada** — colando um elemento na
+borda do cartão e conferindo o `data-el-id` na saída. Sem a segunda, "passou"
+não distingue gate consertado de gate desligado.
+
+E prefira o critério que descreve a geometria, não a árvore do documento. Aqui
+o certo era **contenção** (conteúdo de cartão cabe dentro do cartão; travessia
+cruza sem caber), não parentesco — a mesma `.fita-layer` hospeda os dois papéis.
