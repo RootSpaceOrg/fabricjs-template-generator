@@ -26,6 +26,7 @@ Uso:
 
 import argparse
 import json
+from pathlib import Path
 import sys
 import unicodedata
 
@@ -52,15 +53,55 @@ def _norm(text):
     return t.strip().lower()
 
 
+def _match(subject: str, enabled: list) -> dict | None:
+    """Casa o assunto pedido com um businessType. Mesma regra nos dois modos
+    (online e offline): exato por value/label, depois parcial nos dois sentidos."""
+    s = _norm(subject)
+    for bt in enabled:
+        if _norm(bt.get("value")) == s or _norm(bt.get("label")) == s:
+            return bt
+    for bt in enabled:
+        lv, ll = _norm(bt.get("value")), _norm(bt.get("label"))
+        if s and (s in lv or s in ll or lv in s or ll in s):
+            return bt
+    return None
+
+
 def main():
     ap = argparse.ArgumentParser(description="Resolve tenantConfig e valida businessTypes")
     ap.add_argument("--tenant", required=True, help="tenantId (ex: kultivai)")
     ap.add_argument("--vertical", required=True, help="verticalId (ex: health)")
     ap.add_argument("--subject", help="assunto pedido (ex: laserterapia) para casar com businessTypes")
     ap.add_argument("--env", default="prod", choices=["prod", "dev"], help="ambiente AWS (default: prod)")
+    ap.add_argument("--offline", action="store_true",
+                    help="canoniza o business_type pelo cache local, sem tocar o DynamoDB; "
+                         "não resolve tenant/domain (use na criação da run)")
+    ap.add_argument("--refresh", action="store_true",
+                    help="lê do DynamoDB e reescreve knowledge/business-types.json")
     args = ap.parse_args()
 
     pk = f"TENANT#{args.tenant}#VERTICAL#{args.vertical}"
+
+    # OFFLINE: a canonização do assunto ("fissura mamária" → laserterapy) não
+    # depende do ambiente nem muda entre tenants — é a chave que liga o dossiê a
+    # knowledge/imagem/negocios/<bt>.md. O tenantId/domain, esses sim são do
+    # ambiente, e só importam na PUBLICAÇÃO, que os re-resolve no destino.
+    # Pedir credencial AWS para começar a escrever copy era custo sem retorno.
+    if args.offline:
+        cache = Path(__file__).resolve().parents[2] / "knowledge" / "business-types.json"
+        if not cache.exists():
+            _out({"ok": False, "reason": "cache_ausente",
+                  "message": f"{cache} não existe — rode com --refresh uma vez"}, 2)
+        enabled = json.loads(cache.read_text(encoding="utf-8"))["businessTypes"]
+        matched = _match(args.subject, enabled) if args.subject else None
+        _out({"ok": bool(matched) or not args.subject,
+              "offline": True,
+              "tenantId": args.tenant, "verticalId": args.vertical,
+              "businessTypes": enabled,
+              "matchedBusinessType": matched,
+              "message": None if matched or not args.subject else
+                         f"'{args.subject}' não casou com nenhum business_type do cache"},
+             0 if (matched or not args.subject) else 3)
 
     try:
         session = get_session(args.env)
@@ -116,21 +157,20 @@ def main():
         for bt in enabled
     ]
 
-    matched = None
-    if args.subject:
-        s = _norm(args.subject)
-        # 1) match exato/contido por value; 2) por label; 3) parcial nos dois sentidos
-        for bt in enabled:
-            if _norm(bt.get("value")) == s or _norm(bt.get("label")) == s:
-                matched = bt
-                break
-        if not matched:
-            for bt in enabled:
-                lv, ll = _norm(bt.get("value")), _norm(bt.get("label"))
-                if s and (s in lv or s in ll or lv in s or ll in s):
-                    matched = bt
-                    break
+    if args.refresh:
+        import datetime
+        cache = Path(__file__).resolve().parents[2] / "knowledge" / "business-types.json"
+        cache.write_text(json.dumps({
+            "_comment": "Cache dos business_type do tenantConfig. Editavel a mao; o "
+                        "resolve_tenant.py so consulta o DynamoDB com --refresh.",
+            "atualizado_em": datetime.date.today().isoformat(),
+            "fonte": f"{tenant_id}/{vertical_id} ({args.env})",
+            "businessTypes": catalog,
+        }, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        print(f"cache atualizado: {cache} ({len(catalog)} tipos)", file=sys.stderr)
 
+    matched = _match(args.subject, enabled) if args.subject else None
+    if args.subject:
         if not matched:
             _out(
                 {

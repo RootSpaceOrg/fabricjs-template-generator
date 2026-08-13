@@ -36,7 +36,13 @@ VERTICAIS = ["health"]
 
 
 def _editor_url(slug: str, tid: str | None) -> str | None:
-    """URL do editor: o domínio vem do resolve.json da run (muda por vertical)."""
+    """URL do editor: o domínio vem do resolve.json da run (muda por vertical).
+
+    Com o resolve offline na criação, o `domain` só existe depois da primeira
+    publicação — que é quando o tenant é de fato resolvido, no ambiente de
+    destino. Antes disso não há link, e é correto não haver: o template ainda
+    não existe em lugar nenhum.
+    """
     if not tid:
         return None
     try:

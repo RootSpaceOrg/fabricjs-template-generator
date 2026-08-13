@@ -49,7 +49,7 @@ def main():
     # ambiente. Publicar em outro exige re-resolver lá — o tenant pode não
     # existir, e publicar com o id errado grava template órfão em produção.
     env = a.env or state["env"]
-    if env != state["env"] or a.tenant or a.vertical:
+    if resolve.get("offline") or env != state["env"] or a.tenant or a.vertical:
         alvo_tenant = a.tenant or resolve["tenantId"]
         alvo_vertical = a.vertical or resolve["verticalId"]
         r = subprocess.run(
@@ -64,6 +64,12 @@ def main():
             sys.exit(f"{alvo_tenant}/{alvo_vertical} não existe em {env} "
                      f"({novo.get('message', 'sem tenantConfig')}) — publicação recusada")
         resolve = novo
+        # grava o resolve do DESTINO: é dele que sai o domain do link do editor
+        # no portal. Sem isto, publicar em prod deixaria o link apontando para
+        # o ambiente errado (ou para lugar nenhum, com o resolve offline).
+        if a.execute:
+            (d / "resolve.json").write_text(
+                json.dumps(novo, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     if state.get("stage") not in ("finalize", "upload", "done"):
         sys.exit(
             f"run está em '{state.get('stage')}' — upload permitido só em finalize "

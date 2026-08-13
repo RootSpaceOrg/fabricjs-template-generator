@@ -1,0 +1,52 @@
+{
+  "_comment": "Cache dos business_type do tenantConfig. Editavel a mao; o resolve_tenant.py so e chamado com --refresh. Fonte: DynamoDB tenantConfig (TENANT#<t>#VERTICAL#<v>).",
+  "atualizado_em": "2026-08-12",
+  "fonte": "kultivai/health (dev)",
+  "businessTypes": [
+    {
+      "label": "Laserterapia",
+      "value": "laserterapy",
+      "emoji": "🧑‍⚕️"
+    },
+    {
+      "label": "Clínica Médica",
+      "value": "medical-clinic",
+      "emoji": "🏥"
+    },
+    {
+      "label": "Laboratório",
+      "value": "laboratory",
+      "emoji": "🔬"
+    },
+    {
+      "label": "Farmácia",
+      "value": "pharmacy",
+      "emoji": "💊"
+    },
+    {
+      "label": "Nutricionista",
+      "value": "nutrition",
+      "emoji": "🥗"
+    },
+    {
+      "label": "Fisioterapia",
+      "value": "physiotherapy",
+      "emoji": "🧘"
+    },
+    {
+      "label": "Psicologia",
+      "value": "psychology",
+      "emoji": "🧠"
+    },
+    {
+      "label": "Odontologia",
+      "value": "dentistry",
+      "emoji": "🦷"
+    },
+    {
+      "label": "Estética e Bem-Estar",
+      "value": "aesthetics",
+      "emoji": "💆"
+    }
+  ]
+}
