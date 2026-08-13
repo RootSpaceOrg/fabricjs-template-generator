@@ -306,7 +306,10 @@ img[data-overhang="br"]     { transform: translate(28%, 30%) rotate(-12deg); }
 /* sombra suave SEM elevar: o cartao continua abaixo da .fita-layer, entao um
    elemento da camada (um aparelho recortado, p.ex.) passa POR CIMA dele —
    que e o desenho do laserpro. data-elevated cria z-index 2 e bloqueia isso. */
-.ds-card[data-shadow-soft] { box-shadow: 0 10px 34px rgba(0,0,0,.16); border: 1px solid rgba(0,0,0,.30); }
+/* borda OPACA, nao rgba: o conversor passa a cor por rgb2hex, que descarta o
+   alfa — rgba(0,0,0,.30) virava #000000, um contorno preto duro de 1px no
+   Fabric. #B4B4B4 e o cinza equivalente aos 30% sobre branco, ja resolvido. */
+.ds-card[data-shadow-soft] { box-shadow: 0 10px 34px rgba(0,0,0,.16); border: 1px solid #B4B4B4; }
 /* CANTO do cartao do laserpro. Medido na lamina 4 (432px de largura): a curva
    se afasta ~5px em ~13px de altura, o que da raio ~12px ali e ~30px em 1080.
    O --radius global de 8px sumia no render, e a borda de 6% tambem: na lamina
