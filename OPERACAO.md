@@ -70,9 +70,23 @@ setsid nohup node /usr/lib/node_modules/openclaw/dist/index.js agent \
 - Acompanhe com poll do `run.json` (`stage`) e do `pgrep` do turno; o log fica
   no arquivo acima.
 
-**Clones no VPS:** agente em `/root/.openclaw/workspace/external/fabricjs-template-generator`;
-Claude em `/root/hermes-workspace/fabricjs-template-generator`. Conhecimento
-sincroniza por git (pull no início, push no fim).
+**Clones no VPS — leia com atenção, já causou trabalho perdido:**
+
+| Clone | De quem é | Quem executa lá |
+|---|---|---|
+| `/root/.openclaw/workspace/external/fabricjs-template-generator` | **do AGENTE** | o agente, sempre |
+| `/root/hermes-workspace/fabricjs-template-generator` | do Claude/portal | os gates do worker e o `deploy.sh` |
+
+**Se você é o agente do OpenClaw, trabalhe SEMPRE no primeiro.** O segundo
+existe para o portal rodar gate e deploy; escrever nele faz o worker validar um
+diretório e você escrever em outro — a run parece incompleta e trava.
+
+Em 2026-08-13 o agente leu esta seção, entendeu que a fábrica ficava no clone
+do Claude e escreveu ali: três `contexto.md` de certificação e três imagens de
+pack foram parar no lugar errado, e a fila travou em `bloqueado`.
+
+Conhecimento sincroniza por git (pull no início, push no fim) — os dois clones
+apontam para o mesmo remoto.
 
 ## 4. Corredor mecânico (Claude, entre as fatias)
 

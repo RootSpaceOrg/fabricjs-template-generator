@@ -2,85 +2,113 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <meta name="hm-fonts" content="Poppins:300,400,500,600,700">
+  <meta name="hm-fonts" content="Montserrat:300,400,500,600,700,800">
 </head>
 <body>
-<!-- ESTRUTURA DO PACK laserpro-continuo.
-     Três assinaturas, todas visíveis nesta fita:
-     1. A PALAVRA DO TEMA em corpo gigante ao fundo, atravessando a emenda —
-        vive na .fita-layer, cortada pela fronteira dos slides. É o que dá
-        continuidade à peça quando o dedo passa.
-     2. A FOTO DO PROBLEMA sangrando de um slide para o próximo, também na
-        camada. No original, a mão com a dor destacada ocupa os dois slides.
+<!-- ESTRUTURA DO PACK laserpro-continuo — 6 slides, como a referência.
+     Três assinaturas:
+     1. PALAVRAS DO TEMA em corpo gigante ao fundo, atravessando emendas.
+        VARIAM conforme a copy de cada trecho — nunca a mesma repetida.
+     2. FOTO DO PROBLEMA sangrando de um slide para o próximo.
      3. professionalPhoto na CAPA e no FECHAMENTO; logo SÓ no fechamento.
 
-     A capa é o slide de acento (fundo da marca, texto claro); o miolo é
-     branco com texto escuro. -->
+     Fundo: capa e fechamento de acento (a cor da marca), miolo branco. No
+     LaserPro antigo os slides eram transparentes e a cor entrava por trás no
+     container; aqui o fundo é do próprio slide. -->
 <main class="fita" data-pack="laserpro-continuo" data-template-name="Estrutura laserpro" data-segment="exemplar">
 
-  <!-- CAPA: fundo da marca, título empilhado, profissional à direita -->
+  <!-- 1 CAPA: acento cheio, título em caixa alta, profissional à direita -->
   <section class="slide" data-role="abertura" data-invert>
     <span class="ds-eyebrow" data-el-id="s1e" data-static data-tone="paper"
           style="grid-area: 3 / 2 / 4 / 8">ARRASTA PRO LADO</span>
-    <h1 class="ds-headline" data-el-id="s1t" data-size="lg" data-tone="paper" data-case="sentence"
+    <h1 class="ds-headline" data-el-id="s1t" data-size="lg" data-tone="paper"
         data-template-element data-te-description="nome da condicao"
         data-te-min-chars="8" data-te-max-chars="28"
-        style="grid-area: 4 / 2 / 7 / 8">Túnel<br>do carpo</h1>
-    <p class="ds-body" data-el-id="s1a" data-tone="paper"
+        style="grid-area: 4 / 2 / 7 / 9">Túnel<br>do carpo</h1>
+    <p class="ds-body" data-el-id="s1a" data-tone="paper" data-weight="thin"
        data-template-element data-te-description="pergunta que abre"
        data-te-min-chars="20" data-te-max-chars="90"
        style="grid-area: 7 / 2 / 9 / 8">Sente dor, formigamento ou fraqueza nas mãos?</p>
     <img class="ds-slot" data-el-id="s1p" data-static data-slot="professionalPhoto" data-cutout
-         style="grid-area: 5 / 7 / 13 / 13">
+         style="grid-area: 4 / 7 / 13 / 13">
   </section>
 
-  <!-- MIOLO 1: texto à esquerda, a foto do problema entra pela direita -->
+  <!-- 2 O QUE É: texto à esquerda, a foto do problema entra pela direita -->
   <section class="slide" data-role="item">
-    <p class="ds-body" data-el-id="s2a" data-template-element
+    <p class="ds-body" data-el-id="s2a" data-weight="thin" data-template-element
        data-te-description="o que e a condicao"
        data-te-min-chars="60" data-te-max-chars="240"
        style="grid-area: 4 / 2 / 9 / 7">É uma condição causada pela compressão do nervo mediano no punho. Os sintomas incluem dormência, formigamento e fraqueza ao segurar objetos.</p>
   </section>
 
-  <!-- MIOLO 2: a foto termina aqui e a lista de benefícios ocupa a direita -->
+  <!-- 3 BENEFÍCIOS: a foto termina aqui; a lista ocupa a direita -->
   <section class="slide" data-role="item">
-    <h2 class="ds-headline" data-el-id="s3t" data-case="sentence" data-template-element
-        data-te-description="tese do beneficio" data-te-min-chars="10" data-te-max-chars="34"
-        style="grid-area: 3 / 6 / 5 / 12">Como a laserterapia ajuda?</h2>
-    <p class="ds-body" data-el-id="s3i" data-template-element
+    <h2 class="ds-headline" data-el-id="s3t" data-case="sentence" data-weight="light"
+        data-template-element data-te-description="tese do beneficio"
+        data-te-min-chars="10" data-te-max-chars="34"
+        style="grid-area: 3 / 6 / 5 / 12">Como a <b>laserterapia</b> ajuda?</h2>
+    <p class="ds-body" data-el-id="s3i" data-weight="thin" data-template-element
        data-te-description="beneficios, um por linha"
        data-te-min-chars="60" data-te-max-chars="200"
        style="grid-area: 6 / 6 / 10 / 12">✓ Reduz a inflamação<br>✓ Diminui a dor e o inchaço<br>✓ Melhora a circulação local<br>✓ Estimula a regeneração nervosa</p>
   </section>
 
-  <!-- FECHAMENTO: logo em cima, CTA, profissional à direita -->
-  <section class="slide" data-role="fechamento">
-    <img class="ds-slot" data-el-id="s4l" data-static data-slot="logo"
-         style="grid-area: 2 / 2 / 4 / 6">
-    <h2 class="ds-headline" data-el-id="s4t" data-case="sentence" data-template-element
-        data-te-description="tese do fechamento" data-te-min-chars="15" data-te-max-chars="46"
-        style="grid-area: 5 / 2 / 8 / 8">Chega de sofrer com dor e formigamento nas mãos!</h2>
-    <p class="ds-body" data-el-id="s4a" data-template-element
-       data-te-description="instrucao do comentario"
-       data-te-min-chars="30" data-te-max-chars="140"
-       style="grid-area: 8 / 2 / 11 / 8"><b>COMENTE "EU QUERO"</b> e receba mais sobre a laserterapia para essa condição.</p>
-    <img class="ds-slot" data-el-id="s4p" data-static data-slot="professionalPhoto" data-cutout
-         style="grid-area: 5 / 7 / 13 / 13">
+  <!-- 4 CARTÃO + APARELHO: caixa branca com sombra, o aparelho POR CIMA dela,
+       saindo pela direita. É o único slide com ds-card neste pack. -->
+  <section class="slide" data-role="item">
+    <div class="ds-card" data-el-id="s4c" data-elevated="soft" style="grid-area: 2 / 2 / 11 / 11"></div>
+    <h2 class="ds-headline" data-el-id="s4t" data-case="sentence" data-weight="light"
+        data-template-element data-te-description="tese dos beneficios"
+        data-te-min-chars="12" data-te-max-chars="44"
+        style="grid-area: 3 / 3 / 5 / 9"><b>Benefícios</b> para quem sofre com a condição</h2>
+    <p class="ds-body" data-el-id="s4i" data-weight="thin" data-template-element
+       data-te-description="beneficios em lista"
+       data-te-min-chars="60" data-te-max-chars="220"
+       style="grid-area: 6 / 3 / 10 / 9">Alívio rápido dos sintomas;<br>Tratamento não invasivo e indolor;<br>Recuperação funcional mais eficaz;<br>Maior qualidade de vida no dia a dia;</p>
   </section>
 
-  <!-- CAMADA DAS TRAVESSIAS: a palavra gigante e a foto do problema.
-       Grid contínuo de 12 colunas por slide (fita de 4 = 48 colunas). -->
+  <!-- 5 FAIXA DE FOTO: imagem em tira + tese curta abaixo -->
+  <section class="slide" data-role="item">
+    <img class="ds-photo" data-el-id="s5f" data-static data-image-type="generated"
+         src="foto-mao-aplicacao.jpg" style="grid-area: 2 / 2 / 6 / 12">
+    <h2 class="ds-headline" data-el-id="s5t" data-case="sentence" data-weight="light"
+        data-template-element data-te-description="tese curta"
+        data-te-min-chars="8" data-te-max-chars="26"
+        style="grid-area: 7 / 2 / 9 / 10">O poder da luz</h2>
+    <p class="ds-body" data-el-id="s5a" data-weight="thin" data-template-element
+       data-te-description="apoio da tese"
+       data-te-min-chars="60" data-te-max-chars="220"
+       style="grid-area: 9 / 2 / 12 / 11">Pode ser usada sozinha ou junto de outros tratamentos, ajudando a evitar intervenções mais invasivas em muitos casos.</p>
+  </section>
+
+  <!-- 6 FECHAMENTO: acento cheio, logo no topo, profissional à direita -->
+  <section class="slide" data-role="fechamento" data-invert>
+    <img class="ds-slot" data-el-id="s6l" data-static data-slot="logo"
+         style="grid-area: 2 / 2 / 4 / 6">
+    <h2 class="ds-headline" data-el-id="s6t" data-case="sentence" data-tone="paper"
+        data-weight="light" data-template-element data-te-description="tese do fechamento"
+        data-te-min-chars="15" data-te-max-chars="46"
+        style="grid-area: 6 / 2 / 9 / 8">Chega de sofrer com dor e formigamento nas mãos!</h2>
+    <p class="ds-body" data-el-id="s6a" data-tone="paper" data-weight="thin"
+       data-template-element data-te-description="instrucao do comentario"
+       data-te-min-chars="30" data-te-max-chars="140"
+       style="grid-area: 9 / 2 / 12 / 8"><b>COMENTE "EU QUERO"</b> e receba mais sobre a laserterapia para essa condição.</p>
+    <img class="ds-slot" data-el-id="s6p" data-static data-slot="professionalPhoto" data-cutout
+         style="grid-area: 4 / 7 / 13 / 13">
+  </section>
+
+  <!-- TRAVESSIAS. Fita de 6 = 72 colunas; emendas em 13, 25, 37, 49, 61.
+       As palavras VARIAM com a copy do trecho que atravessam. -->
   <div class="fita-layer" data-split-ok>
-    <!-- palavra do tema atravessando a emenda 1→2 -->
-    <span class="ds-watermark" data-el-id="w1" data-static data-layer data-tone="wm"
-          data-on-accent style="grid-area: 6 / 8 / 10 / 19">LASER</span>
-    <!-- foto do problema: entra no slide 2 e termina no 3 -->
+    <span class="ds-watermark" data-el-id="w1" data-static data-layer data-on-accent
+          style="grid-area: 6 / 8 / 10 / 19">LASER</span>
     <img class="ds-photo" data-el-id="f1" data-static data-layer
          data-image-type="generated" src="foto-problema.jpg"
-         style="grid-area: 1 / 19 / 13 / 29">
-    <!-- segunda travessia da palavra, agora entre 3→4 -->
-    <span class="ds-watermark" data-el-id="w2" data-static data-layer data-tone="wm"
-          style="grid-area: 9 / 20 / 13 / 33">TERAPIA</span>
+         style="grid-area: 1 / 19 / 13 / 30">
+    <span class="ds-watermark" data-el-id="w2" data-static data-layer
+          style="grid-area: 10 / 20 / 13 / 32">SINTOMAS</span>
+    <span class="ds-watermark" data-el-id="w3" data-static data-layer
+          style="grid-area: 10 / 55 / 13 / 66">TERAPIA</span>
   </div>
 
 </main>
