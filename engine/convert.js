@@ -419,6 +419,35 @@ const rgb2hex = (c) => {
       }
     }
 
+    // TEXTO QUE VAZA PARA FORA DO CARTÃO. O gate de célula acima só vale para
+    // filho direto do slide; em pack com travessia o cartão é IRMÃO do texto,
+    // na .fita-layer, e não cresce com o conteúdo — a copy longa simplesmente
+    // sai por baixo dele. Foi assim que "SESSÃO NÃO BASTA" saiu cortado numa
+    // fita que passou em todos os outros gates (cert-ecc-v8, 2026-08-13).
+    // Medido por RETÂNGULO renderizado, não por scrollHeight: este último conta
+    // o espaço do glifo e acusa texto grande que na prática cabe.
+    {
+      const cards = [...document.querySelectorAll(".ds-card")].map((c) => c.getBoundingClientRect());
+      for (const el of document.querySelectorAll(".ds-headline, .ds-body, .ds-number, .ds-eyebrow")) {
+        const r = el.getBoundingClientRect();
+        const dono = cards.find((c) => r.left < c.right && r.right > c.left
+                                    && r.top < c.bottom && r.bottom > c.top);
+        if (!dono) continue;
+        // O texto pode estar DENTRO do cartão e ainda assim sair cortado: ele
+        // transborda a própria caixa, e o corte acontece nos limites dela.
+        // 48px de tolerância, calibrado contra casos reais: número e headline
+        // de exemplar APROVADO acusam 25–32px só pela folga do glifo
+        // (line-height conta espaço que não se vê), enquanto o menor corte
+        // visível medido foi 60px. Abaixo de 48 é ruído; acima, é defeito.
+        const excesso = el.scrollHeight - el.clientHeight;
+        if (excesso > 48) {
+          rejects.push({ id: el.getAttribute("data-el-id"),
+            reason: `texto transborda ${excesso}px da própria caixa dentro do cartão — `
+              + `no render ele sai cortado; encurte a copy ou amplie as linhas de grid` });
+        }
+      }
+    }
+
     // SLIDE COM POUCA DENSIDADE. Um miolo com texto espalhado num slide grande
     // e nada mais lê como rascunho, mesmo com copy suficiente — o defeito é de
     // composição, não de conteúdo (2026-08-11: slide de 24% da área com 223
