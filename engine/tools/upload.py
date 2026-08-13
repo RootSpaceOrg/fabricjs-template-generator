@@ -31,6 +31,10 @@ def main():
     p.add_argument("--name", default=None,
                    help="nome do template; sem isto usa o H1 do template-summary.md")
     p.add_argument("--tags", default="", help="tags extras além das automáticas")
+    p.add_argument("--env", choices=["dev", "prod"], default=None,
+                   help="ambiente de DESTINO; sem isto usa o env da run")
+    p.add_argument("--tenant", default=None, help="tenant de destino (default: o da run)")
+    p.add_argument("--vertical", default=None, help="vertical de destino (default: a da run)")
     p.add_argument("--execute", action="store_true")
     a = p.parse_args()
 
@@ -39,6 +43,27 @@ def main():
     resolve = json.loads((d / "resolve.json").read_text(encoding="utf-8"))
     if not resolve.get("ok"):
         sys.exit("resolve.json com ok=false — não há tenant/business_type válidos")
+
+    # DESTINO ≠ ambiente da run. O resolve.json foi gerado contra o env de
+    # criação: ele traz o tenantId/verticalId lidos do DynamoDB DAQUELE
+    # ambiente. Publicar em outro exige re-resolver lá — o tenant pode não
+    # existir, e publicar com o id errado grava template órfão em produção.
+    env = a.env or state["env"]
+    if env != state["env"] or a.tenant or a.vertical:
+        alvo_tenant = a.tenant or resolve["tenantId"]
+        alvo_vertical = a.vertical or resolve["verticalId"]
+        r = subprocess.run(
+            [sys.executable, str(Path(__file__).parent / "resolve_tenant.py"),
+             "--tenant", alvo_tenant, "--vertical", alvo_vertical, "--env", env,
+             "--subject", (resolve.get("matchedBusinessType") or {}).get("value", "")],
+            capture_output=True, text=True)
+        if r.returncode != 0:
+            sys.exit(f"resolve em {env} falhou para {alvo_tenant}/{alvo_vertical}:\n{r.stderr.strip()}")
+        novo = json.loads(r.stdout)
+        if not novo.get("ok"):
+            sys.exit(f"{alvo_tenant}/{alvo_vertical} não existe em {env} "
+                     f"({novo.get('message', 'sem tenantConfig')}) — publicação recusada")
+        resolve = novo
     if state.get("stage") not in ("finalize", "upload", "done"):
         sys.exit(
             f"run está em '{state.get('stage')}' — upload permitido só em finalize "
@@ -92,12 +117,13 @@ def main():
         "--tenant-id", tenant, "--vertical-id", vertical, "--scope", "vertical",
         "--tags", ",".join(tags),
         "--description-hint", summary.read_text(encoding="utf-8"),
-        "--env", state["env"],
+        "--env", env,
     ]
     if a.execute:
         cmd.append("--execute")
 
-    print(f"env={state['env']} business_type={bt_value} tenant={tenant}/{vertical} "
+    origem = "" if env == state["env"] else f" (run criada em {state['env']})"
+    print(f"env={env}{origem} business_type={bt_value} tenant={tenant}/{vertical} "
           f"tags={','.join(tags)} {'EXECUTE' if a.execute else 'DRY-RUN'}")
     r = subprocess.run(cmd)
     sys.exit(r.returncode)

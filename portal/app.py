@@ -28,6 +28,12 @@ app.mount("/static", StaticFiles(directory=HERE / "static"), name="static")
 
 STAGES = ["resolve", "context", "compose", "render", "convert", "judge", "finalize", "upload", "done"]
 
+# Destinos de publicação. Hoje só há um de cada, mas o seletor já existe para o
+# dia em que houver mais — crescer aqui não mexe na tela. O resolve valida
+# contra o DynamoDB do ambiente na hora do upload; esta lista é só a oferta.
+TENANTS = ["kultivai"]
+VERTICAIS = ["health"]
+
 
 def _editor_url(slug: str, tid: str | None) -> str | None:
     """URL do editor: o domínio vem do resolve.json da run (muda por vertical)."""
@@ -51,6 +57,12 @@ def _read(p: Path, limit: int | None = None) -> str:
 
 def _esc(s: str) -> str:
     return (s or "").replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+
+
+def _opcoes(valores: list[str], atual: str | None) -> str:
+    return "".join(
+        f'<option value="{v}"{" selected" if v == atual else ""}>{v}</option>'
+        for v in valores)
 
 
 def _age(ts: float) -> str:
@@ -163,6 +175,13 @@ def run_detail(slug: str):
         raise HTTPException(404)
     st = json.loads((d / "run.json").read_text(encoding="utf-8"))
     strip_html = f'<div class="strip"><img src="/run/{slug}/strip.png"></div>' if (d / "strip.png").exists() else ""
+    # destino de prod: pré-selecionado com o que a run resolveu, editável
+    try:
+        _rs = json.loads((d / "resolve.json").read_text(encoding="utf-8"))
+    except Exception:
+        _rs = {}
+    tenants_html = _opcoes(TENANTS, _rs.get("tenantId"))
+    verticais_html = _opcoes(VERTICAIS, _rs.get("verticalId"))
     with db() as c:
         jobs = c.execute("SELECT * FROM jobs WHERE slug=? ORDER BY id DESC LIMIT 5", (slug,)).fetchall()
         vers = c.execute("SELECT * FROM vereditos WHERE slug=? ORDER BY id DESC LIMIT 5", (slug,)).fetchall()
@@ -188,8 +207,13 @@ def run_detail(slug: str):
 <div class="acts">
 <form class="inline" method="post" action="/run/{slug}/job/corredor"><button class="primary">▶ Rodar corredor</button></form>
 <form class="inline" method="post" action="/run/{slug}/job/advance"><button>⏭ Avançar estágio</button></form>
-<form class="inline" method="post" action="/run/{slug}/job/upload"><button>⬆ Publicar (manual)</button></form>
-<form class="inline" method="post" action="/run/{slug}/veredito"><input type="hidden" name="veredito" value="aprovado"><button class="ok">✓ Aprovar e publicar</button></form>
+<form class="inline" method="post" action="/run/{slug}/publicar">
+  <input type="hidden" name="env" value="dev"><button>⬆ Publicar em dev</button></form>
+<form class="inline" method="post" action="/run/{slug}/publicar">
+  <input type="hidden" name="env" value="prod">
+  <select name="tenant">{tenants_html}</select>
+  <select name="vertical">{verticais_html}</select>
+  <button class="ok">🚀 Publicar em prod</button></form>
 {'<form class="inline" method="post" action="/run/' + slug + '/notificar"><button>✈ Enviar ao Telegram</button></form>' if tg.ativo() else ''}
 </div>
 <form method="post" action="/run/{slug}/veredito" style="margin-bottom:18px">
@@ -222,6 +246,35 @@ def criar_job(slug: str, tipo: str):
         executar_direto(jid)
         return RedirectResponse(f"/run/{slug}", status_code=303)
     enfileirar(tipo, slug)
+    return RedirectResponse(f"/run/{slug}", status_code=303)
+
+
+@app.post("/run/{slug}/publicar")
+def publicar(slug: str, env: str = Form("dev"),
+             tenant: str = Form(""), vertical: str = Form("")):
+    """Publica a run no ambiente escolhido.
+
+    Substitui o par "Publicar (manual)" + "Aprovar e publicar", que se
+    sobrepunham: os dois publicavam, mudando só quem fazia o trabalho que
+    faltava. Agora o eixo é o DESTINO — dev para ver no editor, prod para valer.
+
+    Prod é irreversível pelo portal (não há botão de apagar template), então
+    exige que a run já esteja pronta: o upload recusa antes de `finalize`, e o
+    resolve valida o tenant no ambiente de destino em vez de assumir o da run.
+    """
+    if not (RUNS / slug / "run.json").exists():
+        raise HTTPException(404)
+    if env not in ("dev", "prod"):
+        raise HTTPException(400, "env inválido")
+    if env == "prod" and (tenant not in TENANTS or vertical not in VERTICAIS):
+        raise HTTPException(400, "tenant/vertical de destino desconhecido")
+
+    cmd = ["python3", "engine/tools/upload.py", slug, "--env", env, "--execute"]
+    if env == "prod":
+        cmd += ["--tenant", tenant, "--vertical", vertical]
+    registrar_veredito(slug, "aprovado", f"publicar em {env}", origem="portal")
+    jid = enfileirar("upload", slug, " ".join(cmd))
+    executar_direto(jid)
     return RedirectResponse(f"/run/{slug}", status_code=303)
 
 

@@ -145,10 +145,14 @@ def executar(job: sqlite3.Row) -> tuple[int, str]:
     if tipo == "advance":
         return _sh(["python3", "engine/run.py", "advance", slug], 300)
     if tipo == "upload":
-        # --execute grava de verdade: o botão do portal diz "Publicar", e sem
-        # isto ele só imprimia o payload (dry-run) e reportava sucesso.
-        # O nome sai do H1 do template-summary.md — não há onde digitá-lo aqui.
-        return _sh(["python3", "engine/tools/upload.py", slug, "--execute"], 600)
+        # O payload carrega o comando montado pela rota /publicar (destino, e
+        # tenant/vertical quando é prod). Sem payload, mantém o comportamento
+        # antigo: publica no env da própria run.
+        # --execute grava de verdade: o botão diz "Publicar", e sem isto ele só
+        # imprimia o payload (dry-run) e reportava sucesso.
+        padrao = ["python3", "engine/tools/upload.py", slug, "--execute"]
+        cmd = shlex.split(payload) if payload.strip().startswith("python3") else padrao
+        return _sh(cmd, 600)
     if tipo == "agente":
         return _agente(slug, payload)
     return 1, f"tipo desconhecido: {tipo}"
