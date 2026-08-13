@@ -35,6 +35,9 @@ def main():
                    help="ambiente de DESTINO; sem isto usa o env da run")
     p.add_argument("--tenant", default=None, help="tenant de destino (default: o da run)")
     p.add_argument("--vertical", default=None, help="vertical de destino (default: a da run)")
+    p.add_argument("--status", choices=["published", "review", "draft"], default="review",
+                   help="status na plataforma (default: review — a revisão final é humana, "
+                        "na própria plataforma; published só quando o Gustavo pedir)")
     p.add_argument("--execute", action="store_true")
     a = p.parse_args()
 
@@ -76,9 +79,14 @@ def main():
             "(upload de teste, necessário pro gate de fidelidade no editor) ou upload (final)"
         )
 
-    bt_value = (resolve.get("matchedBusinessType") or {}).get("value")
+    # business_type: o da RUN vence o inferido pelo resolve. Quem criou a run
+    # sabendo o nicho o gravou explicitamente; o resolve apenas casa um assunto
+    # com o catálogo, e pode acertar o parecido em vez do certo.
+    bt_value = state.get("business_type") or (resolve.get("matchedBusinessType") or {}).get("value")
     if not bt_value:
-        sys.exit("resolve.json sem matchedBusinessType.value — refaça o resolve com --subject")
+        sys.exit("sem business_type: nem run.json nem resolve.json têm — "
+                 "rode o resolve com --subject <nicho> ou "
+                 f"`python3 engine/run.py set {a.slug} business_type <valor>`")
     tenant, vertical = resolve["tenantId"], resolve["verticalId"]
 
     # O upload publica o output/, não a fita.html. Depois de uma correção o
@@ -121,6 +129,12 @@ def main():
         "--template-type", "userReady",
         "--business-type", bt_value,
         "--tenant-id", tenant, "--vertical-id", vertical, "--scope", "vertical",
+        # `review` é o default por decisão: a revisão final acontece na própria
+        # plataforma. Consequência a saber — o catálogo NÃO mostra template em
+        # review (template_catalog_service força status="published" e o
+        # permission_service nega acesso), então ele só é alcançável pelo
+        # painel de revisão, não pela busca do usuário.
+        "--status", a.status,
         "--tags", ",".join(tags),
         "--description-hint", summary.read_text(encoding="utf-8"),
         "--env", env,

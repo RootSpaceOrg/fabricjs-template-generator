@@ -228,7 +228,7 @@ def missing_for(slug: str, state: dict) -> list[str]:
     return miss
 
 
-def cmd_new(slug: str, env: str, pack: str, n: int):
+def cmd_new(slug: str, env: str, pack: str, n: int, business_type: str = ""):
     d = _dir(slug)
     if (d / "run.json").exists():
         sys.exit(f"run já existe: use `status {slug}` para retomar")
@@ -237,6 +237,10 @@ def cmd_new(slug: str, env: str, pack: str, n: int):
     (d / "slides").mkdir(parents=True, exist_ok=True)
     _save(slug, {
         "slug": slug, "env": env, "pack": pack, "n": n,
+        # nicho do negócio, quando conhecido na criação. Tem precedência sobre o
+        # que o resolve infere do assunto: quem pediu a run sabe o nicho, o
+        # resolve só casa um texto com o catálogo.
+        **({"business_type": business_type} if business_type else {}),
         "stage": "resolve",
         "created": time.strftime("%Y-%m-%d %H:%M:%S"),
         "history": [],
@@ -282,6 +286,7 @@ def main():
     p = argparse.ArgumentParser(description=__doc__)
     sub = p.add_subparsers(dest="cmd", required=True)
     np_ = sub.add_parser("new"); np_.add_argument("slug"); np_.add_argument("--env", required=True, choices=["dev", "prod"]); np_.add_argument("--pack", required=True); np_.add_argument("--n", type=int, default=8)
+    np_.add_argument("--business-type", default="", help="nicho canônico (ver knowledge/business-types.json)")
     for c in ("status", "advance", "show"):
         sub.add_parser(c).add_argument("slug")
     st = sub.add_parser("set"); st.add_argument("slug"); st.add_argument("key"); st.add_argument("value")
@@ -295,7 +300,7 @@ def main():
             print(f"{s['slug']:32} {s['env']:4} {s.get('pack', '?'):28} {s['stage']:10} {last}{flag}")
         return
     if a.cmd == "new":
-        cmd_new(a.slug, a.env, a.pack, a.n)
+        cmd_new(a.slug, a.env, a.pack, a.n, a.business_type)
     elif a.cmd == "status":
         cmd_status(a.slug)
     elif a.cmd == "advance":
