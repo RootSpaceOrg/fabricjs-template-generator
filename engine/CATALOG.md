@@ -78,7 +78,7 @@ Sobreposição entre componentes é violação, EXCETO componentes de camada:
 | `ds-card` | container | `roundedRect` + filhos | cartão no papel, cantos `--radius`; `data-elevated` = sombra de cartão empilhado (shadow no Fabric) |
 | `ds-shape` | vazio | `roundedRect` (cantos por lado; anel = stroke) | forma de composição: `data-shape="circle\|ring\|pill"`; cor via `data-tone`; `data-half="left\|right"` na BORDA do slide cria transição — o par complementar no slide vizinho completa a forma na fita |
 | `ds-photo` | `<img>` | `ClippableImage` | imagem gerada/evidência; `data-image-type` obrigatório. Aceita `.svg` como arquivo — **só para geometria, ver regra abaixo** |
-| `ds-slot` | `<img>` | `ClippableImage` | slot da plataforma: `data-slot="professionalPhoto\|instagramProfilePicture\|logo"` (vira `imageType`); `data-circle` para avatar, `data-cutout` para cutout ancorado na base. **`data-cutout` ancora na base DA ÁREA, não do slide**: a célula tem que terminar na linha 13, senão a figura flutua no meio |
+| `ds-slot` | `<img>` | `ClippableImage` | slot da plataforma: `data-slot="professionalPhoto\|instagramProfilePicture\|logo"` (vira `imageType`); `data-circle` para avatar, `data-cutout` para cutout ancorado na base. **`professionalPhoto` NUNCA leva `data-round`** (gate no conversor): o runtime troca o slot por um recorte de pessoa com fundo transparente, e canto arredondado corta a figura. **`data-cutout` ancora na base DA ÁREA, não do slide**: a célula tem que terminar na linha 13, senão a figura flutua no meio |
 
 Modificadores globais: `data-tone` (ink/muted/accent/paper/accent-ink) ·
 `data-align` (center/right) · `data-round`/`data-circle` (imagens) ·

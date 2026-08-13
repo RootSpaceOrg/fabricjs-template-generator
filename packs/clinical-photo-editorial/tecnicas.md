@@ -18,6 +18,19 @@ gerações. Exemplos em `exemplos/` (partida, nunca fôrma).
    `exemplos/ref-capa.html`. Traço de 2–3px em `wm`/accent com opacidade baixa;
    é fundo, nunca compete com a leitura.
 
+## A capa deste pack é decor, não é a foto do problema
+
+A lei geral manda a imagem mostrar o PROBLEMA (`knowledge/design/geral.md`).
+Aqui a capa é a exceção: ela é feita de `professionalPhoto` + **decors
+desfocados flutuando**, e cena de dor não cabe nesse desenho — vira ruído atrás
+do cutout.
+
+Veredito do Gustavo (2026-08-12): *"na capa é legal ter os aparelhos borrados e
+não diretamente a dor; esses elementos voando desse pack não comportam isso"*.
+
+Onde o problema aparece neste pack: no MIOLO, em foto full-bleed ou de meia
+página. A capa segue com decor do tema.
+
 ## Como este estilo resolve cada formato
 
 O dossiê declara o **formato** de cada slide e o **papel** de cada pedaço

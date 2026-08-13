@@ -440,3 +440,16 @@ de cima. O enquadramento é decisão de fotografia; "sem rosto" é uma amputaç�
 E antes disso, confira se o rosto é mesmo proibido — em saúde,
 `compliance/health.md` veda simular paciente ou resultado, não mostrar gente.
 Regra herdada sem checar a fonte custou clareza sem comprar segurança.
+
+## Índice repetido entre slides quebra a sequência
+
+Dois slides seguidos com o mesmo "01" fazem o leitor achar que voltou. O número
+existe para dizer ONDE ele está: ou numera de verdade (01, 02, 03) ou não
+aparece.
+
+Veredito do Gustavo (2026-08-12), sobre uma fita em que os slides 2 e 3 traziam
+ambos o índice 01: *"vale tirar do slide 3 e manter só no 2"*.
+
+Quando o miolo mistura registros (um slide de lista, outro de tese), a saída é
+numerar só os que formam série — e deixar os demais sem número, em vez de
+repetir o último.

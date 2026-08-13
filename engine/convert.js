@@ -267,6 +267,17 @@ const rgb2hex = (c) => {
             }
           }
         }
+        // professionalPhoto com canto arredondado. O runtime troca o slot pela
+        // foto do profissional, que é recorte com fundo transparente — cantos
+        // arredondados cortam a figura e denunciam a montagem. Feedback do
+        // Gustavo (2026-08-12): "isso não existe e não deve ser repetido".
+        // data-circle segue válido: é o avatar redondo, outro desenho.
+        if (cls === "ds-slot" && el.getAttribute("data-slot") === "professionalPhoto"
+            && el.hasAttribute("data-round")) {
+          rejects.push({ id, reason: "professionalPhoto com data-round — o slot recebe "
+            + "recorte de pessoa com fundo transparente; canto arredondado corta a figura" });
+          return;
+        }
         if (IMG.has(cls)) {
           if (el.tagName !== "IMG") { rejects.push({ id, reason: `${cls} deve ser <img>` }); return; }
           nodes.push({ kind: "img", ...base, src: el.currentSrc || el.src,
