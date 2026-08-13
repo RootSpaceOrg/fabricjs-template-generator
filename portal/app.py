@@ -235,8 +235,32 @@ def veredito(slug: str, veredito: str = Form(...), texto: str = Form("")):
         enfileirar("agente", slug,
                    f"REVISAO da run {slug} na fabrica ({comandos.PULL}; copy/dossie so mudam se o "
                    f"feedback pedir). Feedback do Gustavo:\n\n{texto.strip()}\n\n"
-                   f"Corrija o fita.html de artifacts/runs/{slug}, rode "
-                   f"'node engine/assemble.js artifacts/runs/{slug}' e confirme. NAO avance estagio.")
+                   f"1. Corrija o fita.html de artifacts/runs/{slug}, rode "
+                   f"'node engine/assemble.js artifacts/runs/{slug}' e reconverta com "
+                   f"'node engine/convert.js artifacts/runs/{slug} artifacts/runs/{slug}/output "
+                   f"--slug {slug}' — o upload publica o output/, entao fita corrigida sem "
+                   f"reconverter sobe a versao ANTIGA. NAO avance estagio.\n"
+                   f"2. REGISTRE O APRENDIZADO. Pergunte-se: este feedback vale so para esta "
+                   f"peca, ou a proxima run cometeria o mesmo erro? Se vale para as proximas, "
+                   f"ele e LEI e precisa estar escrito — corrigir so esta run garante que o "
+                   f"defeito volta.\n"
+                   f"   Onde escrever, do mais geral para o mais especifico:\n"
+                   f"   - knowledge/design/geral.md — vale para qualquer pack\n"
+                   f"   - knowledge/imagem/negocios/<business_type>.md — o que pode/nao pode "
+                   f"aparecer neste negocio\n"
+                   f"   - packs/<pack>/tecnicas.md ou images.md — regra do estilo, inclusive "
+                   f"EXCECAO a uma lei geral (o pack em que a lei nao se aplica)\n"
+                   f"   - engine/CATALOG.md — contrato de componente\n"
+                   f"   Escreva o PORQUE e o caso que originou, nao so a regra: quem ler daqui "
+                   f"a um mes precisa entender o custo de ignorar.\n"
+                   f"   Se o defeito for detectavel por medida (posicao, tamanho, cor, "
+                   f"repeticao), diga na resposta que ele merece um GATE no engine/convert.js — "
+                   f"lei escrita nao pega, gate mecanico pega de primeira.\n"
+                   f"   Feedback de gosto pontual desta peca (uma palavra, um recorte) NAO vira "
+                   f"lei: corrija e siga.\n"
+                   f"3. Commit do que voce escreveu em knowledge/, packs/ ou engine/ (nao "
+                   f"commite artifacts/). Responda dizendo o que virou lei e o que ficou como "
+                   f"ajuste pontual.")
     return RedirectResponse(f"/run/{slug}", status_code=303)
 
 
