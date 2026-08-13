@@ -93,6 +93,12 @@ const rgb2hex = (c) => {
     const srcs = [...html.matchAll(/<img[^>]*>/g)]
       .map((m) => m[0])
       .filter((tag) => !/data-slot=/.test(tag))
+      // DECOR tambem fica de fora. data-overhang e adorno por definicao
+      // (object-fit: contain + rotacao, sangrando pela borda): repetir o mesmo
+      // grafismo em cantos opostos e o desenho, nao preguica de gerar imagem.
+      // A regra e sobre FOTO repetida. Isentar so .svg nao bastava — o decor do
+      // clinical e PNG, e o gate reprovava um exemplar ja certificado.
+      .filter((tag) => !/data-overhang=/.test(tag))
       .map((tag) => (tag.match(/src="([^"]+)"/) || [])[1])
       .filter((s) => s && !s.startsWith("data:") && !/\.svg$/i.test(s));
     const conta = {};
