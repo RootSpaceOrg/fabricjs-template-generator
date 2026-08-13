@@ -107,13 +107,17 @@ section.slide[data-dark] { background: var(--ink); color: var(--paper); }
   overflow: visible;
 }
 .ds-watermark[data-vertical] { transform: rotate(-90deg); }
-/* a palavra-fantasma vive ATRÁS do conteúdo: sem isto ela cobre a headline.
-   Medido na referência do laserpro — sobre fundo de acento ela é um tom mais
-   CLARO do próprio acento (#2E5752 sobre #1E4A45), não um cinza. */
+/* a palavra-fantasma vive ATRÁS do conteúdo: sem isto ela cobre a headline. */
 .ds-watermark { z-index: 0; }
 section.slide > *:not(.ds-watermark) { position: relative; z-index: 1; }
-section.slide[data-invert] .ds-watermark,
-.ds-watermark[data-on-accent] { color: var(--wm-invert, var(--wm)); }
+/* OPACIDADE, não cor fixa. Medido na referência do laserpro: a palavra é
+   branco a ~7% sobre o acento e preto a ~9% sobre o branco — quase invisível,
+   uma textura. Com cor fixa seria preciso um token por fundo; com opacidade a
+   mesma regra serve aos dois, e ela continua sutil em qualquer marca.
+   Sem isto a palavra compete com a headline em vez de ser fundo. */
+.ds-watermark[data-ghost] { opacity: .07; }
+section.slide[data-invert] .ds-watermark[data-ghost] { color: var(--paper); }
+section.slide:not([data-invert]) .ds-watermark[data-ghost] { color: var(--ink); opacity: .09; }
 
 /* tons (qualquer componente de texto) */
 [data-tone="ink"]    { color: var(--ink); }
@@ -299,6 +303,10 @@ img[data-overhang="br"]     { transform: translate(28%, 30%) rotate(-12deg); }
    Medida no laserpro — a caixa quase flutua, so a borda e a sombra rasa a
    separam do branco do slide. */
 .ds-card[data-elevated="soft"] { box-shadow: 0 8px 28px rgba(0,0,0,.10); border: 1px solid rgba(0,0,0,.06); }
+/* sombra suave SEM elevar: o cartao continua abaixo da .fita-layer, entao um
+   elemento da camada (um aparelho recortado, p.ex.) passa POR CIMA dele —
+   que e o desenho do laserpro. data-elevated cria z-index 2 e bloqueia isso. */
+.ds-card[data-shadow-soft] { box-shadow: 0 8px 28px rgba(0,0,0,.10); border: 1px solid rgba(0,0,0,.06); }
 .ds-block[data-overlay], .ds-block[data-overlay-gradient] { position: relative; z-index: 1; }
 /* ...e quem vem DEPOIS do véu no DOM pinta por cima dele (lei do CATALOG:
    "ordem no DOM = ordem de empilhamento"). Sem isto o z-index:1 do véu

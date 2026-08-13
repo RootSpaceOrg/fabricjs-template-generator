@@ -87,9 +87,14 @@ const rgb2hex = (c) => {
   // data-URI. Assets de assinatura (SVG do pack) sao a excecao legitima: eles
   // SAO para repetir quando o estilo pedir.
   {
-    const srcs = [...html.matchAll(/<img[^>]*src="([^"]+)"/g)]
-      .map((m) => m[1])
-      .filter((s) => !s.startsWith("data:") && !/\.svg$/i.test(s));
+    // SLOT da plataforma fica de fora: professionalPhoto na capa E no
+    // fechamento é o desenho de vários packs, e o runtime troca os dois pela
+    // mesma foto do usuário de qualquer jeito. A regra é sobre imagem GERADA.
+    const srcs = [...html.matchAll(/<img[^>]*>/g)]
+      .map((m) => m[0])
+      .filter((tag) => !/data-slot=/.test(tag))
+      .map((tag) => (tag.match(/src="([^"]+)"/) || [])[1])
+      .filter((s) => s && !s.startsWith("data:") && !/\.svg$/i.test(s));
     const conta = {};
     for (const s of srcs) conta[s] = (conta[s] || 0) + 1;
     const repetidos = Object.entries(conta).filter(([, n]) => n > 1);
@@ -100,6 +105,46 @@ const rgb2hex = (c) => {
           + `gera a sua; se o tema nao rende imagens distintas, use menos cartoes com foto`);
       }
       process.exit(1);
+    }
+  }
+
+  // FOTO DE TRAVESSIA: fundo transparente e sujeito no centro.
+  // A imagem entra por cima de DOIS slides, que podem ter fundos diferentes —
+  // com fundo próprio ela vira retângulo colado e denuncia a emenda em vez de
+  // escondê-la. E se o sujeito estiver numa borda, um dos slides recebe só
+  // vazio: a travessia deixa de existir.
+  // Só vale para imagem na .fita-layer que de fato cruza uma fronteira.
+  {
+    const layer = html.match(/<div class="fita-layer"[\s\S]*?<\/div>/);
+    if (layer) {
+      const imgs = [...layer[0].matchAll(/<img[^>]*src="([^"]+)"[^>]*style="[^"]*grid-area:\s*\d+\s*\/\s*(\d+)\s*\/\s*\d+\s*\/\s*(\d+)/g)];
+      const nSlides = (html.match(/<section[^>]*class="slide"/g) || []).length;
+      const problemas = [];
+      for (const [, src, c1, c2] of imgs) {
+        if (/\.svg$/i.test(src)) continue;
+        const ini = +c1, fim = +c2;
+        const cruza = [...Array(nSlides - 1).keys()].some((i) => ini < (i + 1) * 12 + 1 && fim > (i + 1) * 12 + 1);
+        if (!cruza) continue;
+        if (!/\.png$/i.test(src)) {
+          problemas.push(`${src.replace(/^.*\//, "")}: travessia precisa de PNG com fundo `
+            + `transparente — JPG traz fundo e vira retângulo colado sobre a emenda`);
+          continue;
+        }
+        const abs = path.resolve(path.dirname(fitaPath), src);
+        if (!fs.existsSync(abs)) continue;
+        const buf = fs.readFileSync(abs);
+        // PNG: byte 25 do IHDR é o colorType; 6 = RGBA, 4 = gray+alpha
+        const colorType = buf.length > 25 ? buf[25] : 0;
+        if (colorType !== 6 && colorType !== 4) {
+          problemas.push(`${src.replace(/^.*\//, "")}: PNG sem canal alpha (colorType ${colorType}) `
+            + `— a travessia precisa de fundo removido, não de PNG opaco`);
+        }
+      }
+      if (problemas.length) {
+        console.error("REJEITADO — foto de travessia:");
+        for (const p of problemas) console.error(`  ${p}`);
+        process.exit(1);
+      }
     }
   }
 

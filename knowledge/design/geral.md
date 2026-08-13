@@ -453,3 +453,20 @@ ambos o índice 01: *"vale tirar do slide 3 e manter só no 2"*.
 Quando o miolo mistura registros (um slide de lista, outro de tese), a saída é
 numerar só os que formam série — e deixar os demais sem número, em vez de
 repetir o último.
+
+## Imagem que atravessa a emenda tem duas exigências próprias
+
+Uma foto na `.fita-layer` que cruza a fronteira entre slides não é uma foto
+comum, e falha de dois jeitos que nenhum outro elemento tem:
+
+**Fundo removido.** Ela entra por cima de dois slides que podem ter fundos
+diferentes. Com fundo próprio vira um retângulo colado — e o retângulo denuncia
+a emenda em vez de escondê-la. PNG com alpha de verdade; JPG nunca. Gate no
+conversor lê o colorType do PNG, porque "salvei como PNG" não garante alpha.
+
+**Sujeito no centro, com folga nas laterais.** A emenda corta a imagem ao meio.
+Se o assunto encostar numa borda, um dos slides recebe só fundo vazio e a
+travessia deixa de existir — o leitor vê duas imagens, não uma contínua.
+
+Teste antes de aceitar a imagem: tape a metade direita — o que sobra ainda diz
+alguma coisa? E a metade esquerda? Se uma delas vira vazio, gere de novo.
