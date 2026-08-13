@@ -306,7 +306,12 @@ img[data-overhang="br"]     { transform: translate(28%, 30%) rotate(-12deg); }
 /* sombra suave SEM elevar: o cartao continua abaixo da .fita-layer, entao um
    elemento da camada (um aparelho recortado, p.ex.) passa POR CIMA dele —
    que e o desenho do laserpro. data-elevated cria z-index 2 e bloqueia isso. */
-.ds-card[data-shadow-soft] { box-shadow: 0 8px 28px rgba(0,0,0,.10); border: 1px solid rgba(0,0,0,.06); }
+.ds-card[data-shadow-soft] { box-shadow: 0 10px 34px rgba(0,0,0,.16); border: 1px solid rgba(0,0,0,.30); }
+/* CANTO do cartao do laserpro. Medido na lamina 4 (432px de largura): a curva
+   se afasta ~5px em ~13px de altura, o que da raio ~12px ali e ~30px em 1080.
+   O --radius global de 8px sumia no render, e a borda de 6% tambem: na lamina
+   ela e uma linha escura de 1px (45,45,45), nao uma sombra difusa. */
+.ds-card[data-shadow-soft] { border-radius: 30px; }
 .ds-block[data-overlay], .ds-block[data-overlay-gradient] { position: relative; z-index: 1; }
 /* ...e quem vem DEPOIS do véu no DOM pinta por cima dele (lei do CATALOG:
    "ordem no DOM = ordem de empilhamento"). Sem isto o z-index:1 do véu
