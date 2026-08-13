@@ -43,6 +43,10 @@ def _cabeca(slug: str, pedido: str, tema: str, tenant: str, vertical: str,
     """Contexto comum a todas as fatias."""
     return (
         f"Run {slug} da fabrica ({PULL}).\n"
+        f"DIRETORIO DE TRABALHO: /root/.openclaw/workspace/external/"
+        f"fabricjs-template-generator — e o SEU clone. NAO escreva em "
+        f"/root/hermes-workspace: e o clone do portal, onde os gates rodam. "
+        f"Escrever la deixa a run pela metade nos dois lugares e trava a fila.\n"
         f'PEDIDO DO GUSTAVO: "{pedido or tema}"\n'
         f"CONTEXTO (ja definido - use, nao pergunte): tenant={tenant} - vertical={vertical} - "
         f"env={env}"
