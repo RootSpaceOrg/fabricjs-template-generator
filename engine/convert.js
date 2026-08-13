@@ -158,6 +158,25 @@ const rgb2hex = (c) => {
   await page.evaluate(() => document.fonts.ready);
 
   const data = await page.evaluate(() => {
+    // TRAVESSIA x CONTEUDO DE CARTAO.
+    // Cartao e conteudo podem viver os dois na .fita-layer (e o caso do
+    // editorial-cards-continuos), entao "esta na fita-layer" NAO distingue um do
+    // outro — filtrar por isso desliga os gates justamente no pack que os criou.
+    // O que distingue e a LARGURA: conteudo de cartao cabe dentro das colunas de
+    // um cartao; travessia (a foto que sangra, o aparelho do laserpro) e mais
+    // larga que qualquer cartao que cruza, ou nao esta contida em nenhum.
+    const atravessa = (el) => {
+      const r = el.getBoundingClientRect();
+      const cruzados = [...document.querySelectorAll(".ds-card")]
+        .map((c) => c.getBoundingClientRect())
+        .filter((c) => r.left < c.right && r.right > c.left
+                    && r.top < c.bottom && r.bottom > c.top);
+      if (!cruzados.length) return false;
+      // contido em algum cartao (com folga de 1px de arredondamento) = conteudo
+      return !cruzados.some((c) => r.left >= c.left - 1 && r.right <= c.right + 1
+                                && r.top >= c.top - 1 && r.bottom <= c.bottom + 1);
+    };
+
     const TEXT = new Set(["ds-eyebrow", "ds-headline", "ds-body", "ds-number", "ds-watermark"]);
     const CHIP = new Set(["ds-stamp", "ds-cta"]);
     const SHAPE = new Set(["ds-block", "ds-card"]);
@@ -290,7 +309,8 @@ const rgb2hex = (c) => {
         // apontar duas vezes; agora é mecânico.
         // Os cartões da .fita-layer são IRMÃOS do conteúdo, não pais — por isso
         // a checagem é por retângulo, não por parentesco.
-        if (cls !== "ds-card" && !el.classList.contains("ds-card")) {
+        if (cls !== "ds-card" && !el.classList.contains("ds-card")
+            && !atravessa(el)) {
           const r = el.getBoundingClientRect();
           for (const card of document.querySelectorAll(".ds-card")) {
             const c = card.getBoundingClientRect();
@@ -418,6 +438,8 @@ const rgb2hex = (c) => {
         r.left < c.right && r.right > c.left && r.top < c.bottom && r.bottom > c.top);
       const conteudo = [...document.querySelectorAll(
         ".ds-number, .ds-headline, .ds-body, .ds-photo, .ds-slot, .ds-stamp, .ds-cta")]
+        // fora as travessias: elas passam por cima do cartao por desenho.
+        .filter((el) => !atravessa(el))
         .filter((el) => dentroDeCartao(el.getBoundingClientRect()));
       for (let i = 0; i < conteudo.length; i++) {
         const n = conteudo[i];

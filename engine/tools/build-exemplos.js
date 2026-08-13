@@ -58,7 +58,7 @@ const LARGURA = 760; // o portal mostra em coluna estreita; 760 sobra
       // reduz para a largura de exibição (o PNG cheio pesa MBs por slide).
       // PIL em vez de sharp: já está no fluxo, não vale uma dependência nova.
       const jpg = png.replace(/\.png$/, ".jpg");
-      execFileSync("python", ["-c", [
+      execFileSync(process.env.PYTHON ?? "python3", ["-c", [
         "import sys; from PIL import Image",
         "im = Image.open(sys.argv[1]).convert('RGB')",
         `im.thumbnail((${LARGURA}, ${LARGURA * 4}), Image.LANCZOS)`,
