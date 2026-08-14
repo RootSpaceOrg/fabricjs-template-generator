@@ -1,0 +1,51 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="hm-fonts" content="Montserrat:300,400,500,600,700,800">
+</head>
+<body>
+<!-- PADRÃO: sintomas em lista, com a foto do problema atravessando a emenda.
+     O registro mais frequente do pack — a condição se explica pelo que a pessoa
+     SENTE, não pelo que o aparelho faz.
+
+     A foto entra pela direita do primeiro slide e sai pela esquerda do segundo,
+     na mesma altura; o texto ocupa o lado oposto em cada um. Quem passa o dedo
+     vê a mesma mão continuar de um slide para o outro.
+
+     Use quando a copy lista sensações ("dormência, formigamento, fraqueza").
+     Para BENEFÍCIOS do tratamento, prefira ref-beneficios-cartao: benefício
+     pede a caixa branca, sintoma pede a foto. -->
+<main class="fita" data-pack="laserpro-continuo" data-template-name="Sintomas com travessia" data-segment="exemplar">
+
+  <section class="slide" data-role="item">
+    <p class="ds-body" data-el-id="a1" data-weight="thin" data-template-element
+       data-te-description="o que e a condicao"
+       data-te-min-chars="60" data-te-max-chars="240"
+       style="grid-area: 4 / 2 / 10 / 8">É uma condição causada pela compressão do nervo mediano no punho, que passa por um túnel estreito junto aos tendões.</p>
+  </section>
+
+  <section class="slide" data-role="item">
+    <h2 class="ds-headline" data-el-id="a2t" data-weight="light"
+        data-template-element data-te-description="tese dos sintomas"
+        data-te-min-chars="10" data-te-max-chars="34"
+        style="grid-area: 4 / 6 / 6 / 13">O que você <b>sente</b></h2>
+    <p class="ds-body" data-el-id="a2i" data-weight="thin" data-template-element
+       data-te-description="sintomas, um por linha"
+       data-te-min-chars="60" data-te-max-chars="200"
+       style="grid-area: 6 / 6 / 11 / 13">✓ Dormência nos dedos<br>✓ Formigamento à noite<br>✓ Fraqueza ao segurar<br>✓ Dor que sobe pelo braço</p>
+  </section>
+
+  <!-- Fita de 2 = 24 colunas; a emenda fica na 13.
+       A foto (20..30 numa fita longa) aqui vira 8..18: centro na emenda. -->
+  <div class="fita-layer" data-split-ok>
+    <span class="ds-watermark" data-el-id="w1" data-static data-layer data-ghost
+          style="grid-area: 10 / 2 / 13 / 14">SINTOMAS</span>
+    <img class="ds-photo" data-el-id="f1" data-static data-layer
+         data-image-type="generated" src="foto-problema.png"
+         style="grid-area: 1 / 8 / 13 / 18">
+  </div>
+
+</main>
+</body>
+</html>

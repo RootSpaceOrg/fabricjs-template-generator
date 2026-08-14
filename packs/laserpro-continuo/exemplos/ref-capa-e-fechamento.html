@@ -1,0 +1,66 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="hm-fonts" content="Montserrat:300,400,500,600,700,800">
+</head>
+<body>
+<!-- PADRÃO: capa e fechamento, os dois slides com professionalPhoto.
+     São os únicos slots da plataforma no pack — o usuário preenche com a
+     própria foto. O logo aparece SÓ no fechamento.
+
+     Os fundos são opostos e isso não é decoração:
+     - CAPA é de acento (data-invert), texto claro. É o único slide escuro da
+       fita; ele estabelece a cor da marca antes de tudo virar branco.
+     - FECHAMENTO é BRANCO, com texto em accent. Eu tinha feito invertido e a
+       lâmina desmentiu: só a capa é escura.
+
+     A palavra-fantasma muda de comportamento conforme o fundo — clara sobre o
+     acento, escura sobre o branco. Está no CSS por opacidade, não por cor fixa,
+     então a mesma regra serve aos dois. No fechamento leva também uma
+     VERTICAL na lateral, além das horizontais. -->
+<main class="fita" data-pack="laserpro-continuo" data-template-name="Capa e fechamento" data-segment="exemplar">
+
+  <!-- CAPA: título em caixa alta, apoio fino, pílula de arrasta, profissional
+       recortado à direita. A fantasma passa POR TRÁS do título. -->
+  <section class="slide" data-role="abertura" data-invert>
+    <h1 class="ds-headline" data-el-id="k1t" data-size="lg" data-tone="paper"
+        data-template-element data-te-description="nome da condicao"
+        data-te-min-chars="8" data-te-max-chars="28"
+        style="grid-area: 4 / 2 / 7 / 9">Túnel<br>do carpo</h1>
+    <p class="ds-body" data-el-id="k1a" data-tone="paper" data-weight="thin"
+       data-template-element data-te-description="pergunta que abre"
+       data-te-min-chars="20" data-te-max-chars="90"
+       style="grid-area: 7 / 2 / 9 / 7">Sente dor, formigamento ou fraqueza nas mãos?</p>
+    <span class="ds-stamp" data-el-id="k1s" data-static data-tone="paper"
+          style="grid-area: 9 / 2 / 10 / 6">Arrasta pro lado</span>
+    <img class="ds-slot" data-el-id="k1p" data-static data-layer data-slot="professionalPhoto" data-cutout
+         src="professional-photo-1.png" style="grid-area: 4 / 7 / 13 / 13">
+  </section>
+
+  <!-- FECHAMENTO: branco, logo no topo, tese em accent, instrução de comentário. -->
+  <section class="slide" data-role="fechamento">
+    <img class="ds-slot" data-el-id="k2l" data-static data-slot="logo"
+         src="logo-quadrada.png" style="grid-area: 3 / 2 / 5 / 6">
+    <h2 class="ds-headline" data-el-id="k2t" data-case="sentence" data-tone="accent"
+        data-weight="light" data-template-element data-te-description="tese do fechamento"
+        data-te-min-chars="15" data-te-max-chars="46"
+        style="grid-area: 5 / 2 / 8 / 8">Chega de sofrer com dor e formigamento nas mãos!</h2>
+    <p class="ds-body" data-el-id="k2a" data-weight="thin"
+       data-template-element data-te-description="instrucao do comentario"
+       data-te-min-chars="30" data-te-max-chars="140"
+       style="grid-area: 8 / 2 / 11 / 8"><b>COMENTE "EU QUERO"</b> e receba mais sobre a laserterapia para essa condição.</p>
+    <img class="ds-slot" data-el-id="k2p" data-static data-layer data-slot="professionalPhoto" data-cutout
+         src="professional-photo-1.png" style="grid-area: 4 / 7 / 13 / 13">
+  </section>
+
+  <div class="fita-layer" data-split-ok>
+    <span class="ds-watermark" data-el-id="w1" data-static data-layer data-ghost
+          style="grid-area: 3 / 4 / 7 / 16">LASER</span>
+    <span class="ds-watermark" data-el-id="w2" data-static data-layer data-ghost
+          style="grid-area: 10 / 14 / 13 / 25">LASER</span>
+  </div>
+
+</main>
+</body>
+</html>

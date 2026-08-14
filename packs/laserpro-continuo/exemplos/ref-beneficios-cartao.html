@@ -1,0 +1,61 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="hm-fonts" content="Montserrat:300,400,500,600,700,800">
+</head>
+<body>
+<!-- PADRÃO: benefícios no cartão, com o aparelho atravessando por cima.
+     A caixa branca com contorno e canto de 30px é a assinatura do pack para
+     CONTEÚDO DE AUTORIDADE — o que o tratamento entrega. Sintoma pede foto do
+     corpo; benefício pede a caixa.
+
+     O aparelho passa POR CIMA do cartão, de alto a baixo, com a base entrando
+     no slide seguinte. Ele não é selo nem ilustração de canto: na lâmina é o
+     elemento dominante do slide.
+
+     Duas medidas que vieram da referência e não se mexem sem remedir:
+     - data-inset-left dá a folga de 30px (2.8%) da borda esquerda. Sem ele o
+       cartão brota da extremidade do slide.
+     - o cartão NÃO leva data-elevated: isso criaria z-index 2 e o aparelho
+       passaria por trás. data-shadow-soft dá a sombra sem elevar. -->
+<main class="fita" data-pack="laserpro-continuo" data-template-name="Beneficios em cartao" data-segment="exemplar">
+
+  <section class="slide" data-role="item">
+    <div class="ds-card" data-el-id="b1c" data-layer data-shadow-soft data-inset-left
+         style="grid-area: 3 / 1 / 12 / 11"></div>
+    <h2 class="ds-headline" data-el-id="b1t" data-case="sentence" data-weight="light"
+        data-template-element data-te-description="tese dos beneficios"
+        data-te-min-chars="12" data-te-max-chars="48"
+        style="grid-area: 4 / 2 / 6 / 9"><b>Benefícios</b> para quem sofre com a condição</h2>
+    <p class="ds-body" data-el-id="b1i" data-weight="thin" data-template-element
+       data-te-description="beneficios em lista"
+       data-te-min-chars="60" data-te-max-chars="220"
+       style="grid-area: 7 / 2 / 11 / 9">Alívio rápido dos sintomas;<br>Tratamento não invasivo e indolor;<br>Recuperação funcional mais eficaz;<br>Maior qualidade de vida no dia a dia;</p>
+  </section>
+
+  <section class="slide" data-role="item">
+    <h2 class="ds-headline" data-el-id="b2t" data-case="sentence" data-weight="light"
+        data-template-element data-te-description="tese curta"
+        data-te-min-chars="8" data-te-max-chars="26"
+        style="grid-area: 4 / 5 / 6 / 12">O poder da luz</h2>
+    <p class="ds-body" data-el-id="b2a" data-weight="thin" data-template-element
+       data-te-description="apoio da tese"
+       data-te-min-chars="60" data-te-max-chars="220"
+       style="grid-area: 6 / 5 / 10 / 12">Pode ser usada sozinha ou junto de outros tratamentos, ajudando a evitar intervenções mais invasivas.</p>
+  </section>
+
+  <!-- Fita de 2 = 24 colunas, emenda na 13. O aparelho fica no FIM do primeiro
+       slide com a base entrando no segundo — centrá-lo na emenda o joga atrás
+       do conteúdo do vizinho. -->
+  <div class="fita-layer" data-split-ok>
+    <img class="ds-photo" data-el-id="f1" data-static data-layer
+         data-image-type="generated" src="foto-aparelho.png"
+         style="grid-area: 1 / 8 / 13 / 16">
+    <span class="ds-watermark" data-el-id="w1" data-static data-layer data-ghost
+          style="grid-area: 10 / 16 / 13 / 25">TERAPIA</span>
+  </div>
+
+</main>
+</body>
+</html>
