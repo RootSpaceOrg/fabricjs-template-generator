@@ -537,3 +537,31 @@ Margem transparente daquele lado é defeito, não folga de segurança.
 Isso convive com a regra da travessia (sujeito no terço central **horizontal**,
 para a emenda não cortar o assunto): uma coisa é o eixo que a emenda corta, a
 outra é o eixo por onde o fragmento sai da cena.
+
+## "O texto parece mais leve" pode ser cor, não peso
+
+Um texto que lê como mais fraco que a referência tem duas causas possíveis, e
+elas pedem correções opostas: `font-weight` baixo demais, ou a cor do `ink`
+clara demais. Ajustar peso quando o problema é cor engorda a letra sem escurecê-la
+— fica pesado e ainda cinza.
+
+O jeito de saber é medir o **pixel mais escuro** do glifo nos dois, referência e
+render. O núcleo de uma letra chega à cor cheia; se o seu satura num valor mais
+claro, é o token, não o peso.
+
+No laserpro a lâmina dava `(0,0,0)` e o nosso `(47,47,47)` — exatamente
+`#2F2F2F`, o valor do token `ink`. Nenhum ajuste de `font-weight` chegaria lá.
+
+Vale também para o inverso: se o pixel mais escuro bate mas o texto ainda parece
+diferente, aí sim é peso ou tracking.
+
+## Folga de borda mora no design system, não no HTML do pack
+
+Cartão colado na extremidade do slide precisa de uma nesga de folga — 2.8% (30px
+em 1080) na referência do laserpro. A coluna seguinte do grid dá 8.3%, folga
+demais, e a whitelist de estilo inline aceita só `grid-area` (e deve mesmo, senão
+cada pack inventa o seu CSS).
+
+A saída é um modificador no design system: `data-inset-left` / `data-inset-right`.
+Quando um ajuste de espaçamento não cabe na grade, ele vira token compartilhado —
+não estilo inline no exemplar.
