@@ -119,6 +119,36 @@ pack o cartão é `data-layer` e o texto é IRMÃO dele no grid, então a regra 
 alcança — sem `data-tone="paper"` explícito a copy sai escura sobre a cor da
 marca. Testado com marca azul: ilegível.
 
+## A fantasma que atravessa precisa ser um PAR
+
+Quando a palavra de fundo cruza uma emenda entre fundos DIFERENTES (o acento da
+capa para o branco do miolo), uma fantasma só não serve: ela é clara ou escura,
+e some na metade que cai no fundo de tom parecido. O leitor vê a palavra
+**cortada ao meio** — o oposto do efeito, que é justamente amarrar os dois slides.
+
+A saída são dois elementos na MESMA grid-area, um sobre o outro:
+
+    <span class="ds-watermark" ... data-ghost-sobre="acento" style="grid-area: 9 / 7 / 13 / 19">NERVO</span>
+    <span class="ds-watermark" ... data-ghost-sobre="claro"  style="grid-area: 9 / 7 / 13 / 19">NERVO</span>
+
+O de baixo (`acento`) é branco a 10%: some no fundo branco, aparece sobre a cor
+da marca. O de cima (`claro`) é tinta a 9%: some na cor, aparece no branco. Onde
+os dois se sobrepõem a soma continua sutil.
+
+**Só use o par quando há troca de fundo.** Numa travessia entre dois slides
+brancos o `data-ghost` normal resolve, e o par vira peso morto — dois objetos no
+JSON onde um basta.
+
+**Por que a regra normal não bastava:** as regras de cor da fantasma são
+`section.slide[data-invert] .ds-watermark`, e a palavra que atravessa vive na
+`.fita-layer`, fora de qualquer section. Nenhuma delas a alcançava, então ela
+ficava no `--wm` base e sumia no branco.
+
+**O conversor lida bem:** ele lê `getComputedStyle`, então os dois viram
+textboxes com `fill` e `opacity` já resolvidos, e a duplicação da travessia
+entrega o par a cada slide vizinho. Verificado no JSON emitido: `#FFFFFF` a 0.10
+e `#111111` a 0.09, nos dois slides.
+
 ## O que este pack resolve mal
 
 - **Passo a passo longo.** Não há numeração de série; a fita não sinaliza ordem.

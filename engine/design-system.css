@@ -119,6 +119,18 @@ section.slide > *:not(.ds-watermark) { position: relative; z-index: 1; }
 section.slide[data-invert] .ds-watermark[data-ghost] { color: var(--paper); }
 section.slide:not([data-invert]) .ds-watermark[data-ghost] { color: var(--ink); opacity: .09; }
 
+/* PAR DE FANTASMAS na travessia. As duas regras acima dependem de estar DENTRO
+   de uma section, e a palavra que atravessa a emenda vive na .fita-layer — fora
+   de qualquer slide. Sem alcance, ela ficava no --wm base e sumia justamente na
+   metade que cai no fundo claro: a palavra parecia cortada ao meio.
+   A saida e um PAR sobreposto, mesma grid-area, cada um visivel no seu fundo:
+   `data-ghost-sobre="acento"` clareia (some no branco, aparece na cor),
+   `data-ghost-sobre="claro"`  escurece (some na cor, aparece no branco).
+   Onde os dois se sobrepoem a soma continua sutil — 7% + 9% de tons opostos. */
+.ds-watermark[data-ghost-sobre] { z-index: 0; line-height: 1; white-space: nowrap; }
+.ds-watermark[data-ghost-sobre="acento"] { color: var(--paper); opacity: .10; }
+.ds-watermark[data-ghost-sobre="claro"]  { color: var(--ink);   opacity: .09; }
+
 /* tons (qualquer componente de texto) */
 [data-tone="ink"]    { color: var(--ink); }
 [data-tone="muted"]  { color: var(--muted); }
