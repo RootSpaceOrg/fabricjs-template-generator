@@ -608,3 +608,30 @@ pelas laterais — some justamente a parte que interessa.
 Há gate no conversor para o formato e para a sangria. O "é uma parte, não uma
 pessoa" ainda depende de olhar — mas o formato retrato já elimina boa parte dos
 enquadramentos que trazem a pessoa inteira junto.
+
+## A imagem de travessia é o ponto cego da revisão
+
+Nesta sessão a travessia falhou de quatro jeitos diferentes, e **nenhum** foi
+pego por gate ou pelo judge na primeira vez:
+
+| Defeito | Como apareceu |
+|---|---|
+| JPG sem alpha | retângulo colado sobre a emenda |
+| margem transparente na base | o fragmento boiando, faixa de vazio no slide |
+| formato paisagem | assunto minúsculo num slide vertical |
+| pessoa inteira no lugar de uma parte | recorte de banco de imagens plantado na peça |
+| a mesma imagem em duas fitas | prova de variância esvaziada |
+
+Os três primeiros viraram gate. Os dois últimos ainda dependem de olhar — e o
+da pessoa inteira só apareceu porque um humano viu a fita renderizada.
+
+**O que aprender daqui:** ao revisar uma fita, a travessia merece uma passada
+própria, separada da leitura da composição. Abra o PNG, não só o strip: formato,
+canal alpha, o que a imagem mostra, e se ela se repete em outra fita da mesma
+leva. O strip esconde os quatro — no thumbnail tudo parece uma foto qualquer no
+meio da peça.
+
+**E cuidado com o gate que olha só para dentro.** O gate de imagem repetida
+compara as imagens de UMA fita; duas fitas da mesma certificação saíram com o
+mesmo arquivo byte a byte e ele não viu. Gate de escopo estreito dá a sensação
+de cobertura que não existe.
