@@ -490,3 +490,28 @@ não distingue gate consertado de gate desligado.
 E prefira o critério que descreve a geometria, não a árvore do documento. Aqui
 o certo era **contenção** (conteúdo de cartão cabe dentro do cartão; travessia
 cruza sem caber), não parentesco — a mesma `.fita-layer` hospeda os dois papéis.
+
+## Escala de texto se mede na referência, não se herda do token
+
+Um pack recriado a partir de referência saiu com "reducionismo desnecessário":
+texto pequeno demais, cartão grande e vazio. A causa não foi descuido de
+composição — foi ter herdado `fs-body` de outro pack em vez de medir.
+
+O método que resolveu, e que serve para qualquer pack com referência visual:
+
+1. Varra a referência procurando faixas escuras na coluna de texto — cada faixa
+   é uma linha de glifos. Anote a altura de cada uma como **porcentagem da
+   altura do slide**, não em px: a referência quase nunca está em 1080x1350.
+2. Faça o mesmo no render nativo do seu exemplar (o JPG de miniatura do portal
+   é 8x menor — medir nele mede o thumbnail, não a peça).
+3. O fator entre altura de glifo medida e `fontSize` declarado fica em torno de
+   **0,83**. Com ele, `fontSize = (% alvo × altura do slide) / 0,83`.
+
+Na lâmina do laserpro a lista ocupava 2,0–2,8% e a minha 1,6–2,1% — 25% menor,
+o suficiente para a peça inteira parecer encolhida sem nenhum elemento estar
+obviamente errado.
+
+**E confira o inventário de elementos, não só o tamanho deles.** O mesmo slide
+tinha perdido a headline na reescrita. Cartão maior + conteúdo menor + um
+elemento a menos é a receita do vazio: nenhuma das três coisas isolada chama
+atenção, e juntas a peça fica visivelmente pobre ao lado da referência.
