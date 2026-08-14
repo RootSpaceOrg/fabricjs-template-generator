@@ -1,0 +1,13 @@
+{
+  "ok": true,
+  "pk": "TENANT#kultivai#VERTICAL#health",
+  "tenantId": "kultivai",
+  "verticalId": "health",
+  "domain": "d2nh2qckzosbem.cloudfront.net",
+  "adminLink": "https://d2nh2qckzosbem.cloudfront.net/admin/plataforma/kultivai/health",
+  "matchedBusinessType": {
+    "label": "Laserterapia",
+    "value": "laserterapy",
+    "emoji": "🧑‍⚕️"
+  }
+}

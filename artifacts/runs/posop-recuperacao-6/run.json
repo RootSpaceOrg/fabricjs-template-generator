@@ -1,0 +1,44 @@
+{
+  "slug": "posop-recuperacao-6",
+  "env": "dev",
+  "pack": "laserpro-continuo",
+  "n": 6,
+  "business_type": "laserterapy",
+  "stage": "done",
+  "created": "2026-08-14 17:40:15",
+  "history": [
+    {
+      "stage": "resolve",
+      "at": "2026-08-14 17:42:46"
+    },
+    {
+      "stage": "context",
+      "at": "2026-08-14 17:42:46"
+    },
+    {
+      "stage": "compose",
+      "at": "2026-08-14 17:43:55"
+    },
+    {
+      "stage": "render",
+      "at": "2026-08-14 17:44:16"
+    },
+    {
+      "stage": "convert",
+      "at": "2026-08-14 17:45:37"
+    },
+    {
+      "stage": "judge",
+      "at": "2026-08-14 17:46:14"
+    },
+    {
+      "stage": "finalize",
+      "at": "2026-08-14 17:46:44"
+    },
+    {
+      "stage": "upload",
+      "at": "2026-08-14 17:48:35"
+    }
+  ],
+  "template_id": "LAtdXUg2OsAnXByzwPy51"
+}
