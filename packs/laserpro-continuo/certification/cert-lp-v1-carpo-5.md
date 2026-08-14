@@ -16,9 +16,9 @@ travessia S2→S3, com fragmento encostando na base; o único equipamento entra
 somente depois, em S4, como faixa clínica. A transição da capa em acento para o
 miolo branco usa o par de fantasmas `PUNHO`.
 
-Correção de travessia: o recorte passou a PNG RGBA retrato (1024×1536), com
-apenas mãos e antebraços verticais e o punho em vermelho translúcido; não há
-pessoa inteira, rosto, roupa ou cenário.
+Correção de travessia: o recorte é PNG RGBA retrato (1024×1536), com dedos em
+garra, punho em vermelho translúcido e antebraço vertical; é uma composição
+distinta da fita carpo-4 e não há pessoa inteira, rosto, roupa ou cenário.
 
 ## Evidências visuais
 
