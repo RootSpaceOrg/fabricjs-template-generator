@@ -1,0 +1,39 @@
+{
+  "slug": "cert-lp-v1-lombar-7",
+  "env": "dev",
+  "pack": "laserpro-continuo",
+  "n": 7,
+  "business_type": "laserterapy",
+  "stage": "upload",
+  "created": "2026-08-14 15:10:11",
+  "history": [
+    {
+      "stage": "resolve",
+      "at": "2026-08-14 15:10:50"
+    },
+    {
+      "stage": "context",
+      "at": "2026-08-14 15:22:27"
+    },
+    {
+      "stage": "compose",
+      "at": "2026-08-14 15:22:31"
+    },
+    {
+      "stage": "render",
+      "at": "2026-08-14 15:24:06"
+    },
+    {
+      "stage": "convert",
+      "at": "2026-08-14 15:27:49"
+    },
+    {
+      "stage": "judge",
+      "at": "2026-08-14 15:28:53"
+    },
+    {
+      "stage": "finalize",
+      "at": "2026-08-14 15:31:51"
+    }
+  ]
+}
