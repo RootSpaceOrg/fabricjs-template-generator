@@ -1,0 +1,36 @@
+# Evidência de certificação — cert-lp-v1-carpo-5
+
+- Data: 2026-08-14
+- Tema: síndrome do túnel do carpo
+- Business type: `laserterapy`
+- Run: 5 slides, ambiente `dev`
+- Template de teste: `6eZaMCSNnpAnU9E2smiE2` (status `review`)
+- Judge: `PASS`
+- Fidelidade: `FIEL`
+
+## Corredor executado
+
+Pesquisa → dossiê → imagens → abertura → miolo → fechamento + render →
+conversão → judge → upload. O problema aparece em PNG RGBA centralizado na
+travessia S2→S3, com fragmento encostando na base; o único equipamento entra
+somente depois, em S4, como faixa clínica. A transição da capa em acento para o
+miolo branco usa o par de fantasmas `PUNHO`.
+
+## Evidências visuais
+
+- `cert-lp-v1-carpo-5-strip.png`
+- `cert-lp-v1-carpo-5-slide-1.png` a `cert-lp-v1-carpo-5-slide-5.png`
+
+## Integridade do pack nesta run
+
+| Arquivo | SHA-256 |
+|---|---|
+| `pack.json` | `ad7e98d984039961766aa84ac7d4f7c98d8ddaf353c38f72975ed5b2bd4a6bd0` |
+| `tecnicas.md` | `0b3b3082e899c9f5bc769f0c79cbee37ebe6cbed846d7faab6d4d4725d368ba4` |
+| `images.md` | `6c6aca20021eb0e6d2922896cb1467ff21294eb73944509a6cb348fb08d7c779` |
+| `reference.png` | `d2591fe748a1089f1dbb50646f85daf815c437e5698f7216869417f3c3dedccf` |
+
+`bash engine/tools/check-packs.sh` passou para todos os exemplares de todos os
+packs após esta run. O status do pack permanece `draft`: a certificação completa
+do pack requer as três fitas e a aprovação explícita do Gustavo, conforme
+`PACKS.md` §4.
