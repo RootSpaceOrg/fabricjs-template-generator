@@ -144,7 +144,32 @@ const rgb2hex = (c) => {
         if (colorType !== 6 && colorType !== 4) {
           problemas.push(`${src.replace(/^.*\//, "")}: PNG sem canal alpha (colorType ${colorType}) `
             + `— a travessia precisa de fundo removido, não de PNG opaco`);
+          continue;
         }
+        // SANGRIA: recorte que mostra um FRAGMENTO (um antebraço sem o corpo,
+        // um aparelho apoiado) tem que encostar na borda por onde ele continua
+        // fora da cena. Com margem transparente em volta o fragmento vira
+        // adesivo solto — o olho procura onde o braço termina e acha ar.
+        // Medido na lâmina do laserpro: 0% de sobra embaixo; o gerador entrega
+        // 11-13%, porque centraliza o assunto no quadro como faz com objeto.
+        // Só olha a BASE: é a borda por onde estes recortes saem da cena.
+        try {
+          const py = [
+            "import sys; from PIL import Image",
+            "im = Image.open(sys.argv[1]).convert('RGBA'); w, h = im.size",
+            "a = im.split()[3]",
+            "op = [y for y in range(h) if any(a.getpixel((x, y)) > 30 for x in range(0, w, 8))]",
+            "print(h - 1 - max(op) if op else 0)",
+          ].join("\n");
+          const margem = parseInt(execFileSync(process.env.PYTHON ?? "python3",
+            ["-c", py, abs], { encoding: "utf-8" }).trim(), 10);
+          const LIMITE = Math.round(0.03 * 1536);   // 3% da altura tipica
+          if (margem > LIMITE) {
+            problemas.push(`${src.replace(/^.*\//, "")}: ${margem}px transparentes na BASE `
+              + `— recorte de fragmento sangra pela borda, nao flutua no quadro `
+              + `(gere com o assunto encostando embaixo)`);
+          }
+        } catch (e) { /* sem PIL: o gate de alpha acima ja cobre o essencial */ }
       }
       if (problemas.length) {
         console.error("REJEITADO — foto de travessia:");
