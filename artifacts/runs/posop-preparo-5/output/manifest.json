@@ -1,0 +1,45 @@
+{
+  "templateName": "Antes da cirurgia — preparo consciente",
+  "slug": "posop-preparo-5",
+  "segment": "laserterapia",
+  "fonts": "Montserrat:300,400,500,600,700,800",
+  "pack": "laserpro-continuo",
+  "packVersion": 1,
+  "slides": [
+    {
+      "file": "slide-1.json",
+      "width": 1080,
+      "height": 1350,
+      "role": "abertura"
+    },
+    {
+      "file": "slide-2.json",
+      "width": 1080,
+      "height": 1350,
+      "role": "item"
+    },
+    {
+      "file": "slide-3.json",
+      "width": 1080,
+      "height": 1350,
+      "role": "item"
+    },
+    {
+      "file": "slide-4.json",
+      "width": 1080,
+      "height": 1350,
+      "role": "item"
+    },
+    {
+      "file": "slide-5.json",
+      "width": 1080,
+      "height": 1350,
+      "role": "fechamento"
+    }
+  ],
+  "detectedColors": {
+    "primary": "#1E4A45",
+    "secondary": null
+  },
+  "generatedBy": "engine/convert.js"
+}

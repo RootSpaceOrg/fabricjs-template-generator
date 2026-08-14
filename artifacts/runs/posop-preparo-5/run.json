@@ -1,0 +1,44 @@
+{
+  "slug": "posop-preparo-5",
+  "env": "dev",
+  "pack": "laserpro-continuo",
+  "n": 5,
+  "business_type": "laserterapy",
+  "stage": "done",
+  "created": "2026-08-14 17:25:59",
+  "history": [
+    {
+      "stage": "resolve",
+      "at": "2026-08-14 17:26:49"
+    },
+    {
+      "stage": "context",
+      "at": "2026-08-14 17:29:37"
+    },
+    {
+      "stage": "compose",
+      "at": "2026-08-14 17:29:37"
+    },
+    {
+      "stage": "render",
+      "at": "2026-08-14 17:29:39"
+    },
+    {
+      "stage": "convert",
+      "at": "2026-08-14 17:31:25"
+    },
+    {
+      "stage": "judge",
+      "at": "2026-08-14 17:32:07"
+    },
+    {
+      "stage": "finalize",
+      "at": "2026-08-14 17:32:07"
+    },
+    {
+      "stage": "upload",
+      "at": "2026-08-14 17:33:40"
+    }
+  ],
+  "template_id": "XJFqcz5V4-OaaBbNtYtxw"
+}
