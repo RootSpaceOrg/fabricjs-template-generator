@@ -1,6 +1,6 @@
 # Judge — posop-preparo-5
 
-Golden set: 7 exemplares do pack `laserpro-continuo`. Avaliação do render vigente: `strip.png` e cinco slides.
+Golden set: 7 exemplares do pack `laserpro-continuo`. Reavaliação do render vigente após correções de composição: `strip.png` e cinco slides.
 
 ## Regras duras (R1–R13)
 
@@ -16,5 +16,7 @@ Eliminados: nenhum.
 - Copy é educativa e condicional: sem garantia de cicatrização, percentuais, preço ou indicação individual.
 - A única imagem gerada é um fragmento vertical de antebraço com gaze limpa, sem ferida, rosto, torso ou cenário; PNG RGBA centralizado e sangrando na base.
 - Capa é o único slide escuro; o cartão em S4 concentra a ênfase sem criar outro fundo inteiro em cor.
+- S4: o cartão termina na linha 9, uma faixa de grid após o conteúdo visível, sem área de cor ociosa excessiva e com folga inferior preservada.
+- S5: a headline começa na linha 5; há uma linha inteira de respiro após o logo e os blocos de texto permanecem nas colunas 2–6, antes do `professionalPhoto` em 7–13.
 
 QA: PASS
