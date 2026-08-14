@@ -515,3 +515,25 @@ obviamente errado.
 tinha perdido a headline na reescrita. Cartão maior + conteúdo menor + um
 elemento a menos é a receita do vazio: nenhuma das três coisas isolada chama
 atenção, e juntas a peça fica visivelmente pobre ao lado da referência.
+
+## Recorte incompleto sangra pela borda; não flutua no meio do quadro
+
+Uma foto recortada que mostra um **fragmento** — um antebraço sem o corpo, uma
+mão sem o resto do braço — precisa ser cortada pela borda do slide, entrando por
+ela. Se ficar com folga transparente em volta, o fragmento vira um adesivo
+solto: o olho procura onde o braço termina e encontra ar, o que denuncia o
+recorte em vez de escondê-lo.
+
+Na referência do laserpro o antebraço vai até a última linha do slide. O nosso
+parava a 11% da base — e os 11% eram exatamente a **margem transparente da
+própria imagem**: o gerador centralizou o assunto no quadro, como faz com foto
+de objeto.
+
+**Ao gerar recorte de fragmento**, peça o assunto encostando na borda por onde
+ele "continua fora da cena", e confira no PNG: as linhas de alpha opaco têm que
+ir até a primeira ou a última linha do arquivo, conforme o lado que sangra.
+Margem transparente daquele lado é defeito, não folga de segurança.
+
+Isso convive com a regra da travessia (sujeito no terço central **horizontal**,
+para a emenda não cortar o assunto): uma coisa é o eixo que a emenda corta, a
+outra é o eixo por onde o fragmento sai da cena.
