@@ -32,6 +32,33 @@ dos slides recebe só fundo vazio — a travessia deixa de existir.
   diz alguma coisa?** E a metade esquerda? Se uma das metades vira fundo vazio,
   a imagem não serve para travessia — gere de novo com o sujeito mais ao centro.
 
+
+### 3. É uma PARTE, não uma pessoa
+
+A travessia é elemento gráfico, não fotografia de cena. Pessoa inteira — rosto,
+tronco, calça — vira recorte de banco de imagens plantado no meio da peça, e o
+leitor lê "stock", não "continuação do assunto".
+
+Atravessa: **a mão, os dedos, o punho, o antebraço, o joelho, a perna, a nuca**
+— o suficiente para mostrar onde dói. Ou **o objeto do tema**, sozinho, sem cena.
+
+Não atravessa: pessoa de corpo inteiro, rosto, duas pessoas, cenário (mesa,
+cadeira, consultório ao fundo).
+
+O rosto tem lugar neste pack — é o slot `professionalPhoto`, na capa e no
+fechamento. O que não pode é ele aparecer na travessia.
+
+**A referência é `exemplos/foto-problema.png`:** duas mãos e os antebraços,
+verticais, apontando para cima, a área do punho em vermelho. Nada além disso no
+quadro. Quando gerar uma travessia nova, compare com ela antes de aceitar.
+
+### 4. O membro acompanha o eixo vertical
+
+Retrato não basta: um braço deitado na horizontal dentro de um quadro vertical
+desperdiça a altura e o assunto sai minúsculo. Braço apontando para cima,
+antebraço entrando por baixo, perna de pé. O gate cobra o formato; o eixo do
+membro ainda depende de olhar.
+
 | Slot | Fórmula |
 |------|---------|
 | foto de travessia | "{região do corpo} com {gesto do sintoma}, área afetada destacada em vermelho translúcido, fundo REMOVIDO (transparente), sujeito centralizado com folga nas laterais, foto clínica realista, luz clara uniforme, sem texto" — **PNG paisagem** 1536x1024 |
