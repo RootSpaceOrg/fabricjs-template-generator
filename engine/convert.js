@@ -170,6 +170,21 @@ const rgb2hex = (c) => {
               + `(gere com o assunto encostando embaixo)`);
           }
         } catch (e) { /* sem PIL: o gate de alpha acima ja cobre o essencial */ }
+        // RETRATO. O slide e 1080x1350 e a travessia ocupa a altura inteira:
+        // uma imagem deitada nesse espaco ou fica minuscula ou perde as laterais
+        // no corte — some justamente o que interessa. Medido nas fitas de
+        // certificacao: as travessias sairam 1536x1024 enquanto os exemplares do
+        // pack sao 1024x1536, e a regra existia so em prosa no images.md.
+        try {
+          const dim = execFileSync(process.env.PYTHON ?? "python3", ["-c",
+            "import sys; from PIL import Image; w,h = Image.open(sys.argv[1]).size; print(w,h)",
+            abs], { encoding: "utf-8" }).trim().split(/\s+/).map(Number);
+          if (dim.length === 2 && dim[0] >= dim[1]) {
+            problemas.push(`${src.replace(/^.*\//, "")}: ${dim[0]}x${dim[1]} e paisagem `
+              + `— travessia ocupa a altura do slide e precisa ser RETRATO `
+              + `(1024x1536 ou proporcao equivalente)`);
+          }
+        } catch (e) { /* sem PIL: idem */ }
       }
       if (problemas.length) {
         console.error("REJEITADO — foto de travessia:");

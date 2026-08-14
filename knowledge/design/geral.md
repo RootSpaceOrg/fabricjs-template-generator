@@ -565,3 +565,46 @@ cada pack inventa o seu CSS).
 A saída é um modificador no design system: `data-inset-left` / `data-inset-right`.
 Quando um ajuste de espaçamento não cabe na grade, ele vira token compartilhado —
 não estilo inline no exemplar.
+
+## A travessia mostra uma PARTE, nunca uma pessoa inteira
+
+A imagem que atravessa a emenda é um elemento gráfico, não uma fotografia de
+cena. Pessoa inteira — rosto, tronco, calça, sapato — vira um recorte de banco
+de imagens plantado no meio da peça: o leitor lê "foto de stock", não
+"continuação do assunto". Numa fita editorial isso quebra o registro inteiro.
+
+**O que pode atravessar:**
+
+- **Uma parte do corpo, ligada ao tema.** A mão, os dedos, o punho, o antebraço,
+  o joelho, a perna, a nuca, o ombro. O suficiente para mostrar onde dói, nada
+  além disso.
+- **Um objeto do tema.** O aparelho, o instrumento, a ferramenta que o negócio
+  usa — desde que sozinho, sem cena em volta.
+
+**O que não pode:**
+
+- Pessoa de corpo inteiro, ou qualquer enquadramento que inclua o rosto.
+- Duas ou mais pessoas.
+- Cena com cenário (mesa, cadeira, consultório ao fundo).
+
+O rosto não é proibido no pack — a foto do profissional é um slot e existe para
+isso. O que não pode é ele aparecer na travessia, onde a imagem é textura de
+composição.
+
+## Travessia é sempre VERTICAL, e o assunto aponta ao longo dela
+
+O slide é 1080×1350, mais alto que largo, e a travessia ocupa a altura inteira.
+Uma imagem em paisagem, deitada nesse espaço, ou fica minúscula ou é cortada
+pelas laterais — some justamente a parte que interessa.
+
+- **Formato retrato**, 1024×1536 ou proporção equivalente. Nunca paisagem.
+- **O membro acompanha o eixo vertical.** Braço apontando para cima, antebraço
+  entrando por baixo, perna de pé. Um braço deitado na horizontal dentro de um
+  quadro vertical desperdiça a altura e volta ao mesmo problema.
+- **Sujeito no terço central horizontal**: a emenda corta a imagem ao meio, e o
+  assunto precisa sobreviver ao corte nos dois lados.
+- **Sangra pela borda por onde o fragmento sai da cena** (base, em geral).
+
+Há gate no conversor para o formato e para a sangria. O "é uma parte, não uma
+pessoa" ainda depende de olhar — mas o formato retrato já elimina boa parte dos
+enquadramentos que trazem a pessoa inteira junto.
