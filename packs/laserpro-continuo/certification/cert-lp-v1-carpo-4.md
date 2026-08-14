@@ -19,6 +19,10 @@ Correção pós-certificação: S3 voltou ao fundo branco e sua copy voltou a ti
 assim, apenas a capa permanece invertida e a travessia S2→S3 fica sobre o
 miolo claro contínuo.
 
+Correção de travessia: o asset passou a ser PNG RGBA retrato (1024×1536), com
+apenas mãos e antebraços verticais e o punho em vermelho translúcido; não há
+pessoa inteira, rosto, roupa ou cenário.
+
 ## Evidências visuais
 
 - `cert-lp-v1-carpo-4-strip.png`
