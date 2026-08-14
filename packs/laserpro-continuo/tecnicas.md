@@ -66,28 +66,28 @@ errado, e já foi gerado assim duas vezes.
 A fita real **mistura** os registros. Cada exemplar em `exemplos/` é um padrão;
 o portal os exibe como referência de montagem.
 
-### ref-estrutura
+## Estrutura
 A fita completa de 6 slides, na ordem das lâminas: capa → o que é → benefícios →
 cartão com aparelho → faixa de foto → fechamento. Serve como mapa do pack
 inteiro, não como padrão isolado.
 
-### ref-sintomas-travessia
+## Sintomas travessia
 Sintomas em lista com a foto do problema cruzando a emenda. O registro mais
 frequente — a condição se explica pelo que a pessoa **sente**, não pelo que o
 aparelho faz. O texto ocupa o lado oposto da foto em cada slide.
 
-### ref-beneficios-cartao
+## Beneficios cartao
 Benefícios na caixa branca, com o aparelho passando **por cima** dela. Sintoma
 pede foto do corpo; benefício pede a caixa. O cartão leva `data-shadow-soft`, e
 **não** `data-elevated`: elevated cria `z-index: 2` e o aparelho passaria por
 trás, invertendo a assinatura.
 
-### ref-faixa-de-foto
+## Faixa de foto
 Faixa no topo, tese curta e apoio abaixo. O slide de respiro, quando a fita já
 explicou a condição e precisa de pausa antes do fechamento. A faixa tem margem
 dos dois lados — não sangra.
 
-### ref-capa-e-fechamento
+## Capa e fechamento
 Os dois slides com `professionalPhoto`, lado a lado, para ver o contraste: capa
 de acento com pílula "arrasta pro lado", fechamento branco com logo e instrução
 de comentário.
