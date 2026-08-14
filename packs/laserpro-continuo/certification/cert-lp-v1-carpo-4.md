@@ -15,6 +15,10 @@ conversão → judge → upload. A imagem de travessia é PNG RGBA, centralizada
 encosta na base (0 px de margem transparente inferior); o problema aparece
 antes de qualquer equipamento — esta fita não usa imagem de aparelho.
 
+Correção pós-certificação: S3 voltou ao fundo branco e sua copy voltou a tinta;
+assim, apenas a capa permanece invertida e a travessia S2→S3 fica sobre o
+miolo claro contínuo.
+
 ## Evidências visuais
 
 - `cert-lp-v1-carpo-4-strip.png`
