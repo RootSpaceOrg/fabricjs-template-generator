@@ -209,6 +209,13 @@ section.slide[data-invert] .ds-card .ds-cta { background: var(--accent); color: 
    sobre gap de um lado e sangria do outro. */
 [data-half-left]  { margin-left: -45px; }    /* desliza meia coluna (90px) */
 [data-half-right] { margin-right: 45px; }    /* encolhe meia coluna pela direita */
+/* FOLGA DE BORDA: cartao que comeca na coluna 1 fica colado na extremidade do
+   slide. A coluna 2 daria 8.3%, folga demais. Medido na lamina do laserpro:
+   2.8% = 30px em 1080 — uma nesga, o suficiente para o cartao nao brotar da
+   borda. Como a whitelist de estilo inline so aceita grid-area (e deve mesmo),
+   isto vive aqui, nao no HTML do pack. */
+[data-inset-left]  { margin-left: 30px; }
+[data-inset-right] { margin-right: 30px; }
 .ds-card[data-variable] { background: var(--accent); color: var(--accent-ink); }
 .ds-card[data-variable] .ds-number, .ds-card[data-variable] .ds-headline,
 .ds-card[data-variable] .ds-body, .ds-card[data-variable] .ds-eyebrow { color: var(--accent-ink); }
