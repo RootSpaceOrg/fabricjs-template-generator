@@ -1,0 +1,59 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="hm-fonts" content="Montserrat:300,400,500,600,700,800">
+</head>
+<body>
+<!-- PADRÃO: cartão vestindo a cor da marca, sobre o slide branco.
+     O inverso do slide de destaque: em vez do fundo inteiro na cor, só a caixa.
+     Mais contido — serve quando a fita já tem um destaque e você precisa de um
+     segundo ponto de ênfase sem repetir o fundo cheio.
+
+     `data-variable="primary"` faz três coisas de uma vez: pinta o cartão com o
+     acento, troca o texto para `accent-ink` (sem isso a copy sairia escura
+     sobre escuro) e marca o objeto no JSON, para o editor da plataforma saber
+     que esta cor acompanha a marca do cliente.
+
+     Aqui o cartão leva `data-elevated="soft"` em vez de `data-shadow-soft`:
+     não há aparelho passando por cima neste padrão, então elevar é seguro — e
+     a sombra sobre o branco fica mais presente sob a caixa colorida.
+
+     ATENÇÃO: o CSS de `data-variable` pinta os DESCENDENTES do cartão. Aqui o
+     cartão é `data-layer` e o texto é IRMÃO dele no grid, então a regra não
+     alcança — sem `data-tone="paper"` explícito a copy sai escura sobre a cor
+     da marca, ilegível. Verificado com marca azul. -->
+<main class="fita" data-pack="laserpro-continuo" data-template-name="Cartao na cor da marca" data-segment="exemplar">
+
+  <section class="slide" data-role="item">
+    <h2 class="ds-headline" data-el-id="m1t" data-weight="light"
+        data-template-element data-te-description="tese acima do cartao"
+        data-te-min-chars="10" data-te-max-chars="34"
+        style="grid-area: 2 / 2 / 4 / 11">Quando <b>procurar</b></h2>
+    <div class="ds-card" data-el-id="m1c" data-layer data-variable="primary" data-elevated="soft"
+         data-inset-left style="grid-area: 5 / 1 / 11 / 11"></div>
+    <p class="ds-body" data-el-id="m1i" data-weight="thin" data-tone="paper" data-template-element
+       data-te-description="sinais de alerta, um por linha"
+       data-te-min-chars="60" data-te-max-chars="220"
+       style="grid-area: 6 / 2 / 10 / 9">Dormência que acorda à noite;<br>Objetos caindo da mão;<br>Formigamento que não passa;<br>Dor que sobe pelo antebraço;</p>
+  </section>
+
+  <section class="slide" data-role="item">
+    <h2 class="ds-headline" data-el-id="m2t" data-weight="light"
+        data-template-element data-te-description="tese do slide"
+        data-te-min-chars="10" data-te-max-chars="34"
+        style="grid-area: 4 / 2 / 6 / 10">Quanto <b>antes</b>, melhor</h2>
+    <p class="ds-body" data-el-id="m2a" data-weight="thin" data-template-element
+       data-te-description="apoio"
+       data-te-min-chars="60" data-te-max-chars="240"
+       style="grid-area: 6 / 2 / 11 / 10">O nervo comprimido por muito tempo demora mais para responder. Procurar cedo encurta o tratamento.</p>
+  </section>
+
+  <div class="fita-layer" data-split-ok>
+    <span class="ds-watermark" data-el-id="w1" data-static data-layer data-ghost
+          style="grid-area: 10 / 9 / 13 / 21">SINAIS</span>
+  </div>
+
+</main>
+</body>
+</html>

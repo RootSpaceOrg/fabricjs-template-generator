@@ -95,6 +95,30 @@ de comentário.
 **Cuidado com o slot do profissional:** ele ocupa da coluna 7 à 13. Texto que
 avança além da coluna 7 passa por trás da pessoa e some.
 
+## Destaque na marca
+Um miolo INTEIRO na cor do cliente, no meio da sequência branca. O recurso de
+ênfase do pack: uma tese que precisa de peso, um dado que muda a decisão, o
+momento de virada. **No máximo um por fita** — o pack é branco por natureza, e
+dois slides de acento no miolo fazem a cor deixar de ser destaque para virar
+fundo padrão (e a capa perde a função de estabelecer a marca). O slide seguinte
+volta ao branco: o contraste é o que faz o destaque existir.
+
+A palavra-fantasma inverte sozinha ao atravessar a emenda — clara a 7% sobre o
+acento, escura a 9% sobre o branco. É opacidade no CSS, não cor fixa, então a
+mesma marcação serve a qualquer marca.
+
+## Cartao na marca
+O inverso do destaque: fundo branco, só a caixa vestida com o acento. Mais
+contido — serve quando a fita já tem um destaque e precisa de um segundo ponto
+de ênfase sem repetir o fundo cheio. Aqui o cartão leva `data-elevated="soft"`
+em vez de `data-shadow-soft`: não há aparelho passando por cima neste padrão,
+então elevar é seguro.
+
+**Armadilha:** o CSS de `data-variable` pinta os DESCENDENTES do cartão. Neste
+pack o cartão é `data-layer` e o texto é IRMÃO dele no grid, então a regra não
+alcança — sem `data-tone="paper"` explícito a copy sai escura sobre a cor da
+marca. Testado com marca azul: ilegível.
+
 ## O que este pack resolve mal
 
 - **Passo a passo longo.** Não há numeração de série; a fita não sinaliza ordem.

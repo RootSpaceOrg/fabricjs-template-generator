@@ -1,0 +1,59 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="hm-fonts" content="Montserrat:300,400,500,600,700,800">
+</head>
+<body>
+<!-- PADRÃO: slide de destaque com fundo da marca.
+     Um miolo INTEIRO na cor do cliente, no meio da sequência branca. É o
+     recurso de ênfase do pack: uma tese que precisa de peso, um dado que muda
+     a decisão, o momento de virada da narrativa.
+
+     Regra de uso: NO MÁXIMO UM por fita. O pack é branco por natureza — dois
+     slides de acento no miolo e a cor deixa de ser destaque para virar o fundo
+     padrão, o que descaracteriza o estilo (e a capa perde a função de
+     estabelecer a marca).
+
+     A palavra-fantasma inverte sozinha: sobre o acento ela fica CLARA a 7%,
+     sobre o branco fica ESCURA a 9%. É opacidade no CSS, não cor fixa, então
+     a mesma marcação serve aos dois fundos e a qualquer marca.
+
+     O slide seguinte volta ao branco — o contraste é o que faz o destaque
+     existir. -->
+<main class="fita" data-pack="laserpro-continuo" data-template-name="Destaque na cor da marca" data-segment="exemplar">
+
+  <section class="slide" data-role="item" data-invert>
+    <span class="ds-eyebrow" data-el-id="d1e" data-static data-tone="paper"
+          style="grid-area: 3 / 2 / 4 / 9">O QUE POUCA GENTE SABE</span>
+    <h2 class="ds-headline" data-el-id="d1t" data-size="lg" data-tone="paper" data-weight="light"
+        data-template-element data-te-description="tese de virada"
+        data-te-min-chars="12" data-te-max-chars="42"
+        style="grid-area: 5 / 2 / 8 / 11">A dor não começa no <b>punho</b></h2>
+    <p class="ds-body" data-el-id="d1a" data-tone="paper" data-weight="thin"
+       data-template-element data-te-description="apoio da tese"
+       data-te-min-chars="60" data-te-max-chars="220"
+       style="grid-area: 8 / 2 / 12 / 10">Ela começa no nervo comprimido, e é por isso que apertar o local dói mais do que resolve.</p>
+  </section>
+
+  <section class="slide" data-role="item">
+    <h2 class="ds-headline" data-el-id="d2t" data-weight="light"
+        data-template-element data-te-description="tese do slide"
+        data-te-min-chars="10" data-te-max-chars="34"
+        style="grid-area: 4 / 2 / 6 / 10">O que <b>funciona</b></h2>
+    <p class="ds-body" data-el-id="d2a" data-weight="thin" data-template-element
+       data-te-description="apoio"
+       data-te-min-chars="60" data-te-max-chars="240"
+       style="grid-area: 6 / 2 / 11 / 10">Reduzir a inflamação em volta do nervo, não massagear o ponto que dói. É aí que a laserterapia entra.</p>
+  </section>
+
+  <!-- Fita de 2 = 24 colunas, emenda na 13. A fantasma atravessa a emenda e
+       muda de cor no caminho — clara no slide de acento, escura no branco. -->
+  <div class="fita-layer" data-split-ok>
+    <span class="ds-watermark" data-el-id="w1" data-static data-layer data-ghost
+          style="grid-area: 9 / 7 / 13 / 19">NERVO</span>
+  </div>
+
+</main>
+</body>
+</html>
